@@ -245,18 +245,16 @@ A simple, single-screen app that displays comprehensive device information.
 
 ```bash
 # From repository root
-yarn showcase ios
-# or
-yarn showcase android
+yarn showcase start  # Start Metro bundler
+yarn showcase ios    # Run on iOS
+yarn showcase android # Run on Android
 
 # Or from the showcase directory
 cd example/showcase
-yarn ios
-# or
-yarn android
+yarn start           # Start Metro bundler
+yarn ios             # Run on iOS
+yarn android         # Run on Android
 ```
-
-**Metro Port**: 8081 (default)
 
 ### Benchmark App (`example/benchmark/`)
 
@@ -268,15 +266,15 @@ An independent performance testing application for benchmarking the Nitro module
 
 ```bash
 # From repository root
-yarn benchmark ios
-# or
-yarn benchmark android
+yarn benchmark start  # Start Metro bundler
+yarn benchmark ios    # Run on iOS
+yarn benchmark android # Run on Android
 
 # Or from the benchmark directory
 cd example/benchmark
-yarn ios
-# or
-yarn android
+yarn start            # Start Metro bundler
+yarn ios              # Run on iOS
+yarn android          # Run on Android
 ```
 
 For more details, see:
@@ -289,23 +287,26 @@ For more details, see:
 - **iOS**: 13.4+ (99%+ of devices)
 - **Android**: API 21+ (Android 5.0 Lollipop, 99%+ of devices)
 
-> **📖 For detailed ktlint usage**: See [ktlint Quick Start Guide](specs/002-cleanup-boilerplate-add-ktlint/quickstart.md)
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow and guidelines.
 
-### Pre-commit workflow (recommended)
+### Code Quality
 
-Before committing Kotlin code changes:
+This project uses automated code quality tools:
+
+- **TypeScript**: Type checking with `yarn typecheck`
+- **Linting**: oxlint (default) or ESLint with `yarn lint` or `yarn lint:eslint`
+- **Kotlin**: ktlint for Android code formatting
+
+**Formatting Kotlin code** (before committing Android changes):
 
 ```sh
-cd example/android
+cd example/showcase/android  # or example/benchmark/android
 ./gradlew :react-native-nitro-device-info:ktlintFormat
-cd ../..
-git add .
-git commit -m "Your commit message"
 ```
+
+> For detailed ktlint usage, see [ktlint Quick Start Guide](specs/002-cleanup-boilerplate-add-ktlint/quickstart.md)
 
 ## License
 
