@@ -179,24 +179,72 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          echo "Generating release notes for v$VERSION..."
+          echo "Previous tag: $PREVIOUS_TAG"
+
+          # Get commits since last tag
+          if [ -n "$PREVIOUS_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"%s" $PREVIOUS_TAG..HEAD)
+          else
+            COMMITS=$(git log --pretty=format:"%s" --max-count=50)
+          fi
+
+          # Get merged PRs since last tag
+          if [ -n "$PREVIOUS_TAG" ]; then
+            PRS=$(gh pr list --state merged --search "merged:>$PREVIOUS_TAG" --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
+          else
+            PRS=$(gh pr list --state merged --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
+          fi
+
+          # Create release notes
+          cat > release_notes.md << EOF
+          ## What's Changed
+
+          EOF
+
+          if [ -n "$PRS" ]; then
+            echo "$PRS" >> release_notes.md
+          else
+            echo "- No merged PRs found" >> release_notes.md
+          fi
+
+          cat >> release_notes.md << EOF
+
+          ## Installation
+
+          \`\`\`bash
+          npm install react-native-nitro-device-info@$VERSION
+          # or
+          yarn add react-native-nitro-device-info@$VERSION
+          \`\`\`
+
+          ## Documentation
+
+          - [README](https://github.com/l2hyunwoo/react-native-nitro-device-info#readme)
+
+          **Full Changelog**: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/$PREVIOUS_TAG...v$VERSION
+          EOF
+
+          # Output the release notes
+          RELEASE_NOTES=$(cat release_notes.md)
+          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "✓ Release notes generated"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.event.inputs.version }}
-          generate_release_notes: true
-          body: |
-            ## Installation
-
-            ```bash
-            npm install react-native-nitro-device-info@${{ github.event.inputs.version }}
-            # or
-            yarn add react-native-nitro-device-info@${{ github.event.inputs.version }}
-            ```
-
-            ## Documentation
-
-            - [README](https://github.com/l2hyunwoo/react-native-nitro-device-info#readme)
-            - [API Reference](docs/API.md)
-            - [Migration Guide](docs/MIGRATION.md)
+          body: ${{ steps.release_notes.outputs.release_notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
