@@ -15,7 +15,7 @@ This app demonstrates:
 ### iOS
 
 ```bash
-cd /Users/hyunwoo/StudioCodeProjects/react-native-nitro-device-info
+# From repository root
 yarn showcase ios
 ```
 
@@ -29,7 +29,7 @@ yarn ios
 ### Android
 
 ```bash
-cd /Users/hyunwoo/StudioCodeProjects/react-native-nitro-device-info
+# From repository root
 yarn showcase android
 ```
 

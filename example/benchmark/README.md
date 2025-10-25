@@ -15,7 +15,7 @@ This app is designed to:
 ### iOS
 
 ```bash
-cd /Users/hyunwoo/StudioCodeProjects/react-native-nitro-device-info
+# From repository root
 yarn benchmark ios
 ```
 
@@ -29,7 +29,7 @@ yarn ios
 ### Android
 
 ```bash
-cd /Users/hyunwoo/StudioCodeProjects/react-native-nitro-device-info
+# From repository root
 yarn benchmark android
 ```
 
