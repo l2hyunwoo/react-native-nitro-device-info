@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => min_ios_version_supported }
+  s.platforms    = { :ios => "13.4" }
   s.source       = { :git => "https://github.com/l2hyunwoo/react-native-nitro-device-info.git", :tag => "#{s.version}" }
 
 
@@ -20,11 +20,10 @@ Pod::Spec.new do |s|
     "cpp/**/*.{hpp,cpp}",
   ]
 
+  s.dependency 'React-Core'
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
 
   load 'nitrogen/generated/ios/NitroDeviceInfo+autolinking.rb'
   add_nitrogen_files(s)
-
-  install_modules_dependencies(s)
 end
