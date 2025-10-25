@@ -84,3 +84,12 @@ android/generated
 
 # React Native Nitro Modules
 nitrogen/
+
+# Claude Code
+.claude/
+CLAUDE.md
+specs/
+.specify/
+
+# ios
+Pods/
