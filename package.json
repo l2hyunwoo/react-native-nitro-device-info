@@ -34,11 +34,12 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-nitro-device-info-example",
+    "showcase": "yarn workspace react-native-nitro-device-info-example",
+    "benchmark": "yarn workspace react-native-nitro-device-info-benchmark",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "clean": "del-cli android/build example/showcase/android/build example/showcase/android/app/build example/showcase/ios/build example/benchmark/android/build example/benchmark/android/app/build example/benchmark/ios/build lib",
     "prepare": "bob build",
     "nitrogen": "nitrogen",
     "release": "release-it --only-version"
@@ -94,7 +95,8 @@
     "react-native-nitro-modules": "^0.31.2"
   },
   "workspaces": [
-    "example"
+    "example/showcase",
+    "example/benchmark"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {
