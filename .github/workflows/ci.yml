@@ -82,7 +82,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: example/showcase/ios/build
-          key: deriveddata-${{ runner.os }}-${{ hashFiles('example/showcase/ios/**/*.xcodeproj', 'example/showcase/ios/**/*.xcworkspace') }}
+          key: deriveddata-${{ runner.os }}-${{ hashFiles('example/showcase/ios/**/*.xcodeproj/project.pbxproj', 'example/showcase/ios/**/*.xcworkspace/contents.xcworkspacedata') }}
           restore-keys: |
             deriveddata-${{ runner.os }}-
 
