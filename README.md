@@ -54,17 +54,21 @@ console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
 
-// Asynchronous access (Promise-based - <100ms)
-const uniqueId = await DeviceInfoModule.getUniqueId();
+// Synchronous methods (immediate - <1ms)
+const uniqueId = DeviceInfoModule.getUniqueId();
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
-const powerState = await DeviceInfoModule.getPowerState();
+const powerState = DeviceInfoModule.getPowerState();
 console.log(powerState);
 // {
 //   batteryLevel: 0.75,
 //   batteryState: 'charging',
 //   lowPowerMode: false
 // }
+
+// Asynchronous methods (Promise-based - <100ms)
+const ipAddress = await DeviceInfoModule.getIpAddress();
+console.log(ipAddress); // "192.168.1.100"
 ```
 
 ### Advanced Usage
@@ -76,30 +80,37 @@ import type { DeviceInfo, PowerState } from 'react-native-nitro-device-info';
 // Create a device info instance
 const deviceInfo: DeviceInfo = createDeviceInfo();
 
-// Device Identification
+// Device Identification (Synchronous)
 const deviceId = deviceInfo.deviceId;
-const manufacturer = await deviceInfo.getManufacturer();
+const manufacturer = deviceInfo.getManufacturer();
+const uniqueId = deviceInfo.getUniqueId();
 
-// Device Capabilities
+// Device Capabilities (Synchronous)
 const isTablet = deviceInfo.isTablet();
 const hasNotch = deviceInfo.hasNotch();
 const hasDynamicIsland = deviceInfo.hasDynamicIsland();
+const isCameraPresent = deviceInfo.isCameraPresent();
 
-// System Resources
-const totalMemory = await deviceInfo.getTotalMemory();
-const freeStorage = await deviceInfo.getFreeDiskStorage();
+// System Resources (Synchronous)
+const totalMemory = deviceInfo.getTotalMemory();
+const freeStorage = deviceInfo.getFreeDiskStorage();
 console.log(`Memory: ${totalMemory / 1024 / 1024 / 1024} GB`);
 console.log(`Free Storage: ${freeStorage / 1024 / 1024 / 1024} GB`);
 
-// Battery Information
-const batteryLevel = await deviceInfo.getBatteryLevel();
+// Battery Information (Synchronous)
+const batteryLevel = deviceInfo.getBatteryLevel();
 console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
 
-// Application Metadata
-const version = await deviceInfo.getVersion();
-const buildNumber = await deviceInfo.getBuildNumber();
-const bundleId = await deviceInfo.getBundleId();
+// Application Metadata (Synchronous)
+const version = deviceInfo.getVersion();
+const buildNumber = deviceInfo.getBuildNumber();
+const bundleId = deviceInfo.getBundleId();
 console.log(`${bundleId} v${version} (${buildNumber})`);
+
+// Network Information (Asynchronous)
+const ipAddress = await deviceInfo.getIpAddress();
+const carrier = await deviceInfo.getCarrier();
+console.log(`IP: ${ipAddress}, Carrier: ${carrier}`);
 ```
 
 ## API Reference
@@ -119,35 +130,67 @@ These properties return immediately with cached values:
 
 ### Synchronous Methods
 
-| Method               | Returns   | Description                        |
-| -------------------- | --------- | ---------------------------------- |
-| `isTablet()`         | `boolean` | Check if device is a tablet        |
-| `hasNotch()`         | `boolean` | Check for display notch (iOS only) |
-| `hasDynamicIsland()` | `boolean` | Check for Dynamic Island (iOS 16+) |
-
-### Asynchronous Methods
+All methods below return immediately with cached values (<1ms):
 
 #### Device Identification
 
-- `getUniqueId(): Promise<string>` - Get persistent device ID
-- `getManufacturer(): Promise<string>` - Get manufacturer name
+| Method               | Returns    | Description                  |
+| -------------------- | ---------- | ---------------------------- |
+| `getUniqueId()`      | `string`   | Get persistent device ID     |
+| `getManufacturer()`  | `string`   | Get manufacturer name        |
+
+#### Device Capabilities
+
+| Method                     | Returns    | Description                             |
+| -------------------------- | ---------- | --------------------------------------- |
+| `isTablet()`               | `boolean`  | Check if device is a tablet             |
+| `hasNotch()`               | `boolean`  | Check for display notch (iOS only)      |
+| `hasDynamicIsland()`       | `boolean`  | Check for Dynamic Island (iOS 16+)      |
+| `isCameraPresent()`        | `boolean`  | Check camera availability               |
+| `isPinOrFingerprintSet()`  | `boolean`  | Check biometric security status         |
+| `isEmulator()`             | `boolean`  | Check if running in simulator/emulator  |
 
 #### System Resources
 
-- `getTotalMemory(): Promise<number>` - Total RAM in bytes
-- `getUsedMemory(): Promise<number>` - Current app memory usage
-- `getTotalDiskCapacity(): Promise<number>` - Total storage in bytes
-- `getFreeDiskStorage(): Promise<number>` - Available storage in bytes
-- `getBatteryLevel(): Promise<number>` - Battery level (0.0 to 1.0)
-- `getPowerState(): Promise<PowerState>` - Comprehensive power information
-- `isBatteryCharging(): Promise<boolean>` - Charging status
+| Method                   | Returns   | Description                       |
+| ------------------------ | --------- | --------------------------------- |
+| `getTotalMemory()`       | `number`  | Total RAM in bytes                |
+| `getUsedMemory()`        | `number`  | Current app memory usage          |
+| `getTotalDiskCapacity()` | `number`  | Total storage in bytes            |
+| `getFreeDiskStorage()`   | `number`  | Available storage in bytes        |
+
+#### Battery Information
+
+| Method                | Returns       | Description                      |
+| --------------------- | ------------- | -------------------------------- |
+| `getBatteryLevel()`   | `number`      | Battery level (0.0 to 1.0)       |
+| `getPowerState()`     | `PowerState`  | Comprehensive power information  |
+| `isBatteryCharging()` | `boolean`     | Charging status                  |
 
 #### Application Metadata
 
-- `getVersion(): Promise<string>` - App version string
-- `getBuildNumber(): Promise<string>` - Build number
-- `getBundleId(): Promise<string>` - Bundle ID (iOS) or package name (Android)
-- `getApplicationName(): Promise<string>` - App display name
+| Method                   | Returns   | Description                     |
+| ------------------------ | --------- | ------------------------------- |
+| `getVersion()`           | `string`  | App version string              |
+| `getBuildNumber()`       | `string`  | Build number                    |
+| `getBundleId()`          | `string`  | Bundle ID or package name       |
+| `getApplicationName()`   | `string`  | App display name                |
+
+#### Platform-Specific
+
+| Method                | Returns      | Description                              |
+| --------------------- | ------------ | ---------------------------------------- |
+| `getApiLevel()`       | `number`     | Android API level (-1 on iOS)            |
+| `getSupportedAbis()`  | `string[]`   | CPU architectures                        |
+| `hasGms()`            | `boolean`    | Google Mobile Services (Android only)    |
+| `hasHms()`            | `boolean`    | Huawei Mobile Services (Android only)    |
+
+### Asynchronous Methods
+
+All methods below return Promises and typically complete in 10-100ms:
+
+#### Application Metadata
+
 - `getFirstInstallTime(): Promise<number>` - Install timestamp (ms since epoch)
 - `getLastUpdateTime(): Promise<number>` - Last update timestamp
 
@@ -158,19 +201,6 @@ These properties return immediately with cached values:
 - `getCarrier(): Promise<string>` - Cellular carrier name
 - `isLocationEnabled(): Promise<boolean>` - Location services status
 - `isHeadphonesConnected(): Promise<boolean>` - Headphone connection status
-
-#### Device Capabilities
-
-- `isCameraPresent(): Promise<boolean>` - Camera availability
-- `isPinOrFingerprintSet(): Promise<boolean>` - Biometric security status
-- `isEmulator(): Promise<boolean>` - Simulator/emulator detection
-
-#### Platform-Specific
-
-- `getApiLevel(): Promise<number>` - Android API level (-1 on iOS)
-- `getSupportedAbis(): Promise<string[]>` - CPU architectures
-- `hasGms(): Promise<boolean>` - Google Mobile Services (Android only)
-- `hasHms(): Promise<boolean>` - Huawei Mobile Services (Android only)
 
 ## Type Definitions
 
@@ -222,14 +252,15 @@ const isTablet = DeviceInfo.isTablet();
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 const deviceId = DeviceInfoModule.deviceId; // Now a sync property!
-const uniqueId = await DeviceInfoModule.getUniqueId(); // Same async method
+const uniqueId = DeviceInfoModule.getUniqueId(); // Now synchronous (was async)!
 const isTablet = DeviceInfoModule.isTablet(); // Same method
 ```
 
 **Key Differences**:
 
 - Uses Nitro HybridObject instead of TurboModule
-- Some properties are now synchronous getters (faster!)
+- Most methods are now synchronous for instant access (<1ms)
+- Only network/connectivity and install time methods remain async
 
 ## Example Apps
 

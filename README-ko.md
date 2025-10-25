@@ -55,17 +55,21 @@ console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
 
-// 비동기 접근 (Promise 기반 - <100ms)
-const uniqueId = await DeviceInfoModule.getUniqueId();
+// 동기 메서드 (즉시 - <1ms)
+const uniqueId = DeviceInfoModule.getUniqueId();
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
-const powerState = await DeviceInfoModule.getPowerState();
+const powerState = DeviceInfoModule.getPowerState();
 console.log(powerState);
 // {
 //   batteryLevel: 0.75,
 //   batteryState: 'charging',
 //   lowPowerMode: false
 // }
+
+// 비동기 메서드 (Promise 기반 - <100ms)
+const ipAddress = await DeviceInfoModule.getIpAddress();
+console.log(ipAddress); // "192.168.1.100"
 ```
 
 ### 고급 사용법
@@ -77,32 +81,39 @@ import type { DeviceInfo, PowerState } from 'react-native-nitro-device-info';
 // 디바이스 정보 인스턴스 생성
 const deviceInfo: DeviceInfo = createDeviceInfo();
 
-// 디바이스 식별
+// 디바이스 식별 (동기)
 const deviceId = deviceInfo.deviceId;
-const manufacturer = await deviceInfo.getManufacturer();
+const manufacturer = deviceInfo.getManufacturer();
+const uniqueId = deviceInfo.getUniqueId();
 
-// 디바이스 기능
+// 디바이스 기능 (동기)
 const isTablet = deviceInfo.isTablet();
 const hasNotch = deviceInfo.hasNotch();
 const hasDynamicIsland = deviceInfo.hasDynamicIsland();
+const isCameraPresent = deviceInfo.isCameraPresent();
 
-// 시스템 리소스
-const totalMemory = await deviceInfo.getTotalMemory();
-const freeStorage = await deviceInfo.getFreeDiskStorage();
+// 시스템 리소스 (동기)
+const totalMemory = deviceInfo.getTotalMemory();
+const freeStorage = deviceInfo.getFreeDiskStorage();
 console.log(`메모리: ${(totalMemory / 1024 / 1024 / 1024).toFixed(2)} GB`);
 console.log(
   `사용 가능한 저장공간: ${(freeStorage / 1024 / 1024 / 1024).toFixed(2)} GB`
 );
 
-// 배터리 정보
-const batteryLevel = await deviceInfo.getBatteryLevel();
+// 배터리 정보 (동기)
+const batteryLevel = deviceInfo.getBatteryLevel();
 console.log(`배터리 잔량: ${(batteryLevel * 100).toFixed(0)}%`);
 
-// 앱 메타데이터
-const version = await deviceInfo.getVersion();
-const buildNumber = await deviceInfo.getBuildNumber();
-const bundleId = await deviceInfo.getBundleId();
+// 앱 메타데이터 (동기)
+const version = deviceInfo.getVersion();
+const buildNumber = deviceInfo.getBuildNumber();
+const bundleId = deviceInfo.getBundleId();
 console.log(`${bundleId} v${version} (${buildNumber})`);
+
+// 네트워크 정보 (비동기)
+const ipAddress = await deviceInfo.getIpAddress();
+const carrier = await deviceInfo.getCarrier();
+console.log(`IP: ${ipAddress}, 통신사: ${carrier}`);
 ```
 
 ## API 레퍼런스
@@ -122,35 +133,67 @@ console.log(`${bundleId} v${version} (${buildNumber})`);
 
 ### 동기 메서드
 
-| 메서드               | 반환값    | 설명                            |
-| -------------------- | --------- | ------------------------------- |
-| `isTablet()`         | `boolean` | 태블릿 여부 확인                |
-| `hasNotch()`         | `boolean` | 디스플레이 노치 유무 (iOS 전용) |
-| `hasDynamicIsland()` | `boolean` | Dynamic Island 유무 (iOS 16+)   |
-
-### 비동기 메서드
+아래 모든 메서드는 캐시된 값을 즉시 반환합니다 (<1ms):
 
 #### 디바이스 식별
 
-- `getUniqueId(): Promise<string>` — 고유 디바이스 ID
-- `getManufacturer(): Promise<string>` — 제조사 이름
+| 메서드               | 반환값    | 설명                  |
+| -------------------- | --------- | --------------------- |
+| `getUniqueId()`      | `string`  | 고유 디바이스 ID      |
+| `getManufacturer()`  | `string`  | 제조사 이름           |
+
+#### 디바이스 기능
+
+| 메서드                     | 반환값    | 설명                            |
+| -------------------------- | --------- | ------------------------------- |
+| `isTablet()`               | `boolean` | 태블릿 여부 확인                |
+| `hasNotch()`               | `boolean` | 디스플레이 노치 유무 (iOS 전용) |
+| `hasDynamicIsland()`       | `boolean` | Dynamic Island 유무 (iOS 16+)   |
+| `isCameraPresent()`        | `boolean` | 카메라 사용 가능 여부           |
+| `isPinOrFingerprintSet()`  | `boolean` | 생체 인증 설정 여부             |
+| `isEmulator()`             | `boolean` | 에뮬레이터/시뮬레이터 여부      |
 
 #### 시스템 리소스
 
-- `getTotalMemory(): Promise<number>` — 전체 RAM 용량 (bytes)
-- `getUsedMemory(): Promise<number>` — 현재 앱 메모리 사용량
-- `getTotalDiskCapacity(): Promise<number>` — 전체 저장공간 (bytes)
-- `getFreeDiskStorage(): Promise<number>` — 사용 가능한 저장공간 (bytes)
-- `getBatteryLevel(): Promise<number>` — 배터리 잔량 (0.0 ~ 1.0)
-- `getPowerState(): Promise<PowerState>` — 포괄적인 전원 상태
-- `isBatteryCharging(): Promise<boolean>` — 충전 중 여부
+| 메서드                   | 반환값   | 설명                       |
+| ------------------------ | -------- | -------------------------- |
+| `getTotalMemory()`       | `number` | 전체 RAM 용량 (bytes)      |
+| `getUsedMemory()`        | `number` | 현재 앱 메모리 사용량      |
+| `getTotalDiskCapacity()` | `number` | 전체 저장공간 (bytes)      |
+| `getFreeDiskStorage()`   | `number` | 사용 가능한 저장공간 (bytes) |
+
+#### 배터리 정보
+
+| 메서드                | 반환값       | 설명                     |
+| --------------------- | ------------ | ------------------------ |
+| `getBatteryLevel()`   | `number`     | 배터리 잔량 (0.0 ~ 1.0)  |
+| `getPowerState()`     | `PowerState` | 포괄적인 전원 상태       |
+| `isBatteryCharging()` | `boolean`    | 충전 중 여부             |
 
 #### 애플리케이션 메타데이터
 
-- `getVersion(): Promise<string>` — 앱 버전
-- `getBuildNumber(): Promise<string>` — 빌드 번호
-- `getBundleId(): Promise<string>` — 번들 ID(iOS) 또는 패키지명(Android)
-- `getApplicationName(): Promise<string>` — 앱 이름
+| 메서드                 | 반환값   | 설명                            |
+| ---------------------- | -------- | ------------------------------- |
+| `getVersion()`         | `string` | 앱 버전                         |
+| `getBuildNumber()`     | `string` | 빌드 번호                       |
+| `getBundleId()`        | `string` | 번들 ID 또는 패키지명           |
+| `getApplicationName()` | `string` | 앱 이름                         |
+
+#### 플랫폼별 메서드
+
+| 메서드                | 반환값     | 설명                                 |
+| --------------------- | ---------- | ------------------------------------ |
+| `getApiLevel()`       | `number`   | Android API 레벨 (iOS는 -1)          |
+| `getSupportedAbis()`  | `string[]` | 지원 CPU 아키텍처                    |
+| `hasGms()`            | `boolean`  | Google Mobile Services (Android 전용) |
+| `hasHms()`            | `boolean`  | Huawei Mobile Services (Android 전용) |
+
+### 비동기 메서드
+
+아래 모든 메서드는 Promise를 반환하며 일반적으로 10-100ms 내에 완료됩니다:
+
+#### 애플리케이션 메타데이터
+
 - `getFirstInstallTime(): Promise<number>` — 최초 설치 시각 (epoch 기준 ms)
 - `getLastUpdateTime(): Promise<number>` — 마지막 업데이트 시각
 
@@ -161,19 +204,6 @@ console.log(`${bundleId} v${version} (${buildNumber})`);
 - `getCarrier(): Promise<string>` — 이동통신사 이름
 - `isLocationEnabled(): Promise<boolean>` — 위치 서비스 활성 상태
 - `isHeadphonesConnected(): Promise<boolean>` — 헤드폰 연결 여부
-
-#### 디바이스 기능
-
-- `isCameraPresent(): Promise<boolean>` — 카메라 사용 가능 여부
-- `isPinOrFingerprintSet(): Promise<boolean>` — 잠금/생체 인증 설정 여부
-- `isEmulator(): Promise<boolean>` — 에뮬레이터 감지
-
-#### 플랫폼별 메서드
-
-- `getApiLevel(): Promise<number>` — Android API 레벨 (iOS는 -1)
-- `getSupportedAbis(): Promise<string[]>` — 지원 CPU 아키텍처
-- `hasGms(): Promise<boolean>` — Google Mobile Services 지원 여부
-- `hasHms(): Promise<boolean>` — Huawei Mobile Services 지원 여부
 
 ## 타입 정의
 
@@ -225,14 +255,15 @@ const isTablet = DeviceInfo.isTablet();
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 const deviceId = DeviceInfoModule.deviceId; // 이제 동기 속성입니다!
-const uniqueId = await DeviceInfoModule.getUniqueId(); // 동일한 비동기 메서드
+const uniqueId = DeviceInfoModule.getUniqueId(); // 이제 동기 메서드입니다 (이전엔 비동기)!
 const isTablet = DeviceInfoModule.isTablet(); // 동일한 메서드
 ```
 
 **주요 변경점**
 
 - TurboModule → Nitro HybridObject 기반
-- 일부 속성이 동기 getter로 전환되어 더 빠름
+- 대부분의 메서드가 동기 방식으로 전환되어 즉시 접근 가능 (<1ms)
+- 네트워크/연결 관련 메서드와 설치 시각 메서드만 비동기로 유지
 
 ## 예제 앱
 
