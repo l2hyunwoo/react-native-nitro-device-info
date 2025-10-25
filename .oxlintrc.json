@@ -1,0 +1,21 @@
+{
+  "$schema": "https://oxc-project.github.io/oxlint/schema/oxlintrc.json",
+  "rules": {
+    "react": "error",
+    "typescript": "error",
+    "unicorn": "error",
+    "import": "error",
+    "jsdoc": "warn",
+    "jest": "warn"
+  },
+  "ignorePatterns": [
+    "node_modules/**",
+    "lib/**",
+    "nitrogen/**",
+    "**/build/**",
+    "**/android/**",
+    "**/ios/**",
+    "**/*.d.ts",
+    "coverage/**"
+  ]
+}
