@@ -16,7 +16,7 @@
 ### iOS
 
 ```bash
-cd /Users/hyunwoo/StudioCodeProjects/react-native-nitro-device-info
+# 프로젝트 루트에서
 yarn benchmark ios
 ```
 
@@ -30,7 +30,7 @@ yarn ios
 ### Android
 
 ```bash
-cd /Users/hyunwoo/StudioCodeProjects/react-native-nitro-device-info
+# 프로젝트 루트에서
 yarn benchmark android
 ```
 
