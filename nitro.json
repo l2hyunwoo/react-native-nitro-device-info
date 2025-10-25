@@ -1,0 +1,17 @@
+{
+  "cxxNamespace": ["nitrodeviceinfo"],
+  "ios": {
+    "iosModuleName": "NitroDeviceInfo"
+  },
+  "android": {
+    "androidNamespace": ["nitrodeviceinfo"],
+    "androidCxxLibName": "nitrodeviceinfo"
+  },
+  "autolinking": {
+    "NitroDeviceInfo": {
+      "swift": "NitroDeviceInfo",
+      "kotlin": "NitroDeviceInfo"
+    }
+  },
+  "ignorePaths": ["node_modules"]
+}
