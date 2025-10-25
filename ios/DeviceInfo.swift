@@ -142,178 +142,152 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  // MARK: - Asynchronous Methods - Device Identification
+  // MARK: - Synchronous Methods - Device Identification
 
   /**
    * Get unique device identifier (IDFV)
    * Persists across app installs from same vendor
    */
-  public func getUniqueId() throws -> Promise<String> {
-    return Promise.async {
-      return UIDevice.current.identifierForVendor?.uuidString ?? ""
-    }
+  public func getUniqueId() throws -> String {
+    return UIDevice.current.identifierForVendor?.uuidString ?? ""
   }
 
   /**
    * Get device manufacturer (always "Apple" on iOS)
    */
-  public func getManufacturer() throws -> Promise<String> {
-    return Promise.async {
-      return "Apple"
-    }
+  public func getManufacturer() throws -> String {
+    return "Apple"
   }
 
-  // MARK: - Asynchronous Methods - System Resources
+  // MARK: - Synchronous Methods - System Resources
 
   /**
    * Get total device RAM in bytes
    */
-  public func getTotalMemory() throws -> Promise<Double> {
-    return Promise.async {
-      return Double(ProcessInfo.processInfo.physicalMemory)
-    }
+  public func getTotalMemory() throws -> Double {
+    return Double(ProcessInfo.processInfo.physicalMemory)
   }
 
   /**
    * Get current app memory usage in bytes
    */
-  public func getUsedMemory() throws -> Promise<Double> {
-    return Promise.async {
-      var info = mach_task_basic_info()
-      var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
+  public func getUsedMemory() throws -> Double {
+    var info = mach_task_basic_info()
+    var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
 
-      let kerr: kern_return_t = withUnsafeMutablePointer(to: &info) {
-        $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
-          task_info(mach_task_self_,
-                   task_flavor_t(MACH_TASK_BASIC_INFO),
-                   $0,
-                   &count)
-        }
+    let kerr: kern_return_t = withUnsafeMutablePointer(to: &info) {
+      $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
+        task_info(mach_task_self_,
+                 task_flavor_t(MACH_TASK_BASIC_INFO),
+                 $0,
+                 &count)
       }
-
-      if kerr == KERN_SUCCESS {
-        return Double(info.resident_size)
-      }
-      return 0.0
     }
+
+    if kerr == KERN_SUCCESS {
+      return Double(info.resident_size)
+    }
+    return 0.0
   }
 
   /**
    * Get total disk storage capacity in bytes
    */
-  public func getTotalDiskCapacity() throws -> Promise<Double> {
-    return Promise.async { [logger] in
-      do {
-        let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
-        let space = (systemAttributes[.systemSize] as? NSNumber)?.doubleValue ?? 0
-        return space
-      } catch {
-        os_log(.error, log: logger, "Failed to get total disk capacity: %{public}@", error.localizedDescription)
-        return 0.0
-      }
+  public func getTotalDiskCapacity() throws -> Double {
+    do {
+      let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
+      let space = (systemAttributes[.systemSize] as? NSNumber)?.doubleValue ?? 0
+      return space
+    } catch {
+      os_log(.error, log: logger, "Failed to get total disk capacity: %{public}@", error.localizedDescription)
+      return 0.0
     }
   }
 
   /**
    * Get free disk storage in bytes
    */
-  public func getFreeDiskStorage() throws -> Promise<Double> {
-    return Promise.async { [logger] in
-      do {
-        let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
-        let freeSpace = (systemAttributes[.systemFreeSize] as? NSNumber)?.doubleValue ?? 0
-        return freeSpace
-      } catch {
-        os_log(.error, log: logger, "Failed to get free disk storage: %{public}@", error.localizedDescription)
-        return 0.0
-      }
+  public func getFreeDiskStorage() throws -> Double {
+    do {
+      let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
+      let freeSpace = (systemAttributes[.systemFreeSize] as? NSNumber)?.doubleValue ?? 0
+      return freeSpace
+    } catch {
+      os_log(.error, log: logger, "Failed to get free disk storage: %{public}@", error.localizedDescription)
+      return 0.0
     }
   }
 
   /**
    * Get current battery level (0.0 to 1.0)
    */
-  public func getBatteryLevel() throws -> Promise<Double> {
-    return Promise.async { [batteryMonitoringInitializer] in
-      // Battery monitoring already enabled in initializer
-      _ = batteryMonitoringInitializer
-      let level = UIDevice.current.batteryLevel
-      return level >= 0 ? Double(level) : 0.0
-    }
+  public func getBatteryLevel() throws -> Double {
+    // Battery monitoring already enabled in initializer
+    _ = batteryMonitoringInitializer
+    let level = UIDevice.current.batteryLevel
+    return level >= 0 ? Double(level) : 0.0
   }
 
   /**
    * Get comprehensive power state information
    */
-  public func getPowerState() throws -> Promise<PowerState> {
-    return Promise.async { [batteryMonitoringInitializer] in
-      // Battery monitoring already enabled in initializer
-      _ = batteryMonitoringInitializer
+  public func getPowerState() throws -> PowerState {
+    // Battery monitoring already enabled in initializer
+    _ = batteryMonitoringInitializer
 
-      let batteryLevel = UIDevice.current.batteryLevel >= 0 ? Double(UIDevice.current.batteryLevel) : 0.0
-      let batteryState = self.getBatteryStateEnum(UIDevice.current.batteryState)
+    let batteryLevel = UIDevice.current.batteryLevel >= 0 ? Double(UIDevice.current.batteryLevel) : 0.0
+    let batteryState = self.getBatteryStateEnum(UIDevice.current.batteryState)
 
-      var lowPowerMode = false
-      if #available(iOS 9.0, *) {
-        lowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
-      }
-
-      return PowerState(
-        batteryLevel: batteryLevel,
-        batteryState: batteryState,
-        lowPowerMode: lowPowerMode
-      )
+    var lowPowerMode = false
+    if #available(iOS 9.0, *) {
+      lowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
     }
+
+    return PowerState(
+      batteryLevel: batteryLevel,
+      batteryState: batteryState,
+      lowPowerMode: lowPowerMode
+    )
   }
 
   /**
    * Check if battery is currently charging
    */
-  public func isBatteryCharging() throws -> Promise<Bool> {
-    return Promise.async { [batteryMonitoringInitializer] in
-      // Battery monitoring already enabled in initializer
-      _ = batteryMonitoringInitializer
-      return UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
-    }
+  public func isBatteryCharging() throws -> Bool {
+    // Battery monitoring already enabled in initializer
+    _ = batteryMonitoringInitializer
+    return UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
   }
 
-  // MARK: - Asynchronous Methods - Application Metadata
+  // MARK: - Synchronous Methods - Application Metadata
 
   /**
    * Get application version string
    */
-  public func getVersion() throws -> Promise<String> {
-    return Promise.async {
-      return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
-    }
+  public func getVersion() throws -> String {
+    return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
   }
 
   /**
    * Get application build number
    */
-  public func getBuildNumber() throws -> Promise<String> {
-    return Promise.async {
-      return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
-    }
+  public func getBuildNumber() throws -> String {
+    return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
   }
 
   /**
    * Get bundle identifier
    */
-  public func getBundleId() throws -> Promise<String> {
-    return Promise.async {
-      return Bundle.main.bundleIdentifier ?? ""
-    }
+  public func getBundleId() throws -> String {
+    return Bundle.main.bundleIdentifier ?? ""
   }
 
   /**
    * Get application display name
    */
-  public func getApplicationName() throws -> Promise<String> {
-    return Promise.async {
-      return Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ??
-             Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
-    }
+  public func getApplicationName() throws -> String {
+    return Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ??
+           Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
   }
 
   /**
@@ -431,85 +405,71 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  // MARK: - Asynchronous Methods - Device Capabilities
+  // MARK: - Synchronous Methods - Device Capabilities
 
   /**
    * Check if camera is present
    */
-  public func isCameraPresent() throws -> Promise<Bool> {
-    return Promise.async {
-      // Requires AVFoundation import
-      // For MVP, return true (all iPhones have cameras)
-      return true
-    }
+  public func isCameraPresent() throws -> Bool {
+    // Requires AVFoundation import
+    // For MVP, return true (all iPhones have cameras)
+    return true
   }
 
   /**
    * Check if PIN or biometric authentication is set
    */
-  public func isPinOrFingerprintSet() throws -> Promise<Bool> {
-    return Promise.async {
-      // Requires LocalAuthentication import
-      // For MVP, return false
-      return false
-    }
+  public func isPinOrFingerprintSet() throws -> Bool {
+    // Requires LocalAuthentication import
+    // For MVP, return false
+    return false
   }
 
   /**
    * Check if running in simulator
    */
-  public func isEmulator() throws -> Promise<Bool> {
-    return Promise.async {
-      #if targetEnvironment(simulator)
-        return true
-      #else
-        return false
-      #endif
-    }
+  public func isEmulator() throws -> Bool {
+    #if targetEnvironment(simulator)
+      return true
+    #else
+      return false
+    #endif
   }
 
-  // MARK: - Asynchronous Methods - Platform-Specific
+  // MARK: - Synchronous Methods - Platform-Specific
 
   /**
    * Get Android API level (returns -1 on iOS)
    */
-  public func getApiLevel() throws -> Promise<Double> {
-    return Promise.async {
-      return -1.0
-    }
+  public func getApiLevel() throws -> Double {
+    return -1.0
   }
 
   /**
    * Get supported CPU architectures
    */
-  public func getSupportedAbis() throws -> Promise<[String]> {
-    return Promise.async {
-      #if arch(arm64)
-        return ["arm64"]
-      #elseif arch(x86_64)
-        return ["x86_64"]
-      #else
-        return ["unknown"]
-      #endif
-    }
+  public func getSupportedAbis() throws -> [String] {
+    #if arch(arm64)
+      return ["arm64"]
+    #elseif arch(x86_64)
+      return ["x86_64"]
+    #else
+      return ["unknown"]
+    #endif
   }
 
   /**
    * Check if Google Mobile Services is available (always false on iOS)
    */
-  public func hasGms() throws -> Promise<Bool> {
-    return Promise.async {
-      return false
-    }
+  public func hasGms() throws -> Bool {
+    return false
   }
 
   /**
    * Check if Huawei Mobile Services is available (always false on iOS)
    */
-  public func hasHms() throws -> Promise<Bool> {
-    return Promise.async {
-      return false
-    }
+  public func hasHms() throws -> Bool {
+    return false
   }
 
   // MARK: - Helper Methods
