@@ -68,6 +68,24 @@ jobs:
           node-version: '20'
           cache: 'yarn'
 
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: |
+            example/showcase/ios/Pods
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ runner.os }}-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            pods-${{ runner.os }}-
+
+      - name: Cache Xcode DerivedData
+        uses: actions/cache@v4
+        with:
+          path: example/showcase/ios/build
+          key: deriveddata-${{ runner.os }}-${{ hashFiles('example/showcase/ios/**/*.xcodeproj', 'example/showcase/ios/**/*.xcworkspace') }}
+          restore-keys: |
+            deriveddata-${{ runner.os }}-
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -112,6 +130,17 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            example/showcase/android/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/gradle.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
