@@ -6,12 +6,16 @@ buildscript {
   repositories {
     google()
     mavenCentral()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
   }
 
   dependencies {
     classpath "com.android.tools.build:gradle:8.7.2"
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
+    classpath "org.jlleitschuh.gradle:ktlint-gradle:12.1.1"
   }
 }
 
@@ -23,7 +27,7 @@ def reactNativeArchitectures() {
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 apply from: '../nitrogen/generated/android/nitrodeviceinfo+autolinking.gradle'
-
+apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: "com.facebook.react"
 
 def getExtOrIntegerDefault(name) {
@@ -125,4 +129,21 @@ dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation project(":react-native-nitro-modules")
+
+  // Optional: Google Play Services for hasGms() check
+  compileOnly "com.google.android.gms:play-services-base:18.5.0"
+}
+
+// ktlint configuration
+ktlint {
+  version = "1.0.1"
+  android = false
+  ignoreFailures = false
+  reporters {
+    reporter "plain"
+    reporter "checkstyle"
+  }
+  filter {
+    exclude { element -> element.file.path.contains("nitrogen/generated") }
+  }
 }
