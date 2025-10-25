@@ -78,7 +78,7 @@ jobs:
         run: |
           VERSION="${{ github.event.inputs.version }}"
           git add package.json
-          git commit -m "chore(release): bump version to $VERSION
+          git commit -m "chore(release): bump version to $VERSION"
 
           COMMIT_SHA=$(git rev-parse HEAD)
           echo "sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
