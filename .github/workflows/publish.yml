@@ -8,6 +8,11 @@ on:
         description: 'Version number (e.g., 1.2.3 - no v prefix)'
         required: true
         type: string
+      dry_run:
+        description: 'Dry run mode (test without publishing)'
+        required: false
+        type: boolean
+        default: false
 
 # Required permissions for version commits, tags, releases, and npm provenance
 permissions:
@@ -22,6 +27,13 @@ jobs:
     outputs:
       commit_sha: ${{ steps.commit.outputs.sha }}
     steps:
+      - name: Check dry run mode
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN MODE ENABLED - No changes will be pushed to remote"
+            echo "================================================"
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -86,8 +98,14 @@ jobs:
 
       - name: Push version commit
         run: |
-          git push origin HEAD
-          echo "✓ Version commit pushed to remote"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Would push version commit to remote"
+            echo "   Commit SHA: $(git rev-parse HEAD)"
+            echo "   Branch: $(git branch --show-current)"
+          else
+            git push origin HEAD
+            echo "✓ Version commit pushed to remote"
+          fi
 
   # Job 2: Create and push version tag
   create-version-tag:
@@ -99,15 +117,35 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ needs.create-version-commit.outputs.commit_sha }}
+          ref: ${{ github.event.inputs.dry_run == 'true' && github.ref || needs.create-version-commit.outputs.commit_sha }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js (Dry Run)
+        if: github.event.inputs.dry_run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Update package.json version (Dry Run)
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          echo "Updating package.json to version $VERSION (dry run)"
+          npm version $VERSION --no-git-tag-version
+          echo "✓ package.json updated to version $VERSION"
 
       - name: Create and push tag
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
-          echo "✓ Tag v$VERSION created and pushed"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Would create and push tag v$VERSION"
+            echo "   Current commit: $(git rev-parse HEAD)"
+          else
+            git tag "v$VERSION"
+            git push origin "v$VERSION"
+            echo "✓ Tag v$VERSION created and pushed"
+          fi
 
   # Job 3: Publish to NPM
   publish-npm:
@@ -122,7 +160,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ needs.create-version-commit.outputs.commit_sha }}
+          ref: ${{ github.event.inputs.dry_run == 'true' && github.ref || needs.create-version-commit.outputs.commit_sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -133,6 +171,14 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Update package.json version (Dry Run)
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          echo "Updating package.json to version $VERSION (dry run)"
+          npm version $VERSION --no-git-tag-version
+          echo "✓ package.json updated to version $VERSION"
 
       - name: Build library
         run: yarn prepare
@@ -147,9 +193,15 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          echo "Publishing to NPM with provenance..."
-          npm publish --provenance --access public
-          echo "✓ Package published to NPM registry"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Testing NPM publish..."
+            npm publish --dry-run --access public
+            echo "✓ Dry run completed - package would be published to NPM registry"
+          else
+            echo "Publishing to NPM with provenance..."
+            npm publish --provenance --access public
+            echo "✓ Package published to NPM registry"
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -165,7 +217,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ needs.create-version-commit.outputs.commit_sha }}
+          ref: ${{ github.event.inputs.dry_run == 'true' && github.ref || needs.create-version-commit.outputs.commit_sha }}
 
       - name: Generate Release Notes
         id: release_notes
@@ -232,9 +284,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
+        if: github.event.inputs.dry_run != 'true'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.event.inputs.version }}
           body: ${{ steps.release_notes.outputs.release_notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Display Release Notes (Dry Run)
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "🔍 DRY RUN: Would create GitHub release with the following notes:"
+          echo "---"
+          cat release_notes.md
+          echo "---"
