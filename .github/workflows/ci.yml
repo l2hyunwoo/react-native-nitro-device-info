@@ -129,7 +129,7 @@ jobs:
 
       - name: Build Android app
         working-directory: example/showcase/android
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew :app:assembleDebug --no-daemon
 
   validate-package:
     name: Validate NPM Package
