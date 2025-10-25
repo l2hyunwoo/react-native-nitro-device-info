@@ -170,56 +170,64 @@ jobs:
       - name: Generate Release Notes
         id: release_notes
         run: |
+          set -e  # Exit on error
+
           VERSION="${{ github.event.inputs.version }}"
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 --exclude="v$VERSION" 2>/dev/null || echo "")
 
-          echo "Generating release notes for v$VERSION..."
-          echo "Previous tag: $PREVIOUS_TAG"
+          # Send debug output to stderr to avoid polluting release notes
+          echo "Generating release notes for v$VERSION..." >&2
+          echo "Previous tag: $PREVIOUS_TAG" >&2
 
           # Get merged PRs since last tag
           if [ -n "$PREVIOUS_TAG" ]; then
             PREVIOUS_DATE=$(git log -1 --format=%aI "$PREVIOUS_TAG" 2>/dev/null)
-            PRS=$(gh pr list --state merged --search "merged:>$PREVIOUS_DATE" --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
+            echo "Getting PRs merged after $PREVIOUS_DATE..." >&2
+            # Limit to 50 PRs and suppress any extra output
+            PRS=$(gh pr list --state merged --search "merged:>$PREVIOUS_DATE" --limit 50 --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"' 2>&1 | grep "^-" || echo "")
           else
-            PRS=$(gh pr list --state merged --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
+            echo "No previous tag found, getting all merged PRs..." >&2
+            # Limit to 50 PRs and suppress any extra output
+            PRS=$(gh pr list --state merged --limit 50 --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"' 2>&1 | grep "^-" || echo "")
           fi
 
-          # Create release notes
-          cat > release_notes.md << EOF
-          ## What's Changed
+          # Create release notes in a clean way
+          {
+            echo "## What's Changed"
+            echo ""
+            if [ -n "$PRS" ]; then
+              echo "$PRS"
+            else
+              echo "- No merged PRs found"
+            fi
+            echo ""
+            echo "## Installation"
+            echo ""
+            echo '```bash'
+            echo "npm install react-native-nitro-device-info@$VERSION"
+            echo "# or"
+            echo "yarn add react-native-nitro-device-info@$VERSION"
+            echo '```'
+            echo ""
+            echo "## Documentation"
+            echo ""
+            echo "- [README](https://github.com/l2hyunwoo/react-native-nitro-device-info#readme)"
+            echo ""
+            if [ -n "$PREVIOUS_TAG" ]; then
+              echo "**Full Changelog**: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/$PREVIOUS_TAG...v$VERSION"
+            else
+              echo "**Full Changelog**: https://github.com/l2hyunwoo/react-native-nitro-device-info/commits/v$VERSION"
+            fi
+          } > release_notes.md
 
-          EOF
+          # Output the release notes to GitHub output
+          {
+            echo "release_notes<<RELEASE_NOTES_EOF"
+            cat release_notes.md
+            echo "RELEASE_NOTES_EOF"
+          } >> $GITHUB_OUTPUT
 
-          if [ -n "$PRS" ]; then
-            echo "$PRS" >> release_notes.md
-          else
-            echo "- No merged PRs found" >> release_notes.md
-          fi
-
-          cat >> release_notes.md << EOF
-
-          ## Installation
-
-          ```bash
-          npm install react-native-nitro-device-info@$VERSION
-          # or
-          yarn add react-native-nitro-device-info@$VERSION
-          ```
-
-          ## Documentation
-
-          - [README](https://github.com/l2hyunwoo/react-native-nitro-device-info#readme)
-
-          **Full Changelog**: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/$PREVIOUS_TAG...v$VERSION
-          EOF
-
-          # Output the release notes
-          RELEASE_NOTES=$(cat release_notes.md)
-          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-          echo "✓ Release notes generated"
+          echo "✓ Release notes generated" >&2
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
