@@ -211,7 +211,7 @@ export interface DeviceInfo
   hasDynamicIsland(): boolean;
 
   // ========================================================================
-  // DEVICE IDENTIFICATION (Async)
+  // DEVICE IDENTIFICATION (Sync)
   // ========================================================================
 
   /**
@@ -221,27 +221,27 @@ export interface DeviceInfo
    * - iOS: IDFV (Identifier for Vendor) - persists across app installs
    * - Android: ANDROID_ID - persists across app installs (usually)
    *
-   * @returns Promise resolving to unique ID string
+   * @returns Unique ID string
    * @example "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
    *
-   * @async ~10-50ms
+   * @sync <1ms
    */
-  getUniqueId(): Promise<string>;
+  getUniqueId(): string;
 
   /**
    * Get device manufacturer name
    *
-   * @returns Promise resolving to manufacturer
+   * @returns Manufacturer name
    * @example
    * iOS: "Apple"
    * Android: "Samsung", "Google", "Xiaomi", etc.
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getManufacturer(): Promise<string>;
+  getManufacturer(): string;
 
   // ========================================================================
-  // SYSTEM RESOURCES (Async)
+  // SYSTEM RESOURCES (Sync)
   // ========================================================================
 
   /**
@@ -249,60 +249,60 @@ export interface DeviceInfo
    *
    * Returns the total physical memory available on the device.
    *
-   * @returns Promise resolving to total memory in bytes
+   * @returns Total memory in bytes
    * @example 6442450944 (6 GB)
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getTotalMemory(): Promise<number>;
+  getTotalMemory(): number;
 
   /**
    * Get current app memory usage in bytes
    *
    * Returns the current memory footprint of this app.
    *
-   * @returns Promise resolving to used memory in bytes
+   * @returns Used memory in bytes
    * @example 134217728 (128 MB)
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getUsedMemory(): Promise<number>;
+  getUsedMemory(): number;
 
   /**
    * Get total disk storage capacity in bytes
    *
    * Returns the total internal storage size.
    *
-   * @returns Promise resolving to total storage in bytes
+   * @returns Total storage in bytes
    * @example 128849018880 (120 GB)
    *
-   * @async ~20-50ms
+   * @sync <1ms
    */
-  getTotalDiskCapacity(): Promise<number>;
+  getTotalDiskCapacity(): number;
 
   /**
    * Get free disk storage in bytes
    *
    * Returns the currently available free storage space.
    *
-   * @returns Promise resolving to free storage in bytes
+   * @returns Free storage in bytes
    * @example 51539607552 (48 GB)
    *
-   * @async ~20-50ms
+   * @sync <1ms
    */
-  getFreeDiskStorage(): Promise<number>;
+  getFreeDiskStorage(): number;
 
   /**
    * Get current battery level
    *
    * Returns battery charge level as a float between 0.0 and 1.0.
    *
-   * @returns Promise resolving to battery level (0.0 to 1.0)
+   * @returns Battery level (0.0 to 1.0)
    * @example 0.75 represents 75% battery
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getBatteryLevel(): Promise<number>;
+  getBatteryLevel(): number;
 
   /**
    * Get comprehensive power state information
@@ -310,7 +310,7 @@ export interface DeviceInfo
    * Returns an object containing battery level, charging state,
    * and low power mode status.
    *
-   * @returns Promise resolving to PowerState object
+   * @returns PowerState object
    * @example
    * {
    *   batteryLevel: 0.75,
@@ -318,63 +318,63 @@ export interface DeviceInfo
    *   lowPowerMode: false
    * }
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getPowerState(): Promise<PowerState>;
+  getPowerState(): PowerState;
 
   /**
    * Check if battery is currently charging
    *
-   * @returns Promise resolving to true if charging
-   * @async ~10-30ms
+   * @returns true if charging
+   * @sync <1ms
    */
-  isBatteryCharging(): Promise<boolean>;
+  isBatteryCharging(): boolean;
 
   // ========================================================================
-  // APPLICATION METADATA (Async)
+  // APPLICATION METADATA (Sync)
   // ========================================================================
 
   /**
    * Get application version string
    *
-   * @returns Promise resolving to version (e.g., "1.0.0")
+   * @returns Version (e.g., "1.0.0")
    * @example "1.2.3"
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getVersion(): Promise<string>;
+  getVersion(): string;
 
   /**
    * Get application build number
    *
-   * @returns Promise resolving to build number
+   * @returns Build number
    * @example "42", "20231025"
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getBuildNumber(): Promise<string>;
+  getBuildNumber(): string;
 
   /**
    * Get bundle ID (iOS) or package name (Android)
    *
-   * @returns Promise resolving to bundle/package identifier
+   * @returns Bundle/package identifier
    * @example
    * iOS: "com.company.app"
    * Android: "com.company.app"
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getBundleId(): Promise<string>;
+  getBundleId(): string;
 
   /**
    * Get application display name
    *
-   * @returns Promise resolving to app name
+   * @returns App name
    * @example "My Awesome App"
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getApplicationName(): Promise<string>;
+  getApplicationName(): string;
 
   /**
    * Get first install timestamp
@@ -464,7 +464,7 @@ export interface DeviceInfo
   isHeadphonesConnected(): Promise<boolean>;
 
   // ========================================================================
-  // DEVICE CAPABILITIES (Async)
+  // DEVICE CAPABILITIES (Sync)
   // ========================================================================
 
   /**
@@ -472,20 +472,20 @@ export interface DeviceInfo
    *
    * Detects availability of any camera (front or back).
    *
-   * @returns Promise resolving to true if camera available
-   * @async ~10-30ms
+   * @returns true if camera available
+   * @sync <1ms
    */
-  isCameraPresent(): Promise<boolean>;
+  isCameraPresent(): boolean;
 
   /**
    * Check if PIN, fingerprint, or Face ID is configured
    *
    * Detects if the device has biometric security set up.
    *
-   * @returns Promise resolving to true if biometric security set
-   * @async ~10-30ms
+   * @returns true if biometric security set
+   * @sync <1ms
    */
-  isPinOrFingerprintSet(): Promise<boolean>;
+  isPinOrFingerprintSet(): boolean;
 
   /**
    * Check if running in emulator/simulator
@@ -493,13 +493,13 @@ export interface DeviceInfo
    * Detects if the app is running on a simulator (iOS) or
    * emulator (Android) rather than a physical device.
    *
-   * @returns Promise resolving to true if emulator
-   * @async ~10-30ms
+   * @returns true if emulator
+   * @sync <1ms
    */
-  isEmulator(): Promise<boolean>;
+  isEmulator(): boolean;
 
   // ========================================================================
-  // PLATFORM-SPECIFIC (Async)
+  // PLATFORM-SPECIFIC (Sync)
   // ========================================================================
 
   /**
@@ -507,59 +507,59 @@ export interface DeviceInfo
    *
    * Returns the Android SDK version number.
    *
-   * @returns Promise resolving to API level (or -1 on iOS)
+   * @returns API level (or -1 on iOS)
    * @example
    * Android 12 → 31
    * Android 13 → 33
    * iOS → -1
    *
    * @platform android
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getApiLevel(): Promise<number>;
+  getApiLevel(): number;
 
   /**
    * Get supported CPU architectures (ABIs)
    *
    * Returns the list of supported CPU instruction sets.
    *
-   * @returns Promise resolving to array of ABIs
+   * @returns Array of ABIs
    * @example
    * iOS: ["arm64"]
    * Android: ["arm64-v8a", "armeabi-v7a"]
    *
-   * @async ~10-30ms
+   * @sync <1ms
    */
-  getSupportedAbis(): Promise<string[]>;
+  getSupportedAbis(): string[];
 
   /**
    * Check if Google Mobile Services (GMS) is available
    *
    * Detects if Google Play Services is installed and available.
    *
-   * @returns Promise resolving to true if GMS available
+   * @returns true if GMS available
    * @example
    * Android with Play Services → true
    * Huawei devices without GMS → false
    * iOS → false
    *
    * @platform android
-   * @async ~20-50ms
+   * @sync <1ms
    */
-  hasGms(): Promise<boolean>;
+  hasGms(): boolean;
 
   /**
    * Check if Huawei Mobile Services (HMS) is available
    *
    * Detects if Huawei Mobile Services is installed.
    *
-   * @returns Promise resolving to true if HMS available
+   * @returns true if HMS available
    * @example
    * Huawei devices → true
    * Other Android/iOS → false
    *
    * @platform android (Huawei devices)
-   * @async ~20-50ms
+   * @sync <1ms
    */
-  hasHms(): Promise<boolean>;
+  hasHms(): boolean;
 }
