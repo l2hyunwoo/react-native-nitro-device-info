@@ -183,21 +183,15 @@ jobs:
         id: release_notes
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 --exclude="v$VERSION" 2>/dev/null || echo "")
 
           echo "Generating release notes for v$VERSION..."
           echo "Previous tag: $PREVIOUS_TAG"
 
-          # Get commits since last tag
-          if [ -n "$PREVIOUS_TAG" ]; then
-            COMMITS=$(git log --pretty=format:"%s" $PREVIOUS_TAG..HEAD)
-          else
-            COMMITS=$(git log --pretty=format:"%s" --max-count=50)
-          fi
-
           # Get merged PRs since last tag
           if [ -n "$PREVIOUS_TAG" ]; then
-            PRS=$(gh pr list --state merged --search "merged:>$PREVIOUS_TAG" --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
+            PREVIOUS_DATE=$(git log -1 --format=%aI "$PREVIOUS_TAG" 2>/dev/null)
+            PRS=$(gh pr list --state merged --search "merged:>$PREVIOUS_DATE" --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
           else
             PRS=$(gh pr list --state merged --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
           fi
@@ -218,11 +212,11 @@ jobs:
 
           ## Installation
 
-          \`\`\`bash
+          ```bash
           npm install react-native-nitro-device-info@$VERSION
           # or
           yarn add react-native-nitro-device-info@$VERSION
-          \`\`\`
+          ```
 
           ## Documentation
 
