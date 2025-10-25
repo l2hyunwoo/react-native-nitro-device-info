@@ -303,8 +303,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     /** Get cellular carrier name */
     override fun getCarrier(): Promise<String> {
         return Promise.async {
-            val telephonyManager =
-                context.getSystemService<TelephonyManager>()
+            val telephonyManager = context.getSystemService<TelephonyManager>()
             telephonyManager?.networkOperatorName.orEmpty()
         }
     }
