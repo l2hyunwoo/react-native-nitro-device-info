@@ -1,0 +1,50 @@
+# Documentation
+*.md
+!README.md
+!LICENSE.md
+docs/
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+
+# Configuration
+.editorconfig
+.eslintignore
+.eslintrc.js
+.prettierrc
+.prettierignore
+.yarnrc.yml
+.yarn/
+lefthook.yml
+tsconfig.json
+
+# Development
+example/
+.vscode/
+.idea/
+*.log
+.DS_Store
+
+# Tests
+__tests__/
+__mocks__/
+__fixtures__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage/
+
+# Build artifacts
+lib/
+node_modules/
+.turbo/
+
+# Git
+.git/
+.github/
+
+# Claude Code & Specs
+.claude/
+CLAUDE.md
+specs/
+.specify/
