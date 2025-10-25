@@ -25,9 +25,14 @@ import android.os.StatFs
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.core.content.getSystemService
 import com.facebook.proguard.annotations.DoNotStrip
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
+import java.net.Inet4Address
+import java.net.NetworkInterface
 
 /**
  * Main implementation of DeviceInfo for Android
@@ -41,11 +46,14 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Get the React Application Context */
     private val context: Context
-        get() = NitroModules.applicationContext ?: throw RuntimeException("React context not available")
+        get() {
+            return NitroModules.applicationContext
+                ?: throw RuntimeException("React context not available")
+        }
 
     /** Cached activity manager to avoid repeated system service lookups */
     private val activityManager: ActivityManager by lazy {
-        context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        context.getSystemService<ActivityManager>() as ActivityManager
     }
 
     /** Cached package manager to avoid repeated lookups */
@@ -62,7 +70,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Cached battery manager to avoid repeated system service lookups */
     private val batteryManager: BatteryManager by lazy {
-        context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+        context.getSystemService<BatteryManager>() as BatteryManager
     }
 
     // MARK: - Synchronous Properties (Cached Values)
@@ -91,7 +99,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val deviceType: DeviceType
         get() {
             val uiMode = context.resources.configuration.uiMode
-            val screenLayout = context.resources.configuration.screenLayout
 
             // Check if TV
             if ((uiMode and Configuration.UI_MODE_TYPE_MASK) ==
@@ -134,137 +141,115 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return false
     }
 
-    // MARK: - Asynchronous Methods - Device Identification
+    // MARK: - Synchronous Methods - Device Identification
 
     /** Get unique device identifier (ANDROID_ID) Persists across app installs (usually) */
-    override fun getUniqueId(): Promise<String> {
-        return Promise.async {
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
-        }
+    override fun getUniqueId(): String {
+        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
     }
 
     /** Get device manufacturer name From Build.MANUFACTURER */
-    override fun getManufacturer(): Promise<String> {
-        return Promise.async { Build.MANUFACTURER }
+    override fun getManufacturer(): String {
+        return Build.MANUFACTURER
     }
 
-    // MARK: - Asynchronous Methods - System Resources
+    // MARK: - Synchronous Methods - System Resources
 
     /** Get total device RAM in bytes */
-    override fun getTotalMemory(): Promise<Double> {
-        return Promise.async {
-            // Use cached ActivityManager to avoid repeated system service lookups
-            val memInfo = ActivityManager.MemoryInfo()
-            activityManager.getMemoryInfo(memInfo)
-            memInfo.totalMem.toDouble()
-        }
+    override fun getTotalMemory(): Double {
+        // Use cached ActivityManager to avoid repeated system service lookups
+        val memInfo = ActivityManager.MemoryInfo()
+        activityManager.getMemoryInfo(memInfo)
+        return memInfo.totalMem.toDouble()
     }
 
     /** Get current app memory usage in bytes */
-    override fun getUsedMemory(): Promise<Double> {
-        return Promise.async {
-            // Use Debug.getMemoryInfo which doesn't require ActivityManager
-            val memInfo = Debug.MemoryInfo()
-            Debug.getMemoryInfo(memInfo)
-            (memInfo.totalPss * 1024).toDouble() // Convert KB to bytes
-        }
+    override fun getUsedMemory(): Double {
+        // Use Debug.getMemoryInfo which doesn't require ActivityManager
+        val memInfo = Debug.MemoryInfo()
+        Debug.getMemoryInfo(memInfo)
+        return (memInfo.totalPss * 1024).toDouble() // Convert KB to bytes
     }
 
     /** Get total disk storage capacity in bytes */
-    override fun getTotalDiskCapacity(): Promise<Double> {
-        return Promise.async {
-            val path = Environment.getDataDirectory()
-            val stat = StatFs(path.path)
-            (stat.blockCountLong * stat.blockSizeLong).toDouble()
-        }
+    override fun getTotalDiskCapacity(): Double {
+        val path = Environment.getDataDirectory()
+        val stat = StatFs(path.path)
+        return (stat.blockCountLong * stat.blockSizeLong).toDouble()
     }
 
     /** Get free disk storage in bytes */
-    override fun getFreeDiskStorage(): Promise<Double> {
-        return Promise.async {
-            val path = Environment.getDataDirectory()
-            val stat = StatFs(path.path)
-            (stat.availableBlocksLong * stat.blockSizeLong).toDouble()
-        }
+    override fun getFreeDiskStorage(): Double {
+        val path = Environment.getDataDirectory()
+        val stat = StatFs(path.path)
+        return (stat.availableBlocksLong * stat.blockSizeLong).toDouble()
     }
 
     /** Get current battery level (0.0 to 1.0) */
-    override fun getBatteryLevel(): Promise<Double> {
-        return Promise.async {
-            // Use cached BatteryManager to avoid repeated system service lookups
-            val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            (level / 100.0)
-        }
+    override fun getBatteryLevel(): Double {
+        // Use cached BatteryManager to avoid repeated system service lookups
+        val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        return (level / 100.0)
     }
 
     /** Get comprehensive power state information */
-    override fun getPowerState(): Promise<PowerState> {
-        return Promise.async {
-            // Use cached BatteryManager to avoid repeated system service lookups
-            val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            val isCharging = batteryManager.isCharging
+    override fun getPowerState(): PowerState {
+        // Use cached BatteryManager to avoid repeated system service lookups
+        val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        val isCharging = batteryManager.isCharging
 
-            val batteryState =
-                when {
-                    batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS) ==
-                        BatteryManager.BATTERY_STATUS_FULL -> BatteryState.FULL
+        val batteryState =
+            when {
+                batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS) ==
+                    BatteryManager.BATTERY_STATUS_FULL -> BatteryState.FULL
 
-                    isCharging -> BatteryState.CHARGING
-                    else -> BatteryState.UNPLUGGED
-                }
+                isCharging -> BatteryState.CHARGING
+                else -> BatteryState.UNPLUGGED
+            }
 
-            // Android doesn't have a direct equivalent to iOS low power mode
-            PowerState(
-                batteryLevel = level / 100.0,
-                batteryState = batteryState,
-                lowPowerMode = false,
-            )
-        }
+        // Android doesn't have a direct equivalent to iOS low power mode
+        return PowerState(
+            batteryLevel = level / 100.0,
+            batteryState = batteryState,
+            lowPowerMode = false,
+        )
     }
 
     /** Check if battery is currently charging */
-    override fun isBatteryCharging(): Promise<Boolean> {
-        return Promise.async {
-            // Use cached BatteryManager to avoid repeated system service lookups
-            batteryManager.isCharging
-        }
+    override fun isBatteryCharging(): Boolean {
+        // Use cached BatteryManager to avoid repeated system service lookups
+        return batteryManager.isCharging
     }
 
-    // MARK: - Asynchronous Methods - Application Metadata
+    // MARK: - Synchronous Methods - Application Metadata
 
     /** Get application version string */
-    override fun getVersion(): Promise<String> {
-        return Promise.async {
-            // Use cached packageInfo to avoid repeated queries
-            packageInfo.versionName ?: ""
-        }
+    override fun getVersion(): String {
+        // Use cached packageInfo to avoid repeated queries
+        return packageInfo.versionName ?: ""
     }
 
     /** Get application build number */
-    override fun getBuildNumber(): Promise<String> {
-        return Promise.async {
-            // Use cached packageInfo to avoid repeated queries
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageInfo.longVersionCode.toString()
-            } else {
-                @Suppress("DEPRECATION")
-                packageInfo.versionCode.toString()
-            }
+    override fun getBuildNumber(): String {
+        // Use cached packageInfo to avoid repeated queries
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode.toString()
+        } else {
+            @Suppress("DEPRECATION")
+            packageInfo.versionCode.toString()
         }
     }
 
     /** Get package name (equivalent to bundle ID on iOS) */
-    override fun getBundleId(): Promise<String> {
-        return Promise.async { context.packageName }
+    override fun getBundleId(): String {
+        return context.packageName
     }
 
     /** Get application display name */
-    override fun getApplicationName(): Promise<String> {
-        return Promise.async {
-            // Use cached packageManager to avoid repeated lookups
-            val appInfo = context.applicationInfo
-            packageManager.getApplicationLabel(appInfo).toString()
-        }
+    override fun getApplicationName(): String {
+        // Use cached packageManager to avoid repeated lookups
+        val appInfo = context.applicationInfo
+        return packageManager.getApplicationLabel(appInfo).toString()
     }
 
     /** Get first install timestamp (milliseconds since epoch) */
@@ -289,13 +274,13 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override fun getIpAddress(): Promise<String> {
         return Promise.async {
             try {
-                val en = java.net.NetworkInterface.getNetworkInterfaces()
+                val en = NetworkInterface.getNetworkInterfaces()
                 while (en.hasMoreElements()) {
                     val intf = en.nextElement()
                     val enumIpAddr = intf.inetAddresses
                     while (enumIpAddr.hasMoreElements()) {
                         val inetAddress = enumIpAddr.nextElement()
-                        if (!inetAddress.isLoopbackAddress && inetAddress is java.net.Inet4Address) {
+                        if (!inetAddress.isLoopbackAddress && inetAddress is Inet4Address) {
                             return@async inetAddress.hostAddress ?: ""
                         }
                     }
@@ -320,104 +305,88 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     /** Get cellular carrier name */
     override fun getCarrier(): Promise<String> {
         return Promise.async {
-            val telephonyManager =
-                context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            telephonyManager.networkOperatorName ?: ""
+            val telephonyManager = context.getSystemService<TelephonyManager>()
+            telephonyManager?.networkOperatorName.orEmpty()
         }
     }
 
     /** Check if location services are enabled */
     override fun isLocationEnabled(): Promise<Boolean> {
         return Promise.async {
-            val locationManager =
-                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            val locationManager = context.getSystemService<LocationManager>()
+            locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true ||
+                locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true
         }
     }
 
     /** Check if headphones are connected */
     override fun isHeadphonesConnected(): Promise<Boolean> {
         return Promise.async {
-            val audioManager =
-                context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.isWiredHeadsetOn || audioManager.isBluetoothA2dpOn
+            val audioManager = context.getSystemService<AudioManager>()
+            audioManager?.isWiredHeadsetOn == true || audioManager?.isBluetoothA2dpOn == true
         }
     }
 
-    // MARK: - Asynchronous Methods - Device Capabilities
+    // MARK: - Synchronous Methods - Device Capabilities
 
     /** Check if camera is present */
-    override fun isCameraPresent(): Promise<Boolean> {
-        return Promise.async {
-            // Use cached packageManager to avoid repeated lookups
-            packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
-        }
+    override fun isCameraPresent(): Boolean {
+        // Use cached packageManager to avoid repeated lookups
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
     }
 
     /** Check if PIN or biometric authentication is set */
-    override fun isPinOrFingerprintSet(): Promise<Boolean> {
-        return Promise.async {
-            val keyguardManager =
-                context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-            keyguardManager.isKeyguardSecure
-        }
+    override fun isPinOrFingerprintSet(): Boolean {
+        val keyguardManager = context.getSystemService<KeyguardManager>()
+        return keyguardManager?.isKeyguardSecure == true
     }
 
     /** Check if running in emulator */
-    override fun isEmulator(): Promise<Boolean> {
-        return Promise.async {
-            (
-                Build.FINGERPRINT.startsWith("generic") ||
-                    Build.FINGERPRINT.startsWith("unknown") ||
-                    Build.MODEL.contains("google_sdk") ||
-                    Build.MODEL.contains("Emulator") ||
-                    Build.MODEL.contains("Android SDK built for x86") ||
-                    Build.MANUFACTURER.contains("Genymotion") ||
-                    (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
-                    "google_sdk" == Build.PRODUCT
-            )
-        }
+    override fun isEmulator(): Boolean {
+        return (
+            Build.FINGERPRINT.startsWith("generic") ||
+                Build.FINGERPRINT.startsWith("unknown") ||
+                Build.MODEL.contains("google_sdk") ||
+                Build.MODEL.contains("Emulator") ||
+                Build.MODEL.contains("Android SDK built for x86") ||
+                Build.MANUFACTURER.contains("Genymotion") ||
+                (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
+                "google_sdk" == Build.PRODUCT
+        )
     }
 
-    // MARK: - Asynchronous Methods - Platform-Specific
+    // MARK: - Synchronous Methods - Platform-Specific
 
     /** Get Android API level */
-    override fun getApiLevel(): Promise<Double> {
-        return Promise.async { Build.VERSION.SDK_INT.toDouble() }
+    override fun getApiLevel(): Double {
+        return Build.VERSION.SDK_INT.toDouble()
     }
 
     /** Get supported CPU architectures (ABIs) */
-    override fun getSupportedAbis(): Promise<Array<String>> {
-        return Promise.async { Build.SUPPORTED_ABIS }
+    override fun getSupportedAbis(): Array<String> {
+        return Build.SUPPORTED_ABIS
     }
 
     /** Check if Google Mobile Services (GMS) is available */
-    override fun hasGms(): Promise<Boolean> {
-        return Promise.async {
-            try {
-                val result =
-                    com.google.android.gms.common.GoogleApiAvailability.getInstance()
-                        .isGooglePlayServicesAvailable(context)
-                result == com.google.android.gms.common.ConnectionResult.SUCCESS
-            } catch (e: Exception) {
-                Log.w(NAME, "GMS not available or GMS library not found", e)
-                false
-            }
+    override fun hasGms(): Boolean {
+        return try {
+            val result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+            result == ConnectionResult.SUCCESS
+        } catch (e: Exception) {
+            Log.w(NAME, "GMS not available or GMS library not found", e)
+            false
         }
     }
 
     /** Check if Huawei Mobile Services (HMS) is available */
-    override fun hasHms(): Promise<Boolean> {
-        return Promise.async {
-            try {
-                // Check if HMS Core is available - use cached packageManager
-                val hmsPackageInfo = packageManager.getPackageInfo("com.huawei.hwid", 0)
-                hmsPackageInfo != null
-            } catch (e: PackageManager.NameNotFoundException) {
-                Log.d(NAME, "HMS not available - not a Huawei device")
-                false
-            }
+    override fun hasHms(): Boolean {
+        return try {
+            // Check if HMS Core is available - use cached packageManager
+            val hmsPackageInfo = packageManager.getPackageInfo("com.huawei.hwid", 0)
+            hmsPackageInfo != null
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.d(NAME, "HMS not available - not a Huawei device")
+            false
         }
     }
 

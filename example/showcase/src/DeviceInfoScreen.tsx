@@ -14,52 +14,58 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import {
-  createDeviceInfo,
-  type PowerState,
-} from 'react-native-nitro-device-info';
+import { createDeviceInfo } from 'react-native-nitro-device-info';
 
 // Create device info instance
 const deviceInfo = createDeviceInfo();
 
 export default function DeviceInfoScreen() {
-  const [powerState, setPowerState] = useState<PowerState | null>(null);
-  const [uniqueId, setUniqueId] = useState<string>('');
+  // Synchronous data
+  const [_, setRefreshKey] = useState(0);
+
+  // These values are recomputed on each render when refreshKey changes
+  const uniqueId = deviceInfo.getUniqueId();
+  const manufacturer = deviceInfo.getManufacturer();
+  const batteryLevel = deviceInfo.getBatteryLevel();
+  const appVersion = deviceInfo.getVersion();
+
+  const isBatteryCharging = deviceInfo.isBatteryCharging();
+  const powerState = deviceInfo.getPowerState();
+
+  // Async data - still requires state management (truly async I/O operations)
   const [totalMemory, setTotalMemory] = useState<number>(0);
   const [freeStorage, setFreeStorage] = useState<number>(0);
-  const [appVersion, setAppVersion] = useState<string>('');
   const [buildNumber, setBuildNumber] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadDeviceInfo();
+    loadAsyncDeviceInfo();
   }, []);
 
-  const loadDeviceInfo = async () => {
+  const loadAsyncDeviceInfo = async () => {
     try {
       setLoading(true);
 
-      // Load async device information
-      const [power, uid, memory, storage, version, build] = await Promise.all([
-        deviceInfo.getPowerState(),
-        deviceInfo.getUniqueId(),
+      // Only load truly async device information (I/O operations)
+      const [memory, storage, build] = await Promise.all([
         deviceInfo.getTotalMemory(),
         deviceInfo.getFreeDiskStorage(),
-        deviceInfo.getVersion(),
         deviceInfo.getBuildNumber(),
       ]);
 
-      setPowerState(power);
-      setUniqueId(uid);
       setTotalMemory(memory);
       setFreeStorage(storage);
-      setAppVersion(version);
       setBuildNumber(build);
     } catch (error) {
       console.error('Error loading device info:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const refreshSyncData = () => {
+    // Force re-render to get fresh synchronous values (instant!)
+    setRefreshKey((prev) => prev + 1);
   };
 
   const formatBytes = (bytes: number): string => {
@@ -92,6 +98,7 @@ export default function DeviceInfoScreen() {
         <Section title="Device Identity">
           <InfoRow label="Device ID" value={deviceInfo.deviceId} />
           <InfoRow label="Brand" value={deviceInfo.brand} />
+          <InfoRow label="Manufacturer" value={manufacturer} />
           <InfoRow label="Model" value={deviceInfo.model} />
           <InfoRow
             label="System"
@@ -120,23 +127,31 @@ export default function DeviceInfoScreen() {
           />
         </Section>
 
+        {/* Battery Monitoring Section */}
+        <Section title="Battery Monitoring (Sync)">
+          <InfoRow
+            label="Battery Level"
+            value={`${(batteryLevel * 100).toFixed(0)}%`}
+          />
+          <InfoRow
+            label="Is Charging"
+            value={isBatteryCharging ? 'Yes ⚡' : 'No'}
+          />
+          <InfoRow label="Battery State" value={powerState.batteryState} />
+          <InfoRow
+            label="Low Power Mode"
+            value={powerState.lowPowerMode ? 'Enabled 🔋' : 'Disabled'}
+          />
+          <InfoRow
+            label="Power State (Full)"
+            value={`${(powerState.batteryLevel * 100).toFixed(0)}% • ${powerState.batteryState}`}
+          />
+        </Section>
+
         {/* System Resources Section */}
         <Section title="System Resources">
           <InfoRow label="Total Memory" value={formatBytes(totalMemory)} />
           <InfoRow label="Free Storage" value={formatBytes(freeStorage)} />
-          {powerState && (
-            <>
-              <InfoRow
-                label="Battery Level"
-                value={`${(powerState.batteryLevel * 100).toFixed(0)}%`}
-              />
-              <InfoRow label="Battery State" value={powerState.batteryState} />
-              <InfoRow
-                label="Low Power Mode"
-                value={powerState.lowPowerMode ? 'Enabled' : 'Disabled'}
-              />
-            </>
-          )}
         </Section>
 
         {/* App Metadata Section */}
@@ -151,13 +166,23 @@ export default function DeviceInfoScreen() {
           />
         </Section>
 
-        {/* Refresh Button */}
+        {/* Refresh Buttons */}
         <TouchableOpacity
           style={styles.refreshButton}
-          onPress={loadDeviceInfo}
+          onPress={refreshSyncData}
           activeOpacity={0.7}
         >
-          <Text style={styles.refreshButtonText}>Refresh Data</Text>
+          <Text style={styles.refreshButtonText}>
+            Refresh Sync Data (Instant!)
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.refreshButton, styles.asyncButton]}
+          onPress={loadAsyncDeviceInfo}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.refreshButtonText}>Refresh Async Data</Text>
         </TouchableOpacity>
 
         {/* Footer */}
@@ -319,6 +344,9 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  asyncButton: {
+    backgroundColor: '#5856D6',
   },
   footer: {
     alignItems: 'center',

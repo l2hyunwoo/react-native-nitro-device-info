@@ -41,6 +41,7 @@ export default function BenchmarkScreen() {
 
   const runSyncBenchmarks = (): BenchmarkResult[] => {
     const syncMethods = [
+      // Existing synchronous properties
       { name: 'deviceId', fn: () => deviceInfo.deviceId },
       { name: 'brand', fn: () => deviceInfo.brand },
       { name: 'systemName', fn: () => deviceInfo.systemName },
@@ -50,6 +51,38 @@ export default function BenchmarkScreen() {
       { name: 'isTablet()', fn: () => deviceInfo.isTablet() },
       { name: 'hasNotch()', fn: () => deviceInfo.hasNotch() },
       { name: 'hasDynamicIsland()', fn: () => deviceInfo.hasDynamicIsland() },
+      { name: 'getUniqueId()', fn: () => deviceInfo.getUniqueId() },
+      { name: 'getManufacturer()', fn: () => deviceInfo.getManufacturer() },
+      { name: 'getBatteryLevel()', fn: () => deviceInfo.getBatteryLevel() },
+      { name: 'getVersion()', fn: () => deviceInfo.getVersion() },
+      { name: 'isBatteryCharging()', fn: () => deviceInfo.isBatteryCharging() },
+      { name: 'getPowerState()', fn: () => deviceInfo.getPowerState() },
+      { name: 'getBuildNumber()', fn: () => deviceInfo.getBuildNumber() },
+      { name: 'getBundleId()', fn: () => deviceInfo.getBundleId() },
+      {
+        name: 'getApplicationName()',
+        fn: () => deviceInfo.getApplicationName(),
+      },
+      { name: 'getTotalMemory()', fn: () => deviceInfo.getTotalMemory() },
+      { name: 'getUsedMemory()', fn: () => deviceInfo.getUsedMemory() },
+      {
+        name: 'getTotalDiskCapacity()',
+        fn: () => deviceInfo.getTotalDiskCapacity(),
+      },
+      {
+        name: 'getFreeDiskStorage()',
+        fn: () => deviceInfo.getFreeDiskStorage(),
+      },
+      { name: 'isCameraPresent()', fn: () => deviceInfo.isCameraPresent() },
+      {
+        name: 'isPinOrFingerprintSet()',
+        fn: () => deviceInfo.isPinOrFingerprintSet(),
+      },
+      { name: 'isEmulator()', fn: () => deviceInfo.isEmulator() },
+      { name: 'getApiLevel()', fn: () => deviceInfo.getApiLevel() },
+      { name: 'getSupportedAbis()', fn: () => deviceInfo.getSupportedAbis() },
+      { name: 'hasGms()', fn: () => deviceInfo.hasGms() },
+      { name: 'hasHms()', fn: () => deviceInfo.hasHms() },
     ];
 
     const syncResults: BenchmarkResult[] = [];
@@ -91,20 +124,24 @@ export default function BenchmarkScreen() {
   };
 
   const runAsyncBenchmarks = async (): Promise<BenchmarkResult[]> => {
+    // These methods remain asynchronous - they perform I/O operations
     const asyncMethods = [
-      { name: 'getUniqueId()', fn: () => deviceInfo.getUniqueId() },
-      { name: 'getManufacturer()', fn: () => deviceInfo.getManufacturer() },
-      { name: 'getTotalMemory()', fn: () => deviceInfo.getTotalMemory() },
-      { name: 'getUsedMemory()', fn: () => deviceInfo.getUsedMemory() },
+      // Network & Connectivity (I/O operations)
+      { name: 'getIpAddress()', fn: () => deviceInfo.getIpAddress() },
+      { name: 'getMacAddress()', fn: () => deviceInfo.getMacAddress() },
+      { name: 'getCarrier()', fn: () => deviceInfo.getCarrier() },
+      { name: 'isLocationEnabled()', fn: () => deviceInfo.isLocationEnabled() },
       {
-        name: 'getFreeDiskStorage()',
-        fn: () => deviceInfo.getFreeDiskStorage(),
+        name: 'isHeadphonesConnected()',
+        fn: () => deviceInfo.isHeadphonesConnected(),
       },
-      { name: 'getBatteryLevel()', fn: () => deviceInfo.getBatteryLevel() },
-      { name: 'getPowerState()', fn: () => deviceInfo.getPowerState() },
-      { name: 'getVersion()', fn: () => deviceInfo.getVersion() },
-      { name: 'getBuildNumber()', fn: () => deviceInfo.getBuildNumber() },
-      { name: 'isCameraPresent()', fn: () => deviceInfo.isCameraPresent() },
+
+      // Filesystem operations
+      {
+        name: 'getFirstInstallTime()',
+        fn: () => deviceInfo.getFirstInstallTime(),
+      },
+      { name: 'getLastUpdateTime()', fn: () => deviceInfo.getLastUpdateTime() },
     ];
 
     const asyncResults: BenchmarkResult[] = [];
