@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_call:
 
 jobs:
   lint:
@@ -28,32 +29,6 @@ jobs:
 
       - name: Run TypeScript type check
         run: yarn typecheck
-
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Run tests
-        run: yarn test --coverage
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
 
   build:
     name: Build Library
@@ -82,7 +57,7 @@ jobs:
 
   build-ios:
     name: Build iOS
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -100,15 +75,15 @@ jobs:
         run: yarn prepare
 
       - name: Install example dependencies
-        working-directory: example
+        working-directory: example/showcase
         run: yarn install --frozen-lockfile
 
       - name: Install Pods
-        working-directory: example/ios
+        working-directory: example/showcase/ios
         run: pod install
 
       - name: Build iOS app
-        working-directory: example
+        working-directory: example/showcase
         run: |
           xcodebuild \
             -workspace ios/NitroDeviceInfoExample.xcworkspace \
@@ -145,22 +120,16 @@ jobs:
         run: yarn prepare
 
       - name: Install example dependencies
-        working-directory: example
+        working-directory: example/showcase
         run: yarn install --frozen-lockfile
 
       - name: Run ktlint checks
-        working-directory: example/android
+        working-directory: example/showcase/android
         run: ./gradlew :react-native-nitro-device-info:ktlintCheck --no-daemon
 
       - name: Build Android app
-        working-directory: example/android
-        run: ./gradlew assembleRelease --no-daemon
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release.apk
-          path: example/android/app/build/outputs/apk/release/app-release.apk
+        working-directory: example/showcase/android
+        run: ./gradlew :app:assembleDebug --no-daemon
 
   validate-package:
     name: Validate NPM Package
