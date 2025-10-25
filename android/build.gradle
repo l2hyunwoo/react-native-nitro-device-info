@@ -126,9 +126,9 @@ repositories {
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
-  compileOnly "com.facebook.react:react-android"
+  implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  compileOnly project(":react-native-nitro-modules")
+  implementation project(":react-native-nitro-modules")
 
   // Optional: Google Play Services for hasGms() check
   compileOnly "com.google.android.gms:play-services-base:18.5.0"
