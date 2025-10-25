@@ -8,9 +8,9 @@
     "androidCxxLibName": "nitrodeviceinfo"
   },
   "autolinking": {
-    "NitroDeviceInfo": {
-      "swift": "NitroDeviceInfo",
-      "kotlin": "NitroDeviceInfo"
+    "DeviceInfo": {
+      "swift": "DeviceInfo",
+      "kotlin": "DeviceInfo"
     }
   },
   "ignorePaths": ["node_modules"]
