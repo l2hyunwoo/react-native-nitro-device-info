@@ -114,7 +114,7 @@ jobs:
           git push origin "v$VERSION"
           echo "✓ Tag v$VERSION created and pushed"
 
-  # Job 3: Publish to NPM (only if CI passes)
+  # Job 3: Publish to NPM
   publish-npm:
     name: Publish to NPM
     runs-on: ubuntu-latest
