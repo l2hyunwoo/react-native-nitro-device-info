@@ -1,14 +1,130 @@
 name: Publish
 
+# Manual trigger with version input
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.2.3 - no v prefix)'
+        required: true
+        type: string
+
+# Required permissions for version commits, tags, releases, and npm provenance
+permissions:
+  contents: write
+  id-token: write
 
 jobs:
+  # Job 1: Validate input and create version commit
+  create-version-commit:
+    name: Create Version Commit
+    runs-on: ubuntu-latest
+    outputs:
+      commit_sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error title=Invalid Version Format::Version must be in X.Y.Z format (e.g., 1.2.3). Got: $VERSION"
+            exit 1
+          fi
+          echo "✓ Version format valid: $VERSION"
+
+      - name: Check for existing tag
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "::error title=Tag Already Exists::Tag v$VERSION already exists. Please use a different version number."
+            exit 1
+          fi
+          echo "✓ Tag v$VERSION does not exist"
+
+      - name: Check for dirty working directory
+        run: |
+          if ! git diff-index --quiet HEAD --; then
+            echo "::error title=Uncommitted Changes::Working directory has uncommitted changes. Please commit or stash them first."
+            git status
+            exit 1
+          fi
+          echo "✓ Working directory is clean"
+
+      - name: Update package.json version
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          echo "Updating package.json to version $VERSION"
+          npm version $VERSION --no-git-tag-version
+          echo "✓ package.json updated to version $VERSION"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create version commit
+        id: commit
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git add package.json
+          git commit -m "chore(release): bump version to $VERSION"
+
+          COMMIT_SHA=$(git rev-parse HEAD)
+          echo "sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          echo "✓ Version commit created: $COMMIT_SHA"
+
+      - name: Push version commit
+        run: |
+          git push origin HEAD
+          echo "✓ Version commit pushed to remote"
+
+  # Job 2: Create and push version tag
+  create-version-tag:
+    name: Create Version Tag
+    runs-on: ubuntu-latest
+    needs: create-version-commit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch latest commits
+        run: |
+          git fetch origin
+          git pull origin ${{ github.ref_name }}
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+          echo "✓ Tag v$VERSION created and pushed"
+
+  # Job 3: Run full CI validation
+  run-ci-validation:
+    name: Run CI Validation
+    needs: create-version-tag
+    uses: ./.github/workflows/ci.yml
+
+  # Job 4: Publish to NPM (only if CI passes)
   publish-npm:
     name: Publish to NPM
     runs-on: ubuntu-latest
+    needs: run-ci-validation
     permissions:
       contents: write
       id-token: write
@@ -34,17 +150,23 @@ jobs:
       - name: Build library
         run: yarn prepare
 
-      - name: Verify build
+      - name: Verify build outputs
         run: |
-          test -d lib/module || exit 1
-          test -d lib/typescript || exit 1
-          test -d nitrogen/generated || exit 1
+          echo "Verifying build outputs..."
+          test -d lib/module || (echo "::error::lib/module directory not found" && exit 1)
+          test -d lib/typescript || (echo "::error::lib/typescript directory not found" && exit 1)
+          test -d nitrogen/generated || (echo "::error::nitrogen/generated directory not found" && exit 1)
+          echo "✓ All build outputs verified"
 
       - name: Publish to NPM
-        run: npm publish --provenance --access public
+        run: |
+          echo "Publishing to NPM with provenance..."
+          npm publish --provenance --access public
+          echo "✓ Package published to NPM registry"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+  # Job 5: Create GitHub Release with changelog
   create-github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
@@ -57,23 +179,66 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 --exclude="v$VERSION" 2>/dev/null || echo "")
+
+          echo "Generating release notes for v$VERSION..."
+          echo "Previous tag: $PREVIOUS_TAG"
+
+          # Get merged PRs since last tag
+          if [ -n "$PREVIOUS_TAG" ]; then
+            PREVIOUS_DATE=$(git log -1 --format=%aI "$PREVIOUS_TAG" 2>/dev/null)
+            PRS=$(gh pr list --state merged --search "merged:>$PREVIOUS_DATE" --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
+          else
+            PRS=$(gh pr list --state merged --json number,title,author --jq '.[] | "- #\(.number) \(.title) (@\(.author.login))"')
+          fi
+
+          # Create release notes
+          cat > release_notes.md << EOF
+          ## What's Changed
+
+          EOF
+
+          if [ -n "$PRS" ]; then
+            echo "$PRS" >> release_notes.md
+          else
+            echo "- No merged PRs found" >> release_notes.md
+          fi
+
+          cat >> release_notes.md << EOF
+
+          ## Installation
+
+          ```bash
+          npm install react-native-nitro-device-info@$VERSION
+          # or
+          yarn add react-native-nitro-device-info@$VERSION
+          ```
+
+          ## Documentation
+
+          - [README](https://github.com/l2hyunwoo/react-native-nitro-device-info#readme)
+
+          **Full Changelog**: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/$PREVIOUS_TAG...v$VERSION
+          EOF
+
+          # Output the release notes
+          RELEASE_NOTES=$(cat release_notes.md)
+          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "✓ Release notes generated"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          generate_release_notes: true
-          body: |
-            ## Installation
-
-            ```bash
-            npm install react-native-nitro-device-info
-            # or
-            yarn add react-native-nitro-device-info
-            ```
-
-            ## Documentation
-
-            - [README](https://github.com/l2hyunwoo/react-native-nitro-device-info#readme)
-            - [API Reference](docs/API.md)
-            - [Migration Guide](docs/MIGRATION.md)
+          tag_name: v${{ github.event.inputs.version }}
+          body: ${{ steps.release_notes.outputs.release_notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
