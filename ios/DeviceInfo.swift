@@ -864,7 +864,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     let now = Date().timeIntervalSince1970
     if now - carrierCacheTime > CARRIER_CACHE_DURATION {
       let networkInfo = CTTelephonyNetworkInfo()
-      // iOS 13.4+ (min deployment target) - serviceSubscriberCellularProviders is available
+      // serviceSubscriberCellularProviders is available on iOS 12.0+
       if let providers = networkInfo.serviceSubscriberCellularProviders,
          let carrier = providers.values.first {
         cachedCarrier = carrier.carrierName ?? "unknown"
