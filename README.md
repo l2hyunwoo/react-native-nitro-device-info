@@ -2,20 +2,18 @@
 
 > Get comprehensive device information for React Native using Nitro Modules
 
-[![npm version](https://badge.fury.io/js/react-native-nitro-device-info.svg)](https://badge.fury.io/js/react-native-nitro-device-info)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/v/react-native-nitro-device-info.svg?style=flat-square" alt="npm version"></a>
+<a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dm/react-native-nitro-device-info.svg?style=flat-square" alt="npm downloads"></a>
+<a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dt/react-native-nitro-device-info.svg?style=flat-square" alt="npm total downloads"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
 
 A high-performance device information library for React Native, built on [Nitro Modules](https://nitro.margelo.com/) for zero-overhead native access through JSI.
 
 ## Features
 
 - 🚀 **Zero-overhead JSI bindings** - Direct JavaScript-to-native communication
-- ⚡️ **Synchronous access** - Instant access to cached device properties (<1ms)
-- 🔄 **Asynchronous methods** - Promise-based I/O operations (<100ms)
-- 📱 **50+ device properties** - Comprehensive device information
-- 🎯 **80% API compatibility** - Drop-in replacement for common react-native-device-info use cases
+- 📱 **100+ device properties** - Comprehensive device information
 - 📦 **TypeScript-first** - Full type definitions included
-- 🌍 **Cross-platform** - iOS 13.4+ and Android API 21+ support
 
 ## Installation
 
@@ -100,15 +98,21 @@ const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
 const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
-console.log(`RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`);
-console.log(`Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB free of ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
+console.log(
+  `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
+);
+console.log(
+  `Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB free of ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB`
+);
 
 // Battery Information
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 const isCharging = DeviceInfoModule.isBatteryCharging();
 const powerState: PowerState = DeviceInfoModule.getPowerState();
 
-console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`);
+console.log(
+  `Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`
+);
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`);
 
 // Application Metadata
@@ -137,121 +141,50 @@ const hasGms = DeviceInfoModule.hasGms(); // Android only
 
 ## API Reference
 
-### Synchronous Properties
+For complete API documentation with all 100+ methods and properties, see **[API-REFERENCE.md](API-REFERENCE.md)**.
 
-These properties return immediately with cached values:
+### Quick Reference
 
-| Property        | Type         | Description             | Example        |
-| --------------- | ------------ | ----------------------- | -------------- |
-| `deviceId`      | `string`     | Device model identifier | `"iPhone14,2"` |
-| `brand`         | `string`     | Manufacturer name       | `"Apple"`      |
-| `systemName`    | `string`     | Operating system name   | `"iOS"`        |
-| `systemVersion` | `string`     | OS version string       | `"15.0"`       |
-| `model`         | `string`     | Device model name       | `"iPhone"`     |
-| `deviceType`    | `DeviceType` | Device category         | `"Handset"`    |
+#### Core Properties (Synchronous - <1ms)
 
-### Synchronous Methods
+```typescript
+DeviceInfoModule.deviceId; // "iPhone14,2"
+DeviceInfoModule.brand; // "Apple"
+DeviceInfoModule.systemVersion; // "15.0"
+DeviceInfoModule.model; // "iPhone"
+```
 
-All methods below return immediately with cached values (<1ms):
+#### Common Methods
 
-#### Device Identification
+```typescript
+// Device Info
+DeviceInfoModule.getUniqueId(); // Sync
+DeviceInfoModule.isTablet(); // Sync
+DeviceInfoModule.getTotalMemory(); // Sync
+DeviceInfoModule.getBatteryLevel(); // Sync
 
-| Method               | Returns    | Description                  |
-| -------------------- | ---------- | ---------------------------- |
-| `getUniqueId()`      | `string`   | Get persistent device ID     |
-| `getManufacturer()`  | `string`   | Get manufacturer name        |
+// App Info
+DeviceInfoModule.getVersion(); // Sync
+DeviceInfoModule.getBundleId(); // Sync
 
-#### Device Capabilities
+// Network (Async)
+await DeviceInfoModule.getIpAddress(); // ~20-50ms
+await DeviceInfoModule.getCarrier(); // ~20-50ms
+```
 
-| Method                     | Returns    | Description                             |
-| -------------------------- | ---------- | --------------------------------------- |
-| `isTablet()`               | `boolean`  | Check if device is a tablet             |
-| `hasNotch()`               | `boolean`  | Check for display notch (iOS only)      |
-| `hasDynamicIsland()`       | `boolean`  | Check for Dynamic Island (iOS 16+)      |
-| `isCameraPresent()`        | `boolean`  | Check camera availability               |
-| `isPinOrFingerprintSet()`  | `boolean`  | Check biometric security status         |
-| `isEmulator()`             | `boolean`  | Check if running in simulator/emulator  |
-
-#### System Resources
-
-| Method                   | Returns   | Description                       |
-| ------------------------ | --------- | --------------------------------- |
-| `getTotalMemory()`       | `number`  | Total RAM in bytes                |
-| `getUsedMemory()`        | `number`  | Current app memory usage          |
-| `getTotalDiskCapacity()` | `number`  | Total storage in bytes            |
-| `getFreeDiskStorage()`   | `number`  | Available storage in bytes        |
-
-#### Battery Information
-
-| Method                | Returns       | Description                      |
-| --------------------- | ------------- | -------------------------------- |
-| `getBatteryLevel()`   | `number`      | Battery level (0.0 to 1.0)       |
-| `getPowerState()`     | `PowerState`  | Comprehensive power information  |
-| `isBatteryCharging()` | `boolean`     | Charging status                  |
-
-#### Application Metadata
-
-| Method                   | Returns   | Description                     |
-| ------------------------ | --------- | ------------------------------- |
-| `getVersion()`           | `string`  | App version string              |
-| `getBuildNumber()`       | `string`  | Build number                    |
-| `getBundleId()`          | `string`  | Bundle ID or package name       |
-| `getApplicationName()`   | `string`  | App display name                |
-
-#### Platform-Specific
-
-| Method                | Returns      | Description                              |
-| --------------------- | ------------ | ---------------------------------------- |
-| `getApiLevel()`       | `number`     | Android API level (-1 on iOS)            |
-| `getSupportedAbis()`  | `string[]`   | CPU architectures                        |
-| `hasGms()`            | `boolean`    | Google Mobile Services (Android only)    |
-| `hasHms()`            | `boolean`    | Huawei Mobile Services (Android only)    |
-
-### Asynchronous Methods
-
-All methods below return Promises and typically complete in 10-100ms:
-
-#### Application Metadata
-
-- `getFirstInstallTime(): Promise<number>` - Install timestamp (ms since epoch)
-- `getLastUpdateTime(): Promise<number>` - Last update timestamp
-
-#### Network & Connectivity
-
-- `getIpAddress(): Promise<string>` - Device IP address
-- `getMacAddress(): Promise<string>` - MAC address (deprecated on iOS 7+)
-- `getCarrier(): Promise<string>` - Cellular carrier name
-- `isLocationEnabled(): Promise<boolean>` - Location services status
-- `isHeadphonesConnected(): Promise<boolean>` - Headphone connection status
+For the complete list of all methods, properties, and detailed documentation, see **[API-REFERENCE.md](API-REFERENCE.md)**.
 
 ## Type Definitions
 
-### PowerState
+The library includes full TypeScript definitions. For complete type documentation, see [API-REFERENCE.md](API-REFERENCE.md#type-definitions).
 
 ```typescript
-interface PowerState {
-  batteryLevel: number; // 0.0 to 1.0
-  batteryState: BatteryState; // 'unknown' | 'unplugged' | 'charging' | 'full'
-  lowPowerMode: boolean; // iOS only
-}
-```
-
-### DeviceType
-
-```typescript
-type DeviceType =
-  | 'Handset'
-  | 'Tablet'
-  | 'Tv'
-  | 'Desktop'
-  | 'GamingConsole'
-  | 'unknown';
-```
-
-### BatteryState
-
-```typescript
-type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
+import type {
+  DeviceInfo,
+  PowerState,
+  BatteryState,
+  DeviceType,
+} from 'react-native-nitro-device-info';
 ```
 
 ## Migration from react-native-device-info
@@ -351,29 +284,12 @@ For more details, see:
 
 ## Platform Support
 
-- **iOS**: 13.4+ (99%+ of devices)
-- **Android**: API 21+ (Android 5.0 Lollipop, 99%+ of devices)
+- **iOS**: 13.4+
+- **Android**: API 24+ (Android 7.0 Nougat)
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow and guidelines.
-
-### Code Quality
-
-This project uses automated code quality tools:
-
-- **TypeScript**: Type checking with `yarn typecheck`
-- **Linting**: oxlint (default) or ESLint with `yarn lint` or `yarn lint:eslint`
-- **Kotlin**: ktlint for Android code formatting
-
-**Formatting Kotlin code** (before committing Android changes):
-
-```sh
-cd example/showcase/android  # or example/benchmark/android
-./gradlew :react-native-nitro-device-info:ktlintFormat
-```
-
-> For detailed ktlint usage, see [ktlint Quick Start Guide](specs/002-cleanup-boilerplate-add-ktlint/quickstart.md)
 
 ## License
 

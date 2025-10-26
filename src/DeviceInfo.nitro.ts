@@ -1,13 +1,8 @@
 /**
- * Nitro Device Info Module - TypeScript Interface Contract
+ * Nitro Device Info Module - Complete TypeScript Interface Contract
  *
- * This file defines the complete API surface for the Nitro Device Info module.
  * It will be processed by Nitrogen to generate native bindings.
  *
- * @module react-native-nitro-device-info
- * @version 0.1.0
- * @platform ios 13.4+
- * @platform android API 21+
  */
 
 import { type HybridObject } from 'react-native-nitro-modules';
@@ -53,9 +48,9 @@ export type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
 /**
  * Main DeviceInfo HybridObject providing comprehensive device information
  *
- * This interface exposes all device information methods through Nitro's
+ * This interface exposes device information methods through Nitro's
  * zero-overhead JSI bindings. Methods are categorized as:
- * - Synchronous (readonly getters): Cached values, <1ms access
+ * - Synchronous (readonly getters): Cached values, access
  * - Asynchronous (Promise methods): I/O operations, <100ms completion
  *
  * @example
@@ -67,11 +62,12 @@ export type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
  *
  * // Synchronous access (immediate)
  * console.log(deviceInfo.deviceId)      // "iPhone14,2"
- * console.log(deviceInfo.systemVersion) // "15.0"
+ * console.log(deviceInfo.androidId)     // "9774d56d682e549c"
+ * console.log(deviceInfo.serialNumber)  // "ABC123XYZ"
  *
  * // Asynchronous access (Promise-based)
  * const uniqueId = await deviceInfo.getUniqueId()
- * const memory = await deviceInfo.getTotalMemory()
+ * const referrer = await deviceInfo.getInstallReferrer()
  * ```
  *
  * @platform ios 13.4+
@@ -79,9 +75,7 @@ export type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
  */
 export interface DeviceInfo
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  // ========================================================================
-  // CORE DEVICE INFORMATION (Synchronous)
-  // ========================================================================
+  /* CORE DEVICE INFORMATION (Synchronous) */
 
   /**
    * Get device model identifier
@@ -93,7 +87,7 @@ export interface DeviceInfo
    * iOS: "iPhone14,2" (iPhone 13 Pro)
    * Android: "SM-G998B" (Samsung Galaxy S21)
    *
-   * @sync <1ms
+   *
    */
   readonly deviceId: string;
 
@@ -105,7 +99,7 @@ export interface DeviceInfo
    * iOS: "Apple"
    * Android: "Samsung", "Google", "OnePlus", etc.
    *
-   * @sync <1ms
+   *
    */
   readonly brand: string;
 
@@ -117,7 +111,7 @@ export interface DeviceInfo
    * iOS: "iOS" or "iPadOS"
    * Android: "Android"
    *
-   * @sync <1ms
+   *
    */
   readonly systemName: string;
 
@@ -129,7 +123,7 @@ export interface DeviceInfo
    * iOS: "15.0", "16.2.1"
    * Android: "12", "13", "14"
    *
-   * @sync <1ms
+   *
    */
   readonly systemVersion: string;
 
@@ -143,7 +137,7 @@ export interface DeviceInfo
    * iOS: "iPhone", "iPad"
    * Android: "Galaxy S21", "Pixel 7"
    *
-   * @sync <1ms
+   *
    */
   readonly model: string;
 
@@ -155,13 +149,11 @@ export interface DeviceInfo
    * @returns Device type enum value
    * @example "Handset", "Tablet", "Tv", "Desktop", "unknown"
    *
-   * @sync <1ms
+   *
    */
   readonly deviceType: DeviceType;
 
-  // ========================================================================
   // DEVICE CAPABILITIES (Synchronous)
-  // ========================================================================
 
   /**
    * Check if device is a tablet
@@ -174,7 +166,7 @@ export interface DeviceInfo
    * iPhone → false
    * Samsung Galaxy Tab → true
    *
-   * @sync <1ms
+   *
    */
   isTablet(): boolean;
 
@@ -190,7 +182,7 @@ export interface DeviceInfo
    * Android → false (detection complex, not implemented)
    *
    * @platform ios
-   * @sync <1ms
+   *
    */
   hasNotch(): boolean;
 
@@ -206,13 +198,11 @@ export interface DeviceInfo
    * Android → false
    *
    * @platform ios 16+
-   * @sync <1ms
+   *
    */
   hasDynamicIsland(): boolean;
 
-  // ========================================================================
   // DEVICE IDENTIFICATION (Sync)
-  // ========================================================================
 
   /**
    * Get unique device identifier
@@ -224,7 +214,7 @@ export interface DeviceInfo
    * @returns Unique ID string
    * @example "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
    *
-   * @sync <1ms
+   *
    */
   getUniqueId(): string;
 
@@ -236,13 +226,11 @@ export interface DeviceInfo
    * iOS: "Apple"
    * Android: "Samsung", "Google", "Xiaomi", etc.
    *
-   * @sync <1ms
+   *
    */
   getManufacturer(): string;
 
-  // ========================================================================
   // SYSTEM RESOURCES (Sync)
-  // ========================================================================
 
   /**
    * Get total device RAM in bytes
@@ -252,7 +240,7 @@ export interface DeviceInfo
    * @returns Total memory in bytes
    * @example 6442450944 (6 GB)
    *
-   * @sync <1ms
+   *
    */
   getTotalMemory(): number;
 
@@ -264,7 +252,7 @@ export interface DeviceInfo
    * @returns Used memory in bytes
    * @example 134217728 (128 MB)
    *
-   * @sync <1ms
+   *
    */
   getUsedMemory(): number;
 
@@ -276,7 +264,7 @@ export interface DeviceInfo
    * @returns Total storage in bytes
    * @example 128849018880 (120 GB)
    *
-   * @sync <1ms
+   *
    */
   getTotalDiskCapacity(): number;
 
@@ -288,7 +276,7 @@ export interface DeviceInfo
    * @returns Free storage in bytes
    * @example 51539607552 (48 GB)
    *
-   * @sync <1ms
+   *
    */
   getFreeDiskStorage(): number;
 
@@ -300,7 +288,7 @@ export interface DeviceInfo
    * @returns Battery level (0.0 to 1.0)
    * @example 0.75 represents 75% battery
    *
-   * @sync <1ms
+   *
    */
   getBatteryLevel(): number;
 
@@ -318,7 +306,7 @@ export interface DeviceInfo
    *   lowPowerMode: false
    * }
    *
-   * @sync <1ms
+   *
    */
   getPowerState(): PowerState;
 
@@ -326,13 +314,11 @@ export interface DeviceInfo
    * Check if battery is currently charging
    *
    * @returns true if charging
-   * @sync <1ms
+   *
    */
   isBatteryCharging(): boolean;
 
-  // ========================================================================
   // APPLICATION METADATA (Sync)
-  // ========================================================================
 
   /**
    * Get application version string
@@ -340,7 +326,7 @@ export interface DeviceInfo
    * @returns Version (e.g., "1.0.0")
    * @example "1.2.3"
    *
-   * @sync <1ms
+   *
    */
   getVersion(): string;
 
@@ -350,7 +336,7 @@ export interface DeviceInfo
    * @returns Build number
    * @example "42", "20231025"
    *
-   * @sync <1ms
+   *
    */
   getBuildNumber(): string;
 
@@ -362,7 +348,7 @@ export interface DeviceInfo
    * iOS: "com.company.app"
    * Android: "com.company.app"
    *
-   * @sync <1ms
+   *
    */
   getBundleId(): string;
 
@@ -372,7 +358,7 @@ export interface DeviceInfo
    * @returns App name
    * @example "My Awesome App"
    *
-   * @sync <1ms
+   *
    */
   getApplicationName(): string;
 
@@ -400,9 +386,7 @@ export interface DeviceInfo
    */
   getLastUpdateTime(): Promise<number>;
 
-  // ========================================================================
   // NETWORK & CONNECTIVITY (Async)
-  // ========================================================================
 
   /**
    * Get device IP address
@@ -463,9 +447,7 @@ export interface DeviceInfo
    */
   isHeadphonesConnected(): Promise<boolean>;
 
-  // ========================================================================
   // DEVICE CAPABILITIES (Sync)
-  // ========================================================================
 
   /**
    * Check if camera is present
@@ -473,7 +455,7 @@ export interface DeviceInfo
    * Detects availability of any camera (front or back).
    *
    * @returns true if camera available
-   * @sync <1ms
+   *
    */
   isCameraPresent(): boolean;
 
@@ -483,7 +465,7 @@ export interface DeviceInfo
    * Detects if the device has biometric security set up.
    *
    * @returns true if biometric security set
-   * @sync <1ms
+   *
    */
   isPinOrFingerprintSet(): boolean;
 
@@ -494,13 +476,11 @@ export interface DeviceInfo
    * emulator (Android) rather than a physical device.
    *
    * @returns true if emulator
-   * @sync <1ms
+   *
    */
   isEmulator(): boolean;
 
-  // ========================================================================
   // PLATFORM-SPECIFIC (Sync)
-  // ========================================================================
 
   /**
    * Get Android API level
@@ -514,7 +494,7 @@ export interface DeviceInfo
    * iOS → -1
    *
    * @platform android
-   * @sync <1ms
+   *
    */
   getApiLevel(): number;
 
@@ -528,7 +508,7 @@ export interface DeviceInfo
    * iOS: ["arm64"]
    * Android: ["arm64-v8a", "armeabi-v7a"]
    *
-   * @sync <1ms
+   *
    */
   getSupportedAbis(): string[];
 
@@ -544,7 +524,7 @@ export interface DeviceInfo
    * iOS → false
    *
    * @platform android
-   * @sync <1ms
+   *
    */
   hasGms(): boolean;
 
@@ -559,7 +539,516 @@ export interface DeviceInfo
    * Other Android/iOS → false
    *
    * @platform android (Huawei devices)
-   * @sync <1ms
+   *
    */
   hasHms(): boolean;
+
+  // ANDROID BUILD INFORMATION (Synchronous Properties)
+
+  /**
+   * Returns the Android device serial number.
+   * Requires READ_PHONE_STATE permission on Android 8.0+.
+   * Returns "unknown" on iOS/Windows or when permission denied.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly serialNumber: string;
+
+  /**
+   * Returns the Android ID (unique per device/app/user).
+   * Returns "unknown" on iOS/Windows.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly androidId: string;
+
+  /**
+   * Returns the Android security patch level (YYYY-MM-DD format).
+   * Available on Android API 23+.
+   * Returns "unknown" on iOS or Android <23.
+   *
+   * @platform Android API 23+ (returns "unknown" on iOS)
+   *
+   */
+  readonly securityPatch: string;
+
+  /**
+   * Returns the system bootloader version string.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly bootloader: string;
+
+  /**
+   * Returns the current development codename (e.g., "REL" for release).
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly codename: string;
+
+  /**
+   * Returns the device board/platform name.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly device: string;
+
+  /**
+   * Returns the build display ID string.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly display: string;
+
+  /**
+   * Returns the build fingerprint (unique build identifier).
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly fingerprint: string;
+
+  /**
+   * Returns the hardware name/identifier.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly hardware: string;
+
+  /**
+   * Returns the build host machine name.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly host: string;
+
+  /**
+   * Returns the product name.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly product: string;
+
+  /**
+   * Returns the build tags (comma-separated).
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly tags: string;
+
+  /**
+   * Returns the build type (e.g., "user", "userdebug", "eng").
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly type: string;
+
+  /**
+   * Returns the base OS build version (may be empty for initial release).
+   * Available on Android API 23+.
+   * Returns "" on iOS or Android <23.
+   *
+   * @platform Android API 23+ (returns "" on iOS)
+   *
+   */
+  readonly baseOs: string;
+
+  /**
+   * Returns the preview SDK version (0 for release builds).
+   * Available on Android API 23+.
+   * Returns 0 on iOS or Android <23.
+   *
+   * @platform Android API 23+ (returns 0 on iOS)
+   *
+   */
+  readonly previewSdkInt: number;
+
+  /**
+   * Returns the incremental version string.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly incremental: string;
+
+  /**
+   * Returns the build ID string.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly buildId: string;
+
+  // INSTALLATION METADATA
+
+  /**
+   * Get the package name of the app store that installed this app.
+   * Returns "unknown" if sideloaded or can't determine.
+   *
+   * @platform iOS, Android
+   *
+   */
+  readonly installerPackageName: string;
+
+  /**
+   * Get the device boot time as milliseconds since epoch.
+   * Returns boot time, NOT app startup time.
+   *
+   * @platform iOS, Android
+   *
+   */
+  readonly startupTime: number;
+
+  /**
+   * Get human-readable version string (version + build).
+   * Format: "version.buildNumber"
+   *
+   * @platform All
+   *
+   */
+  readonly readableVersion: string;
+
+  /**
+   * Get first install timestamp (sync variant).
+   * Uses cached value from module initialization.
+   *
+   * @platform iOS, Android
+   *
+   */
+  readonly firstInstallTimeSync: number;
+
+  /**
+   * Get last update timestamp (sync variant).
+   * Returns -1 on iOS.
+   *
+   * @platform Android (returns -1 on iOS)
+   *
+   */
+  readonly lastUpdateTimeSync: number;
+
+  /**
+   * Get the install referrer information (Android Play Store).
+   * Requires Google Play Services.
+   * Returns "unknown" on iOS.
+   *
+   * @platform Android (returns "unknown" on iOS)
+   * @async ~50-200ms (Play Services API call)
+   */
+  getInstallReferrer(): Promise<string>;
+
+  // ADVANCED CAPABILITIES & SYSTEM INFORMATION
+
+  /**
+   * Check if wired headphones are currently connected.
+   * Returns false on platforms other than iOS/Android.
+   *
+   * @platform iOS, Android
+   *
+   */
+  isWiredHeadphonesConnected(): boolean;
+
+  /**
+   * Check if Bluetooth headphones are currently connected.
+   * Returns false on platforms other than iOS/Android.
+   *
+   * @platform iOS, Android
+   *
+   */
+  isBluetoothHeadphonesConnected(): boolean;
+
+  /**
+   * Check if airplane mode is enabled.
+   * Returns false on iOS (not available).
+   *
+   * @platform Android (returns false on iOS)
+   *
+   */
+  isAirplaneMode(): boolean;
+
+  /**
+   * Check if device is classified as low RAM device.
+   * Returns false on iOS or Android <19.
+   *
+   * @platform Android API 19+ (returns false on iOS)
+   *
+   */
+  isLowRamDevice(): boolean;
+
+  /**
+   * Check if a mouse is currently connected.
+   * Returns false on iOS/Android.
+   *
+   * @platform Windows (returns false on iOS/Android)
+   *
+   */
+  isMouseConnected(): boolean;
+
+  /**
+   * Check if a physical keyboard is currently connected.
+   * Returns false on iOS/Android.
+   *
+   * @platform Windows (returns false on iOS/Android)
+   *
+   */
+  isKeyboardConnected(): boolean;
+
+  /**
+   * Check if device is in landscape orientation.
+   * Computed from Dimensions API (width > height).
+   *
+   * @platform All
+   *
+   */
+  isLandscape(): boolean;
+
+  /**
+   * Get list of supported 32-bit ABIs.
+   * Returns [] on iOS.
+   *
+   * @platform Android API 21+ (returns [] on iOS)
+   *
+   */
+  getSupported32BitAbis(): string[];
+
+  /**
+   * Get list of supported 64-bit ABIs.
+   * Returns ["arm64"] on iOS.
+   *
+   * @platform Android API 21+, iOS
+   *
+   */
+  getSupported64BitAbis(): string[];
+
+  /**
+   * Get current font scale multiplier.
+   * Returns 1.0 (normal) on platforms without font scaling.
+   *
+   * @platform iOS, Android
+   *
+   */
+  getFontScale(): number;
+
+  /**
+   * Check if specific system feature is available.
+   * Returns false on iOS.
+   *
+   * @param feature Feature identifier (e.g., "android.hardware.camera")
+   * @platform Android (returns false on iOS)
+   *
+   */
+  hasSystemFeature(feature: string): boolean;
+
+  /**
+   * Get list of all available system features.
+   * Returns [] on iOS.
+   *
+   * @platform Android (returns [] on iOS)
+   *
+   */
+  getSystemAvailableFeatures(): string[];
+
+  /**
+   * Get list of enabled location providers.
+   * Returns [] on platforms without location services or if all providers are disabled.
+   *
+   * @platform iOS, Android
+   * @returns Array of enabled provider names (e.g., ["gps", "network"])
+   */
+  getAvailableLocationProviders(): string[];
+
+  /**
+   * Get list of Windows host names.
+   * Returns [] on iOS/Android.
+   *
+   * @platform Windows (returns [] on iOS/Android)
+   *
+   */
+  getHostNames(): string[];
+
+  /**
+   * Get maximum memory available to app (in bytes).
+   * Returns -1 on iOS.
+   *
+   * @platform Android (returns -1 on iOS)
+   *
+   */
+  getMaxMemory(): number;
+
+  /**
+   * Get list of supported media/codec types.
+   * Returns [] on iOS.
+   *
+   * @platform Android (returns [] on iOS)
+   *
+   */
+  getSupportedMediaTypeList(): string[];
+
+  /**
+   * Check if battery level is below threshold.
+   * Userland helper using getBatteryLevel().
+   *
+   * @param threshold Battery level threshold (0.0 to 1.0)
+   * @platform All
+   *
+   */
+  isLowBatteryLevel(threshold: number): boolean;
+
+  /**
+   * Check if Windows tablet mode is active.
+   * Returns false on iOS/Android.
+   *
+   * @platform Windows (returns false on iOS/Android)
+   *
+   */
+  isTabletMode(): boolean;
+
+  // NETWORK & DISPLAY INFORMATION
+
+  /**
+   * Get user-assigned device name.
+   * Returns "unknown" on platforms without device naming.
+   *
+   * @platform iOS, Android
+   *
+   */
+  getDeviceName(): string;
+
+  /**
+   * Get IP address (sync variant).
+   * Uses cached value (refreshed every 5 seconds).
+   *
+   * @platform iOS, Android
+   *
+   */
+  readonly ipAddressSync: string;
+
+  /**
+   * Get MAC address (sync variant).
+   * iOS returns "02:00:00:00:00:00" (hardcoded per Apple privacy policy).
+   *
+   * @platform iOS (hardcoded), Android
+   *
+   */
+  readonly macAddressSync: string;
+
+  /**
+   * Get carrier name (sync variant).
+   * Uses cached value from telephony manager.
+   *
+   * @platform iOS, Android
+   *
+   */
+  readonly carrierSync: string;
+
+  /**
+   * Check if location services enabled (sync variant).
+   *
+   * @platform iOS, Android
+   *
+   */
+  readonly isLocationEnabledSync: boolean;
+
+  /**
+   * Check if headphones connected (sync variant).
+   * Checks for wired OR Bluetooth headphones.
+   *
+   * @platform iOS, Android
+   *
+   */
+  readonly isHeadphonesConnectedSync: boolean;
+
+  /**
+   * Get HTTP User-Agent string.
+   * iOS requires WebView initialization (heavy operation, cached after first call).
+   * Android can return synchronously from System.getProperty().
+   *
+   * @platform iOS (async), Android, Web
+   * @async iOS: 100-500ms (WebView init), Android: sync capable
+   */
+  getUserAgent(): Promise<string>;
+
+  // iOS-SPECIFIC FEATURES
+
+  /**
+   * Check if iOS Display Zoom is enabled.
+   * Returns false on Android.
+   *
+   * @platform iOS (returns false on Android)
+   *
+   */
+  isDisplayZoomed(): boolean;
+
+  /**
+   * Get current screen brightness level.
+   * Returns -1 on Android.
+   *
+   * @platform iOS (returns -1 on Android)
+   *
+   */
+  getBrightness(): number;
+
+  /**
+   * Get Apple DeviceCheck token.
+   * Requires network request to Apple servers.
+   * Throws error on Android.
+   *
+   * @platform iOS 11+ (throws on Android)
+   * @async ~500-2000ms (network request)
+   */
+  getDeviceToken(): Promise<string>;
+
+  /**
+   * Synchronize unique ID to iCloud Keychain.
+   * Saves IDFV to Keychain on iOS (persists across reinstalls).
+   * Returns getUniqueId() on Android without Keychain sync.
+   *
+   * @platform iOS (no-op on Android)
+   * @async ~10-50ms (Keychain I/O)
+   */
+  syncUniqueId(): Promise<string>;
+
+  // LEGACY COMPATIBILITY
+
+  /**
+   * Get total disk capacity using legacy Android API.
+   * On Android: uses old StatFs API (pre-Jelly Bean compatibility).
+   * On iOS: alias to getTotalDiskCapacity().
+   *
+   * @platform Android (alias on iOS)
+   *
+   */
+  getTotalDiskCapacityOld(): number;
+
+  /**
+   * Get free disk storage using legacy Android API.
+   * On Android: uses old StatFs API (pre-Jelly Bean compatibility).
+   * On iOS: alias to getFreeDiskStorage().
+   *
+   * @platform Android (alias on iOS)
+   *
+   */
+  getFreeDiskStorageOld(): number;
 }

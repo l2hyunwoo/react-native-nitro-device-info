@@ -2,20 +2,18 @@
 
 > Nitro 모듈을 활용해 React Native에서 디바이스 정보를 빠르고 포괄적으로 가져옵니다.
 
-[![npm version](https://badge.fury.io/js/react-native-nitro-device-info.svg)](https://badge.fury.io/js/react-native-nitro-device-info)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/v/react-native-nitro-device-info.svg?style=flat-square" alt="npm version"></a>
+<a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dm/react-native-nitro-device-info.svg?style=flat-square" alt="npm downloads"></a>
+<a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dt/react-native-nitro-device-info.svg?style=flat-square" alt="npm total downloads"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
 
 [Nitro 모듈](https://nitro.margelo.com/) 기반으로, JSI를 통해 **제로 오버헤드 네이티브 접근**을 제공하는 고성능 React Native 디바이스 정보 라이브러리입니다.
 
 ## 주요 특징
 
 - 🚀 **제로 오버헤드 JSI 바인딩** — JavaScript에서 네이티브 코드로 직접 접근
-- ⚡️ **동기 액세스 지원** — 캐시된 디바이스 속성 즉시 접근 (<1ms)
-- 🔄 **비동기 메서드 지원** — Promise 기반의 I/O 작업 (<100ms)
-- 📱 **50개 이상의 속성 제공** — 포괄적인 디바이스 정보 조회
-- 🎯 **약 80% API 호환성** — `react-native-device-info`와 대부분의 사용 사례 호환
+- 📱 **100개 이상의 속성 제공** — 포괄적인 디바이스 정보 조회
 - 📦 **TypeScript 우선 설계** — 완전한 타입 정의 포함
-- 🌍 **크로스 플랫폼 지원** — iOS 13.4+, Android API 21+ 호환
 
 ## 설치 방법
 
@@ -101,15 +99,21 @@ const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
 const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
-console.log(`RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`);
-console.log(`저장공간: ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB 중 ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB 사용 가능`);
+console.log(
+  `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
+);
+console.log(
+  `저장공간: ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB 중 ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB 사용 가능`
+);
 
 // 배터리 정보
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 const isCharging = DeviceInfoModule.isBatteryCharging();
 const powerState: PowerState = DeviceInfoModule.getPowerState();
 
-console.log(`배터리: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(충전 중)' : ''}`);
+console.log(
+  `배터리: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(충전 중)' : ''}`
+);
 console.log(`저전력 모드: ${powerState.lowPowerMode}`);
 
 // 앱 메타데이터
@@ -138,121 +142,50 @@ const hasGms = DeviceInfoModule.hasGms(); // Android 전용
 
 ## API 레퍼런스
 
-### 동기 속성
+100개 이상의 모든 메서드와 속성에 대한 완전한 API 문서는 **[API-REFERENCE-ko.md](API-REFERENCE-ko.md)**를 참고하세요.
 
-즉시 접근 가능한 캐시된 속성들입니다:
+### 빠른 참조
 
-| 속성            | 타입         | 설명                 | 예시           |
-| --------------- | ------------ | -------------------- | -------------- |
-| `deviceId`      | `string`     | 디바이스 모델 식별자 | `"iPhone14,2"` |
-| `brand`         | `string`     | 제조사 이름          | `"Apple"`      |
-| `systemName`    | `string`     | 운영체제 이름        | `"iOS"`        |
-| `systemVersion` | `string`     | OS 버전              | `"15.0"`       |
-| `model`         | `string`     | 모델명               | `"iPhone"`     |
-| `deviceType`    | `DeviceType` | 디바이스 카테고리    | `"Handset"`    |
+#### 주요 속성 (동기 - <1ms)
 
-### 동기 메서드
+```typescript
+DeviceInfoModule.deviceId; // "iPhone14,2"
+DeviceInfoModule.brand; // "Apple"
+DeviceInfoModule.systemVersion; // "15.0"
+DeviceInfoModule.model; // "iPhone"
+```
 
-아래 모든 메서드는 캐시된 값을 즉시 반환합니다 (<1ms):
+#### 주요 메서드
 
-#### 디바이스 식별
+```typescript
+// 디바이스 정보
+DeviceInfoModule.getUniqueId(); // 동기
+DeviceInfoModule.isTablet(); // 동기
+DeviceInfoModule.getTotalMemory(); // 동기
+DeviceInfoModule.getBatteryLevel(); // 동기
 
-| 메서드               | 반환값    | 설명                  |
-| -------------------- | --------- | --------------------- |
-| `getUniqueId()`      | `string`  | 고유 디바이스 ID      |
-| `getManufacturer()`  | `string`  | 제조사 이름           |
+// 앱 정보
+DeviceInfoModule.getVersion(); // 동기
+DeviceInfoModule.getBundleId(); // 동기
 
-#### 디바이스 기능
+// 네트워크 (비동기)
+await DeviceInfoModule.getIpAddress(); // ~20-50ms
+await DeviceInfoModule.getCarrier(); // ~20-50ms
+```
 
-| 메서드                     | 반환값    | 설명                            |
-| -------------------------- | --------- | ------------------------------- |
-| `isTablet()`               | `boolean` | 태블릿 여부 확인                |
-| `hasNotch()`               | `boolean` | 디스플레이 노치 유무 (iOS 전용) |
-| `hasDynamicIsland()`       | `boolean` | Dynamic Island 유무 (iOS 16+)   |
-| `isCameraPresent()`        | `boolean` | 카메라 사용 가능 여부           |
-| `isPinOrFingerprintSet()`  | `boolean` | 생체 인증 설정 여부             |
-| `isEmulator()`             | `boolean` | 에뮬레이터/시뮬레이터 여부      |
-
-#### 시스템 리소스
-
-| 메서드                   | 반환값   | 설명                       |
-| ------------------------ | -------- | -------------------------- |
-| `getTotalMemory()`       | `number` | 전체 RAM 용량 (bytes)      |
-| `getUsedMemory()`        | `number` | 현재 앱 메모리 사용량      |
-| `getTotalDiskCapacity()` | `number` | 전체 저장공간 (bytes)      |
-| `getFreeDiskStorage()`   | `number` | 사용 가능한 저장공간 (bytes) |
-
-#### 배터리 정보
-
-| 메서드                | 반환값       | 설명                     |
-| --------------------- | ------------ | ------------------------ |
-| `getBatteryLevel()`   | `number`     | 배터리 잔량 (0.0 ~ 1.0)  |
-| `getPowerState()`     | `PowerState` | 포괄적인 전원 상태       |
-| `isBatteryCharging()` | `boolean`    | 충전 중 여부             |
-
-#### 애플리케이션 메타데이터
-
-| 메서드                 | 반환값   | 설명                            |
-| ---------------------- | -------- | ------------------------------- |
-| `getVersion()`         | `string` | 앱 버전                         |
-| `getBuildNumber()`     | `string` | 빌드 번호                       |
-| `getBundleId()`        | `string` | 번들 ID 또는 패키지명           |
-| `getApplicationName()` | `string` | 앱 이름                         |
-
-#### 플랫폼별 메서드
-
-| 메서드                | 반환값     | 설명                                 |
-| --------------------- | ---------- | ------------------------------------ |
-| `getApiLevel()`       | `number`   | Android API 레벨 (iOS는 -1)          |
-| `getSupportedAbis()`  | `string[]` | 지원 CPU 아키텍처                    |
-| `hasGms()`            | `boolean`  | Google Mobile Services (Android 전용) |
-| `hasHms()`            | `boolean`  | Huawei Mobile Services (Android 전용) |
-
-### 비동기 메서드
-
-아래 모든 메서드는 Promise를 반환하며 일반적으로 10-100ms 내에 완료됩니다:
-
-#### 애플리케이션 메타데이터
-
-- `getFirstInstallTime(): Promise<number>` — 최초 설치 시각 (epoch 기준 ms)
-- `getLastUpdateTime(): Promise<number>` — 마지막 업데이트 시각
-
-#### 네트워크 및 연결
-
-- `getIpAddress(): Promise<string>` — IP 주소
-- `getMacAddress(): Promise<string>` — MAC 주소 (iOS 7+에서는 비활성화됨)
-- `getCarrier(): Promise<string>` — 이동통신사 이름
-- `isLocationEnabled(): Promise<boolean>` — 위치 서비스 활성 상태
-- `isHeadphonesConnected(): Promise<boolean>` — 헤드폰 연결 여부
+모든 메서드, 속성 및 상세 문서는 **[API-REFERENCE-ko.md](API-REFERENCE-ko.md)**를 참고하세요.
 
 ## 타입 정의
 
-### PowerState
+라이브러리는 완전한 TypeScript 정의를 포함합니다. 전체 타입 문서는 [API-REFERENCE-ko.md](API-REFERENCE-ko.md#타입-정의)를 참고하세요.
 
 ```typescript
-interface PowerState {
-  batteryLevel: number; // 0.0 ~ 1.0
-  batteryState: BatteryState; // 'unknown' | 'unplugged' | 'charging' | 'full'
-  lowPowerMode: boolean; // iOS 전용
-}
-```
-
-### DeviceType
-
-```typescript
-type DeviceType =
-  | 'Handset'
-  | 'Tablet'
-  | 'Tv'
-  | 'Desktop'
-  | 'GamingConsole'
-  | 'unknown';
-```
-
-### BatteryState
-
-```typescript
-type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
+import type {
+  DeviceInfo,
+  PowerState,
+  BatteryState,
+  DeviceType,
+} from 'react-native-nitro-device-info';
 ```
 
 ## react-native-device-info에서 마이그레이션
@@ -350,29 +283,12 @@ yarn android
 
 ## 지원 플랫폼
 
-- **iOS:** 13.4 이상 (99%+ 디바이스)
-- **Android:** API 21 이상 (Android 5.0 Lollipop, 99%+ 디바이스)
+- **iOS**: 13.4+
+- **Android**: API 24+ (Android 7.0 Nougat)
 
 ## 기여하기
 
 개발 가이드라인과 워크플로우는 [CONTRIBUTING-ko.md](CONTRIBUTING-ko.md)를 참고하세요.
-
-### 코드 품질 유지
-
-다음 자동화된 정적 코드 분석 도구를 사용합니다:
-
-- **TypeScript**: `yarn typecheck` — 타입 검사
-- **린트**: `yarn lint` 또는 `yarn lint:eslint` — 기본 oxlint, 옵션으로 ESLint
-- **Kotlin**: `ktlint` — Android 코드 포매팅
-
-**Kotlin 코드 포매팅 예시 (커밋 전 실행):**
-
-```sh
-cd example/showcase/android  # 또는 example/benchmark/android
-./gradlew :react-native-nitro-device-info:ktlintFormat
-```
-
-> 자세한 내용은 [ktlint 빠른 시작 가이드](specs/002-cleanup-boilerplate-add-ktlint/quickstart.md)를 참고하세요.
 
 ## 라이선스
 

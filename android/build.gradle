@@ -132,6 +132,9 @@ dependencies {
 
   // Optional: Google Play Services for hasGms() check
   compileOnly "com.google.android.gms:play-services-base:18.5.0"
+
+  // Install Referrer API for getInstallReferrer() method
+  implementation "com.android.installreferrer:installreferrer:2.2"
 }
 
 // ktlint configuration
