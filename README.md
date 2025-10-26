@@ -2,7 +2,7 @@
 
 > Get comprehensive device information for React Native using Nitro Modules
 
-<a href="https://badge.fury.io/js/react-native-nitro-device-info"><img src="https://badge.fury.io/js/react-native-nitro-device-info.svg?style=flat-square" alt="npm version"></a>
+<a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/v/react-native-nitro-device-info.svg?style=flat-square" alt="npm version"></a>
 <a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dm/react-native-nitro-device-info.svg?style=flat-square" alt="npm downloads"></a>
 <a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dt/react-native-nitro-device-info.svg?style=flat-square" alt="npm total downloads"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
@@ -98,15 +98,21 @@ const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
 const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
-console.log(`RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`);
-console.log(`Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB free of ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
+console.log(
+  `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
+);
+console.log(
+  `Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB free of ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB`
+);
 
 // Battery Information
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 const isCharging = DeviceInfoModule.isBatteryCharging();
 const powerState: PowerState = DeviceInfoModule.getPowerState();
 
-console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`);
+console.log(
+  `Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`
+);
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`);
 
 // Application Metadata
@@ -142,28 +148,28 @@ For complete API documentation with all 100+ methods and properties, see **[API-
 #### Core Properties (Synchronous - <1ms)
 
 ```typescript
-DeviceInfoModule.deviceId          // "iPhone14,2"
-DeviceInfoModule.brand             // "Apple"
-DeviceInfoModule.systemVersion     // "15.0"
-DeviceInfoModule.model             // "iPhone"
+DeviceInfoModule.deviceId; // "iPhone14,2"
+DeviceInfoModule.brand; // "Apple"
+DeviceInfoModule.systemVersion; // "15.0"
+DeviceInfoModule.model; // "iPhone"
 ```
 
 #### Common Methods
 
 ```typescript
 // Device Info
-DeviceInfoModule.getUniqueId()           // Sync
-DeviceInfoModule.isTablet()              // Sync
-DeviceInfoModule.getTotalMemory()        // Sync
-DeviceInfoModule.getBatteryLevel()       // Sync
+DeviceInfoModule.getUniqueId(); // Sync
+DeviceInfoModule.isTablet(); // Sync
+DeviceInfoModule.getTotalMemory(); // Sync
+DeviceInfoModule.getBatteryLevel(); // Sync
 
 // App Info
-DeviceInfoModule.getVersion()            // Sync
-DeviceInfoModule.getBundleId()           // Sync
+DeviceInfoModule.getVersion(); // Sync
+DeviceInfoModule.getBundleId(); // Sync
 
 // Network (Async)
-await DeviceInfoModule.getIpAddress()    // ~20-50ms
-await DeviceInfoModule.getCarrier()      // ~20-50ms
+await DeviceInfoModule.getIpAddress(); // ~20-50ms
+await DeviceInfoModule.getCarrier(); // ~20-50ms
 ```
 
 For the complete list of all methods, properties, and detailed documentation, see **[API-REFERENCE.md](API-REFERENCE.md)**.
@@ -173,7 +179,12 @@ For the complete list of all methods, properties, and detailed documentation, se
 The library includes full TypeScript definitions. For complete type documentation, see [API-REFERENCE.md](API-REFERENCE.md#type-definitions).
 
 ```typescript
-import type { DeviceInfo, PowerState, BatteryState, DeviceType } from 'react-native-nitro-device-info';
+import type {
+  DeviceInfo,
+  PowerState,
+  BatteryState,
+  DeviceType,
+} from 'react-native-nitro-device-info';
 ```
 
 ## Migration from react-native-device-info

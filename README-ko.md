@@ -2,7 +2,7 @@
 
 > Nitro 모듈을 활용해 React Native에서 디바이스 정보를 빠르고 포괄적으로 가져옵니다.
 
-<a href="https://badge.fury.io/js/react-native-nitro-device-info"><img src="https://badge.fury.io/js/react-native-nitro-device-info.svg?style=flat-square" alt="npm version"></a>
+<a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/v/react-native-nitro-device-info.svg?style=flat-square" alt="npm version"></a>
 <a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dm/react-native-nitro-device-info.svg?style=flat-square" alt="npm downloads"></a>
 <a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dt/react-native-nitro-device-info.svg?style=flat-square" alt="npm total downloads"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
@@ -99,15 +99,21 @@ const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
 const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
-console.log(`RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`);
-console.log(`저장공간: ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB 중 ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB 사용 가능`);
+console.log(
+  `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
+);
+console.log(
+  `저장공간: ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB 중 ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB 사용 가능`
+);
 
 // 배터리 정보
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 const isCharging = DeviceInfoModule.isBatteryCharging();
 const powerState: PowerState = DeviceInfoModule.getPowerState();
 
-console.log(`배터리: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(충전 중)' : ''}`);
+console.log(
+  `배터리: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(충전 중)' : ''}`
+);
 console.log(`저전력 모드: ${powerState.lowPowerMode}`);
 
 // 앱 메타데이터
@@ -143,28 +149,28 @@ const hasGms = DeviceInfoModule.hasGms(); // Android 전용
 #### 주요 속성 (동기 - <1ms)
 
 ```typescript
-DeviceInfoModule.deviceId          // "iPhone14,2"
-DeviceInfoModule.brand             // "Apple"
-DeviceInfoModule.systemVersion     // "15.0"
-DeviceInfoModule.model             // "iPhone"
+DeviceInfoModule.deviceId; // "iPhone14,2"
+DeviceInfoModule.brand; // "Apple"
+DeviceInfoModule.systemVersion; // "15.0"
+DeviceInfoModule.model; // "iPhone"
 ```
 
 #### 주요 메서드
 
 ```typescript
 // 디바이스 정보
-DeviceInfoModule.getUniqueId()           // 동기
-DeviceInfoModule.isTablet()              // 동기
-DeviceInfoModule.getTotalMemory()        // 동기
-DeviceInfoModule.getBatteryLevel()       // 동기
+DeviceInfoModule.getUniqueId(); // 동기
+DeviceInfoModule.isTablet(); // 동기
+DeviceInfoModule.getTotalMemory(); // 동기
+DeviceInfoModule.getBatteryLevel(); // 동기
 
 // 앱 정보
-DeviceInfoModule.getVersion()            // 동기
-DeviceInfoModule.getBundleId()           // 동기
+DeviceInfoModule.getVersion(); // 동기
+DeviceInfoModule.getBundleId(); // 동기
 
 // 네트워크 (비동기)
-await DeviceInfoModule.getIpAddress()    // ~20-50ms
-await DeviceInfoModule.getCarrier()      // ~20-50ms
+await DeviceInfoModule.getIpAddress(); // ~20-50ms
+await DeviceInfoModule.getCarrier(); // ~20-50ms
 ```
 
 모든 메서드, 속성 및 상세 문서는 **[API-REFERENCE-ko.md](API-REFERENCE-ko.md)**를 참고하세요.
@@ -174,7 +180,12 @@ await DeviceInfoModule.getCarrier()      // ~20-50ms
 라이브러리는 완전한 TypeScript 정의를 포함합니다. 전체 타입 문서는 [API-REFERENCE-ko.md](API-REFERENCE-ko.md#타입-정의)를 참고하세요.
 
 ```typescript
-import type { DeviceInfo, PowerState, BatteryState, DeviceType } from 'react-native-nitro-device-info';
+import type {
+  DeviceInfo,
+  PowerState,
+  BatteryState,
+  DeviceType,
+} from 'react-native-nitro-device-info';
 ```
 
 ## react-native-device-info에서 마이그레이션
