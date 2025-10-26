@@ -4,9 +4,9 @@
   "description": "Documentation site for react-native-nitro-device-info",
   "private": true,
   "scripts": {
-    "dev": "rspress dev -c .rspress/config.ts",
-    "build": "rspress build -c .rspress/config.ts",
-    "preview": "rspress preview -c .rspress/config.ts"
+    "dev": "rspress dev",
+    "build": "rspress build",
+    "preview": "rspress preview"
   },
   "dependencies": {
     "rspress": "^1.30.0"
