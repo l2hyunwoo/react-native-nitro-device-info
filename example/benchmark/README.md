@@ -1,65 +1,20 @@
-# Nitro Device Info Benchmark App
+# Benchmark App
 
-Performance testing application for the react-native-nitro-device-info library.
+Performance testing application for react-native-nitro-device-info.
 
-## Purpose
+## Running the App
 
-This app is designed to:
-- Benchmark performance of Nitro module device info retrieval
-- Compare with alternative implementations
-- Measure execution time and memory usage
-- Stress test the Nitro module under various conditions
-
-## Running the Benchmark App
-
-### iOS
+### From Repository Root
 
 ```bash
-# From repository root
-yarn benchmark ios
+yarn benchmark ios      # iOS
+yarn benchmark android  # Android
 ```
 
-Or from the benchmark directory:
+### From Benchmark Directory
 
 ```bash
 cd example/benchmark
-yarn ios
+yarn ios      # iOS
+yarn android  # Android
 ```
-
-### Android
-
-```bash
-# From repository root
-yarn benchmark android
-```
-
-Or from the benchmark directory:
-
-```bash
-cd example/benchmark
-yarn android
-```
-
-## Development
-
-The benchmark app is completely independent of the showcase app. Changes to one will not affect the other.
-
-### Installing Dependencies
-
-```bash
-cd example/benchmark
-yarn install
-```
-
-### iOS Pod Install
-
-```bash
-cd example/benchmark/ios
-pod install
-```
-
-## Build Configuration
-
-- **Bundle ID (iOS)**: com.nitrodeviceinfobenchmark
-- **Package Name (Android)**: com.nitrodeviceinfobenchmark
-- **Display Name**: Nitro Device Info Benchmark

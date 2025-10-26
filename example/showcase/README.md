@@ -1,85 +1,20 @@
-# Nitro Device Info Showcase App
+# Showcase App
 
-A simple, single-screen demonstration app for the react-native-nitro-device-info library.
+A simple demonstration app for react-native-nitro-device-info.
 
-## Purpose
+## Running the App
 
-This app demonstrates:
-- All available device information properties
-- Usage examples of synchronous and asynchronous methods
-- Integration of the react-native-nitro-device-info library
-- Clean, straightforward implementation without navigation complexity
-
-## Running the Showcase App
-
-### iOS
+### From Repository Root
 
 ```bash
-# From repository root
-yarn showcase ios
+yarn showcase ios      # iOS
+yarn showcase android  # Android
 ```
 
-Or from the showcase directory:
+### From Showcase Directory
 
 ```bash
 cd example/showcase
-yarn ios
+yarn ios      # iOS
+yarn android  # Android
 ```
-
-### Android
-
-```bash
-# From repository root
-yarn showcase android
-```
-
-Or from the showcase directory:
-
-```bash
-cd example/showcase
-yarn android
-```
-
-## Features
-
-- Simple single-screen interface displaying all device information
-- No navigation dependencies (React Navigation removed for simplicity)
-- Direct SafeAreaView implementation using react-native-safe-area-context
-- Comprehensive display of:
-  - Device identification
-  - System information
-  - Hardware capabilities
-  - Battery status
-  - Network information
-  - Application metadata
-
-## Development
-
-### Installing Dependencies
-
-```bash
-cd example/showcase
-yarn install
-```
-
-### iOS Pod Install
-
-```bash
-cd example/showcase/ios
-pod install
-```
-
-## Build Configuration
-
-- **Bundle ID (iOS)**: nitrodeviceinfo.example
-- **Package Name (Android)**: com.nitrodeviceinfoexample
-- **Display Name**: NitroDeviceInfoExample
-
-## Comparison with Benchmark App
-
-| Feature | Showcase App | Benchmark App |
-|---------|-------------|---------------|
-| Purpose | Demo/Examples | Performance Testing |
-| Complexity | Simple | Complex |
-| Navigation | None | None |
-| Independence | ✓ | ✓ |
