@@ -8,7 +8,7 @@ PODS:
   - hermes-engine (0.81.1):
     - hermes-engine/Pre-built (= 0.81.1)
   - hermes-engine/Pre-built (0.81.1)
-  - NitroDeviceInfo (0.1.0):
+  - NitroDeviceInfo (1.1.0):
     - NitroModules
     - React-callinvoker
     - React-Core
@@ -2287,6 +2287,8 @@ PODS:
     - React-perflogger (= 0.81.1)
     - React-utils (= 0.81.1)
     - SocketRocket
+  - RNDeviceInfo (11.1.0):
+    - React-Core
   - SocketRocket (0.7.1)
   - Yoga (0.0.0)
 
@@ -2364,6 +2366,7 @@ DEPENDENCIES:
   - ReactAppDependencyProvider (from `build/generated/ios`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - SocketRocket (~> 0.7.1)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -2517,6 +2520,8 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -2528,7 +2533,7 @@ SPEC CHECKSUMS:
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 4f8246b1f6d79f625e0d99472d1f3a71da4d28ca
-  NitroDeviceInfo: ae4e89043a334c1828e7e298ac5709877e1daf08
+  NitroDeviceInfo: 6e2e20647d7020d463dd3c80a45b947966777bea
   NitroModules: 5f474732a91ef6a48e7788fb73b355bcb52999ee
   RCT-Folly: 59ec0ac1f2f39672a0c6e6cecdd39383b764646f
   RCTDeprecation: c4b9e2fd0ab200e3af72b013ed6113187c607077
@@ -2593,6 +2598,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 448b422f8af1dedf81374eacc90a15439a0ed7f5
   ReactCodegen: 3baedb0c33f963250c866151b825a3c5194b12f1
   ReactCommon: e897f9a1b4afab370cfefaaf5fb3c80371bc3937
+  RNDeviceInfo: b899ce37a403a4dea52b7cb85e16e49c04a5b88e
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: fa23995c18b65978347b096d0836f4f5093df545
 
