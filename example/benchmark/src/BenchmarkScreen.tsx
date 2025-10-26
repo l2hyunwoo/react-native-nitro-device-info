@@ -1,11 +1,11 @@
 /**
  * BenchmarkScreen.tsx
- * Performance benchmarking component for react-native-nitro-device-info
+ * Performance comparison benchmarking between Nitro and react-native-device-info
  *
- * Tests synchronous methods (<1ms target) and asynchronous methods (<100ms target)
+ * Displays side-by-side performance metrics with speedup multipliers
  */
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -16,336 +16,216 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import { createDeviceInfo } from 'react-native-nitro-device-info';
-
-const deviceInfo = createDeviceInfo();
-
-interface BenchmarkResult {
-  methodName: string;
-  avgTime: number;
-  minTime: number;
-  maxTime: number;
-  iterations: number;
-  passed: boolean;
-  target: number;
-}
-
-interface BenchmarkResults {
-  sync: BenchmarkResult[];
-  async: BenchmarkResult[];
-}
+// @ts-ignore - react-native-device-info is a peer dependency that may not be installed during type checking
+import DeviceInfo from 'react-native-device-info';
+import { runBenchmark } from './utils/timer';
+import { createComparison, calculateMetrics } from './benchmarks/comparator';
+import { BENCHMARK_METHODS } from './config/benchmarkMethods';
+import { ComparisonRow } from './components/ComparisonRow';
+import { StatisticsPanel } from './components/StatisticsPanel';
+import type { BenchmarkResult, ComparisonResult, PerformanceMetrics } from './types';
+import { LibraryType } from './types';
 
 export default function BenchmarkScreen() {
-  const [results, setResults] = useState<BenchmarkResults | null>(null);
+  const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null);
   const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [dependencyError, setDependencyError] = useState<string | null>(null);
 
-  const runSyncBenchmarks = (): BenchmarkResult[] => {
-    const syncMethods = [
-      // Existing synchronous properties
-      { name: 'deviceId', fn: () => deviceInfo.deviceId },
-      { name: 'brand', fn: () => deviceInfo.brand },
-      { name: 'systemName', fn: () => deviceInfo.systemName },
-      { name: 'systemVersion', fn: () => deviceInfo.systemVersion },
-      { name: 'model', fn: () => deviceInfo.model },
-      { name: 'deviceType', fn: () => deviceInfo.deviceType },
-      { name: 'isTablet()', fn: () => deviceInfo.isTablet() },
-      { name: 'hasNotch()', fn: () => deviceInfo.hasNotch() },
-      { name: 'hasDynamicIsland()', fn: () => deviceInfo.hasDynamicIsland() },
-      { name: 'getUniqueId()', fn: () => deviceInfo.getUniqueId() },
-      { name: 'getManufacturer()', fn: () => deviceInfo.getManufacturer() },
-      { name: 'getBatteryLevel()', fn: () => deviceInfo.getBatteryLevel() },
-      { name: 'getVersion()', fn: () => deviceInfo.getVersion() },
-      { name: 'isBatteryCharging()', fn: () => deviceInfo.isBatteryCharging() },
-      { name: 'getPowerState()', fn: () => deviceInfo.getPowerState() },
-      { name: 'getBuildNumber()', fn: () => deviceInfo.getBuildNumber() },
-      { name: 'getBundleId()', fn: () => deviceInfo.getBundleId() },
-      {
-        name: 'getApplicationName()',
-        fn: () => deviceInfo.getApplicationName(),
-      },
-      { name: 'getTotalMemory()', fn: () => deviceInfo.getTotalMemory() },
-      { name: 'getUsedMemory()', fn: () => deviceInfo.getUsedMemory() },
-      {
-        name: 'getTotalDiskCapacity()',
-        fn: () => deviceInfo.getTotalDiskCapacity(),
-      },
-      {
-        name: 'getFreeDiskStorage()',
-        fn: () => deviceInfo.getFreeDiskStorage(),
-      },
-      { name: 'isCameraPresent()', fn: () => deviceInfo.isCameraPresent() },
-      {
-        name: 'isPinOrFingerprintSet()',
-        fn: () => deviceInfo.isPinOrFingerprintSet(),
-      },
-      { name: 'isEmulator()', fn: () => deviceInfo.isEmulator() },
-      { name: 'getApiLevel()', fn: () => deviceInfo.getApiLevel() },
-      { name: 'getSupportedAbis()', fn: () => deviceInfo.getSupportedAbis() },
-      { name: 'hasGms()', fn: () => deviceInfo.hasGms() },
-      { name: 'hasHms()', fn: () => deviceInfo.hasHms() },
-    ];
-
-    const syncResults: BenchmarkResult[] = [];
-    const iterations = 1000; // Run each method 1000 times
-    const target = 1; // <1ms target
-
-    for (const method of syncMethods) {
-      const times: number[] = [];
-
-      // Warmup
-      for (let i = 0; i < 100; i++) {
-        method.fn();
+  // Check if react-native-device-info is available
+  React.useEffect(() => {
+    try {
+      if (!DeviceInfo || typeof DeviceInfo.getDeviceId !== 'function') {
+        setDependencyError(
+          'react-native-device-info is not properly installed. Please run:\n\n' +
+            'cd example/benchmark\n' +
+            'yarn add react-native-device-info\n' +
+            'cd ios && pod install'
+        );
       }
-
-      // Benchmark
-      for (let i = 0; i < iterations; i++) {
-        const start = performance.now();
-        method.fn();
-        const end = performance.now();
-        times.push(end - start);
-      }
-
-      const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
-      const minTime = Math.min(...times);
-      const maxTime = Math.max(...times);
-
-      syncResults.push({
-        methodName: method.name,
-        avgTime,
-        minTime,
-        maxTime,
-        iterations,
-        passed: avgTime < target,
-        target,
-      });
+    } catch {
+      setDependencyError(
+        'Failed to load react-native-device-info. Ensure it is installed and linked correctly.'
+      );
     }
+  }, []);
 
-    return syncResults;
-  };
-
-  const runAsyncBenchmarks = async (): Promise<BenchmarkResult[]> => {
-    // These methods remain asynchronous - they perform I/O operations
-    const asyncMethods = [
-      // Network & Connectivity (I/O operations)
-      { name: 'getIpAddress()', fn: () => deviceInfo.getIpAddress() },
-      { name: 'getMacAddress()', fn: () => deviceInfo.getMacAddress() },
-      { name: 'getCarrier()', fn: () => deviceInfo.getCarrier() },
-      { name: 'isLocationEnabled()', fn: () => deviceInfo.isLocationEnabled() },
-      {
-        name: 'isHeadphonesConnected()',
-        fn: () => deviceInfo.isHeadphonesConnected(),
-      },
-
-      // Filesystem operations
-      {
-        name: 'getFirstInstallTime()',
-        fn: () => deviceInfo.getFirstInstallTime(),
-      },
-      { name: 'getLastUpdateTime()', fn: () => deviceInfo.getLastUpdateTime() },
-    ];
-
-    const asyncResults: BenchmarkResult[] = [];
-    const iterations = 10; // Run each async method 10 times
-    const target = 100; // <100ms target
-
-    for (const method of asyncMethods) {
-      const times: number[] = [];
-
-      // Warmup
-      await method.fn();
-
-      // Benchmark
-      for (let i = 0; i < iterations; i++) {
-        const start = performance.now();
-        await method.fn();
-        const end = performance.now();
-        times.push(end - start);
-      }
-
-      const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
-      const minTime = Math.min(...times);
-      const maxTime = Math.max(...times);
-
-      asyncResults.push({
-        methodName: method.name,
-        avgTime,
-        minTime,
-        maxTime,
-        iterations,
-        passed: avgTime < target,
-        target,
-      });
-    }
-
-    return asyncResults;
-  };
-
+  /**
+   * Run benchmarks for both Nitro and react-native-device-info
+   * Creates side-by-side comparisons with speedup metrics
+   */
   const runAllBenchmarks = async () => {
     setRunning(true);
+    setProgress({ current: 0, total: BENCHMARK_METHODS.length * 2 });
+
     try {
-      console.log('Running synchronous benchmarks...');
-      const syncResults = runSyncBenchmarks();
+      console.log('Starting performance comparison benchmarks...');
+      const comparisons: ComparisonResult[] = [];
 
-      console.log('Running asynchronous benchmarks...');
-      const asyncResults = await runAsyncBenchmarks();
+      for (let i = 0; i < BENCHMARK_METHODS.length; i++) {
+        const method = BENCHMARK_METHODS[i];
+        if (!method) continue;
 
-      setResults({
-        sync: syncResults,
-        async: asyncResults,
-      });
+        console.log(`Benchmarking: ${method.name}`);
+
+        try {
+          // Benchmark Nitro implementation
+          setProgress({ current: i * 2 + 1, total: BENCHMARK_METHODS.length * 2 });
+          const nitroBenchmark = await runBenchmark(
+            method.name,
+            method.nitroFn,
+            LibraryType.NITRO,
+            method.iterations,
+            method.target,
+            method.isAsync
+          );
+
+          // Benchmark react-native-device-info implementation
+          setProgress({ current: i * 2 + 2, total: BENCHMARK_METHODS.length * 2 });
+          const deviceInfoBenchmark = await runBenchmark(
+            method.name,
+            method.deviceInfoFn,
+            LibraryType.DEVICE_INFO,
+            method.iterations,
+            method.target,
+            method.isAsync
+          );
+
+          // Create comparison
+          const comparison = createComparison(nitroBenchmark, deviceInfoBenchmark);
+          comparisons.push(comparison);
+
+          console.log(
+            `${method.name}: Nitro ${nitroBenchmark.avgTime.toFixed(3)}ms vs DeviceInfo ${deviceInfoBenchmark.avgTime.toFixed(3)}ms (${comparison.speedupMultiplier.toFixed(1)}x)`
+          );
+        } catch (error) {
+          console.error(`Error benchmarking ${method.name}:`, error);
+          // Create error comparison
+          const errorBenchmark: BenchmarkResult = {
+            methodName: method.name,
+            library: LibraryType.NITRO,
+            iterations: 0,
+            avgTime: 0,
+            minTime: 0,
+            maxTime: 0,
+            stdDev: 0,
+            target: method.target,
+            passed: false,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          };
+          comparisons.push(
+            createComparison(errorBenchmark, { ...errorBenchmark, library: LibraryType.DEVICE_INFO })
+          );
+        }
+      }
+
+      // Calculate aggregate metrics
+      const performanceMetrics = calculateMetrics(comparisons);
+      setMetrics(performanceMetrics);
 
       console.log('Benchmarks complete!');
+      console.log(`Average speedup: ${performanceMetrics.avgSpeedupMultiplier.toFixed(2)}x`);
+      console.log(`Max speedup: ${performanceMetrics.maxSpeedupMultiplier.toFixed(2)}x`);
+      console.log(`Catchphrase: ${performanceMetrics.marketingCatchphrase}`);
     } catch (error) {
       console.error('Benchmark error:', error);
     } finally {
       setRunning(false);
+      setProgress({ current: 0, total: 0 });
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-      >
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Performance Benchmarks</Text>
-          <Text style={styles.subtitle}>Nitro Module Performance Testing</Text>
+          <Text style={styles.title}>Performance Comparison</Text>
+          <Text style={styles.subtitle}>Nitro vs react-native-device-info</Text>
+          <Text style={styles.methodCount}>Testing {BENCHMARK_METHODS.length} methods</Text>
         </View>
+
+        {/* Dependency Error Card */}
+        {dependencyError && (
+          <View style={styles.errorCard}>
+            <Text style={styles.errorTitle}>❌ Dependency Missing</Text>
+            <Text style={styles.errorText}>{dependencyError}</Text>
+          </View>
+        )}
 
         {/* Run Button */}
         <TouchableOpacity
-          style={[styles.runButton, running && styles.runButtonDisabled]}
+          style={[styles.runButton, (running || dependencyError) && styles.runButtonDisabled]}
           onPress={runAllBenchmarks}
-          disabled={running}
+          disabled={running || !!dependencyError}
           activeOpacity={0.7}
         >
           {running ? (
-            <ActivityIndicator color="#FFF" />
+            <View style={styles.runButtonContent}>
+              <ActivityIndicator color="#FFF" />
+              <Text style={styles.runButtonText}>
+                Running... {progress.current}/{progress.total}
+              </Text>
+            </View>
           ) : (
-            <Text style={styles.runButtonText}>Run Benchmarks</Text>
+            <Text style={styles.runButtonText}>Run Performance Comparison</Text>
           )}
         </TouchableOpacity>
 
         {/* Results */}
-        {results && (
+        {metrics && (
           <>
-            {/* Synchronous Results */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                Synchronous Methods (Target: &lt;1ms)
-              </Text>
-              <View style={styles.resultsHeader}>
-                <Text style={[styles.headerText, styles.methodCol]}>
-                  Method
-                </Text>
-                <Text style={[styles.headerText, styles.avgCol]}>Avg</Text>
-                <Text style={[styles.headerText, styles.minCol]}>Min</Text>
-                <Text style={[styles.headerText, styles.maxCol]}>Max</Text>
-                <Text style={[styles.headerText, styles.statusCol]}>
-                  Status
+            {/* Statistics Panel */}
+            <StatisticsPanel metrics={metrics} />
+
+            {/* Comparisons Section */}
+            <View style={styles.comparisonsSection}>
+              <Text style={styles.sectionTitle}>Detailed Comparisons</Text>
+              <View style={styles.comparisonsHeader}>
+                <Text style={styles.headerHint}>
+                  Green = Significant improvement (≥2x faster) • Blue = Passed target
                 </Text>
               </View>
-              {results.sync.map((result, index) => (
-                <BenchmarkRow key={index} result={result} />
+
+              {metrics.comparisons.map((comparison, index) => (
+                <ComparisonRow key={`${comparison.methodName}-${index}`} comparison={comparison} />
               ))}
             </View>
 
-            {/* Asynchronous Results */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                Asynchronous Methods (Target: &lt;100ms)
-              </Text>
-              <View style={styles.resultsHeader}>
-                <Text style={[styles.headerText, styles.methodCol]}>
-                  Method
-                </Text>
-                <Text style={[styles.headerText, styles.avgCol]}>Avg</Text>
-                <Text style={[styles.headerText, styles.minCol]}>Min</Text>
-                <Text style={[styles.headerText, styles.maxCol]}>Max</Text>
-                <Text style={[styles.headerText, styles.statusCol]}>
-                  Status
-                </Text>
-              </View>
-              {results.async.map((result, index) => (
-                <BenchmarkRow key={index} result={result} />
-              ))}
-            </View>
-
-            {/* Summary */}
-            <View style={styles.summary}>
-              <Text style={styles.summaryTitle}>Summary</Text>
-              <Text style={styles.summaryText}>
-                Sync Passed: {results.sync.filter((r) => r.passed).length}/
-                {results.sync.length}
-              </Text>
-              <Text style={styles.summaryText}>
-                Async Passed: {results.async.filter((r) => r.passed).length}/
-                {results.async.length}
-              </Text>
-              <Text style={styles.summaryText}>
-                Platform: {Platform.OS === 'ios' ? 'iOS' : 'Android'}
+            {/* Platform Info */}
+            <View style={styles.platformInfo}>
+              <Text style={styles.platformText}>Platform: {Platform.OS === 'ios' ? 'iOS' : 'Android'}</Text>
+              <Text style={styles.platformSubtext}>
+                Benchmark completed at {new Date(metrics.timestamp).toLocaleTimeString()}
               </Text>
             </View>
           </>
         )}
 
         {/* Instructions */}
-        {!results && !running && (
+        {!metrics && !running && (
           <View style={styles.instructions}>
-            <Text style={styles.instructionsTitle}>Instructions</Text>
+            <Text style={styles.instructionsTitle}>About Performance Comparison</Text>
             <Text style={styles.instructionsText}>
-              • Tap "Run Benchmarks" to test performance
+              • Tap "Run Performance Comparison" to benchmark both libraries
             </Text>
             <Text style={styles.instructionsText}>
-              • Synchronous methods target: &lt;1ms per call
+              • Each method is tested multiple times for accuracy
             </Text>
             <Text style={styles.instructionsText}>
-              • Asynchronous methods target: &lt;100ms per call
+              • Sync methods target: &lt;1ms | Async methods target: &lt;100ms
             </Text>
             <Text style={styles.instructionsText}>
-              • Results show average, min, and max times
+              • Speedup multiplier shows how many times faster Nitro is
+            </Text>
+            <Text style={styles.instructionsText}>
+              • Significant improvements (≥2x) are highlighted in green
             </Text>
           </View>
         )}
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-function BenchmarkRow({ result }: { result: BenchmarkResult }) {
-  return (
-    <View style={styles.resultRow}>
-      <Text style={[styles.resultText, styles.methodCol]} numberOfLines={1}>
-        {result.methodName}
-      </Text>
-      <Text style={[styles.resultText, styles.avgCol]}>
-        {formatTime(result.avgTime)}
-      </Text>
-      <Text style={[styles.resultText, styles.minCol]}>
-        {formatTime(result.minTime)}
-      </Text>
-      <Text style={[styles.resultText, styles.maxCol]}>
-        {formatTime(result.maxTime)}
-      </Text>
-      <Text
-        style={[
-          styles.statusText,
-          result.passed ? styles.passed : styles.failed,
-        ]}
-      >
-        {result.passed ? '✓' : '✗'}
-      </Text>
-    </View>
-  );
-}
-
-function formatTime(ms: number): string {
-  if (ms < 1) {
-    return `${(ms * 1000).toFixed(1)}μs`;
-  }
-  return `${ms.toFixed(1)}ms`;
 }
 
 const styles = StyleSheet.create({
@@ -362,26 +242,52 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
     paddingTop: 16,
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#000',
+    color: '#1A1A1A',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#666',
+    color: '#666666',
     fontWeight: '500',
+    marginBottom: 4,
+  },
+  methodCount: {
+    fontSize: 12,
+    color: '#999999',
+    fontWeight: '400',
+  },
+  errorCard: {
+    backgroundColor: '#FFEBEE',
+    borderLeftWidth: 4,
+    borderLeftColor: '#F44336',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 20,
+  },
+  errorTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#C62828',
+    marginBottom: 8,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#D32F2F',
+    lineHeight: 20,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   runButton: {
     backgroundColor: '#007AFF',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
     ...Platform.select({
       ios: {
         shadowColor: '#007AFF',
@@ -395,142 +301,90 @@ const styles = StyleSheet.create({
     }),
   },
   runButtonDisabled: {
-    backgroundColor: '#999',
+    backgroundColor: '#999999',
+  },
+  runButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   runButtonText: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+    marginLeft: 12,
   },
-  section: {
-    backgroundColor: '#FFF',
+  comparisonsSection: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginBottom: 16,
-    padding: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000',
-    marginBottom: 12,
-  },
-  resultsHeader: {
-    flexDirection: 'row',
-    borderBottomWidth: 2,
-    borderBottomColor: '#E5E5EA',
+    color: '#1A1A1A',
+    padding: 16,
     paddingBottom: 8,
-    marginBottom: 8,
   },
-  headerText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#666',
-    textTransform: 'uppercase',
+  comparisonsHeader: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E0E0E0',
   },
-  resultRow: {
-    flexDirection: 'row',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+  headerHint: {
+    fontSize: 11,
+    color: '#666666',
+    fontStyle: 'italic',
   },
-  resultText: {
-    fontSize: 14,
-    color: '#000',
-  },
-  statusText: {
-    fontSize: 16,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  passed: {
-    color: '#34C759',
-  },
-  failed: {
-    color: '#FF3B30',
-  },
-  methodCol: {
-    flex: 3,
-  },
-  avgCol: {
-    flex: 1.5,
-    textAlign: 'right',
-  },
-  minCol: {
-    flex: 1.5,
-    textAlign: 'right',
-  },
-  maxCol: {
-    flex: 1.5,
-    textAlign: 'right',
-  },
-  statusCol: {
-    flex: 0.8,
-    textAlign: 'center',
-  },
-  summary: {
-    backgroundColor: '#FFF',
+  platformInfo: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
+    alignItems: 'center',
     marginTop: 8,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  summaryTitle: {
-    fontSize: 18,
+  platformText: {
+    fontSize: 14,
     fontWeight: '600',
-    color: '#000',
-    marginBottom: 8,
+    color: '#333333',
+    marginBottom: 4,
   },
-  summaryText: {
-    fontSize: 15,
-    color: '#666',
-    marginVertical: 4,
+  platformSubtext: {
+    fontSize: 12,
+    color: '#999999',
   },
   instructions: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   instructionsTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000',
+    color: '#1A1A1A',
     marginBottom: 12,
   },
   instructionsText: {
-    fontSize: 15,
-    color: '#666',
+    fontSize: 14,
+    color: '#666666',
     marginVertical: 4,
+    lineHeight: 20,
   },
 });

@@ -1,225 +1,171 @@
 /**
- * DeviceInfoScreen.tsx
- * Main screen displaying comprehensive device information
+ * Enhanced DeviceInfoScreen
+ * Displays all 80+ device properties organized by category with collapsible sections
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  Platform,
   ActivityIndicator,
   SafeAreaView,
+  RefreshControl,
 } from 'react-native';
 import { createDeviceInfo } from 'react-native-nitro-device-info';
-
-// Create device info instance
-const deviceInfo = createDeviceInfo();
+import { PropertyCategory } from './types';
+import type { DeviceProperty } from './types';
+import { PROPERTY_CONFIGS, isPlatformSupported } from './config/propertyCategories';
+import { CategorySection } from './components/CategorySection';
 
 export default function DeviceInfoScreen() {
-  // Synchronous data
-  const [_, setRefreshKey] = useState(0);
-
-  // These values are recomputed on each render when refreshKey changes
-  const uniqueId = deviceInfo.getUniqueId();
-  const manufacturer = deviceInfo.getManufacturer();
-  const batteryLevel = deviceInfo.getBatteryLevel();
-  const appVersion = deviceInfo.getVersion();
-
-  const isBatteryCharging = deviceInfo.isBatteryCharging();
-  const powerState = deviceInfo.getPowerState();
-
-  // Async data - still requires state management (truly async I/O operations)
-  const [totalMemory, setTotalMemory] = useState<number>(0);
-  const [freeStorage, setFreeStorage] = useState<number>(0);
-  const [buildNumber, setBuildNumber] = useState<string>('');
+  const [properties, setProperties] = useState<DeviceProperty[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    loadAsyncDeviceInfo();
+    loadAllProperties();
   }, []);
 
-  const loadAsyncDeviceInfo = async () => {
+  /**
+   * Load all device properties (sync and async)
+   * Fetches values for all 80+ properties from DeviceInfo interface
+   */
+  const loadAllProperties = async () => {
     try {
       setLoading(true);
+      const deviceInfo = createDeviceInfo();
+      const loadedProperties: DeviceProperty[] = [];
 
-      // Only load truly async device information (I/O operations)
-      const [memory, storage, build] = await Promise.all([
-        deviceInfo.getTotalMemory(),
-        deviceInfo.getFreeDiskStorage(),
-        deviceInfo.getBuildNumber(),
-      ]);
+      // Filter properties for current platform
+      const platformProperties = PROPERTY_CONFIGS.filter(isPlatformSupported);
 
-      setTotalMemory(memory);
-      setFreeStorage(storage);
-      setBuildNumber(build);
+      // Load all properties
+      for (const config of platformProperties) {
+        try {
+          let value: any;
+
+          // Access property based on whether it's sync or async
+          if (config.isSync) {
+            // Synchronous property - direct access
+            value = (deviceInfo as any)[config.key];
+          } else {
+            // Asynchronous property - call as function
+            value = await (deviceInfo as any)[config.key]();
+          }
+
+          loadedProperties.push({
+            ...config,
+            value,
+            errorState: undefined,
+          });
+        } catch (error) {
+          // Handle individual property errors gracefully
+          loadedProperties.push({
+            ...config,
+            value: null,
+            errorState: error instanceof Error ? error.message : 'Failed to fetch',
+          });
+        }
+      }
+
+      setProperties(loadedProperties);
     } catch (error) {
-      console.error('Error loading device info:', error);
+      console.error('Error loading device properties:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  const refreshSyncData = () => {
-    // Force re-render to get fresh synchronous values (instant!)
-    setRefreshKey((prev) => prev + 1);
+  /**
+   * Handle pull-to-refresh
+   */
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadAllProperties();
   };
 
-  const formatBytes = (bytes: number): string => {
-    const gb = bytes / (1024 * 1024 * 1024);
-    return `${gb.toFixed(2)} GB`;
+  /**
+   * Group properties by category for display
+   */
+  const getPropertiesByCategory = (): Record<PropertyCategory, DeviceProperty[]> => {
+    const grouped: Record<string, DeviceProperty[]> = {};
+
+    properties.forEach((property) => {
+      const category = property.category;
+      if (!grouped[category]) {
+        grouped[category] = [];
+      }
+      grouped[category].push(property);
+    });
+
+    return grouped as Record<PropertyCategory, DeviceProperty[]>;
   };
 
-  if (loading) {
+  // Show loading indicator on initial load
+  if (loading && !refreshing) {
     return (
       <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Loading device information...</Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.loadingText}>Loading device information...</Text>
+          <Text style={styles.loadingSubtext}>Fetching {PROPERTY_CONFIGS.length}+ properties</Text>
+        </View>
       </SafeAreaView>
     );
   }
+
+  const categorizedProperties = getPropertiesByCategory();
+  const categoryKeys = Object.keys(categorizedProperties) as PropertyCategory[];
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#007AFF" />
+        }
       >
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Device Information</Text>
           <Text style={styles.subtitle}>react-native-nitro-device-info</Text>
+          <Text style={styles.propertyCount}>
+            {properties.length} properties • {categoryKeys.length} categories
+          </Text>
         </View>
 
-        {/* Device Identity Section */}
-        <Section title="Device Identity">
-          <InfoRow label="Device ID" value={deviceInfo.deviceId} />
-          <InfoRow label="Brand" value={deviceInfo.brand} />
-          <InfoRow label="Manufacturer" value={manufacturer} />
-          <InfoRow label="Model" value={deviceInfo.model} />
-          <InfoRow
-            label="System"
-            value={`${deviceInfo.systemName} ${deviceInfo.systemVersion}`}
-          />
-          <InfoRow label="Device Type" value={deviceInfo.deviceType} />
-          <InfoRow
-            label="Unique ID"
-            value={uniqueId.substring(0, 20) + '...'}
-          />
-        </Section>
-
-        {/* Device Capabilities Section */}
-        <Section title="Device Capabilities">
-          <InfoRow
-            label="Is Tablet"
-            value={deviceInfo.isTablet() ? 'Yes' : 'No'}
-          />
-          <InfoRow
-            label="Has Notch"
-            value={deviceInfo.hasNotch() ? 'Yes' : 'No'}
-          />
-          <InfoRow
-            label="Dynamic Island"
-            value={deviceInfo.hasDynamicIsland() ? 'Yes' : 'No'}
-          />
-        </Section>
-
-        {/* Battery Monitoring Section */}
-        <Section title="Battery Monitoring (Sync)">
-          <InfoRow
-            label="Battery Level"
-            value={`${(batteryLevel * 100).toFixed(0)}%`}
-          />
-          <InfoRow
-            label="Is Charging"
-            value={isBatteryCharging ? 'Yes ⚡' : 'No'}
-          />
-          <InfoRow label="Battery State" value={powerState.batteryState} />
-          <InfoRow
-            label="Low Power Mode"
-            value={powerState.lowPowerMode ? 'Enabled 🔋' : 'Disabled'}
-          />
-          <InfoRow
-            label="Power State (Full)"
-            value={`${(powerState.batteryLevel * 100).toFixed(0)}% • ${powerState.batteryState}`}
-          />
-        </Section>
-
-        {/* System Resources Section */}
-        <Section title="System Resources">
-          <InfoRow label="Total Memory" value={formatBytes(totalMemory)} />
-          <InfoRow label="Free Storage" value={formatBytes(freeStorage)} />
-        </Section>
-
-        {/* App Metadata Section */}
-        <Section title="App Metadata">
-          <InfoRow label="App Version" value={appVersion} />
-          <InfoRow label="Build Number" value={buildNumber} />
-          <InfoRow
-            label="Bundle ID"
-            value={
-              Platform.OS === 'ios' ? 'com.example.app' : 'com.example.app'
-            }
-          />
-        </Section>
-
-        {/* Refresh Buttons */}
-        <TouchableOpacity
-          style={styles.refreshButton}
-          onPress={refreshSyncData}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.refreshButtonText}>
-            Refresh Sync Data (Instant!)
+        {/* Info Message */}
+        <View style={styles.infoCard}>
+          <Text style={styles.infoText}>
+            ℹ️ Tap any category to expand and view properties
           </Text>
-        </TouchableOpacity>
+          <Text style={styles.infoSubtext}>
+            All sections start collapsed by default
+          </Text>
+        </View>
 
-        <TouchableOpacity
-          style={[styles.refreshButton, styles.asyncButton]}
-          onPress={loadAsyncDeviceInfo}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.refreshButtonText}>Refresh Async Data</Text>
-        </TouchableOpacity>
+        {/* Category Sections - All collapsed by default per clarification */}
+        {categoryKeys.map((category) => (
+          <CategorySection
+            key={category}
+            category={category}
+            properties={categorizedProperties[category]}
+            defaultExpanded={false}
+          />
+        ))}
 
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Powered by Nitro Modules</Text>
           <Text style={styles.footerSubtext}>Zero-overhead JSI bindings</Text>
+          <Text style={styles.footerNote}>Pull down to refresh</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
-}
-
-// Section component
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.sectionContent}>{children}</View>
-    </View>
-  );
-}
-
-// InfoRow component
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.row}>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value} numberOfLines={1}>
-        {value}
-      </Text>
-    </View>
   );
 }
 
@@ -235,137 +181,82 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32,
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 24,
-    paddingTop: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-  },
-  section: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    marginBottom: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000',
-    padding: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
-  },
-  sectionContent: {
-    padding: 16,
-    paddingTop: 12,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  label: {
-    fontSize: 15,
-    color: '#666',
-    fontWeight: '500',
+  loadingContainer: {
     flex: 1,
-  },
-  value: {
-    fontSize: 15,
-    color: '#000',
-    fontWeight: '400',
-    flex: 1,
-    textAlign: 'right',
-  },
-  benchmarkButton: {
-    backgroundColor: '#34C759',
-    borderRadius: 12,
-    padding: 16,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#34C759',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
-  },
-  benchmarkButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  refreshButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 24,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#007AFF',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
-  },
-  refreshButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  asyncButton: {
-    backgroundColor: '#5856D6',
-  },
-  footer: {
-    alignItems: 'center',
-    marginTop: 8,
-    paddingBottom: 16,
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-  },
-  footerSubtext: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 4,
+    padding: 32,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#666',
+    color: '#333333',
+    fontWeight: '500',
+  },
+  loadingSubtext: {
+    marginTop: 4,
+    fontSize: 14,
+    color: '#666666',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingTop: 8,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666666',
+    fontWeight: '500',
+    marginBottom: 8,
+  },
+  propertyCount: {
+    fontSize: 12,
+    color: '#999999',
+    fontWeight: '400',
+  },
+  infoCard: {
+    backgroundColor: '#E3F2FD',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderLeftWidth: 3,
+    borderLeftColor: '#2196F3',
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#1565C0',
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  infoSubtext: {
+    fontSize: 12,
+    color: '#1976D2',
+  },
+  footer: {
+    alignItems: 'center',
+    marginTop: 24,
+    paddingBottom: 16,
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#666666',
+    fontWeight: '500',
+  },
+  footerSubtext: {
+    fontSize: 12,
+    color: '#999999',
+    marginTop: 4,
+  },
+  footerNote: {
+    fontSize: 11,
+    color: '#BBBBBB',
+    marginTop: 8,
+    fontStyle: 'italic',
   },
 });
