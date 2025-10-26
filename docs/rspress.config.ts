@@ -121,7 +121,6 @@ export default defineConfig({
 
     search: true,
     lastUpdated: true,
-    prevNextLink: true,
     outlineTitle: 'On this page',
   },
 });
