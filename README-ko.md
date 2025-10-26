@@ -7,6 +7,8 @@
 <a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/dt/react-native-nitro-device-info.svg?style=flat-square" alt="npm total downloads"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
 
+📖 **[전체 문서 읽기](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/)** | [English Docs](https://l2hyunwoo.github.io/react-native-nitro-device-info/)
+
 [Nitro 모듈](https://nitro.margelo.com/) 기반으로, JSI를 통해 **제로 오버헤드 네이티브 접근**을 제공하는 고성능 React Native 디바이스 정보 라이브러리입니다.
 
 ## 주요 특징

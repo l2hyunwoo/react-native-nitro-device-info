@@ -1,0 +1,21 @@
+{
+  "name": "react-native-nitro-device-info-docs",
+  "version": "1.0.0",
+  "description": "Documentation site for react-native-nitro-device-info",
+  "private": true,
+  "scripts": {
+    "dev": "rspress dev",
+    "build": "rspress build",
+    "preview": "rspress preview"
+  },
+  "dependencies": {
+    "rspress": "^1.30.0"
+  },
+  "devDependencies": {
+    "@rspress/plugin-container-syntax": "^1.45.8",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
