@@ -7,6 +7,10 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs-deploy.yml'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs-deploy.yml'
 
 permissions:
   contents: read
