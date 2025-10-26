@@ -477,7 +477,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 Build.MANUFACTURER.contains("Genymotion") ||
                 (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
                 "google_sdk" == Build.PRODUCT
-        )
+            )
     }
 
     // MARK: - Synchronous Methods - Platform-Specific
@@ -610,12 +610,13 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 val referrerClient = InstallReferrerClient.newBuilder(context).build()
                 val handler = Handler(Looper.getMainLooper())
 
-                val timeoutRunnable = Runnable {
-                    if (continuation.context.isActive) {
-                        referrerClient.endConnection()
-                        continuation.resume("unknown")
+                val timeoutRunnable =
+                    Runnable {
+                        if (continuation.context.isActive) {
+                            referrerClient.endConnection()
+                            continuation.resume("unknown")
+                        }
                     }
-                }
 
                 referrerClient.startConnection(
                     object : InstallReferrerStateListener {
