@@ -1,7 +1,6 @@
 /**
  * CategorySection Component
  * Collapsible section for a category of device properties
- * Uses React Native built-in components only (NO third-party navigation libraries)
  */
 
 import React, { useState } from 'react';

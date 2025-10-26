@@ -1,7 +1,6 @@
 /**
  * Enhanced DeviceInfoScreen
  * Displays all 80+ device properties organized by category with collapsible sections
- * NO third-party navigation libraries - uses React Native built-in components only
  */
 
 import { useEffect, useState } from 'react';

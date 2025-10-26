@@ -1,9 +1,6 @@
 /**
  * TypeScript Type Contracts for Enhanced Example Apps
  *
- * Feature: 010-enhanced-example-apps
- * Generated from: data-model.md
- *
  * These types serve as the contract between UI components, data fetching logic,
  * and benchmark runners. They should be copied to the appropriate locations in
  * example/showcase/src/types/ and example/benchmark/src/types/
