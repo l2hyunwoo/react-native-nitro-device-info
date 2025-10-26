@@ -65,7 +65,7 @@ private data class BuildInfoCache(
     val baseOs: String,
     val previewSdkInt: Double,
     val incremental: String,
-    val buildId: String
+    val buildId: String,
 )
 
 /**
@@ -127,7 +127,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 ) {
                     Build.getSerial()
                 } else {
-                    "unknown"  // Permission not granted
+                    "unknown" // Permission not granted
                 }
             } else {
                 @Suppress("DEPRECATION")
@@ -142,10 +142,11 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     private val buildInfoCache: BuildInfoCache by lazy {
         BuildInfoCache(
             serialNumber = getSerialNumberInternal(),
-            androidId = Settings.Secure.getString(
-                context.contentResolver,
-                Settings.Secure.ANDROID_ID
-            ) ?: "unknown",
+            androidId =
+                Settings.Secure.getString(
+                    context.contentResolver,
+                    Settings.Secure.ANDROID_ID,
+                ) ?: "unknown",
             securityPatch = Build.VERSION.SECURITY_PATCH,
             bootloader = Build.BOOTLOADER,
             codename = Build.VERSION.CODENAME,
@@ -160,7 +161,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             baseOs = Build.VERSION.BASE_OS ?: "",
             previewSdkInt = Build.VERSION.PREVIEW_SDK_INT.toDouble(),
             incremental = Build.VERSION.INCREMENTAL,
-            buildId = Build.ID
+            buildId = Build.ID,
         )
     }
 
@@ -189,7 +190,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     }
 
     /** Cached network info with periodic refresh (5 second cache) */
-    private val IP_CACHE_DURATION_MS = 5000L
+    private val ipCacheDurationMs = 5000L
     private var cachedIpAddress: String = "unknown"
     private var ipAddressCacheTime: Long = 0
     private var cachedMacAddress: String = "unknown"
@@ -476,7 +477,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 Build.MANUFACTURER.contains("Genymotion") ||
                 (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
                 "google_sdk" == Build.PRODUCT
-            )
+        )
     }
 
     // MARK: - Synchronous Methods - Platform-Specific
@@ -608,32 +609,34 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             return@async suspendCancellableCoroutine { continuation ->
                 val referrerClient = InstallReferrerClient.newBuilder(context).build()
 
-                referrerClient.startConnection(object : InstallReferrerStateListener {
-                    override fun onInstallReferrerSetupFinished(responseCode: Int) {
-                        when (responseCode) {
-                            InstallReferrerClient.InstallReferrerResponse.OK -> {
-                                try {
-                                    val response = referrerClient.installReferrer
-                                    val referrer = response.installReferrer ?: "unknown"
-                                    referrerClient.endConnection()
-                                    continuation.resume(referrer)
-                                } catch (e: Exception) {
+                referrerClient.startConnection(
+                    object : InstallReferrerStateListener {
+                        override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                            when (responseCode) {
+                                InstallReferrerClient.InstallReferrerResponse.OK -> {
+                                    try {
+                                        val response = referrerClient.installReferrer
+                                        val referrer = response.installReferrer ?: "unknown"
+                                        referrerClient.endConnection()
+                                        continuation.resume(referrer)
+                                    } catch (e: Exception) {
+                                        referrerClient.endConnection()
+                                        continuation.resume("unknown")
+                                    }
+                                }
+
+                                else -> {
                                     referrerClient.endConnection()
                                     continuation.resume("unknown")
                                 }
                             }
-
-                            else -> {
-                                referrerClient.endConnection()
-                                continuation.resume("unknown")
-                            }
                         }
-                    }
 
-                    override fun onInstallReferrerServiceDisconnected() {
-                        continuation.resume("unknown")
-                    }
-                })
+                        override fun onInstallReferrerServiceDisconnected() {
+                            continuation.resume("unknown")
+                        }
+                    },
+                )
 
                 // Timeout after 5 seconds
                 Handler(Looper.getMainLooper()).postDelayed({
@@ -704,7 +707,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             Settings.Global.getInt(
                 context.contentResolver,
                 Settings.Global.AIRPLANE_MODE_ON,
-                0
+                0,
             ) != 0
         } catch (e: Exception) {
             false
@@ -831,7 +834,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val ipAddressSync: String
         get() {
             val now = System.currentTimeMillis()
-            if (now - ipAddressCacheTime > IP_CACHE_DURATION_MS) {
+            if (now - ipAddressCacheTime > ipCacheDurationMs) {
                 cachedIpAddress = queryIpAddressInternal()
                 ipAddressCacheTime = now
             }
@@ -860,7 +863,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val macAddressSync: String
         get() {
             val now = System.currentTimeMillis()
-            if (now - macAddressCacheTime > IP_CACHE_DURATION_MS) {
+            if (now - macAddressCacheTime > ipCacheDurationMs) {
                 cachedMacAddress = queryMacAddressInternal()
                 macAddressCacheTime = now
             }
@@ -887,7 +890,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val carrierSync: String
         get() {
             val now = System.currentTimeMillis()
-            if (now - carrierCacheTime > IP_CACHE_DURATION_MS) {
+            if (now - carrierCacheTime > ipCacheDurationMs) {
                 val telephonyManager =
                     context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
                 cachedCarrier = telephonyManager?.networkOperatorName ?: "unknown"
@@ -905,11 +908,12 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
                     locationManager.isLocationEnabled
                 } else {
-                    val mode = Settings.Secure.getInt(
-                        context.contentResolver,
-                        Settings.Secure.LOCATION_MODE,
-                        Settings.Secure.LOCATION_MODE_OFF
-                    )
+                    val mode =
+                        Settings.Secure.getInt(
+                            context.contentResolver,
+                            Settings.Secure.LOCATION_MODE,
+                            Settings.Secure.LOCATION_MODE_OFF,
+                        )
                     mode != Settings.Secure.LOCATION_MODE_OFF
                 }
             } catch (e: Exception) {
