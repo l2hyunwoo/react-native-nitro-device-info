@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Documentation Site**: Comprehensive documentation site built with RSPress
+  - English and Korean language support
+  - Complete API reference with TypeScript definitions
+  - Usage examples and migration guide from `react-native-device-info`
+  - Automated CI/CD deployment to GitHub Pages
+  - Visit at: https://l2hyunwoo.github.io/react-native-nitro-device-info/
+
 ## [1.0.0] - 2025-10-25
 
 ### Added
