@@ -5,10 +5,10 @@
  * information through Nitro's JSI bindings.
  *
  * @author HyunWoo Lee
- * @version 0.1.0
  */
 package com.margelo.nitro.nitrodeviceinfo
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.KeyguardManager
 import android.content.Context
@@ -16,23 +16,57 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.location.LocationManager
+import android.media.AudioDeviceInfo
 import android.media.AudioManager
+import android.media.MediaCodecList
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Debug
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.os.StatFs
+import android.os.SystemClock
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.webkit.WebSettings
 import androidx.core.content.getSystemService
+import com.android.installreferrer.api.InstallReferrerClient
+import com.android.installreferrer.api.InstallReferrerStateListener
 import com.facebook.proguard.annotations.DoNotStrip
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.net.Inet4Address
 import java.net.NetworkInterface
+import kotlin.coroutines.resume
+
+/**
+ * Build information cache to avoid repeated Build.* lookups
+ */
+private data class BuildInfoCache(
+    val serialNumber: String,
+    val androidId: String,
+    val securityPatch: String,
+    val bootloader: String,
+    val codename: String,
+    val device: String,
+    val display: String,
+    val fingerprint: String,
+    val hardware: String,
+    val host: String,
+    val product: String,
+    val tags: String,
+    val type: String,
+    val baseOs: String,
+    val previewSdkInt: Double,
+    val incremental: String,
+    val buildId: String
+)
 
 /**
  * Main implementation of DeviceInfo for Android
@@ -40,6 +74,7 @@ import java.net.NetworkInterface
  * This class provides all device information methods for Android devices, using Android SDK APIs
  * like Build, PackageManager, ActivityManager, etc.
  */
+@SuppressLint("HardwareIds")
 @DoNotStrip
 class DeviceInfo : HybridDeviceInfoSpec() {
     // MARK: - Memory Optimization - Lazy Cached Values
@@ -72,6 +107,95 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     private val batteryManager: BatteryManager by lazy {
         context.getSystemService<BatteryManager>() as BatteryManager
     }
+
+    /** Cached audio manager for headphone detection */
+    private val audioManager: AudioManager by lazy {
+        context.getSystemService<AudioManager>() as AudioManager
+    }
+
+    /**
+     * Get serial number with permission check
+     * Requires READ_PHONE_STATE permission on Android 8.0+
+     */
+    @SuppressLint("MissingPermission")
+    private fun getSerialNumberInternal(): String {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Android 8.0+ requires READ_PHONE_STATE permission
+                if (context.checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE)
+                    == PackageManager.PERMISSION_GRANTED
+                ) {
+                    Build.getSerial()
+                } else {
+                    "unknown"  // Permission not granted
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                Build.SERIAL
+            }
+        } catch (e: SecurityException) {
+            "unknown"
+        }
+    }
+
+    /** Build information cache - initialized once at first access */
+    private val buildInfoCache: BuildInfoCache by lazy {
+        BuildInfoCache(
+            serialNumber = getSerialNumberInternal(),
+            androidId = Settings.Secure.getString(
+                context.contentResolver,
+                Settings.Secure.ANDROID_ID
+            ) ?: "unknown",
+            securityPatch = Build.VERSION.SECURITY_PATCH,
+            bootloader = Build.BOOTLOADER,
+            codename = Build.VERSION.CODENAME,
+            device = Build.DEVICE,
+            display = Build.DISPLAY,
+            fingerprint = Build.FINGERPRINT,
+            hardware = Build.HARDWARE,
+            host = Build.HOST,
+            product = Build.PRODUCT,
+            tags = Build.TAGS,
+            type = Build.TYPE,
+            baseOs = Build.VERSION.BASE_OS ?: "",
+            previewSdkInt = Build.VERSION.PREVIEW_SDK_INT.toDouble(),
+            incremental = Build.VERSION.INCREMENTAL,
+            buildId = Build.ID
+        )
+    }
+
+    /** Cached system features list */
+    private val systemFeatures: List<String> by lazy {
+        context.packageManager.systemAvailableFeatures
+            .mapNotNull { it.name }
+            .sorted()
+    }
+
+    /** Cached supported media types */
+    private val supportedMediaTypes: List<String> by lazy {
+        try {
+            val codecList = MediaCodecList(MediaCodecList.ALL_CODECS)
+            val types = mutableSetOf<String>()
+            codecList.codecInfos?.forEach { codecInfo ->
+                codecInfo.supportedTypes.forEach { type ->
+                    types.add(type)
+                }
+            }
+
+            types.sorted()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    /** Cached network info with periodic refresh (5 second cache) */
+    private val IP_CACHE_DURATION_MS = 5000L
+    private var cachedIpAddress: String = "unknown"
+    private var ipAddressCacheTime: Long = 0
+    private var cachedMacAddress: String = "unknown"
+    private var macAddressCacheTime: Long = 0
+    private var cachedCarrier: String = "unknown"
+    private var carrierCacheTime: Long = 0
 
     // MARK: - Synchronous Properties (Cached Values)
 
@@ -352,7 +476,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 Build.MANUFACTURER.contains("Genymotion") ||
                 (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
                 "google_sdk" == Build.PRODUCT
-        )
+            )
     }
 
     // MARK: - Synchronous Methods - Platform-Specific
@@ -387,6 +511,470 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         } catch (e: PackageManager.NameNotFoundException) {
             Log.d(NAME, "HMS not available - not a Huawei device")
             false
+        }
+    }
+
+    // MARK: - Android Build Information Properties
+
+    /** Android device serial number */
+    override val serialNumber: String
+        get() = buildInfoCache.serialNumber
+
+    /** Android ID (unique per device/app/user combination) */
+    override val androidId: String
+        get() = buildInfoCache.androidId
+
+    /** Android security patch level */
+    override val securityPatch: String
+        get() = buildInfoCache.securityPatch
+
+    /** Device bootloader version */
+    override val bootloader: String
+        get() = buildInfoCache.bootloader
+
+    /** Android OS version codename */
+    override val codename: String
+        get() = buildInfoCache.codename
+
+    /** Device codename */
+    override val device: String
+        get() = buildInfoCache.device
+
+    /** Build display ID */
+    override val display: String
+        get() = buildInfoCache.display
+
+    /** Build fingerprint */
+    override val fingerprint: String
+        get() = buildInfoCache.fingerprint
+
+    /** Hardware name */
+    override val hardware: String
+        get() = buildInfoCache.hardware
+
+    /** Build host */
+    override val host: String
+        get() = buildInfoCache.host
+
+    /** Product name */
+    override val product: String
+        get() = buildInfoCache.product
+
+    /** Build tags */
+    override val tags: String
+        get() = buildInfoCache.tags
+
+    /** Build type */
+    override val type: String
+        get() = buildInfoCache.type
+
+    /** Base OS version */
+    override val baseOs: String
+        get() = buildInfoCache.baseOs
+
+    /** Preview SDK version */
+    override val previewSdkInt: Double
+        get() = buildInfoCache.previewSdkInt
+
+    /** Incremental version */
+    override val incremental: String
+        get() = buildInfoCache.incremental
+
+    /** Build ID */
+    override val buildId: String
+        get() = buildInfoCache.buildId
+
+    // MARK: - Application Installation Metadata
+
+    /** Installer package name (e.g., "com.android.vending" for Play Store) */
+    override val installerPackageName: String
+        get() {
+            return try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    context.packageManager.getInstallSourceInfo(context.packageName).installingPackageName
+                        ?: "unknown"
+                } else {
+                    @Suppress("DEPRECATION")
+                    context.packageManager.getInstallerPackageName(context.packageName) ?: "unknown"
+                }
+            } catch (e: Exception) {
+                "unknown"
+            }
+        }
+
+    /** Get install referrer from Google Play */
+    override fun getInstallReferrer(): Promise<String> {
+        return Promise.async {
+            return@async suspendCancellableCoroutine { continuation ->
+                val referrerClient = InstallReferrerClient.newBuilder(context).build()
+
+                referrerClient.startConnection(object : InstallReferrerStateListener {
+                    override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                        when (responseCode) {
+                            InstallReferrerClient.InstallReferrerResponse.OK -> {
+                                try {
+                                    val response = referrerClient.installReferrer
+                                    val referrer = response.installReferrer ?: "unknown"
+                                    referrerClient.endConnection()
+                                    continuation.resume(referrer)
+                                } catch (e: Exception) {
+                                    referrerClient.endConnection()
+                                    continuation.resume("unknown")
+                                }
+                            }
+
+                            else -> {
+                                referrerClient.endConnection()
+                                continuation.resume("unknown")
+                            }
+                        }
+                    }
+
+                    override fun onInstallReferrerServiceDisconnected() {
+                        continuation.resume("unknown")
+                    }
+                })
+
+                // Timeout after 5 seconds
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (continuation.context.isActive) {
+                        referrerClient.endConnection()
+                        continuation.resume("unknown")
+                    }
+                }, 5000)
+            }
+        }
+    }
+
+    /** Device boot time in milliseconds since epoch */
+    override val startupTime: Double
+        get() {
+            val bootTime = System.currentTimeMillis() - SystemClock.elapsedRealtime()
+            return bootTime.toDouble()
+        }
+
+    /** Readable version string (version.build) */
+    override val readableVersion: String
+        get() = "${getVersion()}.${getBuildNumber()}"
+
+    /** First install time in milliseconds since epoch */
+    override val firstInstallTimeSync: Double
+        get() = packageInfo.firstInstallTime.toDouble()
+
+    /** Last update time in milliseconds since epoch */
+    override val lastUpdateTimeSync: Double
+        get() = packageInfo.lastUpdateTime.toDouble()
+
+    // MARK: - Device Capability Detection
+
+    /** Check if wired headphones are connected */
+    override fun isWiredHeadphonesConnected(): Boolean {
+        return try {
+            val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+            audioDevices.any { device ->
+                device.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
+                    device.type == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        device.type == AudioDeviceInfo.TYPE_USB_HEADSET
+                    } else {
+                        true
+                    }
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /** Check if Bluetooth headphones are connected */
+    override fun isBluetoothHeadphonesConnected(): Boolean {
+        return try {
+            val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+            audioDevices.any { device ->
+                device.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
+                    device.type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /** Check if airplane mode is enabled */
+    override fun isAirplaneMode(): Boolean {
+        return try {
+            Settings.Global.getInt(
+                context.contentResolver,
+                Settings.Global.AIRPLANE_MODE_ON,
+                0
+            ) != 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /** Check if device is low RAM device */
+    override fun isLowRamDevice(): Boolean {
+        return activityManager.isLowRamDevice
+    }
+
+    /** Check if mouse is connected (Windows-specific, returns false on Android) */
+    override fun isMouseConnected(): Boolean {
+        return false
+    }
+
+    /** Check if keyboard is connected (Windows-specific, returns false on Android) */
+    override fun isKeyboardConnected(): Boolean {
+        return false
+    }
+
+    /** Check if device is in landscape orientation */
+    override fun isLandscape(): Boolean {
+        val orientation = context.resources.configuration.orientation
+        return orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
+
+    // MARK: - Advanced System Information
+
+    /** Get supported 32-bit ABIs */
+    override fun getSupported32BitAbis(): Array<String> {
+        return Build.SUPPORTED_32_BIT_ABIS.toList().toTypedArray()
+    }
+
+    /** Get supported 64-bit ABIs */
+    override fun getSupported64BitAbis(): Array<String> {
+        return Build.SUPPORTED_64_BIT_ABIS.toList().toTypedArray()
+    }
+
+    /** Get system font scale */
+    override fun getFontScale(): Double {
+        return context.resources.configuration.fontScale.toDouble()
+    }
+
+    /** Check if system has a specific feature */
+    override fun hasSystemFeature(feature: String): Boolean {
+        return try {
+            context.packageManager.hasSystemFeature(feature)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /** Get list of all system features */
+    override fun getSystemAvailableFeatures(): Array<String> {
+        return systemFeatures.toTypedArray()
+    }
+
+    /** Get available location providers and their status */
+    override fun getAvailableLocationProviders(): Map<String, Boolean> {
+        return try {
+            val locationManager =
+                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val allProviders = locationManager.allProviders
+            val providers = mutableMapOf<String, Boolean>()
+
+            for (provider in allProviders) {
+                providers[provider] = locationManager.isProviderEnabled(provider)
+            }
+
+            providers
+        } catch (e: Exception) {
+            emptyMap()
+        }
+    }
+
+    /** Get host names (Windows-specific, not available on Android) */
+    override fun getHostNames(): Array<String> {
+        return arrayOf()
+    }
+
+    /** Get maximum memory available to the app */
+    override fun getMaxMemory(): Double {
+        return Runtime.getRuntime().maxMemory().toDouble()
+    }
+
+    // MARK: - Network & Display Information
+
+    /** Get WebView user agent string */
+    override fun getUserAgent(): Promise<String> {
+        return Promise.async {
+            return@async try {
+                WebSettings.getDefaultUserAgent(context)
+            } catch (e: Exception) {
+                "unknown"
+            }
+        }
+    }
+
+    /** Get device name */
+    override fun getDeviceName(): String {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME)
+                    ?: Settings.Secure.getString(context.contentResolver, "bluetooth_name")
+                    ?: "unknown"
+            } else {
+                Settings.Secure.getString(context.contentResolver, "bluetooth_name")
+                    ?: "unknown"
+            }
+        } catch (e: Exception) {
+            "unknown"
+        }
+    }
+
+    /** Get device token (iOS-specific, throws error on Android) */
+    override fun getDeviceToken(): Promise<String> {
+        return Promise.async {
+            throw Exception("getDeviceToken() is only available on iOS")
+        }
+    }
+
+    /** Get IP address with 5-second cache */
+    override val ipAddressSync: String
+        get() {
+            val now = System.currentTimeMillis()
+            if (now - ipAddressCacheTime > IP_CACHE_DURATION_MS) {
+                cachedIpAddress = queryIpAddressInternal()
+                ipAddressCacheTime = now
+            }
+            return cachedIpAddress
+        }
+
+    /** Query IP address from network interfaces */
+    private fun queryIpAddressInternal(): String {
+        return try {
+            val interfaces = NetworkInterface.getNetworkInterfaces()
+            for (intf in interfaces) {
+                val addrs = intf.inetAddresses
+                for (addr in addrs) {
+                    if (!addr.isLoopbackAddress && addr is Inet4Address) {
+                        return addr.hostAddress ?: "unknown"
+                    }
+                }
+            }
+            "unknown"
+        } catch (e: Exception) {
+            "unknown"
+        }
+    }
+
+    /** Get MAC address with 5-second cache */
+    override val macAddressSync: String
+        get() {
+            val now = System.currentTimeMillis()
+            if (now - macAddressCacheTime > IP_CACHE_DURATION_MS) {
+                cachedMacAddress = queryMacAddressInternal()
+                macAddressCacheTime = now
+            }
+            return cachedMacAddress
+        }
+
+    /** Query MAC address from network interfaces */
+    private fun queryMacAddressInternal(): String {
+        return try {
+            val interfaces = NetworkInterface.getNetworkInterfaces()
+            for (intf in interfaces) {
+                if (intf.name.equals("wlan0", ignoreCase = true)) {
+                    val mac = intf.hardwareAddress ?: continue
+                    return mac.joinToString(":") { "%02X".format(it) }
+                }
+            }
+            "unknown"
+        } catch (e: Exception) {
+            "unknown"
+        }
+    }
+
+    /** Get carrier name with 5-second cache */
+    override val carrierSync: String
+        get() {
+            val now = System.currentTimeMillis()
+            if (now - carrierCacheTime > IP_CACHE_DURATION_MS) {
+                val telephonyManager =
+                    context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+                cachedCarrier = telephonyManager?.networkOperatorName ?: "unknown"
+                carrierCacheTime = now
+            }
+            return cachedCarrier
+        }
+
+    /** Check if location services are enabled */
+    override val isLocationEnabledSync: Boolean
+        get() {
+            return try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val locationManager =
+                        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    locationManager.isLocationEnabled
+                } else {
+                    val mode = Settings.Secure.getInt(
+                        context.contentResolver,
+                        Settings.Secure.LOCATION_MODE,
+                        Settings.Secure.LOCATION_MODE_OFF
+                    )
+                    mode != Settings.Secure.LOCATION_MODE_OFF
+                }
+            } catch (e: Exception) {
+                false
+            }
+        }
+
+    /** Check if any headphones are connected */
+    override val isHeadphonesConnectedSync: Boolean
+        get() = isWiredHeadphonesConnected() || isBluetoothHeadphonesConnected()
+
+    // MARK: - iOS-Specific Features
+
+    /** Check if display is zoomed (iOS-specific, returns false on Android) */
+    override fun isDisplayZoomed(): Boolean {
+        return false
+    }
+
+    /** Get screen brightness (iOS-specific, returns -1 on Android) */
+    override fun getBrightness(): Double {
+        return -1.0
+    }
+
+    /** Get unique ID from Keychain (iOS-specific, returns device ID on Android) */
+    override fun syncUniqueId(): Promise<String> {
+        return Promise.async {
+            return@async getUniqueId()
+        }
+    }
+
+    // MARK: - Media & Battery Helpers
+
+    /** Get list of supported media types/codecs */
+    override fun getSupportedMediaTypeList(): Array<String> {
+        return supportedMediaTypes.toTypedArray()
+    }
+
+    /** Check if battery level is below threshold */
+    override fun isLowBatteryLevel(threshold: Double): Boolean {
+        val currentLevel = getBatteryLevel()
+        return currentLevel < threshold
+    }
+
+    /** Check if device is in tablet mode (Windows-specific, returns false on Android) */
+    override fun isTabletMode(): Boolean {
+        return false
+    }
+
+    /** Get total disk capacity using old API (for legacy compatibility) */
+    override fun getTotalDiskCapacityOld(): Double {
+        return try {
+            val stat = StatFs(Environment.getDataDirectory().path)
+            stat.blockCountLong * stat.blockSizeLong.toDouble()
+        } catch (e: Exception) {
+            -1.0
+        }
+    }
+
+    /** Get free disk storage using old API (for legacy compatibility) */
+    override fun getFreeDiskStorageOld(): Double {
+        return try {
+            val stat = StatFs(Environment.getDataDirectory().path)
+            stat.availableBlocksLong * stat.blockSizeLong.toDouble()
+        } catch (e: Exception) {
+            -1.0
         }
     }
 
