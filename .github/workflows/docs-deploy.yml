@@ -32,9 +32,12 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'docs/yarn.lock'
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
       - name: Install dependencies
         working-directory: docs
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build documentation
         working-directory: docs

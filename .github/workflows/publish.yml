@@ -170,7 +170,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Update package.json version (Dry Run)
         if: github.event.inputs.dry_run == 'true'
