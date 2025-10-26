@@ -645,9 +645,14 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if wired headphones are connected
   func isWiredHeadphonesConnected() -> Bool {
-    let route = AVAudioSession.sharedInstance().currentRoute
-    return route.outputs.contains { output in
-      output.portType == .headphones
+    do {
+      let route = AVAudioSession.sharedInstance().currentRoute
+      return route.outputs.contains { output in
+        output.portType == .headphones
+      }
+    } catch {
+      // Handle error silently and return false
+      return false
     }
   }
 
