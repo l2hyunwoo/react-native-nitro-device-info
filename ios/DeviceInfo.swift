@@ -731,15 +731,14 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return []
   }
 
-  /// Get available location providers
-  func getAvailableLocationProviders() -> [String: Bool] {
-    var providers: [String: Bool] = [:]
-
+  /// Get list of enabled location providers
+  func getAvailableLocationProviders() -> [String] {
     let enabled = CLLocationManager.locationServicesEnabled()
-    providers["gps"] = enabled
-    providers["network"] = enabled
-
-    return providers
+    if enabled {
+      return ["gps", "network"]
+    } else {
+      return []
+    }
   }
 
   /// Get host names (Windows-specific, not available on iOS)

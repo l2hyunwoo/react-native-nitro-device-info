@@ -871,13 +871,13 @@ export interface DeviceInfo
   getSystemAvailableFeatures(): string[];
 
   /**
-   * Get list of available location providers.
-   * Returns {} on platforms without location services.
+   * Get list of enabled location providers.
+   * Returns [] on platforms without location services or if all providers are disabled.
    *
    * @platform iOS, Android
-   *
+   * @returns Array of enabled provider names (e.g., ["gps", "network"])
    */
-  getAvailableLocationProviders(): Record<string, boolean>;
+  getAvailableLocationProviders(): string[];
 
   /**
    * Get list of Windows host names.

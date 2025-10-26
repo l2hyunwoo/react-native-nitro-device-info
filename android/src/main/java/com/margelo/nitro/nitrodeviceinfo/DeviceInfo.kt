@@ -774,21 +774,17 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return systemFeatures.toTypedArray()
     }
 
-    /** Get available location providers and their status */
-    override fun getAvailableLocationProviders(): Map<String, Boolean> {
+    /** Get list of enabled location providers */
+    override fun getAvailableLocationProviders(): Array<String> {
         return try {
             val locationManager =
                 context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            val allProviders = locationManager.allProviders
-            val providers = mutableMapOf<String, Boolean>()
 
-            for (provider in allProviders) {
-                providers[provider] = locationManager.isProviderEnabled(provider)
-            }
-
-            providers
+            locationManager.allProviders
+                .filter { locationManager.isProviderEnabled(it) }
+                .toTypedArray()
         } catch (e: Exception) {
-            emptyMap()
+            emptyArray()
         }
     }
 
