@@ -2,8 +2,9 @@
  * TypeScript Type Contracts for Enhanced Example Apps
  *
  * These types serve as the contract between UI components, data fetching logic,
- * and benchmark runners. They should be copied to the appropriate locations in
- * example/showcase/src/types/ and example/benchmark/src/types/
+ * and benchmark runners. To avoid code duplication, import these types from this
+ * file wherever they are needed (e.g., in example/showcase/src/types/ and
+ * example/benchmark/src/types/).
  */
 
 // ============================================================================
