@@ -40,10 +40,6 @@ cd example/showcase
 yarn android
 ```
 
-## Metro Configuration
-
-The showcase app uses the default Metro port (8081).
-
 ## Features
 
 - Simple single-screen interface displaying all device information
@@ -78,7 +74,6 @@ pod install
 - **Bundle ID (iOS)**: nitrodeviceinfo.example
 - **Package Name (Android)**: com.nitrodeviceinfoexample
 - **Display Name**: NitroDeviceInfoExample
-- **Metro Port**: 8081 (default)
 
 ## Comparison with Benchmark App
 
@@ -86,6 +81,5 @@ pod install
 |---------|-------------|---------------|
 | Purpose | Demo/Examples | Performance Testing |
 | Complexity | Simple | Complex |
-| Metro Port | 8081 | 8082 |
 | Navigation | None | None |
 | Independence | ✓ | ✓ |

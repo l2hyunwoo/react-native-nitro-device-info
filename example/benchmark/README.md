@@ -40,10 +40,6 @@ cd example/benchmark
 yarn android
 ```
 
-## Metro Configuration
-
-The benchmark app runs on Metro port 8082 to allow running simultaneously with the showcase app (which uses the default port 8081).
-
 ## Development
 
 The benchmark app is completely independent of the showcase app. Changes to one will not affect the other.
@@ -67,4 +63,3 @@ pod install
 - **Bundle ID (iOS)**: com.nitrodeviceinfobenchmark
 - **Package Name (Android)**: com.nitrodeviceinfobenchmark
 - **Display Name**: Nitro Device Info Benchmark
-- **Metro Port**: 8082

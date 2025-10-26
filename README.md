@@ -49,68 +49,90 @@ No additional configuration needed! Gradle auto-linking handles everything.
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-// Synchronous access (immediate - <1ms)
+// Synchronous properties (immediate - <1ms)
 console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
+console.log(DeviceInfoModule.model); // "iPhone"
 
 // Synchronous methods (immediate - <1ms)
 const uniqueId = DeviceInfoModule.getUniqueId();
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
-const powerState = DeviceInfoModule.getPowerState();
-console.log(powerState);
-// {
-//   batteryLevel: 0.75,
-//   batteryState: 'charging',
-//   lowPowerMode: false
-// }
+const manufacturer = DeviceInfoModule.getManufacturer();
+console.log(manufacturer); // "Apple"
+
+const isTablet = DeviceInfoModule.isTablet();
+console.log(isTablet); // false
+
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
+console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`); // "Battery: 85%"
 
 // Asynchronous methods (Promise-based - <100ms)
 const ipAddress = await DeviceInfoModule.getIpAddress();
 console.log(ipAddress); // "192.168.1.100"
+
+const carrier = await DeviceInfoModule.getCarrier();
+console.log(carrier); // "T-Mobile"
 ```
 
 ### Advanced Usage
 
 ```typescript
-import { createDeviceInfo } from 'react-native-nitro-device-info';
-import type { DeviceInfo, PowerState } from 'react-native-nitro-device-info';
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+import type { PowerState, DeviceType } from 'react-native-nitro-device-info';
 
-// Create a device info instance
-const deviceInfo: DeviceInfo = createDeviceInfo();
+// Device Identification
+const deviceId = DeviceInfoModule.deviceId; // "iPhone14,2"
+const manufacturer = DeviceInfoModule.getManufacturer(); // "Apple"
+const uniqueId = DeviceInfoModule.getUniqueId(); // "FCDBD8EF-..."
 
-// Device Identification (Synchronous)
-const deviceId = deviceInfo.deviceId;
-const manufacturer = deviceInfo.getManufacturer();
-const uniqueId = deviceInfo.getUniqueId();
+// Device Capabilities
+const isTablet = DeviceInfoModule.isTablet(); // false
+const hasNotch = DeviceInfoModule.hasNotch(); // true
+const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland(); // false
+const isCameraPresent = DeviceInfoModule.isCameraPresent(); // true
+const isEmulator = DeviceInfoModule.isEmulator(); // false
 
-// Device Capabilities (Synchronous)
-const isTablet = deviceInfo.isTablet();
-const hasNotch = deviceInfo.hasNotch();
-const hasDynamicIsland = deviceInfo.hasDynamicIsland();
-const isCameraPresent = deviceInfo.isCameraPresent();
+// System Resources
+const totalMemory = DeviceInfoModule.getTotalMemory();
+const usedMemory = DeviceInfoModule.getUsedMemory();
+const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
+const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
-// System Resources (Synchronous)
-const totalMemory = deviceInfo.getTotalMemory();
-const freeStorage = deviceInfo.getFreeDiskStorage();
-console.log(`Memory: ${totalMemory / 1024 / 1024 / 1024} GB`);
-console.log(`Free Storage: ${freeStorage / 1024 / 1024 / 1024} GB`);
+console.log(`RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`);
+console.log(`Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB free of ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
-// Battery Information (Synchronous)
-const batteryLevel = deviceInfo.getBatteryLevel();
-console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
+// Battery Information
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const isCharging = DeviceInfoModule.isBatteryCharging();
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 
-// Application Metadata (Synchronous)
-const version = deviceInfo.getVersion();
-const buildNumber = deviceInfo.getBuildNumber();
-const bundleId = deviceInfo.getBundleId();
-console.log(`${bundleId} v${version} (${buildNumber})`);
+console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`);
+console.log(`Low Power Mode: ${powerState.lowPowerMode}`);
 
-// Network Information (Asynchronous)
-const ipAddress = await deviceInfo.getIpAddress();
-const carrier = await deviceInfo.getCarrier();
-console.log(`IP: ${ipAddress}, Carrier: ${carrier}`);
+// Application Metadata
+const version = DeviceInfoModule.getVersion();
+const buildNumber = DeviceInfoModule.getBuildNumber();
+const bundleId = DeviceInfoModule.getBundleId();
+const appName = DeviceInfoModule.getApplicationName();
+
+console.log(`${appName} (${bundleId})`);
+console.log(`Version: ${version} (${buildNumber})`);
+
+// Network & Connectivity (Async)
+const ipAddress = await DeviceInfoModule.getIpAddress();
+const carrier = await DeviceInfoModule.getCarrier();
+const isLocationEnabled = await DeviceInfoModule.isLocationEnabled();
+
+console.log(`IP: ${ipAddress}`);
+console.log(`Carrier: ${carrier}`);
+console.log(`Location Services: ${isLocationEnabled ? 'enabled' : 'disabled'}`);
+
+// Platform-Specific
+const apiLevel = DeviceInfoModule.getApiLevel(); // Android: 33, iOS: -1
+const abis = DeviceInfoModule.getSupportedAbis(); // ["arm64-v8a"]
+const hasGms = DeviceInfoModule.hasGms(); // Android only
 ```
 
 ## API Reference
@@ -241,8 +263,12 @@ If you're migrating from `react-native-device-info`, the API is 80% compatible:
 ```typescript
 import DeviceInfo from 'react-native-device-info';
 
+// Everything was async or method-based
 const deviceId = DeviceInfo.getDeviceId();
+const brand = DeviceInfo.getBrand();
 const uniqueId = await DeviceInfo.getUniqueId();
+const totalMemory = await DeviceInfo.getTotalMemory();
+const batteryLevel = await DeviceInfo.getBatteryLevel();
 const isTablet = DeviceInfo.isTablet();
 ```
 
@@ -251,16 +277,26 @@ const isTablet = DeviceInfo.isTablet();
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-const deviceId = DeviceInfoModule.deviceId; // Now a sync property!
-const uniqueId = DeviceInfoModule.getUniqueId(); // Now synchronous (was async)!
-const isTablet = DeviceInfoModule.isTablet(); // Same method
+// Properties are now direct getters
+const deviceId = DeviceInfoModule.deviceId; // Property, not method
+const brand = DeviceInfoModule.brand; // Property, not method
+
+// Most methods are now synchronous
+const uniqueId = DeviceInfoModule.getUniqueId(); // Sync now!
+const totalMemory = DeviceInfoModule.getTotalMemory(); // Sync now!
+const batteryLevel = DeviceInfoModule.getBatteryLevel(); // Sync now!
+const isTablet = DeviceInfoModule.isTablet(); // Same as before
+
+// Only network/connectivity remain async
+const ipAddress = await DeviceInfoModule.getIpAddress();
 ```
 
 **Key Differences**:
 
-- Uses Nitro HybridObject instead of TurboModule
-- Most methods are now synchronous for instant access (<1ms)
-- Only network/connectivity and install time methods remain async
+- Uses Nitro HybridObject (JSI) instead of TurboModule for zero-overhead calls
+- Core device properties are now direct property accessors (not methods)
+- Most methods are synchronous for instant access (<1ms)
+- Only I/O-bound operations (network, install times) remain async
 
 ## Example Apps
 

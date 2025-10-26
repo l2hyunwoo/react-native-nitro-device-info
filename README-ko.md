@@ -50,70 +50,90 @@ Gradle 자동 링크가 모든 작업을 처리합니다.
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-// 동기 접근 (즉시 - <1ms)
+// 동기 속성 (즉시 - <1ms)
 console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
+console.log(DeviceInfoModule.model); // "iPhone"
 
 // 동기 메서드 (즉시 - <1ms)
 const uniqueId = DeviceInfoModule.getUniqueId();
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
-const powerState = DeviceInfoModule.getPowerState();
-console.log(powerState);
-// {
-//   batteryLevel: 0.75,
-//   batteryState: 'charging',
-//   lowPowerMode: false
-// }
+const manufacturer = DeviceInfoModule.getManufacturer();
+console.log(manufacturer); // "Apple"
+
+const isTablet = DeviceInfoModule.isTablet();
+console.log(isTablet); // false
+
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
+console.log(`배터리: ${(batteryLevel * 100).toFixed(0)}%`); // "배터리: 85%"
 
 // 비동기 메서드 (Promise 기반 - <100ms)
 const ipAddress = await DeviceInfoModule.getIpAddress();
 console.log(ipAddress); // "192.168.1.100"
+
+const carrier = await DeviceInfoModule.getCarrier();
+console.log(carrier); // "SK Telecom"
 ```
 
 ### 고급 사용법
 
 ```typescript
-import { createDeviceInfo } from 'react-native-nitro-device-info';
-import type { DeviceInfo, PowerState } from 'react-native-nitro-device-info';
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+import type { PowerState, DeviceType } from 'react-native-nitro-device-info';
 
-// 디바이스 정보 인스턴스 생성
-const deviceInfo: DeviceInfo = createDeviceInfo();
+// 디바이스 식별
+const deviceId = DeviceInfoModule.deviceId; // "iPhone14,2"
+const manufacturer = DeviceInfoModule.getManufacturer(); // "Apple"
+const uniqueId = DeviceInfoModule.getUniqueId(); // "FCDBD8EF-..."
 
-// 디바이스 식별 (동기)
-const deviceId = deviceInfo.deviceId;
-const manufacturer = deviceInfo.getManufacturer();
-const uniqueId = deviceInfo.getUniqueId();
+// 디바이스 기능
+const isTablet = DeviceInfoModule.isTablet(); // false
+const hasNotch = DeviceInfoModule.hasNotch(); // true
+const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland(); // false
+const isCameraPresent = DeviceInfoModule.isCameraPresent(); // true
+const isEmulator = DeviceInfoModule.isEmulator(); // false
 
-// 디바이스 기능 (동기)
-const isTablet = deviceInfo.isTablet();
-const hasNotch = deviceInfo.hasNotch();
-const hasDynamicIsland = deviceInfo.hasDynamicIsland();
-const isCameraPresent = deviceInfo.isCameraPresent();
+// 시스템 리소스
+const totalMemory = DeviceInfoModule.getTotalMemory();
+const usedMemory = DeviceInfoModule.getUsedMemory();
+const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
+const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
-// 시스템 리소스 (동기)
-const totalMemory = deviceInfo.getTotalMemory();
-const freeStorage = deviceInfo.getFreeDiskStorage();
-console.log(`메모리: ${(totalMemory / 1024 / 1024 / 1024).toFixed(2)} GB`);
-console.log(
-  `사용 가능한 저장공간: ${(freeStorage / 1024 / 1024 / 1024).toFixed(2)} GB`
-);
+console.log(`RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`);
+console.log(`저장공간: ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB 중 ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB 사용 가능`);
 
-// 배터리 정보 (동기)
-const batteryLevel = deviceInfo.getBatteryLevel();
-console.log(`배터리 잔량: ${(batteryLevel * 100).toFixed(0)}%`);
+// 배터리 정보
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const isCharging = DeviceInfoModule.isBatteryCharging();
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 
-// 앱 메타데이터 (동기)
-const version = deviceInfo.getVersion();
-const buildNumber = deviceInfo.getBuildNumber();
-const bundleId = deviceInfo.getBundleId();
-console.log(`${bundleId} v${version} (${buildNumber})`);
+console.log(`배터리: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(충전 중)' : ''}`);
+console.log(`저전력 모드: ${powerState.lowPowerMode}`);
 
-// 네트워크 정보 (비동기)
-const ipAddress = await deviceInfo.getIpAddress();
-const carrier = await deviceInfo.getCarrier();
-console.log(`IP: ${ipAddress}, 통신사: ${carrier}`);
+// 앱 메타데이터
+const version = DeviceInfoModule.getVersion();
+const buildNumber = DeviceInfoModule.getBuildNumber();
+const bundleId = DeviceInfoModule.getBundleId();
+const appName = DeviceInfoModule.getApplicationName();
+
+console.log(`${appName} (${bundleId})`);
+console.log(`버전: ${version} (${buildNumber})`);
+
+// 네트워크 및 연결 (비동기)
+const ipAddress = await DeviceInfoModule.getIpAddress();
+const carrier = await DeviceInfoModule.getCarrier();
+const isLocationEnabled = await DeviceInfoModule.isLocationEnabled();
+
+console.log(`IP: ${ipAddress}`);
+console.log(`통신사: ${carrier}`);
+console.log(`위치 서비스: ${isLocationEnabled ? '활성화' : '비활성화'}`);
+
+// 플랫폼별
+const apiLevel = DeviceInfoModule.getApiLevel(); // Android: 33, iOS: -1
+const abis = DeviceInfoModule.getSupportedAbis(); // ["arm64-v8a"]
+const hasGms = DeviceInfoModule.hasGms(); // Android 전용
 ```
 
 ## API 레퍼런스
@@ -244,8 +264,12 @@ type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
 ```typescript
 import DeviceInfo from 'react-native-device-info';
 
+// 모든 것이 비동기이거나 메서드 기반
 const deviceId = DeviceInfo.getDeviceId();
+const brand = DeviceInfo.getBrand();
 const uniqueId = await DeviceInfo.getUniqueId();
+const totalMemory = await DeviceInfo.getTotalMemory();
+const batteryLevel = await DeviceInfo.getBatteryLevel();
 const isTablet = DeviceInfo.isTablet();
 ```
 
@@ -254,16 +278,26 @@ const isTablet = DeviceInfo.isTablet();
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-const deviceId = DeviceInfoModule.deviceId; // 이제 동기 속성입니다!
-const uniqueId = DeviceInfoModule.getUniqueId(); // 이제 동기 메서드입니다 (이전엔 비동기)!
-const isTablet = DeviceInfoModule.isTablet(); // 동일한 메서드
+// 속성은 이제 직접 접근 가능한 getter
+const deviceId = DeviceInfoModule.deviceId; // 메서드가 아닌 속성
+const brand = DeviceInfoModule.brand; // 메서드가 아닌 속성
+
+// 대부분의 메서드가 이제 동기
+const uniqueId = DeviceInfoModule.getUniqueId(); // 이제 동기!
+const totalMemory = DeviceInfoModule.getTotalMemory(); // 이제 동기!
+const batteryLevel = DeviceInfoModule.getBatteryLevel(); // 이제 동기!
+const isTablet = DeviceInfoModule.isTablet(); // 이전과 동일
+
+// 네트워크/연결만 비동기로 유지
+const ipAddress = await DeviceInfoModule.getIpAddress();
 ```
 
 **주요 변경점**
 
-- TurboModule → Nitro HybridObject 기반
-- 대부분의 메서드가 동기 방식으로 전환되어 즉시 접근 가능 (<1ms)
-- 네트워크/연결 관련 메서드와 설치 시각 메서드만 비동기로 유지
+- TurboModule 대신 Nitro HybridObject(JSI) 사용으로 제로 오버헤드 호출
+- 핵심 디바이스 속성은 이제 직접 속성 접근 (메서드 아님)
+- 대부분의 메서드가 동기 방식으로 즉시 접근 가능 (<1ms)
+- I/O 기반 작업(네트워크, 설치 시각)만 비동기로 유지
 
 ## 예제 앱
 
