@@ -8,7 +8,7 @@ PODS:
   - hermes-engine (0.81.1):
     - hermes-engine/Pre-built (= 0.81.1)
   - hermes-engine/Pre-built (0.81.1)
-  - NitroDeviceInfo (0.1.1):
+  - NitroDeviceInfo (1.0.0):
     - NitroModules
     - React-callinvoker
     - React-Core
@@ -2528,7 +2528,7 @@ SPEC CHECKSUMS:
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 4f8246b1f6d79f625e0d99472d1f3a71da4d28ca
-  NitroDeviceInfo: 9a63ae05d553037cf98f2541c7bab0ab534dc344
+  NitroDeviceInfo: 55d053e98debd43505a7c51f16410511d42c1c93
   NitroModules: 5f474732a91ef6a48e7788fb73b355bcb52999ee
   RCT-Folly: 59ec0ac1f2f39672a0c6e6cecdd39383b764646f
   RCTDeprecation: c4b9e2fd0ab200e3af72b013ed6113187c607077
