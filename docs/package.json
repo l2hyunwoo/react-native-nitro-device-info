@@ -9,7 +9,7 @@
     "preview": "rspress preview"
   },
   "dependencies": {
-    "rspress": "^1.30.0"
+    "rspress": "^1.40.2"
   },
   "devDependencies": {
     "@rspress/plugin-container-syntax": "^1.45.8",

@@ -3462,7 +3462,7 @@ __metadata:
   resolution: "react-native-nitro-device-info-docs@workspace:."
   dependencies:
     "@rspress/plugin-container-syntax": ^1.45.8
-    rspress: ^1.30.0
+    rspress: ^1.40.2
     typescript: ^5.6.3
   languageName: unknown
   linkType: soft
@@ -3655,7 +3655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rspress@npm:^1.30.0":
+"rspress@npm:^1.40.2":
   version: 1.45.8
   resolution: "rspress@npm:1.45.8"
   dependencies:
