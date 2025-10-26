@@ -954,7 +954,11 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Get total disk capacity using old API (alias to main method on iOS)
   func getTotalDiskCapacityOld() -> Double {
-    return try! getTotalDiskCapacity()
+    do {
+      return try getTotalDiskCapacity()
+    } catch {
+      return -1.0
+    }
   }
 
   /// Get free disk storage using old API (alias to main method on iOS)
