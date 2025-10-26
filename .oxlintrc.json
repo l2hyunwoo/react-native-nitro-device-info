@@ -16,6 +16,7 @@
     "**/android/**",
     "**/ios/**",
     "**/*.d.ts",
-    "coverage/**"
+    "coverage/**",
+    "docs/**"
   ]
 }
