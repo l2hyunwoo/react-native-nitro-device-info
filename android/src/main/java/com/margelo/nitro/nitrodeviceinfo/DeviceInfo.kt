@@ -608,10 +608,21 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return Promise.async {
             return@async suspendCancellableCoroutine { continuation ->
                 val referrerClient = InstallReferrerClient.newBuilder(context).build()
+                val handler = Handler(Looper.getMainLooper())
+
+                val timeoutRunnable = Runnable {
+                    if (continuation.context.isActive) {
+                        referrerClient.endConnection()
+                        continuation.resume("unknown")
+                    }
+                }
 
                 referrerClient.startConnection(
                     object : InstallReferrerStateListener {
                         override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                            // Cancel timeout handler
+                            handler.removeCallbacks(timeoutRunnable)
+
                             when (responseCode) {
                                 InstallReferrerClient.InstallReferrerResponse.OK -> {
                                     try {
@@ -633,18 +644,15 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                         }
 
                         override fun onInstallReferrerServiceDisconnected() {
+                            // Cancel timeout handler
+                            handler.removeCallbacks(timeoutRunnable)
                             continuation.resume("unknown")
                         }
                     },
                 )
 
                 // Timeout after 5 seconds
-                Handler(Looper.getMainLooper()).postDelayed({
-                    if (continuation.context.isActive) {
-                        referrerClient.endConnection()
-                        continuation.resume("unknown")
-                    }
-                }, 5000)
+                handler.postDelayed(timeoutRunnable, 5000)
             }
         }
     }
