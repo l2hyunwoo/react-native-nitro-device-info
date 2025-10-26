@@ -963,6 +963,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Get free disk storage using old API (alias to main method on iOS)
   func getFreeDiskStorageOld() -> Double {
-    return try! getFreeDiskStorage()
+    return (try? getFreeDiskStorage()) ?? -1.0
   }
 }
