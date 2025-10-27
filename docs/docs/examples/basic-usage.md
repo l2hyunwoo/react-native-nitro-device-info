@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function getDeviceCategory(): string {
-  if (DeviceInfoModule.isTablet()) {
+  if (DeviceInfoModule.isTablet) {
     return 'This is a tablet';
   } else {
     return 'This is a phone';
@@ -93,22 +93,22 @@ console.log(getDeviceCategory());
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 // Check if device has a notch
-if (DeviceInfoModule.hasNotch()) {
+if (DeviceInfoModule.hasNotch) {
   console.log('Device has a notch - adjust UI accordingly');
 }
 
 // Check if device has Dynamic Island (iPhone 14 Pro+)
-if (DeviceInfoModule.hasDynamicIsland()) {
+if (DeviceInfoModule.hasDynamicIsland) {
   console.log('Device has Dynamic Island');
 }
 
 // Check if camera is available
-if (DeviceInfoModule.isCameraPresent()) {
+if (DeviceInfoModule.isCameraPresent) {
   console.log('Camera is available');
 }
 
 // Check if running in simulator/emulator
-if (DeviceInfoModule.isEmulator()) {
+if (DeviceInfoModule.isEmulator) {
   console.log('Running in simulator/emulator');
 }
 ```
@@ -123,8 +123,8 @@ import { View, Text } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 export default function BatteryIndicator() {
-  const batteryLevel = DeviceInfoModule.getBatteryLevel();
-  const isCharging = DeviceInfoModule.isBatteryCharging();
+  const batteryLevel = DeviceInfoModule.batteryLevel;
+  const isCharging = DeviceInfoModule.isBatteryCharging;
 
   const percentage = (batteryLevel * 100).toFixed(0);
 
@@ -143,7 +143,7 @@ export default function BatteryIndicator() {
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function checkBatteryStatus() {
-  const batteryLevel = DeviceInfoModule.getBatteryLevel();
+  const batteryLevel = DeviceInfoModule.batteryLevel;
 
   if (DeviceInfoModule.isLowBatteryLevel(0.2)) {
     console.warn(`Battery low: ${(batteryLevel * 100).toFixed(0)}%`);
@@ -167,7 +167,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import type { PowerState } from 'react-native-nitro-device-info';
 
 export default function PowerStateDisplay() {
-  const powerState: PowerState = DeviceInfoModule.getPowerState();
+  const powerState: PowerState = DeviceInfoModule.powerState;
 
   const percentage = (powerState.batteryLevel * 100).toFixed(0);
 
@@ -191,8 +191,8 @@ import { View, Text } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 export default function MemoryInfo() {
-  const totalMemory = DeviceInfoModule.getTotalMemory();
-  const usedMemory = DeviceInfoModule.getUsedMemory();
+  const totalMemory = DeviceInfoModule.totalMemory;
+  const usedMemory = DeviceInfoModule.usedMemory;
 
   const totalGB = (totalMemory / 1024 / 1024 / 1024).toFixed(1);
   const usedMB = (usedMemory / 1024 / 1024).toFixed(0);
@@ -214,8 +214,8 @@ import { View, Text } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 export default function StorageInfo() {
-  const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
-  const freeDisk = DeviceInfoModule.getFreeDiskStorage();
+  const totalDisk = DeviceInfoModule.totalDiskCapacity;
+  const freeDisk = DeviceInfoModule.freeDiskStorage;
 
   const totalGB = (totalDisk / 1024 / 1024 / 1024).toFixed(0);
   const freeGB = (freeDisk / 1024 / 1024 / 1024).toFixed(1);
@@ -239,10 +239,10 @@ import { View, Text } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 export default function AppVersionInfo() {
-  const appName = DeviceInfoModule.getApplicationName();
-  const version = DeviceInfoModule.getVersion();
-  const buildNumber = DeviceInfoModule.getBuildNumber();
-  const bundleId = DeviceInfoModule.getBundleId();
+  const appName = DeviceInfoModule.applicationName;
+  const version = DeviceInfoModule.version;
+  const buildNumber = DeviceInfoModule.buildNumber;
+  const bundleId = DeviceInfoModule.bundleId;
 
   return (
     <View>
@@ -381,10 +381,10 @@ export default function DeviceInfoScreen() {
   const brand = DeviceInfoModule.brand;
   const model = DeviceInfoModule.model;
   const systemVersion = DeviceInfoModule.systemVersion;
-  const isTablet = DeviceInfoModule.isTablet();
-  const batteryLevel = DeviceInfoModule.getBatteryLevel();
-  const totalMemory = DeviceInfoModule.getTotalMemory();
-  const freeDisk = DeviceInfoModule.getFreeDiskStorage();
+  const isTablet = DeviceInfoModule.isTablet;
+  const batteryLevel = DeviceInfoModule.batteryLevel;
+  const totalMemory = DeviceInfoModule.totalMemory;
+  const freeDisk = DeviceInfoModule.freeDiskStorage;
 
   // Async data - fetch on mount
   useEffect(() => {

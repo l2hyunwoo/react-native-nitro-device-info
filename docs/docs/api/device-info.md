@@ -77,12 +77,12 @@ const deviceType = DeviceInfoModule.deviceType;
 
 ## Device Capabilities
 
-### `isTablet(): boolean`
+### `isTablet: boolean`
 
 Check if device is a tablet.
 
 ```typescript
-const isTablet = DeviceInfoModule.isTablet();
+const isTablet = DeviceInfoModule.isTablet;
 // iPad → true
 // iPhone → false
 ```
@@ -90,12 +90,12 @@ const isTablet = DeviceInfoModule.isTablet();
 - **iOS**: Based on UIDevice.userInterfaceIdiom
 - **Android**: Based on smallest screen width >= 600dp
 
-### `hasNotch(): boolean`
+### `hasNotch: boolean`
 
 Check if device has a display notch.
 
 ```typescript
-const hasNotch = DeviceInfoModule.hasNotch();
+const hasNotch = DeviceInfoModule.hasNotch;
 // iPhone X, 11, 12, 13 → true
 // iPhone SE, 8 → false
 ```
@@ -103,12 +103,12 @@ const hasNotch = DeviceInfoModule.hasNotch();
 - **iOS only** - Detects iPhone X and later models
 - **Android**: Always returns `false`
 
-### `hasDynamicIsland(): boolean`
+### `hasDynamicIsland: boolean`
 
 Check if device has Dynamic Island.
 
 ```typescript
-const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland();
+const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland;
 // iPhone 14 Pro, 15 Pro → true
 // iPhone 14, 13 → false
 ```
@@ -116,40 +116,40 @@ const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland();
 - **iOS 16+ only** - iPhone 14 Pro and later
 - **Android**: Always returns `false`
 
-### `isCameraPresent(): boolean`
+### `isCameraPresent: boolean`
 
 Check if camera is available.
 
 ```typescript
-const hasCamera = DeviceInfoModule.isCameraPresent();
+const hasCamera = DeviceInfoModule.isCameraPresent;
 ```
 
-### `isPinOrFingerprintSet(): boolean`
+### `isPinOrFingerprintSet: boolean`
 
 Check if PIN, fingerprint, or Face ID is configured.
 
 ```typescript
-const isSecure = DeviceInfoModule.isPinOrFingerprintSet();
+const isSecure = DeviceInfoModule.isPinOrFingerprintSet;
 ```
 
-### `isEmulator(): boolean`
+### `isEmulator: boolean`
 
 Check if running in simulator/emulator.
 
 ```typescript
-const isEmulator = DeviceInfoModule.isEmulator();
+const isEmulator = DeviceInfoModule.isEmulator;
 ```
 
 ---
 
 ## Device Identification
 
-### `getUniqueId(): string`
+### `uniqueId: string`
 
 Get unique device identifier.
 
 ```typescript
-const uniqueId = DeviceInfoModule.getUniqueId();
+const uniqueId = DeviceInfoModule.uniqueId;
 // iOS: IDFV (Identifier for Vendor)
 // Android: ANDROID_ID
 // Example: "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
@@ -158,12 +158,12 @@ const uniqueId = DeviceInfoModule.getUniqueId();
 - **iOS**: Persists across app installs from the same vendor
 - **Android**: Usually persists across app installs
 
-### `getManufacturer(): string`
+### `manufacturer: string`
 
 Get device manufacturer name.
 
 ```typescript
-const manufacturer = DeviceInfoModule.getManufacturer();
+const manufacturer = DeviceInfoModule.manufacturer;
 // iOS: "Apple"
 // Android: "Samsung", "Google", "Xiaomi", etc.
 ```
@@ -172,42 +172,42 @@ const manufacturer = DeviceInfoModule.getManufacturer();
 
 ## System Resources
 
-### `getTotalMemory(): number`
+### `totalMemory: number`
 
 Get total device RAM in bytes.
 
 ```typescript
-const totalMemory = DeviceInfoModule.getTotalMemory();
+const totalMemory = DeviceInfoModule.totalMemory;
 // Example: 6442450944 (6 GB)
 console.log(`Total RAM: ${(totalMemory / 1024 / 1024 / 1024).toFixed(1)}GB`);
 ```
 
-### `getUsedMemory(): number`
+### `usedMemory: number`
 
 Get current app memory usage in bytes.
 
 ```typescript
-const usedMemory = DeviceInfoModule.getUsedMemory();
+const usedMemory = DeviceInfoModule.usedMemory;
 // Example: 134217728 (128 MB)
 console.log(`Used Memory: ${(usedMemory / 1024 / 1024).toFixed(0)}MB`);
 ```
 
-### `getTotalDiskCapacity(): number`
+### `totalDiskCapacity: number`
 
 Get total internal storage size in bytes.
 
 ```typescript
-const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
+const totalDisk = DeviceInfoModule.totalDiskCapacity;
 // Example: 128849018880 (120 GB)
 console.log(`Total Storage: ${(totalDisk / 1024 / 1024 / 1024).toFixed(0)}GB`);
 ```
 
-### `getFreeDiskStorage(): number`
+### `freeDiskStorage: number`
 
 Get available free storage space in bytes.
 
 ```typescript
-const freeDisk = DeviceInfoModule.getFreeDiskStorage();
+const freeDisk = DeviceInfoModule.freeDiskStorage;
 // Example: 51539607552 (48 GB)
 console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 ```
@@ -216,22 +216,22 @@ console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 ## Battery Information
 
-### `getBatteryLevel(): number`
+### `batteryLevel: number`
 
 Get current battery level (0.0 to 1.0).
 
 ```typescript
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const batteryLevel = DeviceInfoModule.batteryLevel;
 console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
 // Output: "Battery: 75%"
 ```
 
-### `getPowerState(): PowerState`
+### `powerState: PowerState`
 
 Get comprehensive power state information.
 
 ```typescript
-const powerState = DeviceInfoModule.getPowerState();
+const powerState = DeviceInfoModule.powerState;
 console.log(`Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
 console.log(`Status: ${powerState.batteryState}`);
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`); // iOS only
@@ -247,12 +247,12 @@ interface PowerState {
 }
 ```
 
-### `isBatteryCharging(): boolean`
+### `isBatteryCharging: boolean`
 
 Check if battery is currently charging.
 
 ```typescript
-const isCharging = DeviceInfoModule.isBatteryCharging();
+const isCharging = DeviceInfoModule.isBatteryCharging;
 ```
 
 ### `isLowBatteryLevel(threshold: number): boolean`
@@ -270,41 +270,41 @@ if (isLowBattery) {
 
 ## Application Metadata
 
-### Synchronous Methods
+### Synchronous Properties
 
-#### `getVersion(): string`
+#### `version: string`
 
 Get application version string.
 
 ```typescript
-const version = DeviceInfoModule.getVersion();
+const version = DeviceInfoModule.version;
 // Example: "1.2.3"
 ```
 
-#### `getBuildNumber(): string`
+#### `buildNumber: string`
 
 Get application build number.
 
 ```typescript
-const buildNumber = DeviceInfoModule.getBuildNumber();
+const buildNumber = DeviceInfoModule.buildNumber;
 // Example: "42" or "20231025"
 ```
 
-#### `getBundleId(): string`
+#### `bundleId: string`
 
 Get bundle ID (iOS) or package name (Android).
 
 ```typescript
-const bundleId = DeviceInfoModule.getBundleId();
+const bundleId = DeviceInfoModule.bundleId;
 // Example: "com.company.app"
 ```
 
-#### `getApplicationName(): string`
+#### `applicationName: string`
 
 Get application display name.
 
 ```typescript
-const appName = DeviceInfoModule.getApplicationName();
+const appName = DeviceInfoModule.applicationName;
 // Example: "My Awesome App"
 ```
 
@@ -456,25 +456,25 @@ const userAgent = await DeviceInfoModule.getUserAgent();
 - iOS: 100-500ms (requires WebView initialization, cached after first call)
 - Android: sync capable
 
-### `getDeviceName(): string`
+### `deviceName: string`
 
 Get user-assigned device name.
 
 ```typescript
-const deviceName = DeviceInfoModule.getDeviceName();
+const deviceName = DeviceInfoModule.deviceName;
 // Example: "John's iPhone", "My Galaxy S21"
 ```
 
 ---
 
-## Platform-Specific Methods
+## Platform-Specific Properties
 
-### `getApiLevel(): number`
+### `apiLevel: number`
 
 Get Android API level.
 
 ```typescript
-const apiLevel = DeviceInfoModule.getApiLevel();
+const apiLevel = DeviceInfoModule.apiLevel;
 // Android 12 → 31
 // Android 13 → 33
 // iOS → -1
@@ -482,44 +482,44 @@ const apiLevel = DeviceInfoModule.getApiLevel();
 
 **Platform**: Android only
 
-### `getSupportedAbis(): string[]`
+### `supportedAbis: string[]`
 
 Get supported CPU architectures.
 
 ```typescript
-const abis = DeviceInfoModule.getSupportedAbis();
+const abis = DeviceInfoModule.supportedAbis;
 // iOS: ["arm64"]
 // Android: ["arm64-v8a", "armeabi-v7a"]
 ```
 
-### `getSupported32BitAbis(): string[]`
+### `supported32BitAbis: string[]`
 
 Get list of supported 32-bit ABIs.
 
 ```typescript
-const abis32 = DeviceInfoModule.getSupported32BitAbis();
+const abis32 = DeviceInfoModule.supported32BitAbis;
 // iOS: []
 // Android API 21+: ["armeabi-v7a", "x86"]
 ```
 
 **Platform**: Android API 21+, returns `[]` on iOS
 
-### `getSupported64BitAbis(): string[]`
+### `supported64BitAbis: string[]`
 
 Get list of supported 64-bit ABIs.
 
 ```typescript
-const abis64 = DeviceInfoModule.getSupported64BitAbis();
+const abis64 = DeviceInfoModule.supported64BitAbis;
 // iOS: ["arm64"]
 // Android API 21+: ["arm64-v8a", "x86_64"]
 ```
 
-### `hasGms(): boolean`
+### `hasGms: boolean`
 
 Check if Google Mobile Services is available.
 
 ```typescript
-const hasGms = DeviceInfoModule.hasGms();
+const hasGms = DeviceInfoModule.hasGms;
 // Android with Play Services → true
 // Huawei devices without GMS → false
 // iOS → false
@@ -527,24 +527,24 @@ const hasGms = DeviceInfoModule.hasGms();
 
 **Platform**: Android only
 
-### `hasHms(): boolean`
+### `hasHms: boolean`
 
 Check if Huawei Mobile Services is available.
 
 ```typescript
-const hasHms = DeviceInfoModule.hasHms();
+const hasHms = DeviceInfoModule.hasHms;
 // Huawei devices → true
 // Other Android/iOS → false
 ```
 
 **Platform**: Android (Huawei devices) only
 
-### `getFontScale(): number`
+### `fontScale: number`
 
 Get current font scale multiplier.
 
 ```typescript
-const fontScale = DeviceInfoModule.getFontScale();
+const fontScale = DeviceInfoModule.fontScale;
 // Example: 1.0 (normal), 1.2 (large), 0.85 (small)
 ```
 
@@ -566,45 +566,45 @@ const hasNfc = DeviceInfoModule.hasSystemFeature('android.hardware.nfc');
 - `android.hardware.bluetooth`
 - `android.hardware.wifi`
 
-### `getSystemAvailableFeatures(): string[]`
+### `systemAvailableFeatures: string[]`
 
 Get list of all available system features.
 
 ```typescript
-const features = DeviceInfoModule.getSystemAvailableFeatures();
+const features = DeviceInfoModule.systemAvailableFeatures;
 // Android: ["android.hardware.camera", "android.hardware.nfc", ...]
 // iOS: []
 ```
 
 **Platform**: Android only
 
-### `getAvailableLocationProviders(): Record<string, boolean>`
+### `availableLocationProviders: string[]`
 
-Get available location providers and their status.
+Get list of enabled location providers.
 
 ```typescript
-const providers = DeviceInfoModule.getAvailableLocationProviders();
-// { "gps": true, "network": true }
+const providers = DeviceInfoModule.availableLocationProviders;
+// ["gps", "network"]
 ```
 
-### `getMaxMemory(): number`
+### `maxMemory: number`
 
 Get maximum memory available to app (in bytes).
 
 ```typescript
-const maxMemory = DeviceInfoModule.getMaxMemory();
+const maxMemory = DeviceInfoModule.maxMemory;
 // Android: max heap size
 // iOS: -1
 ```
 
 **Platform**: Android only
 
-### `getSupportedMediaTypeList(): string[]`
+### `supportedMediaTypeList: string[]`
 
 Get list of supported media/codec types.
 
 ```typescript
-const mediaTypes = DeviceInfoModule.getSupportedMediaTypeList();
+const mediaTypes = DeviceInfoModule.supportedMediaTypeList;
 // Android: ["video/avc", "audio/mp4a-latm", ...]
 // iOS: []
 ```
@@ -690,78 +690,78 @@ const referrer = await DeviceInfoModule.getInstallReferrer();
 
 ### Headphone Detection
 
-#### `isWiredHeadphonesConnected(): boolean`
+#### `isWiredHeadphonesConnected: boolean`
 
 Check if wired headphones are connected.
 
 ```typescript
-const hasWiredHeadphones = DeviceInfoModule.isWiredHeadphonesConnected();
+const hasWiredHeadphones = DeviceInfoModule.isWiredHeadphonesConnected;
 ```
 
-#### `isBluetoothHeadphonesConnected(): boolean`
+#### `isBluetoothHeadphonesConnected: boolean`
 
 Check if Bluetooth headphones are connected.
 
 ```typescript
-const hasBluetoothHeadphones = DeviceInfoModule.isBluetoothHeadphonesConnected();
+const hasBluetoothHeadphones = DeviceInfoModule.isBluetoothHeadphonesConnected;
 ```
 
 ### Device State
 
-#### `isAirplaneMode(): boolean`
+#### `isAirplaneMode: boolean`
 
 Check if airplane mode is enabled.
 
 ```typescript
-const isAirplaneMode = DeviceInfoModule.isAirplaneMode();
+const isAirplaneMode = DeviceInfoModule.isAirplaneMode;
 // Android: true/false
 // iOS: false (not available)
 ```
 
 **Platform**: Android only
 
-#### `isLowRamDevice(): boolean`
+#### `isLowRamDevice: boolean`
 
 Check if device is classified as low RAM device.
 
 ```typescript
-const isLowRam = DeviceInfoModule.isLowRamDevice();
+const isLowRam = DeviceInfoModule.isLowRamDevice;
 // Android API 19+: true/false
 // iOS: false
 ```
 
 **Platform**: Android API 19+
 
-#### `isLandscape(): boolean`
+#### `isLandscape: boolean`
 
 Check if device is in landscape orientation.
 
 ```typescript
-const isLandscape = DeviceInfoModule.isLandscape();
+const isLandscape = DeviceInfoModule.isLandscape;
 ```
 
 ---
 
 ## iOS-Specific Features
 
-### `isDisplayZoomed(): boolean`
+### `isDisplayZoomed: boolean`
 
 Check if iOS Display Zoom is enabled.
 
 ```typescript
-const isZoomed = DeviceInfoModule.isDisplayZoomed();
+const isZoomed = DeviceInfoModule.isDisplayZoomed;
 // iOS: true/false based on display zoom setting
 // Android: false
 ```
 
 **Platform**: iOS only
 
-### `getBrightness(): number`
+### `brightness: number`
 
 Get current screen brightness level (0.0 to 1.0).
 
 ```typescript
-const brightness = DeviceInfoModule.getBrightness();
+const brightness = DeviceInfoModule.brightness;
 console.log(`Brightness: ${(brightness * 100).toFixed(0)}%`);
 // iOS: 0.0 to 1.0
 // Android: -1
@@ -802,24 +802,24 @@ const uniqueId = await DeviceInfoModule.syncUniqueId();
 
 ## Legacy Compatibility
 
-### `getTotalDiskCapacityOld(): number`
+### `totalDiskCapacityOld: number`
 
 Get total disk capacity using legacy Android API.
 
 ```typescript
-const totalDiskOld = DeviceInfoModule.getTotalDiskCapacityOld();
+const totalDiskOld = DeviceInfoModule.totalDiskCapacityOld;
 // Android: Uses old StatFs API (pre-Jelly Bean compatibility)
-// iOS: Alias to getTotalDiskCapacity()
+// iOS: Alias to totalDiskCapacity
 ```
 
-### `getFreeDiskStorageOld(): number`
+### `freeDiskStorageOld: number`
 
 Get free disk storage using legacy Android API.
 
 ```typescript
-const freeDiskOld = DeviceInfoModule.getFreeDiskStorageOld();
+const freeDiskOld = DeviceInfoModule.freeDiskStorageOld;
 // Android: Uses old StatFs API (pre-Jelly Bean compatibility)
-// iOS: Alias to getFreeDiskStorage()
+// iOS: Alias to freeDiskStorage
 ```
 
 ---
