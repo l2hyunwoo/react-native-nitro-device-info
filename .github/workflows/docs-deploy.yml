@@ -7,6 +7,10 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs-deploy.yml'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs-deploy.yml'
 
 permissions:
   contents: read
@@ -24,6 +28,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,9 +38,12 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'docs/yarn.lock'
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
       - name: Install dependencies
         working-directory: docs
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build documentation
         working-directory: docs

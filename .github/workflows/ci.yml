@@ -22,7 +22,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Run oxlint
         run: yarn lint
@@ -44,7 +44,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build TypeScript
         run: yarn prepare
@@ -87,14 +87,14 @@ jobs:
             deriveddata-${{ runner.os }}-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build library
         run: yarn prepare
 
       - name: Install example dependencies
         working-directory: example/showcase
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Install Pods
         working-directory: example/showcase/ios
@@ -143,14 +143,14 @@ jobs:
             gradle-${{ runner.os }}-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build library
         run: yarn prepare
 
       - name: Install example dependencies
         working-directory: example/showcase
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Run ktlint checks
         working-directory: example/showcase/android
@@ -174,7 +174,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build library
         run: yarn prepare

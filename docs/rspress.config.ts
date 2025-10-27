@@ -1,15 +1,16 @@
-import { defineConfig } from 'rspress/config';
+import * as path from "node:path";
+import { defineConfig } from "rspress/config";
 
 export default defineConfig({
-  root: 'docs',
+  root: path.join(__dirname, "docs"),
   title: 'React Native Nitro Device Info',
   description: 'Get comprehensive device information for React Native using Nitro Modules',
+  base: '/react-native-nitro-device-info/',
   icon: '/logo.svg',
   logo: {
     light: '/logo.svg',
     dark: '/logo.svg',
   },
-  base: '/react-native-nitro-device-info/',
 
   locales: [
     {
@@ -121,7 +122,6 @@ export default defineConfig({
 
     search: true,
     lastUpdated: true,
-    prevNextLink: true,
     outlineTitle: 'On this page',
   },
 });
