@@ -2,8 +2,12 @@
 pageType: home
 
 hero:
-  name: React Native Nitro Device Info
-  tagline: Get comprehensive device information using Nitro Modules
+  name: React Native
+  text: Nitro Device Info
+  tagline: Device Info at the Speed of Nitro ⚡️
+  image:
+    src: /logo.png
+    alt: react-native-nitro-device-info
   actions:
     - theme: brand
       text: Get Started
