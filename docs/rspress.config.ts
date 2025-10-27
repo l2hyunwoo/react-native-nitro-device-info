@@ -7,10 +7,10 @@ export default defineConfig({
   description:
     'Get comprehensive device information for React Native using Nitro Modules',
   base: '/react-native-nitro-device-info/',
-  icon: '/logo.svg',
+  icon: '/logo.png',
   logo: {
-    light: '/logo.svg',
-    dark: '/logo.svg',
+    light: '/logo.png',
+    dark: '/logo.png',
   },
 
   themeConfig: {
