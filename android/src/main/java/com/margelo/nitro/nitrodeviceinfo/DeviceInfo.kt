@@ -674,7 +674,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Readable version string (version.build) */
     override val readableVersion: String
-        get() = "${version}.${buildNumber}"
+        get() = "$version.$buildNumber"
 
     /** First install time in milliseconds since epoch */
     override val firstInstallTimeSync: Double
