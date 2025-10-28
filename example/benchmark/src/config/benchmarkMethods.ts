@@ -4,7 +4,7 @@
  */
 
 import type { BenchmarkMethodConfig } from '../types';
-import { createDeviceInfo } from 'react-native-nitro-device-info';
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
 // @ts-ignore - react-native-device-info is a peer dependency that may not be installed during type checking
 import DeviceInfo from 'react-native-device-info';
 
@@ -24,7 +24,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous Device Identity Methods
   {
     name: 'deviceId',
-    nitroFn: () => createDeviceInfo().deviceId,
+    nitroFn: () => DeviceInfoModule.deviceId,
     deviceInfoFn: () => DeviceInfo.getDeviceId(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -32,7 +32,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'brand',
-    nitroFn: () => createDeviceInfo().brand,
+    nitroFn: () => DeviceInfoModule.brand,
     deviceInfoFn: () => DeviceInfo.getBrand(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -40,7 +40,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'model',
-    nitroFn: () => createDeviceInfo().model,
+    nitroFn: () => DeviceInfoModule.model,
     deviceInfoFn: () => DeviceInfo.getModel(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -48,7 +48,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'systemName',
-    nitroFn: () => createDeviceInfo().systemName,
+    nitroFn: () => DeviceInfoModule.systemName,
     deviceInfoFn: () => DeviceInfo.getSystemName(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -56,7 +56,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'systemVersion',
-    nitroFn: () => createDeviceInfo().systemVersion,
+    nitroFn: () => DeviceInfoModule.systemVersion,
     deviceInfoFn: () => DeviceInfo.getSystemVersion(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -66,7 +66,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous Device Capabilities
   {
     name: 'isTablet',
-    nitroFn: () => createDeviceInfo().isTablet,
+    nitroFn: () => DeviceInfoModule.isTablet,
     deviceInfoFn: () => DeviceInfo.isTablet(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -74,7 +74,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'hasNotch',
-    nitroFn: () => createDeviceInfo().hasNotch,
+    nitroFn: () => DeviceInfoModule.hasNotch,
     deviceInfoFn: () => DeviceInfo.hasNotch(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -82,7 +82,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'isEmulator',
-    nitroFn: () => createDeviceInfo().isEmulator,
+    nitroFn: () => DeviceInfoModule.isEmulator,
     deviceInfoFn: () => DeviceInfo.isEmulator(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -92,7 +92,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous Device Identification
   {
     name: 'uniqueId',
-    nitroFn: () => createDeviceInfo().uniqueId,
+    nitroFn: () => DeviceInfoModule.uniqueId,
     deviceInfoFn: () => DeviceInfo.getUniqueId(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -100,7 +100,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'manufacturer',
-    nitroFn: () => createDeviceInfo().manufacturer,
+    nitroFn: () => DeviceInfoModule.manufacturer,
     deviceInfoFn: () => DeviceInfo.getManufacturer(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -110,7 +110,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous Battery & Power
   {
     name: 'batteryLevel',
-    nitroFn: () => createDeviceInfo().batteryLevel,
+    nitroFn: () => DeviceInfoModule.batteryLevel,
     deviceInfoFn: () => DeviceInfo.getBatteryLevel(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -118,7 +118,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'isBatteryCharging',
-    nitroFn: () => createDeviceInfo().isBatteryCharging,
+    nitroFn: () => DeviceInfoModule.isBatteryCharging,
     deviceInfoFn: () => DeviceInfo.isBatteryCharging(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -126,7 +126,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'powerState',
-    nitroFn: () => createDeviceInfo().powerState,
+    nitroFn: () => DeviceInfoModule.powerState,
     deviceInfoFn: () => DeviceInfo.getPowerState(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -136,7 +136,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous System Resources
   {
     name: 'totalMemory',
-    nitroFn: () => createDeviceInfo().totalMemory,
+    nitroFn: () => DeviceInfoModule.totalMemory,
     deviceInfoFn: () => DeviceInfo.getTotalMemory(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -144,7 +144,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'usedMemory',
-    nitroFn: () => createDeviceInfo().usedMemory,
+    nitroFn: () => DeviceInfoModule.usedMemory,
     deviceInfoFn: () => DeviceInfo.getUsedMemory(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -152,7 +152,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'totalDiskCapacity',
-    nitroFn: () => createDeviceInfo().totalDiskCapacity,
+    nitroFn: () => DeviceInfoModule.totalDiskCapacity,
     deviceInfoFn: () => DeviceInfo.getTotalDiskCapacity(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -160,7 +160,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'freeDiskStorage',
-    nitroFn: () => createDeviceInfo().freeDiskStorage,
+    nitroFn: () => DeviceInfoModule.freeDiskStorage,
     deviceInfoFn: () => DeviceInfo.getFreeDiskStorage(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -170,7 +170,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous Application Metadata
   {
     name: 'version',
-    nitroFn: () => createDeviceInfo().version,
+    nitroFn: () => DeviceInfoModule.version,
     deviceInfoFn: () => DeviceInfo.getVersion(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -178,7 +178,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'buildNumber',
-    nitroFn: () => createDeviceInfo().buildNumber,
+    nitroFn: () => DeviceInfoModule.buildNumber,
     deviceInfoFn: () => DeviceInfo.getBuildNumber(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -186,7 +186,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'bundleId',
-    nitroFn: () => createDeviceInfo().bundleId,
+    nitroFn: () => DeviceInfoModule.bundleId,
     deviceInfoFn: () => DeviceInfo.getBundleId(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -194,7 +194,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'applicationName',
-    nitroFn: () => createDeviceInfo().applicationName,
+    nitroFn: () => DeviceInfoModule.applicationName,
     deviceInfoFn: () => DeviceInfo.getApplicationName(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -204,7 +204,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Asynchronous Network & Connectivity
   {
     name: 'getIpAddress',
-    nitroFn: () => createDeviceInfo().getIpAddress(),
+    nitroFn: () => DeviceInfoModule.getIpAddress(),
     deviceInfoFn: () => DeviceInfo.getIpAddress(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -212,7 +212,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'getMacAddress',
-    nitroFn: () => createDeviceInfo().getMacAddress(),
+    nitroFn: () => DeviceInfoModule.getMacAddress(),
     deviceInfoFn: () => DeviceInfo.getMacAddress(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -220,7 +220,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'getCarrier',
-    nitroFn: () => createDeviceInfo().getCarrier(),
+    nitroFn: () => DeviceInfoModule.getCarrier(),
     deviceInfoFn: () => DeviceInfo.getCarrier(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -228,7 +228,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'isLocationEnabled',
-    nitroFn: () => createDeviceInfo().isLocationEnabled(),
+    nitroFn: () => DeviceInfoModule.isLocationEnabled(),
     deviceInfoFn: () => DeviceInfo.isLocationEnabled(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -238,7 +238,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Asynchronous Advanced Features
   {
     name: 'getFirstInstallTime',
-    nitroFn: () => createDeviceInfo().getFirstInstallTime(),
+    nitroFn: () => DeviceInfoModule.getFirstInstallTime(),
     deviceInfoFn: () => DeviceInfo.getFirstInstallTime(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -246,7 +246,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'getLastUpdateTime',
-    nitroFn: () => createDeviceInfo().getLastUpdateTime(),
+    nitroFn: () => DeviceInfoModule.getLastUpdateTime(),
     deviceInfoFn: () => DeviceInfo.getLastUpdateTime(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
