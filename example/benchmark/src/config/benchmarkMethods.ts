@@ -4,7 +4,7 @@
  */
 
 import type { BenchmarkMethodConfig } from '../types';
-import { createDeviceInfo } from 'react-native-nitro-device-info';
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
 // @ts-ignore - react-native-device-info is a peer dependency that may not be installed during type checking
 import DeviceInfo from 'react-native-device-info';
 
@@ -24,7 +24,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous Device Identity Methods
   {
     name: 'deviceId',
-    nitroFn: () => createDeviceInfo().deviceId,
+    nitroFn: () => DeviceInfoModule.deviceId,
     deviceInfoFn: () => DeviceInfo.getDeviceId(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -32,7 +32,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'brand',
-    nitroFn: () => createDeviceInfo().brand,
+    nitroFn: () => DeviceInfoModule.brand,
     deviceInfoFn: () => DeviceInfo.getBrand(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -40,7 +40,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'model',
-    nitroFn: () => createDeviceInfo().model,
+    nitroFn: () => DeviceInfoModule.model,
     deviceInfoFn: () => DeviceInfo.getModel(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -48,7 +48,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'systemName',
-    nitroFn: () => createDeviceInfo().systemName,
+    nitroFn: () => DeviceInfoModule.systemName,
     deviceInfoFn: () => DeviceInfo.getSystemName(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -56,7 +56,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'systemVersion',
-    nitroFn: () => createDeviceInfo().systemVersion,
+    nitroFn: () => DeviceInfoModule.systemVersion,
     deviceInfoFn: () => DeviceInfo.getSystemVersion(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -66,7 +66,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous Device Capabilities
   {
     name: 'isTablet',
-    nitroFn: () => createDeviceInfo().isTablet,
+    nitroFn: () => DeviceInfoModule.isTablet,
     deviceInfoFn: () => DeviceInfo.isTablet(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -74,7 +74,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'hasNotch',
-    nitroFn: () => createDeviceInfo().hasNotch,
+    nitroFn: () => DeviceInfoModule.hasNotch,
     deviceInfoFn: () => DeviceInfo.hasNotch(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -82,129 +82,129 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'isEmulator',
-    nitroFn: () => createDeviceInfo().isEmulator,
+    nitroFn: () => DeviceInfoModule.isEmulator,
     deviceInfoFn: () => DeviceInfo.isEmulator(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
     target: SYNC_TARGET,
   },
 
-  // Asynchronous Device Identification
+  // Synchronous Device Identification
   {
-    name: 'getUniqueId',
-    nitroFn: () => createDeviceInfo().getUniqueId(),
+    name: 'uniqueId',
+    nitroFn: () => DeviceInfoModule.uniqueId,
     deviceInfoFn: () => DeviceInfo.getUniqueId(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
-    name: 'getManufacturer',
-    nitroFn: () => createDeviceInfo().getManufacturer(),
+    name: 'manufacturer',
+    nitroFn: () => DeviceInfoModule.manufacturer,
     deviceInfoFn: () => DeviceInfo.getManufacturer(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
 
-  // Asynchronous Battery & Power
+  // Synchronous Battery & Power
   {
-    name: 'getBatteryLevel',
-    nitroFn: () => createDeviceInfo().getBatteryLevel(),
+    name: 'batteryLevel',
+    nitroFn: () => DeviceInfoModule.batteryLevel,
     deviceInfoFn: () => DeviceInfo.getBatteryLevel(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
     name: 'isBatteryCharging',
-    nitroFn: () => createDeviceInfo().isBatteryCharging(),
+    nitroFn: () => DeviceInfoModule.isBatteryCharging,
     deviceInfoFn: () => DeviceInfo.isBatteryCharging(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
-    name: 'getPowerState',
-    nitroFn: () => createDeviceInfo().getPowerState(),
+    name: 'powerState',
+    nitroFn: () => DeviceInfoModule.powerState,
     deviceInfoFn: () => DeviceInfo.getPowerState(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
 
-  // Asynchronous System Resources
+  // Synchronous System Resources
   {
-    name: 'getTotalMemory',
-    nitroFn: () => createDeviceInfo().getTotalMemory(),
+    name: 'totalMemory',
+    nitroFn: () => DeviceInfoModule.totalMemory,
     deviceInfoFn: () => DeviceInfo.getTotalMemory(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
-    name: 'getUsedMemory',
-    nitroFn: () => createDeviceInfo().getUsedMemory(),
+    name: 'usedMemory',
+    nitroFn: () => DeviceInfoModule.usedMemory,
     deviceInfoFn: () => DeviceInfo.getUsedMemory(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
-    name: 'getTotalDiskCapacity',
-    nitroFn: () => createDeviceInfo().getTotalDiskCapacity(),
+    name: 'totalDiskCapacity',
+    nitroFn: () => DeviceInfoModule.totalDiskCapacity,
     deviceInfoFn: () => DeviceInfo.getTotalDiskCapacity(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
-    name: 'getFreeDiskStorage',
-    nitroFn: () => createDeviceInfo().getFreeDiskStorage(),
+    name: 'freeDiskStorage',
+    nitroFn: () => DeviceInfoModule.freeDiskStorage,
     deviceInfoFn: () => DeviceInfo.getFreeDiskStorage(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
 
-  // Asynchronous Application Metadata
+  // Synchronous Application Metadata
   {
-    name: 'getVersion',
-    nitroFn: () => createDeviceInfo().getVersion(),
+    name: 'version',
+    nitroFn: () => DeviceInfoModule.version,
     deviceInfoFn: () => DeviceInfo.getVersion(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
-    name: 'getBuildNumber',
-    nitroFn: () => createDeviceInfo().getBuildNumber(),
+    name: 'buildNumber',
+    nitroFn: () => DeviceInfoModule.buildNumber,
     deviceInfoFn: () => DeviceInfo.getBuildNumber(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
-    name: 'getBundleId',
-    nitroFn: () => createDeviceInfo().getBundleId(),
+    name: 'bundleId',
+    nitroFn: () => DeviceInfoModule.bundleId,
     deviceInfoFn: () => DeviceInfo.getBundleId(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
   {
-    name: 'getApplicationName',
-    nitroFn: () => createDeviceInfo().getApplicationName(),
+    name: 'applicationName',
+    nitroFn: () => DeviceInfoModule.applicationName,
     deviceInfoFn: () => DeviceInfo.getApplicationName(),
-    isAsync: true,
-    iterations: ASYNC_ITERATIONS,
-    target: ASYNC_TARGET,
+    isAsync: false,
+    iterations: SYNC_ITERATIONS,
+    target: SYNC_TARGET,
   },
 
   // Asynchronous Network & Connectivity
   {
     name: 'getIpAddress',
-    nitroFn: () => createDeviceInfo().getIpAddress(),
+    nitroFn: () => DeviceInfoModule.getIpAddress(),
     deviceInfoFn: () => DeviceInfo.getIpAddress(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -212,7 +212,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'getMacAddress',
-    nitroFn: () => createDeviceInfo().getMacAddress(),
+    nitroFn: () => DeviceInfoModule.getMacAddress(),
     deviceInfoFn: () => DeviceInfo.getMacAddress(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -220,7 +220,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'getCarrier',
-    nitroFn: () => createDeviceInfo().getCarrier(),
+    nitroFn: () => DeviceInfoModule.getCarrier(),
     deviceInfoFn: () => DeviceInfo.getCarrier(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -228,7 +228,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'isLocationEnabled',
-    nitroFn: () => createDeviceInfo().isLocationEnabled(),
+    nitroFn: () => DeviceInfoModule.isLocationEnabled(),
     deviceInfoFn: () => DeviceInfo.isLocationEnabled(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -238,7 +238,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Asynchronous Advanced Features
   {
     name: 'getFirstInstallTime',
-    nitroFn: () => createDeviceInfo().getFirstInstallTime(),
+    nitroFn: () => DeviceInfoModule.getFirstInstallTime(),
     deviceInfoFn: () => DeviceInfo.getFirstInstallTime(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,
@@ -246,7 +246,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'getLastUpdateTime',
-    nitroFn: () => createDeviceInfo().getLastUpdateTime(),
+    nitroFn: () => DeviceInfoModule.getLastUpdateTime(),
     deviceInfoFn: () => DeviceInfo.getLastUpdateTime(),
     isAsync: true,
     iterations: ASYNC_ITERATIONS,

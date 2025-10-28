@@ -168,7 +168,7 @@ export interface DeviceInfo
    *
    *
    */
-  isTablet(): boolean;
+  readonly isTablet: boolean;
 
   /**
    * Check if device has a display notch
@@ -184,7 +184,7 @@ export interface DeviceInfo
    * @platform ios
    *
    */
-  hasNotch(): boolean;
+  readonly hasNotch: boolean;
 
   /**
    * Check if device has Dynamic Island
@@ -200,7 +200,7 @@ export interface DeviceInfo
    * @platform ios 16+
    *
    */
-  hasDynamicIsland(): boolean;
+  readonly hasDynamicIsland: boolean;
 
   // DEVICE IDENTIFICATION (Sync)
 
@@ -216,7 +216,7 @@ export interface DeviceInfo
    *
    *
    */
-  getUniqueId(): string;
+  readonly uniqueId: string;
 
   /**
    * Get device manufacturer name
@@ -228,7 +228,7 @@ export interface DeviceInfo
    *
    *
    */
-  getManufacturer(): string;
+  readonly manufacturer: string;
 
   // SYSTEM RESOURCES (Sync)
 
@@ -242,7 +242,7 @@ export interface DeviceInfo
    *
    *
    */
-  getTotalMemory(): number;
+  readonly totalMemory: number;
 
   /**
    * Get current app memory usage in bytes
@@ -254,7 +254,7 @@ export interface DeviceInfo
    *
    *
    */
-  getUsedMemory(): number;
+  readonly usedMemory: number;
 
   /**
    * Get total disk storage capacity in bytes
@@ -266,7 +266,7 @@ export interface DeviceInfo
    *
    *
    */
-  getTotalDiskCapacity(): number;
+  readonly totalDiskCapacity: number;
 
   /**
    * Get free disk storage in bytes
@@ -278,7 +278,7 @@ export interface DeviceInfo
    *
    *
    */
-  getFreeDiskStorage(): number;
+  readonly freeDiskStorage: number;
 
   /**
    * Get current battery level
@@ -290,7 +290,7 @@ export interface DeviceInfo
    *
    *
    */
-  getBatteryLevel(): number;
+  readonly batteryLevel: number;
 
   /**
    * Get comprehensive power state information
@@ -308,7 +308,7 @@ export interface DeviceInfo
    *
    *
    */
-  getPowerState(): PowerState;
+  readonly powerState: PowerState;
 
   /**
    * Check if battery is currently charging
@@ -316,7 +316,7 @@ export interface DeviceInfo
    * @returns true if charging
    *
    */
-  isBatteryCharging(): boolean;
+  readonly isBatteryCharging: boolean;
 
   // APPLICATION METADATA (Sync)
 
@@ -328,7 +328,7 @@ export interface DeviceInfo
    *
    *
    */
-  getVersion(): string;
+  readonly version: string;
 
   /**
    * Get application build number
@@ -338,7 +338,7 @@ export interface DeviceInfo
    *
    *
    */
-  getBuildNumber(): string;
+  readonly buildNumber: string;
 
   /**
    * Get bundle ID (iOS) or package name (Android)
@@ -350,7 +350,7 @@ export interface DeviceInfo
    *
    *
    */
-  getBundleId(): string;
+  readonly bundleId: string;
 
   /**
    * Get application display name
@@ -360,7 +360,7 @@ export interface DeviceInfo
    *
    *
    */
-  getApplicationName(): string;
+  readonly applicationName: string;
 
   /**
    * Get first install timestamp
@@ -457,7 +457,7 @@ export interface DeviceInfo
    * @returns true if camera available
    *
    */
-  isCameraPresent(): boolean;
+  readonly isCameraPresent: boolean;
 
   /**
    * Check if PIN, fingerprint, or Face ID is configured
@@ -467,7 +467,7 @@ export interface DeviceInfo
    * @returns true if biometric security set
    *
    */
-  isPinOrFingerprintSet(): boolean;
+  readonly isPinOrFingerprintSet: boolean;
 
   /**
    * Check if running in emulator/simulator
@@ -478,7 +478,7 @@ export interface DeviceInfo
    * @returns true if emulator
    *
    */
-  isEmulator(): boolean;
+  readonly isEmulator: boolean;
 
   // PLATFORM-SPECIFIC (Sync)
 
@@ -496,7 +496,7 @@ export interface DeviceInfo
    * @platform android
    *
    */
-  getApiLevel(): number;
+  readonly apiLevel: number;
 
   /**
    * Get supported CPU architectures (ABIs)
@@ -510,7 +510,7 @@ export interface DeviceInfo
    *
    *
    */
-  getSupportedAbis(): string[];
+  readonly supportedAbis: string[];
 
   /**
    * Check if Google Mobile Services (GMS) is available
@@ -526,7 +526,7 @@ export interface DeviceInfo
    * @platform android
    *
    */
-  hasGms(): boolean;
+  readonly hasGms: boolean;
 
   /**
    * Check if Huawei Mobile Services (HMS) is available
@@ -541,7 +541,7 @@ export interface DeviceInfo
    * @platform android (Huawei devices)
    *
    */
-  hasHms(): boolean;
+  readonly hasHms: boolean;
 
   // ANDROID BUILD INFORMATION (Synchronous Properties)
 
@@ -768,7 +768,7 @@ export interface DeviceInfo
    * @platform iOS, Android
    *
    */
-  isWiredHeadphonesConnected(): boolean;
+  readonly isWiredHeadphonesConnected: boolean;
 
   /**
    * Check if Bluetooth headphones are currently connected.
@@ -777,7 +777,7 @@ export interface DeviceInfo
    * @platform iOS, Android
    *
    */
-  isBluetoothHeadphonesConnected(): boolean;
+  readonly isBluetoothHeadphonesConnected: boolean;
 
   /**
    * Check if airplane mode is enabled.
@@ -786,7 +786,7 @@ export interface DeviceInfo
    * @platform Android (returns false on iOS)
    *
    */
-  isAirplaneMode(): boolean;
+  readonly isAirplaneMode: boolean;
 
   /**
    * Check if device is classified as low RAM device.
@@ -795,7 +795,7 @@ export interface DeviceInfo
    * @platform Android API 19+ (returns false on iOS)
    *
    */
-  isLowRamDevice(): boolean;
+  readonly isLowRamDevice: boolean;
 
   /**
    * Check if a mouse is currently connected.
@@ -804,7 +804,7 @@ export interface DeviceInfo
    * @platform Windows (returns false on iOS/Android)
    *
    */
-  isMouseConnected(): boolean;
+  readonly isMouseConnected: boolean;
 
   /**
    * Check if a physical keyboard is currently connected.
@@ -813,7 +813,7 @@ export interface DeviceInfo
    * @platform Windows (returns false on iOS/Android)
    *
    */
-  isKeyboardConnected(): boolean;
+  readonly isKeyboardConnected: boolean;
 
   /**
    * Check if device is in landscape orientation.
@@ -822,7 +822,7 @@ export interface DeviceInfo
    * @platform All
    *
    */
-  isLandscape(): boolean;
+  readonly isLandscape: boolean;
 
   /**
    * Get list of supported 32-bit ABIs.
@@ -831,7 +831,7 @@ export interface DeviceInfo
    * @platform Android API 21+ (returns [] on iOS)
    *
    */
-  getSupported32BitAbis(): string[];
+  readonly supported32BitAbis: string[];
 
   /**
    * Get list of supported 64-bit ABIs.
@@ -840,7 +840,7 @@ export interface DeviceInfo
    * @platform Android API 21+, iOS
    *
    */
-  getSupported64BitAbis(): string[];
+  readonly supported64BitAbis: string[];
 
   /**
    * Get current font scale multiplier.
@@ -849,7 +849,7 @@ export interface DeviceInfo
    * @platform iOS, Android
    *
    */
-  getFontScale(): number;
+  readonly fontScale: number;
 
   /**
    * Check if specific system feature is available.
@@ -868,7 +868,7 @@ export interface DeviceInfo
    * @platform Android (returns [] on iOS)
    *
    */
-  getSystemAvailableFeatures(): string[];
+  readonly systemAvailableFeatures: string[];
 
   /**
    * Get list of enabled location providers.
@@ -877,7 +877,7 @@ export interface DeviceInfo
    * @platform iOS, Android
    * @returns Array of enabled provider names (e.g., ["gps", "network"])
    */
-  getAvailableLocationProviders(): string[];
+  readonly availableLocationProviders: string[];
 
   /**
    * Get list of Windows host names.
@@ -886,7 +886,7 @@ export interface DeviceInfo
    * @platform Windows (returns [] on iOS/Android)
    *
    */
-  getHostNames(): string[];
+  readonly hostNames: string[];
 
   /**
    * Get maximum memory available to app (in bytes).
@@ -895,7 +895,7 @@ export interface DeviceInfo
    * @platform Android (returns -1 on iOS)
    *
    */
-  getMaxMemory(): number;
+  readonly maxMemory: number;
 
   /**
    * Get list of supported media/codec types.
@@ -904,7 +904,7 @@ export interface DeviceInfo
    * @platform Android (returns [] on iOS)
    *
    */
-  getSupportedMediaTypeList(): string[];
+  readonly supportedMediaTypeList: string[];
 
   /**
    * Check if battery level is below threshold.
@@ -923,7 +923,7 @@ export interface DeviceInfo
    * @platform Windows (returns false on iOS/Android)
    *
    */
-  isTabletMode(): boolean;
+  readonly isTabletMode: boolean;
 
   // NETWORK & DISPLAY INFORMATION
 
@@ -934,7 +934,7 @@ export interface DeviceInfo
    * @platform iOS, Android
    *
    */
-  getDeviceName(): string;
+  readonly deviceName: string;
 
   /**
    * Get IP address (sync variant).
@@ -999,7 +999,7 @@ export interface DeviceInfo
    * @platform iOS (returns false on Android)
    *
    */
-  isDisplayZoomed(): boolean;
+  readonly isDisplayZoomed: boolean;
 
   /**
    * Get current screen brightness level.
@@ -1008,7 +1008,7 @@ export interface DeviceInfo
    * @platform iOS (returns -1 on Android)
    *
    */
-  getBrightness(): number;
+  readonly brightness: number;
 
   /**
    * Get Apple DeviceCheck token.
@@ -1040,7 +1040,7 @@ export interface DeviceInfo
    * @platform Android (alias on iOS)
    *
    */
-  getTotalDiskCapacityOld(): number;
+  readonly totalDiskCapacityOld: number;
 
   /**
    * Get free disk storage using legacy Android API.
@@ -1050,5 +1050,5 @@ export interface DeviceInfo
    * @platform Android (alias on iOS)
    *
    */
-  getFreeDiskStorageOld(): number;
+  readonly freeDiskStorageOld: number;
 }

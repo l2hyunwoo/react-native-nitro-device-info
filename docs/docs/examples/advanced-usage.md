@@ -13,17 +13,17 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 function getDeviceDetails() {
   if (Platform.OS === 'ios') {
     return {
-      hasNotch: DeviceInfoModule.hasNotch(),
-      hasDynamicIsland: DeviceInfoModule.hasDynamicIsland(),
-      isDisplayZoomed: DeviceInfoModule.isDisplayZoomed(),
-      brightness: DeviceInfoModule.getBrightness(),
+      hasNotch: DeviceInfoModule.hasNotch,
+      hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
+      isDisplayZoomed: DeviceInfoModule.isDisplayZoomed,
+      brightness: DeviceInfoModule.brightness,
     };
   } else {
     return {
-      apiLevel: DeviceInfoModule.getApiLevel(),
+      apiLevel: DeviceInfoModule.apiLevel,
       securityPatch: DeviceInfoModule.securityPatch,
-      hasGms: DeviceInfoModule.hasGms(),
-      hasHms: DeviceInfoModule.hasHms(),
+      hasGms: DeviceInfoModule.hasGms,
+      hasHms: DeviceInfoModule.hasHms,
     };
   }
 }
@@ -42,7 +42,7 @@ function getAndroidDetails() {
 
   return {
     // API Level
-    apiLevel: DeviceInfoModule.getApiLevel(),
+    apiLevel: DeviceInfoModule.apiLevel,
 
     // Build Information
     androidId: DeviceInfoModule.androidId,
@@ -50,24 +50,24 @@ function getAndroidDetails() {
     fingerprint: DeviceInfoModule.fingerprint,
 
     // ABIs (CPU architectures)
-    supportedAbis: DeviceInfoModule.getSupportedAbis(),
-    supported32BitAbis: DeviceInfoModule.getSupported32BitAbis(),
-    supported64BitAbis: DeviceInfoModule.getSupported64BitAbis(),
+    supportedAbis: DeviceInfoModule.supportedAbis,
+    supported32BitAbis: DeviceInfoModule.supported32BitAbis,
+    supported64BitAbis: DeviceInfoModule.supported64BitAbis,
 
     // Mobile Services
-    hasGooglePlayServices: DeviceInfoModule.hasGms(),
-    hasHuaweiMobileServices: DeviceInfoModule.hasHms(),
+    hasGooglePlayServices: DeviceInfoModule.hasGms,
+    hasHuaweiMobileServices: DeviceInfoModule.hasHms,
 
     // Device State
-    isAirplaneMode: DeviceInfoModule.isAirplaneMode(),
-    isLowRamDevice: DeviceInfoModule.isLowRamDevice(),
+    isAirplaneMode: DeviceInfoModule.isAirplaneMode,
+    isLowRamDevice: DeviceInfoModule.isLowRamDevice,
 
     // System Features
     hasNfc: DeviceInfoModule.hasSystemFeature('android.hardware.nfc'),
     hasBluetooth: DeviceInfoModule.hasSystemFeature('android.hardware.bluetooth'),
 
     // All Available Features
-    availableFeatures: DeviceInfoModule.getSystemAvailableFeatures(),
+    availableFeatures: DeviceInfoModule.systemAvailableFeatures,
   };
 }
 ```
@@ -85,12 +85,12 @@ async function getIOSDetails() {
 
   return {
     // Display Features
-    hasNotch: DeviceInfoModule.hasNotch(),
-    hasDynamicIsland: DeviceInfoModule.hasDynamicIsland(),
-    isDisplayZoomed: DeviceInfoModule.isDisplayZoomed(),
+    hasNotch: DeviceInfoModule.hasNotch,
+    hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
+    isDisplayZoomed: DeviceInfoModule.isDisplayZoomed,
 
     // Screen Brightness
-    brightness: DeviceInfoModule.getBrightness(),
+    brightness: DeviceInfoModule.brightness,
 
     // DeviceCheck Token (async, requires network)
     deviceToken: await DeviceInfoModule.getDeviceToken().catch(() => null),

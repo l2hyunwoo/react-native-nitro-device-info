@@ -241,141 +241,145 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
-    // MARK: - Synchronous Methods
+    // MARK: - Synchronous Properties - Device Capabilities
 
     /** Check if device is a tablet Based on smallest screen width >= 600dp */
-    override fun isTablet(): Boolean {
-        val smallestScreenWidthDp = context.resources.configuration.smallestScreenWidthDp
-        return smallestScreenWidthDp >= 600
-    }
+    override val isTablet: Boolean
+        get() {
+            val smallestScreenWidthDp = context.resources.configuration.smallestScreenWidthDp
+            return smallestScreenWidthDp >= 600
+        }
 
     /**
      * Check if device has a display notch Not implemented for Android (detection complex and varies
      * by manufacturer)
      */
-    override fun hasNotch(): Boolean {
-        // Android notch detection is complex and manufacturer-specific
-        // For MVP, return false
-        return false
-    }
+    override val hasNotch: Boolean
+        get() = false
 
     /**
      * Check if device has Dynamic Island Android devices don't have Dynamic Island (iOS-only feature)
      */
-    override fun hasDynamicIsland(): Boolean {
-        return false
-    }
+    override val hasDynamicIsland: Boolean
+        get() = false
 
-    // MARK: - Synchronous Methods - Device Identification
+    // MARK: - Synchronous Properties - Device Identification
 
     /** Get unique device identifier (ANDROID_ID) Persists across app installs (usually) */
-    override fun getUniqueId(): String {
-        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
-    }
+    override val uniqueId: String
+        get() = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
 
     /** Get device manufacturer name From Build.MANUFACTURER */
-    override fun getManufacturer(): String {
-        return Build.MANUFACTURER
-    }
+    override val manufacturer: String
+        get() = Build.MANUFACTURER
 
-    // MARK: - Synchronous Methods - System Resources
+    // MARK: - Synchronous Properties - System Resources
 
     /** Get total device RAM in bytes */
-    override fun getTotalMemory(): Double {
-        // Use cached ActivityManager to avoid repeated system service lookups
-        val memInfo = ActivityManager.MemoryInfo()
-        activityManager.getMemoryInfo(memInfo)
-        return memInfo.totalMem.toDouble()
-    }
+    override val totalMemory: Double
+        get() {
+            // Use cached ActivityManager to avoid repeated system service lookups
+            val memInfo = ActivityManager.MemoryInfo()
+            activityManager.getMemoryInfo(memInfo)
+            return memInfo.totalMem.toDouble()
+        }
 
     /** Get current app memory usage in bytes */
-    override fun getUsedMemory(): Double {
-        // Use Debug.getMemoryInfo which doesn't require ActivityManager
-        val memInfo = Debug.MemoryInfo()
-        Debug.getMemoryInfo(memInfo)
-        return (memInfo.totalPss * 1024).toDouble() // Convert KB to bytes
-    }
+    override val usedMemory: Double
+        get() {
+            // Use Debug.getMemoryInfo which doesn't require ActivityManager
+            val memInfo = Debug.MemoryInfo()
+            Debug.getMemoryInfo(memInfo)
+            return (memInfo.totalPss * 1024).toDouble() // Convert KB to bytes
+        }
 
     /** Get total disk storage capacity in bytes */
-    override fun getTotalDiskCapacity(): Double {
-        val path = Environment.getDataDirectory()
-        val stat = StatFs(path.path)
-        return (stat.blockCountLong * stat.blockSizeLong).toDouble()
-    }
+    override val totalDiskCapacity: Double
+        get() {
+            val path = Environment.getDataDirectory()
+            val stat = StatFs(path.path)
+            return (stat.blockCountLong * stat.blockSizeLong).toDouble()
+        }
 
     /** Get free disk storage in bytes */
-    override fun getFreeDiskStorage(): Double {
-        val path = Environment.getDataDirectory()
-        val stat = StatFs(path.path)
-        return (stat.availableBlocksLong * stat.blockSizeLong).toDouble()
-    }
+    override val freeDiskStorage: Double
+        get() {
+            val path = Environment.getDataDirectory()
+            val stat = StatFs(path.path)
+            return (stat.availableBlocksLong * stat.blockSizeLong).toDouble()
+        }
 
     /** Get current battery level (0.0 to 1.0) */
-    override fun getBatteryLevel(): Double {
-        // Use cached BatteryManager to avoid repeated system service lookups
-        val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        return (level / 100.0)
-    }
+    override val batteryLevel: Double
+        get() {
+            // Use cached BatteryManager to avoid repeated system service lookups
+            val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+            return (level / 100.0)
+        }
 
     /** Get comprehensive power state information */
-    override fun getPowerState(): PowerState {
-        // Use cached BatteryManager to avoid repeated system service lookups
-        val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        val isCharging = batteryManager.isCharging
+    override val powerState: PowerState
+        get() {
+            // Use cached BatteryManager to avoid repeated system service lookups
+            val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+            val isCharging = batteryManager.isCharging
 
-        val batteryState =
-            when {
-                batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS) ==
-                    BatteryManager.BATTERY_STATUS_FULL -> BatteryState.FULL
+            val batteryState =
+                when {
+                    batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS) ==
+                        BatteryManager.BATTERY_STATUS_FULL -> BatteryState.FULL
 
-                isCharging -> BatteryState.CHARGING
-                else -> BatteryState.UNPLUGGED
-            }
+                    isCharging -> BatteryState.CHARGING
+                    else -> BatteryState.UNPLUGGED
+                }
 
-        // Android doesn't have a direct equivalent to iOS low power mode
-        return PowerState(
-            batteryLevel = level / 100.0,
-            batteryState = batteryState,
-            lowPowerMode = false,
-        )
-    }
+            // Android doesn't have a direct equivalent to iOS low power mode
+            return PowerState(
+                batteryLevel = level / 100.0,
+                batteryState = batteryState,
+                lowPowerMode = false,
+            )
+        }
 
     /** Check if battery is currently charging */
-    override fun isBatteryCharging(): Boolean {
-        // Use cached BatteryManager to avoid repeated system service lookups
-        return batteryManager.isCharging
-    }
+    override val isBatteryCharging: Boolean
+        get() {
+            // Use cached BatteryManager to avoid repeated system service lookups
+            return batteryManager.isCharging
+        }
 
-    // MARK: - Synchronous Methods - Application Metadata
+    // MARK: - Synchronous Properties - Application Metadata
 
     /** Get application version string */
-    override fun getVersion(): String {
-        // Use cached packageInfo to avoid repeated queries
-        return packageInfo.versionName ?: ""
-    }
+    override val version: String
+        get() {
+            // Use cached packageInfo to avoid repeated queries
+            return packageInfo.versionName ?: ""
+        }
 
     /** Get application build number */
-    override fun getBuildNumber(): String {
-        // Use cached packageInfo to avoid repeated queries
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageInfo.longVersionCode.toString()
-        } else {
-            @Suppress("DEPRECATION")
-            packageInfo.versionCode.toString()
+    override val buildNumber: String
+        get() {
+            // Use cached packageInfo to avoid repeated queries
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageInfo.longVersionCode.toString()
+            } else {
+                @Suppress("DEPRECATION")
+                packageInfo.versionCode.toString()
+            }
         }
-    }
 
     /** Get package name (equivalent to bundle ID on iOS) */
-    override fun getBundleId(): String {
-        return context.packageName
-    }
+    override val bundleId: String
+        get() = context.packageName
 
     /** Get application display name */
-    override fun getApplicationName(): String {
-        // Use cached packageManager to avoid repeated lookups
-        val appInfo = context.applicationInfo
-        return packageManager.getApplicationLabel(appInfo).toString()
-    }
+    override val applicationName: String
+        get() {
+            // Use cached packageManager to avoid repeated lookups
+            val appInfo = context.applicationInfo
+            return packageManager.getApplicationLabel(appInfo).toString()
+        }
 
     /** Get first install timestamp (milliseconds since epoch) */
     override fun getFirstInstallTime(): Promise<Double> {
@@ -452,68 +456,71 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    // MARK: - Synchronous Methods - Device Capabilities
+    // MARK: - Synchronous Properties - Device Capabilities (Additional)
 
     /** Check if camera is present */
-    override fun isCameraPresent(): Boolean {
-        // Use cached packageManager to avoid repeated lookups
-        return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
-    }
+    override val isCameraPresent: Boolean
+        get() {
+            // Use cached packageManager to avoid repeated lookups
+            return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+        }
 
     /** Check if PIN or biometric authentication is set */
-    override fun isPinOrFingerprintSet(): Boolean {
-        val keyguardManager = context.getSystemService<KeyguardManager>()
-        return keyguardManager?.isKeyguardSecure == true
-    }
+    override val isPinOrFingerprintSet: Boolean
+        get() {
+            val keyguardManager = context.getSystemService<KeyguardManager>()
+            return keyguardManager?.isKeyguardSecure == true
+        }
 
     /** Check if running in emulator */
-    override fun isEmulator(): Boolean {
-        return (
-            Build.FINGERPRINT.startsWith("generic") ||
-                Build.FINGERPRINT.startsWith("unknown") ||
-                Build.MODEL.contains("google_sdk") ||
-                Build.MODEL.contains("Emulator") ||
-                Build.MODEL.contains("Android SDK built for x86") ||
-                Build.MANUFACTURER.contains("Genymotion") ||
-                (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
-                "google_sdk" == Build.PRODUCT
-        )
-    }
+    override val isEmulator: Boolean
+        get() {
+            return (
+                Build.FINGERPRINT.startsWith("generic") ||
+                    Build.FINGERPRINT.startsWith("unknown") ||
+                    Build.MODEL.contains("google_sdk") ||
+                    Build.MODEL.contains("Emulator") ||
+                    Build.MODEL.contains("Android SDK built for x86") ||
+                    Build.MANUFACTURER.contains("Genymotion") ||
+                    (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
+                    "google_sdk" == Build.PRODUCT
+            )
+        }
 
-    // MARK: - Synchronous Methods - Platform-Specific
+    // MARK: - Synchronous Properties - Platform-Specific
 
     /** Get Android API level */
-    override fun getApiLevel(): Double {
-        return Build.VERSION.SDK_INT.toDouble()
-    }
+    override val apiLevel: Double
+        get() = Build.VERSION.SDK_INT.toDouble()
 
     /** Get supported CPU architectures (ABIs) */
-    override fun getSupportedAbis(): Array<String> {
-        return Build.SUPPORTED_ABIS
-    }
+    override val supportedAbis: Array<String>
+        get() = Build.SUPPORTED_ABIS
 
     /** Check if Google Mobile Services (GMS) is available */
-    override fun hasGms(): Boolean {
-        return try {
-            val result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
-            result == ConnectionResult.SUCCESS
-        } catch (e: Exception) {
-            Log.w(NAME, "GMS not available or GMS library not found", e)
-            false
+    override val hasGms: Boolean
+        get() {
+            return try {
+                val result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+                result == ConnectionResult.SUCCESS
+            } catch (e: Exception) {
+                Log.w(NAME, "GMS not available or GMS library not found", e)
+                false
+            }
         }
-    }
 
     /** Check if Huawei Mobile Services (HMS) is available */
-    override fun hasHms(): Boolean {
-        return try {
-            // Check if HMS Core is available - use cached packageManager
-            val hmsPackageInfo = packageManager.getPackageInfo("com.huawei.hwid", 0)
-            hmsPackageInfo != null
-        } catch (e: PackageManager.NameNotFoundException) {
-            Log.d(NAME, "HMS not available - not a Huawei device")
-            false
+    override val hasHms: Boolean
+        get() {
+            return try {
+                // Check if HMS Core is available - use cached packageManager
+                val hmsPackageInfo = packageManager.getPackageInfo("com.huawei.hwid", 0)
+                hmsPackageInfo != null
+            } catch (e: PackageManager.NameNotFoundException) {
+                Log.d(NAME, "HMS not available - not a Huawei device")
+                false
+            }
         }
-    }
 
     // MARK: - Android Build Information Properties
 
@@ -667,7 +674,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Readable version string (version.build) */
     override val readableVersion: String
-        get() = "${getVersion()}.${getBuildNumber()}"
+        get() = "$version.$buildNumber"
 
     /** First install time in milliseconds since epoch */
     override val firstInstallTimeSync: Double
@@ -680,86 +687,84 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     // MARK: - Device Capability Detection
 
     /** Check if wired headphones are connected */
-    override fun isWiredHeadphonesConnected(): Boolean {
-        return try {
-            val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
-            audioDevices.any { device ->
-                device.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
-                    device.type == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        device.type == AudioDeviceInfo.TYPE_USB_HEADSET
-                    } else {
-                        true
-                    }
+    override val isWiredHeadphonesConnected: Boolean
+        get() {
+            return try {
+                val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+                audioDevices.any { device ->
+                    device.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
+                        device.type == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            device.type == AudioDeviceInfo.TYPE_USB_HEADSET
+                        } else {
+                            true
+                        }
+                }
+            } catch (e: Exception) {
+                false
             }
-        } catch (e: Exception) {
-            false
         }
-    }
 
     /** Check if Bluetooth headphones are connected */
-    override fun isBluetoothHeadphonesConnected(): Boolean {
-        return try {
-            val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
-            audioDevices.any { device ->
-                device.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
-                    device.type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO
+    override val isBluetoothHeadphonesConnected: Boolean
+        get() {
+            return try {
+                val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+                audioDevices.any { device ->
+                    device.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
+                        device.type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO
+                }
+            } catch (e: Exception) {
+                false
             }
-        } catch (e: Exception) {
-            false
         }
-    }
 
     /** Check if airplane mode is enabled */
-    override fun isAirplaneMode(): Boolean {
-        return try {
-            Settings.Global.getInt(
-                context.contentResolver,
-                Settings.Global.AIRPLANE_MODE_ON,
-                0,
-            ) != 0
-        } catch (e: Exception) {
-            false
+    override val isAirplaneMode: Boolean
+        get() {
+            return try {
+                Settings.Global.getInt(
+                    context.contentResolver,
+                    Settings.Global.AIRPLANE_MODE_ON,
+                    0,
+                ) != 0
+            } catch (e: Exception) {
+                false
+            }
         }
-    }
 
     /** Check if device is low RAM device */
-    override fun isLowRamDevice(): Boolean {
-        return activityManager.isLowRamDevice
-    }
+    override val isLowRamDevice: Boolean
+        get() = activityManager.isLowRamDevice
 
     /** Check if mouse is connected (Windows-specific, returns false on Android) */
-    override fun isMouseConnected(): Boolean {
-        return false
-    }
+    override val isMouseConnected: Boolean
+        get() = false
 
     /** Check if keyboard is connected (Windows-specific, returns false on Android) */
-    override fun isKeyboardConnected(): Boolean {
-        return false
-    }
+    override val isKeyboardConnected: Boolean
+        get() = false
 
     /** Check if device is in landscape orientation */
-    override fun isLandscape(): Boolean {
-        val orientation = context.resources.configuration.orientation
-        return orientation == Configuration.ORIENTATION_LANDSCAPE
-    }
+    override val isLandscape: Boolean
+        get() {
+            val orientation = context.resources.configuration.orientation
+            return orientation == Configuration.ORIENTATION_LANDSCAPE
+        }
 
     // MARK: - Advanced System Information
 
     /** Get supported 32-bit ABIs */
-    override fun getSupported32BitAbis(): Array<String> {
-        return Build.SUPPORTED_32_BIT_ABIS.toList().toTypedArray()
-    }
+    override val supported32BitAbis: Array<String>
+        get() = Build.SUPPORTED_32_BIT_ABIS.toList().toTypedArray()
 
     /** Get supported 64-bit ABIs */
-    override fun getSupported64BitAbis(): Array<String> {
-        return Build.SUPPORTED_64_BIT_ABIS.toList().toTypedArray()
-    }
+    override val supported64BitAbis: Array<String>
+        get() = Build.SUPPORTED_64_BIT_ABIS.toList().toTypedArray()
 
     /** Get system font scale */
-    override fun getFontScale(): Double {
-        return context.resources.configuration.fontScale.toDouble()
-    }
+    override val fontScale: Double
+        get() = context.resources.configuration.fontScale.toDouble()
 
     /** Check if system has a specific feature */
     override fun hasSystemFeature(feature: String): Boolean {
@@ -771,33 +776,31 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     }
 
     /** Get list of all system features */
-    override fun getSystemAvailableFeatures(): Array<String> {
-        return systemFeatures.toTypedArray()
-    }
+    override val systemAvailableFeatures: Array<String>
+        get() = systemFeatures.toTypedArray()
 
     /** Get list of enabled location providers */
-    override fun getAvailableLocationProviders(): Array<String> {
-        return try {
-            val locationManager =
-                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    override val availableLocationProviders: Array<String>
+        get() {
+            return try {
+                val locationManager =
+                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-            locationManager.allProviders
-                .filter { locationManager.isProviderEnabled(it) }
-                .toTypedArray()
-        } catch (e: Exception) {
-            emptyArray()
+                locationManager.allProviders
+                    .filter { locationManager.isProviderEnabled(it) }
+                    .toTypedArray()
+            } catch (e: Exception) {
+                emptyArray()
+            }
         }
-    }
 
     /** Get host names (Windows-specific, not available on Android) */
-    override fun getHostNames(): Array<String> {
-        return arrayOf()
-    }
+    override val hostNames: Array<String>
+        get() = arrayOf()
 
     /** Get maximum memory available to the app */
-    override fun getMaxMemory(): Double {
-        return Runtime.getRuntime().maxMemory().toDouble()
-    }
+    override val maxMemory: Double
+        get() = Runtime.getRuntime().maxMemory().toDouble()
 
     // MARK: - Network & Display Information
 
@@ -813,20 +816,21 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     }
 
     /** Get device name */
-    override fun getDeviceName(): String {
-        return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME)
-                    ?: Settings.Secure.getString(context.contentResolver, "bluetooth_name")
-                    ?: "unknown"
-            } else {
-                Settings.Secure.getString(context.contentResolver, "bluetooth_name")
-                    ?: "unknown"
+    override val deviceName: String
+        get() {
+            return try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                    Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME)
+                        ?: Settings.Secure.getString(context.contentResolver, "bluetooth_name")
+                        ?: "unknown"
+                } else {
+                    Settings.Secure.getString(context.contentResolver, "bluetooth_name")
+                        ?: "unknown"
+                }
+            } catch (e: Exception) {
+                "unknown"
             }
-        } catch (e: Exception) {
-            "unknown"
         }
-    }
 
     /** Get device token (iOS-specific, throws error on Android) */
     override fun getDeviceToken(): Promise<String> {
@@ -928,64 +932,61 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Check if any headphones are connected */
     override val isHeadphonesConnectedSync: Boolean
-        get() = isWiredHeadphonesConnected() || isBluetoothHeadphonesConnected()
+        get() = isWiredHeadphonesConnected || isBluetoothHeadphonesConnected
 
     // MARK: - iOS-Specific Features
 
     /** Check if display is zoomed (iOS-specific, returns false on Android) */
-    override fun isDisplayZoomed(): Boolean {
-        return false
-    }
+    override val isDisplayZoomed: Boolean
+        get() = false
 
     /** Get screen brightness (iOS-specific, returns -1 on Android) */
-    override fun getBrightness(): Double {
-        return -1.0
-    }
+    override val brightness: Double
+        get() = -1.0
 
     /** Get unique ID from Keychain (iOS-specific, returns device ID on Android) */
     override fun syncUniqueId(): Promise<String> {
         return Promise.async {
-            return@async getUniqueId()
+            return@async uniqueId
         }
     }
 
     // MARK: - Media & Battery Helpers
 
     /** Get list of supported media types/codecs */
-    override fun getSupportedMediaTypeList(): Array<String> {
-        return supportedMediaTypes.toTypedArray()
-    }
+    override val supportedMediaTypeList: Array<String>
+        get() = supportedMediaTypes.toTypedArray()
 
     /** Check if battery level is below threshold */
     override fun isLowBatteryLevel(threshold: Double): Boolean {
-        val currentLevel = getBatteryLevel()
-        return currentLevel < threshold
+        return batteryLevel < threshold
     }
 
     /** Check if device is in tablet mode (Windows-specific, returns false on Android) */
-    override fun isTabletMode(): Boolean {
-        return false
-    }
+    override val isTabletMode: Boolean
+        get() = false
 
     /** Get total disk capacity using old API (for legacy compatibility) */
-    override fun getTotalDiskCapacityOld(): Double {
-        return try {
-            val stat = StatFs(Environment.getDataDirectory().path)
-            stat.blockCountLong * stat.blockSizeLong.toDouble()
-        } catch (e: Exception) {
-            -1.0
+    override val totalDiskCapacityOld: Double
+        get() {
+            return try {
+                val stat = StatFs(Environment.getDataDirectory().path)
+                stat.blockCountLong * stat.blockSizeLong.toDouble()
+            } catch (e: Exception) {
+                -1.0
+            }
         }
-    }
 
     /** Get free disk storage using old API (for legacy compatibility) */
-    override fun getFreeDiskStorageOld(): Double {
-        return try {
-            val stat = StatFs(Environment.getDataDirectory().path)
-            stat.availableBlocksLong * stat.blockSizeLong.toDouble()
-        } catch (e: Exception) {
-            -1.0
+    override val freeDiskStorageOld: Double
+        get() {
+            return try {
+                val stat = StatFs(Environment.getDataDirectory().path)
+                stat.availableBlocksLong * stat.blockSizeLong.toDouble()
+            } catch (e: Exception) {
+                -1.0
+            }
         }
-    }
 
     companion object {
         const val NAME = "NitroDeviceInfo"

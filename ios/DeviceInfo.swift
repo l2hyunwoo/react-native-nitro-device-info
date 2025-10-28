@@ -118,12 +118,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  // MARK: - Synchronous Methods
+  // MARK: - Synchronous Properties - Device Capabilities
 
   /**
    * Check if device is a tablet (iPad)
    */
-  public func isTablet() throws -> Bool {
+  public var isTablet: Bool {
     return UIDevice.current.userInterfaceIdiom == .pad
   }
 
@@ -131,7 +131,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
    * Check if device has a display notch
    * Detects iPhone X and later models with notch
    */
-  public func hasNotch() throws -> Bool {
+  public var hasNotch: Bool {
     if #available(iOS 11.0, *) {
       let window = UIApplication.shared.windows.first
       let bottomInset = window?.safeAreaInsets.bottom ?? 0
@@ -144,7 +144,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
    * Check if device has Dynamic Island
    * Only iPhone 14 Pro and later
    */
-  public func hasDynamicIsland() throws -> Bool {
+  public var hasDynamicIsland: Bool {
     if #available(iOS 16.0, *) {
       // Use cached model identifier to avoid repeated syscalls
       let modelIdentifier = cachedDeviceModelIdentifier
@@ -158,36 +158,36 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  // MARK: - Synchronous Methods - Device Identification
+  // MARK: - Synchronous Properties - Device Identification
 
   /**
    * Get unique device identifier (IDFV)
    * Persists across app installs from same vendor
    */
-  public func getUniqueId() throws -> String {
+  public var uniqueId: String {
     return UIDevice.current.identifierForVendor?.uuidString ?? ""
   }
 
   /**
    * Get device manufacturer (always "Apple" on iOS)
    */
-  public func getManufacturer() throws -> String {
+  public var manufacturer: String {
     return "Apple"
   }
 
-  // MARK: - Synchronous Methods - System Resources
+  // MARK: - Synchronous Properties - System Resources
 
   /**
    * Get total device RAM in bytes
    */
-  public func getTotalMemory() throws -> Double {
+  public var totalMemory: Double {
     return Double(ProcessInfo.processInfo.physicalMemory)
   }
 
   /**
    * Get current app memory usage in bytes
    */
-  public func getUsedMemory() throws -> Double {
+  public var usedMemory: Double {
     var info = mach_task_basic_info()
     var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
 
@@ -209,7 +209,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Get total disk storage capacity in bytes
    */
-  public func getTotalDiskCapacity() throws -> Double {
+  public var totalDiskCapacity: Double {
     do {
       let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
       let space = (systemAttributes[.systemSize] as? NSNumber)?.doubleValue ?? 0
@@ -223,7 +223,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Get free disk storage in bytes
    */
-  public func getFreeDiskStorage() throws -> Double {
+  public var freeDiskStorage: Double {
     do {
       let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
       let freeSpace = (systemAttributes[.systemFreeSize] as? NSNumber)?.doubleValue ?? 0
@@ -237,7 +237,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Get current battery level (0.0 to 1.0)
    */
-  public func getBatteryLevel() throws -> Double {
+  public var batteryLevel: Double {
     // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
     let level = UIDevice.current.batteryLevel
@@ -247,7 +247,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Get comprehensive power state information
    */
-  public func getPowerState() throws -> PowerState {
+  public var powerState: PowerState {
     // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
 
@@ -269,39 +269,39 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Check if battery is currently charging
    */
-  public func isBatteryCharging() throws -> Bool {
+  public var isBatteryCharging: Bool {
     // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
     return UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
   }
 
-  // MARK: - Synchronous Methods - Application Metadata
+  // MARK: - Synchronous Properties - Application Metadata
 
   /**
    * Get application version string
    */
-  public func getVersion() throws -> String {
+  public var version: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
   }
 
   /**
    * Get application build number
    */
-  public func getBuildNumber() throws -> String {
+  public var buildNumber: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
   }
 
   /**
    * Get bundle identifier
    */
-  public func getBundleId() throws -> String {
+  public var bundleId: String {
     return Bundle.main.bundleIdentifier ?? ""
   }
 
   /**
    * Get application display name
    */
-  public func getApplicationName() throws -> String {
+  public var applicationName: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ??
            Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
   }
@@ -421,12 +421,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  // MARK: - Synchronous Methods - Device Capabilities
+  // MARK: - Synchronous Properties - Device Capabilities (Additional)
 
   /**
    * Check if camera is present
    */
-  public func isCameraPresent() throws -> Bool {
+  public var isCameraPresent: Bool {
     // Requires AVFoundation import
     // For MVP, return true (all iPhones have cameras)
     return true
@@ -435,7 +435,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Check if PIN or biometric authentication is set
    */
-  public func isPinOrFingerprintSet() throws -> Bool {
+  public var isPinOrFingerprintSet: Bool {
     // Requires LocalAuthentication import
     // For MVP, return false
     return false
@@ -444,7 +444,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Check if running in simulator
    */
-  public func isEmulator() throws -> Bool {
+  public var isEmulator: Bool {
     #if targetEnvironment(simulator)
       return true
     #else
@@ -452,19 +452,19 @@ class DeviceInfo: HybridDeviceInfoSpec {
     #endif
   }
 
-  // MARK: - Synchronous Methods - Platform-Specific
+  // MARK: - Synchronous Properties - Platform-Specific
 
   /**
    * Get Android API level (returns -1 on iOS)
    */
-  public func getApiLevel() throws -> Double {
+  public var apiLevel: Double {
     return -1.0
   }
 
   /**
    * Get supported CPU architectures
    */
-  public func getSupportedAbis() throws -> [String] {
+  public var supportedAbis: [String] {
     #if arch(arm64)
       return ["arm64"]
     #elseif arch(x86_64)
@@ -477,14 +477,14 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Check if Google Mobile Services is available (always false on iOS)
    */
-  public func hasGms() throws -> Bool {
+  public var hasGms: Bool {
     return false
   }
 
   /**
    * Check if Huawei Mobile Services is available (always false on iOS)
    */
-  public func hasHms() throws -> Bool {
+  public var hasHms: Bool {
     return false
   }
 
@@ -606,9 +606,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Readable version string (version.build)
   var readableVersion: String {
-    let version = (try? getVersion()) ?? ""
-    let build = (try? getBuildNumber()) ?? ""
-    return "\(version).\(build)"
+    return "\(version).\(buildNumber)"
   }
 
   /// Cached first install time (computed once)
@@ -644,7 +642,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   // MARK: - Device Capability Detection
 
   /// Check if wired headphones are connected
-  func isWiredHeadphonesConnected() -> Bool {
+  var isWiredHeadphonesConnected: Bool {
     do {
       let route = AVAudioSession.sharedInstance().currentRoute
       return route.outputs.contains { output in
@@ -657,7 +655,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Check if Bluetooth headphones are connected
-  func isBluetoothHeadphonesConnected() -> Bool {
+  var isBluetoothHeadphonesConnected: Bool {
     let route = AVAudioSession.sharedInstance().currentRoute
     return route.outputs.contains { output in
       output.portType == .bluetoothA2DP ||
@@ -667,27 +665,27 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Check if airplane mode is enabled (not available on iOS - returns false)
-  func isAirplaneMode() -> Bool {
+  var isAirplaneMode: Bool {
     return false
   }
 
   /// Check if device is low RAM device (iOS doesn't have equivalent - returns false)
-  func isLowRamDevice() -> Bool {
+  var isLowRamDevice: Bool {
     return false
   }
 
   /// Check if mouse is connected (Windows-specific, returns false on iOS)
-  func isMouseConnected() -> Bool {
+  var isMouseConnected: Bool {
     return false
   }
 
   /// Check if keyboard is connected (Windows-specific, returns false on iOS)
-  func isKeyboardConnected() -> Bool {
+  var isKeyboardConnected: Bool {
     return false
   }
 
   /// Check if device is in landscape orientation
-  func isLandscape() -> Bool {
+  var isLandscape: Bool {
     let orientation = UIDevice.current.orientation
     return orientation == .landscapeLeft || orientation == .landscapeRight
   }
@@ -695,12 +693,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
   // MARK: - Advanced System Information
 
   /// Get supported 32-bit ABIs (iOS devices are 64-bit only since iPhone 5s)
-  func getSupported32BitAbis() -> [String] {
+  var supported32BitAbis: [String] {
     return []
   }
 
   /// Get supported 64-bit ABIs
-  func getSupported64BitAbis() -> [String] {
+  var supported64BitAbis: [String] {
     var arch: String = "arm64"
 
     #if targetEnvironment(simulator)
@@ -715,7 +713,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get system font scale
-  func getFontScale() -> Double {
+  var fontScale: Double {
     let preferredFont = UIFont.preferredFont(forTextStyle: .body)
     let defaultSize: CGFloat = 17.0  // iOS default body font size
     return Double(preferredFont.pointSize / defaultSize)
@@ -727,12 +725,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get system available features (Android-specific, not available on iOS)
-  func getSystemAvailableFeatures() -> [String] {
+  var systemAvailableFeatures: [String] {
     return []
   }
 
   /// Get list of enabled location providers
-  func getAvailableLocationProviders() -> [String] {
+  var availableLocationProviders: [String] {
     let enabled = CLLocationManager.locationServicesEnabled()
     if enabled {
       return ["gps", "network"]
@@ -742,12 +740,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get host names (Windows-specific, not available on iOS)
-  func getHostNames() -> [String] {
+  var hostNames: [String] {
     return []
   }
 
   /// Get maximum memory (not available on iOS in same way as Android)
-  func getMaxMemory() -> Double {
+  var maxMemory: Double {
     return -1
   }
 
@@ -777,7 +775,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get device name
-  func getDeviceName() -> String {
+  var deviceName: String {
     return UIDevice.current.name
   }
 
@@ -887,26 +885,26 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if any headphones are connected
   var isHeadphonesConnectedSync: Bool {
-    return isWiredHeadphonesConnected() || isBluetoothHeadphonesConnected()
+    return isWiredHeadphonesConnected || isBluetoothHeadphonesConnected
   }
 
   // MARK: - iOS-Specific Features
 
   /// Check if Display Zoom is enabled
-  func isDisplayZoomed() -> Bool {
+  var isDisplayZoomed: Bool {
     let screen = UIScreen.main
     return screen.scale < screen.nativeScale
   }
 
   /// Get screen brightness (0.0 to 1.0)
-  func getBrightness() -> Double {
+  var brightness: Double {
     return Double(UIScreen.main.brightness)
   }
 
   /// Get unique ID and sync to Keychain for persistence
   func syncUniqueId() throws -> Promise<String> {
     return Promise.async {
-      let uniqueId = try self.getUniqueId()
+      let uniqueId = self.uniqueId
 
       let keychainQuery: [String: Any] = [
         kSecClass as String: kSecClassGenericPassword,
@@ -936,32 +934,27 @@ class DeviceInfo: HybridDeviceInfoSpec {
   // MARK: - Media & Battery Helpers
 
   /// Get supported media types (Android-specific, returns empty on iOS)
-  func getSupportedMediaTypeList() -> [String] {
+  var supportedMediaTypeList: [String] {
     return []
   }
 
   /// Check if battery level is below threshold
   func isLowBatteryLevel(threshold: Double) -> Bool {
-    let currentLevel = (try? getBatteryLevel()) ?? 0.0
-    return currentLevel < threshold
+    return batteryLevel < threshold
   }
 
   /// Check if device is in tablet mode (Windows-specific, returns false on iOS)
-  func isTabletMode() -> Bool {
+  var isTabletMode: Bool {
     return false
   }
 
   /// Get total disk capacity using old API (alias to main method on iOS)
-  func getTotalDiskCapacityOld() -> Double {
-    do {
-      return try getTotalDiskCapacity()
-    } catch {
-      return -1.0
-    }
+  var totalDiskCapacityOld: Double {
+    return totalDiskCapacity
   }
 
   /// Get free disk storage using old API (alias to main method on iOS)
-  func getFreeDiskStorageOld() -> Double {
-    return (try? getFreeDiskStorage()) ?? -1.0
+  var freeDiskStorageOld: Double {
+    return freeDiskStorage
   }
 }
