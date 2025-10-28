@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-device-info",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Get device info for React Native using Nitro",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
