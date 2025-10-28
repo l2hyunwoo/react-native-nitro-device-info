@@ -112,12 +112,12 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   // CATEGORY 3: Device Identification
   // ==========================================================================
   {
-    key: 'getUniqueId',
+    key: 'uniqueId',
     label: 'Unique ID',
     category: PropertyCategory.DEVICE_IDENTIFICATION,
     type: PropertyType.STRING,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
     key: 'androidId',
@@ -136,24 +136,24 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'getManufacturer',
+    key: 'manufacturer',
     label: 'Manufacturer',
     category: PropertyCategory.DEVICE_IDENTIFICATION,
     type: PropertyType.STRING,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
 
   // ==========================================================================
   // CATEGORY 4: Battery & Power
   // ==========================================================================
   {
-    key: 'getBatteryLevel',
+    key: 'batteryLevel',
     label: 'Battery Level',
     category: PropertyCategory.BATTERY_POWER,
     type: PropertyType.NUMBER,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
     key: 'isBatteryCharging',
@@ -161,15 +161,15 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     category: PropertyCategory.BATTERY_POWER,
     type: PropertyType.BOOLEAN,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
-    key: 'getPowerState',
+    key: 'powerState',
     label: 'Power State',
     category: PropertyCategory.BATTERY_POWER,
     type: PropertyType.OBJECT,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
     key: 'lowPowerMode',
@@ -184,72 +184,72 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   // CATEGORY 5: System Resources
   // ==========================================================================
   {
-    key: 'getTotalMemory',
+    key: 'totalMemory',
     label: 'Total Memory',
     category: PropertyCategory.SYSTEM_RESOURCES,
     type: PropertyType.BYTES,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
-    key: 'getUsedMemory',
+    key: 'usedMemory',
     label: 'Used Memory',
     category: PropertyCategory.SYSTEM_RESOURCES,
     type: PropertyType.BYTES,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
-    key: 'getTotalDiskCapacity',
+    key: 'totalDiskCapacity',
     label: 'Total Disk Capacity',
     category: PropertyCategory.SYSTEM_RESOURCES,
     type: PropertyType.BYTES,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
-    key: 'getFreeDiskStorage',
+    key: 'freeDiskStorage',
     label: 'Free Disk Storage',
     category: PropertyCategory.SYSTEM_RESOURCES,
     type: PropertyType.BYTES,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
 
   // ==========================================================================
   // CATEGORY 6: Application Metadata
   // ==========================================================================
   {
-    key: 'getVersion',
+    key: 'version',
     label: 'App Version',
     category: PropertyCategory.APP_METADATA,
     type: PropertyType.STRING,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
-    key: 'getBuildNumber',
+    key: 'buildNumber',
     label: 'Build Number',
     category: PropertyCategory.APP_METADATA,
     type: PropertyType.STRING,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
-    key: 'getBundleId',
+    key: 'bundleId',
     label: 'Bundle ID',
     category: PropertyCategory.APP_METADATA,
     type: PropertyType.STRING,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
   {
-    key: 'getApplicationName',
+    key: 'applicationName',
     label: 'Application Name',
     category: PropertyCategory.APP_METADATA,
     type: PropertyType.STRING,
     platform: PlatformAvailability.ALL,
-    isSync: false,
+    isSync: true,
   },
 
   // ==========================================================================
@@ -300,20 +300,20 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   // CATEGORY 8: Platform Capabilities
   // ==========================================================================
   {
-    key: 'getApiLevel',
+    key: 'apiLevel',
     label: 'API Level',
     category: PropertyCategory.PLATFORM_CAPABILITIES,
     type: PropertyType.NUMBER,
     platform: PlatformAvailability.ANDROID_ONLY,
-    isSync: false,
+    isSync: true,
   },
   {
-    key: 'getSupportedAbis',
+    key: 'supportedAbis',
     label: 'Supported ABIs',
     category: PropertyCategory.PLATFORM_CAPABILITIES,
     type: PropertyType.ARRAY,
     platform: PlatformAvailability.ANDROID_ONLY,
-    isSync: false,
+    isSync: true,
   },
   {
     key: 'hasGms',
@@ -321,7 +321,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     category: PropertyCategory.PLATFORM_CAPABILITIES,
     type: PropertyType.BOOLEAN,
     platform: PlatformAvailability.ANDROID_ONLY,
-    isSync: false,
+    isSync: true,
   },
   {
     key: 'hasHms',
@@ -329,7 +329,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     category: PropertyCategory.PLATFORM_CAPABILITIES,
     type: PropertyType.BOOLEAN,
     platform: PlatformAvailability.ANDROID_ONLY,
-    isSync: false,
+    isSync: true,
   },
 
   // ==========================================================================
