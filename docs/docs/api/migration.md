@@ -34,7 +34,7 @@ DeviceInfoModule.getBrand();
 
 ### 3. Properties vs Methods
 
-Some methods are now **direct property accessors** for instant synchronous access:
+Most methods are now **direct property accessors** for instant synchronous access:
 
 **Before**:
 ```typescript
@@ -52,22 +52,22 @@ const model = DeviceInfoModule.model;        // Property access
 
 ### 4. Synchronous by Default
 
-Most methods are now **synchronous** for instant access (<1ms):
+Most properties are now **synchronous** for instant access (<1ms):
 
 **Before** (everything async or method-based):
 ```typescript
 const uniqueId = await DeviceInfo.getUniqueId();      // Async
 const totalMemory = await DeviceInfo.getTotalMemory(); // Async
 const batteryLevel = await DeviceInfo.getBatteryLevel(); // Async
-const isTablet = DeviceInfo.isTablet();               // Sync
+const isTablet = DeviceInfo.isTablet();               // Sync method
 ```
 
-**After** (most methods synchronous):
+**After** (most properties synchronous):
 ```typescript
-const uniqueId = DeviceInfoModule.getUniqueId();      // Sync now!
-const totalMemory = DeviceInfoModule.getTotalMemory(); // Sync now!
-const batteryLevel = DeviceInfoModule.getBatteryLevel(); // Sync now!
-const isTablet = DeviceInfoModule.isTablet();         // Still sync
+const uniqueId = DeviceInfoModule.uniqueId;      // Sync property now!
+const totalMemory = DeviceInfoModule.totalMemory; // Sync property now!
+const batteryLevel = DeviceInfoModule.batteryLevel; // Sync property now!
+const isTablet = DeviceInfoModule.isTablet;      // Sync property
 ```
 
 ### 5. Only I/O Operations Are Async
@@ -97,35 +97,35 @@ const installTime = await DeviceInfoModule.getFirstInstallTime();
 | `DeviceInfo.getModel()` | `DeviceInfoModule.model` | Now a property |
 | `DeviceInfo.getSystemName()` | `DeviceInfoModule.systemName` | Now a property |
 | `DeviceInfo.getSystemVersion()` | `DeviceInfoModule.systemVersion` | Now a property |
-| `await DeviceInfo.getUniqueId()` | `DeviceInfoModule.getUniqueId()` | Now sync |
-| `DeviceInfo.getManufacturer()` | `DeviceInfoModule.getManufacturer()` | Same (sync) |
-| `DeviceInfo.isTablet()` | `DeviceInfoModule.isTablet()` | Same (sync) |
+| `await DeviceInfo.getUniqueId()` | `DeviceInfoModule.uniqueId` | Now sync property |
+| `DeviceInfo.getManufacturer()` | `DeviceInfoModule.manufacturer` | Now property |
+| `DeviceInfo.isTablet()` | `DeviceInfoModule.isTablet` | Now property |
 
 ### System Resources
 
 | react-native-device-info | `react-native-nitro-device-info` | Notes |
 |---------------------------|--------------------------------|-------|
-| `await DeviceInfo.getTotalMemory()` | `DeviceInfoModule.getTotalMemory()` | Now sync |
-| `await DeviceInfo.getUsedMemory()` | `DeviceInfoModule.getUsedMemory()` | Now sync |
-| `await DeviceInfo.getTotalDiskCapacity()` | `DeviceInfoModule.getTotalDiskCapacity()` | Now sync |
-| `await DeviceInfo.getFreeDiskStorage()` | `DeviceInfoModule.getFreeDiskStorage()` | Now sync |
+| `await DeviceInfo.getTotalMemory()` | `DeviceInfoModule.totalMemory` | Now sync property |
+| `await DeviceInfo.getUsedMemory()` | `DeviceInfoModule.usedMemory` | Now sync property |
+| `await DeviceInfo.getTotalDiskCapacity()` | `DeviceInfoModule.totalDiskCapacity` | Now sync property |
+| `await DeviceInfo.getFreeDiskStorage()` | `DeviceInfoModule.freeDiskStorage` | Now sync property |
 
 ### Battery Information
 
 | react-native-device-info | `react-native-nitro-device-info` | Notes |
 |---------------------------|--------------------------------|-------|
-| `await DeviceInfo.getBatteryLevel()` | `DeviceInfoModule.getBatteryLevel()` | Now sync |
-| `await DeviceInfo.getPowerState()` | `DeviceInfoModule.getPowerState()` | Now sync |
-| `await DeviceInfo.isBatteryCharging()` | `DeviceInfoModule.isBatteryCharging()` | Now sync |
+| `await DeviceInfo.getBatteryLevel()` | `DeviceInfoModule.batteryLevel` | Now sync property |
+| `await DeviceInfo.getPowerState()` | `DeviceInfoModule.powerState` | Now sync property |
+| `await DeviceInfo.isBatteryCharging()` | `DeviceInfoModule.isBatteryCharging` | Now sync property |
 
 ### Application Metadata
 
 | react-native-device-info | `react-native-nitro-device-info` | Notes |
 |---------------------------|--------------------------------|-------|
-| `DeviceInfo.getVersion()` | `DeviceInfoModule.getVersion()` | Same (sync) |
-| `DeviceInfo.getBuildNumber()` | `DeviceInfoModule.getBuildNumber()` | Same (sync) |
-| `DeviceInfo.getBundleId()` | `DeviceInfoModule.getBundleId()` | Same (sync) |
-| `DeviceInfo.getApplicationName()` | `DeviceInfoModule.getApplicationName()` | Same (sync) |
+| `DeviceInfo.getVersion()` | `DeviceInfoModule.version` | Now property |
+| `DeviceInfo.getBuildNumber()` | `DeviceInfoModule.buildNumber` | Now property |
+| `DeviceInfo.getBundleId()` | `DeviceInfoModule.bundleId` | Now property |
+| `DeviceInfo.getApplicationName()` | `DeviceInfoModule.applicationName` | Now property |
 | `DeviceInfo.getReadableVersion()` | `DeviceInfoModule.readableVersion` | Now a property |
 
 ### Network & Connectivity
@@ -208,10 +208,10 @@ const uniqueId = await DeviceInfo.getUniqueId();
 const totalMemory = await DeviceInfo.getTotalMemory();
 const batteryLevel = await DeviceInfo.getBatteryLevel();
 
-// After (no await needed)
-const uniqueId = DeviceInfoModule.getUniqueId();
-const totalMemory = DeviceInfoModule.getTotalMemory();
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
+// After (no await needed, now properties)
+const uniqueId = DeviceInfoModule.uniqueId;
+const totalMemory = DeviceInfoModule.totalMemory;
+const batteryLevel = DeviceInfoModule.batteryLevel;
 ```
 
 ### 6. Test Your Changes
@@ -282,9 +282,9 @@ function DeviceInfoScreen() {
   // Sync properties - instant access, no state needed
   const deviceId = DeviceInfoModule.deviceId;
   const brand = DeviceInfoModule.brand;
-  const uniqueId = DeviceInfoModule.getUniqueId();
-  const totalMemory = DeviceInfoModule.getTotalMemory();
-  const batteryLevel = DeviceInfoModule.getBatteryLevel();
+  const uniqueId = DeviceInfoModule.uniqueId;
+  const totalMemory = DeviceInfoModule.totalMemory;
+  const batteryLevel = DeviceInfoModule.batteryLevel;
 
   useEffect(() => {
     // Only async operations need useEffect
@@ -313,10 +313,10 @@ const brand = await DeviceInfo.getBrand();
 const model = await DeviceInfo.getModel();
 const memory = await DeviceInfo.getTotalMemory();
 
-// New: <1ms total (synchronous + JSI)
+// New: <1ms total (synchronous properties + JSI)
 const brand = DeviceInfoModule.brand;
 const model = DeviceInfoModule.model;
-const memory = DeviceInfoModule.getTotalMemory();
+const memory = DeviceInfoModule.totalMemory;
 ```
 
 ### 2. Simpler Code
@@ -344,7 +344,7 @@ Full type definitions with excellent IntelliSense:
 ```typescript
 import type { PowerState, BatteryState } from 'react-native-nitro-device-info';
 
-const powerState: PowerState = DeviceInfoModule.getPowerState();
+const powerState: PowerState = DeviceInfoModule.powerState;
 // TypeScript knows: powerState.batteryLevel, powerState.batteryState, powerState.lowPowerMode
 ```
 

@@ -10,30 +10,28 @@ Import the module and start accessing device information:
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 // Synchronous properties (immediate - <1ms)
-console.log(DeviceInfoModule.deviceId);      // "iPhone14,2"
+console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
-console.log(DeviceInfoModule.brand);         // "Apple"
-console.log(DeviceInfoModule.model);         // "iPhone"
+console.log(DeviceInfoModule.brand); // "Apple"
+console.log(DeviceInfoModule.model); // "iPhone"
 ```
 
-### Synchronous Methods
-
-Most methods return results instantly (<1ms):
+### Synchronous Properties
 
 ```typescript
 // Device identification
-const uniqueId = DeviceInfoModule.getUniqueId();
+const uniqueId = DeviceInfoModule.uniqueId;
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
-const manufacturer = DeviceInfoModule.getManufacturer();
+const manufacturer = DeviceInfoModule.manufacturer;
 console.log(manufacturer); // "Apple"
 
 // Device capabilities
-const isTablet = DeviceInfoModule.isTablet();
+const isTablet = DeviceInfoModule.isTablet;
 console.log(isTablet); // false
 
 // Battery information
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const batteryLevel = DeviceInfoModule.batteryLevel;
 console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`); // "Battery: 85%"
 ```
 
@@ -60,11 +58,11 @@ Get comprehensive device identification information:
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-const deviceId = DeviceInfoModule.deviceId;           // "iPhone14,2"
-const manufacturer = DeviceInfoModule.getManufacturer(); // "Apple"
-const uniqueId = DeviceInfoModule.getUniqueId();      // "FCDBD8EF-..."
-const brand = DeviceInfoModule.brand;                 // "Apple"
-const model = DeviceInfoModule.model;                 // "iPhone"
+const deviceId = DeviceInfoModule.deviceId; // "iPhone14,2"
+const manufacturer = DeviceInfoModule.manufacturer; // "Apple"
+const uniqueId = DeviceInfoModule.uniqueId; // "FCDBD8EF-..."
+const brand = DeviceInfoModule.brand; // "Apple"
+const model = DeviceInfoModule.model; // "iPhone"
 ```
 
 ### Device Capabilities
@@ -72,11 +70,11 @@ const model = DeviceInfoModule.model;                 // "iPhone"
 Check what features the device supports:
 
 ```typescript
-const isTablet = DeviceInfoModule.isTablet();             // false
-const hasNotch = DeviceInfoModule.hasNotch();             // true
-const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland(); // false
-const isCameraPresent = DeviceInfoModule.isCameraPresent(); // true
-const isEmulator = DeviceInfoModule.isEmulator();         // false
+const isTablet = DeviceInfoModule.isTablet; // false
+const hasNotch = DeviceInfoModule.hasNotch; // true
+const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland; // false
+const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
+const isEmulator = DeviceInfoModule.isEmulator; // false
 ```
 
 ### System Resources
@@ -84,10 +82,10 @@ const isEmulator = DeviceInfoModule.isEmulator();         // false
 Monitor memory and storage:
 
 ```typescript
-const totalMemory = DeviceInfoModule.getTotalMemory();
-const usedMemory = DeviceInfoModule.getUsedMemory();
-const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
-const freeDisk = DeviceInfoModule.getFreeDiskStorage();
+const totalMemory = DeviceInfoModule.totalMemory;
+const usedMemory = DeviceInfoModule.usedMemory;
+const totalDisk = DeviceInfoModule.totalDiskCapacity;
+const freeDisk = DeviceInfoModule.freeDiskStorage;
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
@@ -104,9 +102,9 @@ Get detailed battery status with TypeScript types:
 ```typescript
 import type { PowerState } from 'react-native-nitro-device-info';
 
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
-const isCharging = DeviceInfoModule.isBatteryCharging();
-const powerState: PowerState = DeviceInfoModule.getPowerState();
+const batteryLevel = DeviceInfoModule.batteryLevel;
+const isCharging = DeviceInfoModule.isBatteryCharging;
+const powerState: PowerState = DeviceInfoModule.powerState;
 
 console.log(
   `Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`
@@ -119,10 +117,10 @@ console.log(`Low Power Mode: ${powerState.lowPowerMode}`);
 Access information about your app:
 
 ```typescript
-const version = DeviceInfoModule.getVersion();
-const buildNumber = DeviceInfoModule.getBuildNumber();
-const bundleId = DeviceInfoModule.getBundleId();
-const appName = DeviceInfoModule.getApplicationName();
+const version = DeviceInfoModule.version;
+const buildNumber = DeviceInfoModule.buildNumber;
+const bundleId = DeviceInfoModule.bundleId;
+const appName = DeviceInfoModule.applicationName;
 
 console.log(`${appName} (${bundleId})`);
 console.log(`Version: ${version} (${buildNumber})`);
@@ -149,15 +147,15 @@ Access platform-specific details:
 ```typescript
 // Android: Returns API level (e.g., 33 for Android 13)
 // iOS: Returns -1
-const apiLevel = DeviceInfoModule.getApiLevel();
+const apiLevel = DeviceInfoModule.apiLevel;
 
 // Android: Returns supported ABIs (e.g., ["arm64-v8a", "armeabi-v7a"])
-// iOS: Returns empty array
-const abis = DeviceInfoModule.getSupportedAbis();
+// iOS: Returns ["arm64"]
+const abis = DeviceInfoModule.supportedAbis;
 
 // Android: Check if Google Mobile Services is available
 // iOS: Returns false
-const hasGms = DeviceInfoModule.hasGms();
+const hasGms = DeviceInfoModule.hasGms;
 
 console.log(`API Level: ${apiLevel}`);
 console.log(`Supported ABIs: ${abis.join(', ')}`);
@@ -199,10 +197,10 @@ export default function DeviceInfoScreen() {
   const brand = DeviceInfoModule.brand;
   const systemVersion = DeviceInfoModule.systemVersion;
 
-  // Sync methods - instant access
-  const isTablet = DeviceInfoModule.isTablet();
-  const batteryLevel = DeviceInfoModule.getBatteryLevel();
-  const powerState: PowerState = DeviceInfoModule.getPowerState();
+  // Sync properties - instant access
+  const isTablet = DeviceInfoModule.isTablet;
+  const batteryLevel = DeviceInfoModule.batteryLevel;
+  const powerState: PowerState = DeviceInfoModule.powerState;
 
   useEffect(() => {
     // Async methods - fetch on mount
