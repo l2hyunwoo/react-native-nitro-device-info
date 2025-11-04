@@ -132,7 +132,7 @@ if (hasHardwareKeyStore) {
 }
 ```
 
-**Platform**: Android, iOS(except for iOS Emulator)
+**Platform**: Android, iOS (except for iOS Emulator)
 
 ### `isCameraPresent: boolean`
 
