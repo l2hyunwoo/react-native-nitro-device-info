@@ -982,8 +982,9 @@ export interface DeviceInfo
 
   /**
    * Check if liquid glass effect is available.
+   * Requires iOS 26.0+ and returns false on Android.
    *
-   * @platform iOS
+   * @platform iOS 26.0+ (returns false on Android)
    *
    */
   readonly isLiquidGlassAvailable: boolean;
