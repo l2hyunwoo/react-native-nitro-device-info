@@ -957,4 +957,23 @@ class DeviceInfo: HybridDeviceInfoSpec {
   var freeDiskStorageOld: Double {
     return freeDiskStorage
   }
+
+  /// Check if liquid glass effect is available
+  /// Requires iOS 26.0+, Xcode 16+ (Swift 6.2+), and UIDesignRequiresCompatibility must be false/absent
+  var isLiquidGlassAvailable: Bool {
+    #if compiler(>=6.2)  // Xcode 16+ with Swift 6.2+
+    if #available(iOS 26.0, *) {
+      // Check if the app has explicitly disabled liquid glass via compatibility flag
+      if let infoPlist = Bundle.main.infoDictionary,
+         let requiresCompatibility = infoPlist["UIDesignRequiresCompatibility"] as? Bool {
+        // If UIDesignRequiresCompatibility is true, liquid glass is disabled
+        return !requiresCompatibility
+      }
+      // If the flag is not set or is false, liquid glass is available
+      return true
+    }
+    #endif
+    // Liquid glass requires iOS 26.0+ and Swift 6.2+ compiler
+    return false
+  }
 }

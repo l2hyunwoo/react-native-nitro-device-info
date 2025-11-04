@@ -981,6 +981,14 @@ export interface DeviceInfo
   readonly isHeadphonesConnectedSync: boolean;
 
   /**
+   * Check if liquid glass effect is available.
+   *
+   * @platform iOS
+   *
+   */
+  readonly isLiquidGlassAvailable: boolean;
+
+  /**
    * Get HTTP User-Agent string.
    * iOS requires WebView initialization (heavy operation, cached after first call).
    * Android can return synchronously from System.getProperty().
