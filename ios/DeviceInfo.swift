@@ -16,6 +16,7 @@ import os.log
 import AVFoundation
 import CoreTelephony
 import CoreLocation
+import CryptoKit
 import DeviceCheck
 import WebKit
 
@@ -975,5 +976,16 @@ class DeviceInfo: HybridDeviceInfoSpec {
     #endif
     // Liquid glass requires iOS 26.0+ and Swift 6.2+ compiler
     return false
+  }
+
+  /// Check if hardware-backed key storage (Secure Enclave) is available
+  var isHardwareKeyStoreAvailable: Bool {
+    #if targetEnvironment(simulator)
+      // iOS Simulator does not have Secure Enclave
+      return false
+    #else
+      // SecureEnclave.isAvailable checks for A7+ chip (iPhone 5s+)
+      return SecureEnclave.isAvailable
+    #endif
   }
 }

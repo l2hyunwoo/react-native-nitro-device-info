@@ -28,6 +28,9 @@ import android.os.Looper
 import android.os.StatFs
 import android.os.SystemClock
 import android.provider.Settings
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyInfo
+import android.security.keystore.KeyProperties
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.webkit.WebSettings
@@ -43,6 +46,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.net.Inet4Address
 import java.net.NetworkInterface
+import java.security.KeyStore
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKeyFactory
 import kotlin.coroutines.resume
 
 /**
@@ -935,6 +941,22 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         get() = isWiredHeadphonesConnected || isBluetoothHeadphonesConnected
 
     override val isLiquidGlassAvailable: Boolean = false
+
+    /**
+     * Check if hardware-backed key storage is available
+     * Android KeyStore is always hardware-backed on API 23+ (TEE or StrongBox)
+     */
+    override val isHardwareKeyStoreAvailable: Boolean
+        get() {
+            return try {
+                // AndroidKeyStore provider existence indicates hardware-backed storage
+                KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+                true
+            } catch (e: Exception) {
+                Log.w(NAME, "AndroidKeyStore not available", e)
+                false
+            }
+        }
 
     // MARK: - iOS-Specific Features
 

@@ -1020,6 +1020,31 @@ export interface DeviceInfo
   readonly isLiquidGlassAvailable: boolean;
 
   /**
+   * Check if hardware-backed key storage is available
+   *
+   * Detects if the device supports hardware-backed cryptographic key storage:
+   * - Android: Hardware-backed KeyStore (TEE or StrongBox)
+   * - iOS: Secure Enclave
+   *
+   * Hardware backing means cryptographic keys are stored in secure hardware
+   * isolated from the main CPU, providing enhanced security against extraction.
+   *
+   * @returns true if hardware-backed key storage available
+   * @example
+   * Android with TEE/StrongBox → true
+   * iOS with Secure Enclave (iPhone 5s+) → true
+   * iOS Simulator → false
+   * Older/low-end devices → false
+   *
+   * @note First call may take 50-200ms on Android (creates test key), <1ms thereafter
+   * @note iOS check is instant (<1ms)
+   *
+   * @platform iOS 13.4+, Android API 24+
+   *
+   */
+  readonly isHardwareKeyStoreAvailable: boolean;
+
+  /**
    * Get Apple DeviceCheck token.
    * Requires network request to Apple servers.
    * Throws error on Android.
