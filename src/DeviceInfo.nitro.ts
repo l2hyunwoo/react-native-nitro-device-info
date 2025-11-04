@@ -1036,10 +1036,7 @@ export interface DeviceInfo
    * iOS Simulator → false
    * Older/low-end devices → false
    *
-   * @note First call may take 50-200ms on Android (creates test key), <1ms thereafter
-   * @note iOS check is instant (<1ms)
-   *
-   * @platform iOS 13.4+, Android API 24+
+   * @platform iOS, Android
    *
    */
   readonly isHardwareKeyStoreAvailable: boolean;
