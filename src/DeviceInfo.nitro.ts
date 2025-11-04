@@ -1011,6 +1011,15 @@ export interface DeviceInfo
   readonly brightness: number;
 
   /**
+   * Check if liquid glass effect is available.
+   * Requires iOS 26.0+ and returns false on Android.
+   *
+   * @platform iOS 26.0+ (returns false on Android)
+   *
+   */
+  readonly isLiquidGlassAvailable: boolean;
+
+  /**
    * Get Apple DeviceCheck token.
    * Requires network request to Apple servers.
    * Throws error on Android.

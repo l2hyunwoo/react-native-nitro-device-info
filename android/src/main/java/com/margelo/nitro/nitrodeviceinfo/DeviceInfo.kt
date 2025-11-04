@@ -934,6 +934,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val isHeadphonesConnectedSync: Boolean
         get() = isWiredHeadphonesConnected || isBluetoothHeadphonesConnected
 
+    override val isLiquidGlassAvailable: Boolean = false
+
     // MARK: - iOS-Specific Features
 
     /** Check if display is zoomed (iOS-specific, returns false on Android) */
