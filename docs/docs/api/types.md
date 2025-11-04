@@ -98,12 +98,12 @@ Device category classification.
 
 ```typescript
 type DeviceType =
-  | 'Handset'        // Smartphone
-  | 'Tablet'         // Tablet device
-  | 'Tv'             // TV or set-top box
-  | 'Desktop'        // Desktop computer
-  | 'GamingConsole'  // Gaming console
-  | 'unknown';       // Unknown device type
+  | 'Handset' // Smartphone
+  | 'Tablet' // Tablet device
+  | 'Tv' // TV or set-top box
+  | 'Desktop' // Desktop computer
+  | 'GamingConsole' // Gaming console
+  | 'unknown'; // Unknown device type
 ```
 
 **Values**:
@@ -185,6 +185,7 @@ interface DeviceInfo extends HybridObject {
   readonly isTablet: boolean;
   readonly hasNotch: boolean;
   readonly hasDynamicIsland: boolean;
+  readonly isHardwareKeyStoreAvailable: boolean;
   readonly isCameraPresent: boolean;
   readonly isPinOrFingerprintSet: boolean;
   readonly isEmulator: boolean;
@@ -255,6 +256,7 @@ interface DeviceInfo extends HybridObject {
   // iOS-Specific Properties
   readonly isDisplayZoomed: boolean;
   readonly brightness: number;
+  readonly isLiquidGlassAvailable: boolean;
   getDeviceToken(): Promise<string>;
   syncUniqueId(): Promise<string>;
 }
@@ -362,8 +364,8 @@ Full autocomplete for all methods and properties:
 
 ```typescript
 // TypeScript knows all available methods
-DeviceInfoModule.get // Shows all available getters
-DeviceInfoModule.is  // Shows all available boolean checks
+DeviceInfoModule.get; // Shows all available getters
+DeviceInfoModule.is; // Shows all available boolean checks
 ```
 
 ### Compile-Time Error Checking
