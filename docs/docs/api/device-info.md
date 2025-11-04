@@ -116,6 +116,24 @@ const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland;
 - **iOS 16+ only** - iPhone 14 Pro and later
 - **Android**: Always returns `false`
 
+### `isHardwareKeyStoreAvailable: boolean`
+
+Check if hardware-backed cryptographic key storage is available on the device.
+
+```typescript
+const hasHardwareKeyStore = DeviceInfoModule.isHardwareKeyStoreAvailable;
+
+if (hasHardwareKeyStore) {
+  console.log('✅ Hardware-backed key storage available');
+  // Safe to store sensitive cryptographic keys
+} else {
+  console.log('⚠️ No hardware-backed storage');
+  // Use alternative security measures
+}
+```
+
+**Platform**: Android, iOS(except for iOS Emulator)
+
 ### `isCameraPresent: boolean`
 
 Check if camera is available.
@@ -453,6 +471,7 @@ const userAgent = await DeviceInfoModule.getUserAgent();
 ```
 
 **Performance**:
+
 - iOS: 100-500ms (requires WebView initialization, cached after first call)
 - Android: sync capable
 
@@ -561,6 +580,7 @@ const hasNfc = DeviceInfoModule.hasSystemFeature('android.hardware.nfc');
 **Platform**: Android only
 
 **Common features**:
+
 - `android.hardware.camera`
 - `android.hardware.nfc`
 - `android.hardware.bluetooth`
@@ -769,6 +789,24 @@ console.log(`Brightness: ${(brightness * 100).toFixed(0)}%`);
 
 **Platform**: iOS only
 
+### `isLiquidGlassAvailable: boolean`
+
+Check if the liquid glass effect is available on the device.
+
+```typescript
+const hasLiquidGlass = DeviceInfoModule.isLiquidGlassAvailable;
+
+if (hasLiquidGlass) {
+  console.log('✅ Liquid glass effect available');
+  // Can use new iOS 26+ design features
+} else {
+  console.log('⚠️ Liquid glass not available');
+  // Fallback to standard UI
+}
+```
+
+**Platform**: iOS 26.0+
+
 ### `getDeviceToken(): Promise<string>`
 
 Get Apple DeviceCheck token.
@@ -829,6 +867,7 @@ const freeDiskOld = DeviceInfoModule.freeDiskStorageOld;
 ### Synchronous Methods (<1ms)
 
 All synchronous methods use cached values and return instantly:
+
 - Core device properties
 - Device identification
 - System resources (memory, disk)
@@ -838,6 +877,7 @@ All synchronous methods use cached values and return instantly:
 ### Asynchronous Methods
 
 Performance varies by operation type:
+
 - **Fast (10-30ms)**: Install times, location status, headphone detection
 - **Medium (20-50ms)**: Network queries (IP, MAC, carrier)
 - **Slow (100-500ms)**: UserAgent (iOS WebView init, cached after first call)
@@ -846,6 +886,7 @@ Performance varies by operation type:
 ### Caching
 
 Network-related synchronous properties use 5-second caches:
+
 - `ipAddressSync`
 - `macAddressSync`
 - `carrierSync`
@@ -856,20 +897,22 @@ This provides fast access while keeping data reasonably fresh.
 
 ## Platform Compatibility Matrix
 
-| Feature | iOS | Android | Notes |
-|---------|-----|---------|-------|
-| Core device info | ✅ | ✅ | All platforms |
-| Battery info | ✅ | ✅ | Low power mode iOS only |
-| System resources | ✅ | ✅ | All platforms |
-| Network info | ✅ | ✅ | MAC hardcoded on iOS 7+ |
-| Android Build info | ❌ | ✅ | Android only |
-| hasNotch/Dynamic Island | ✅ | ❌ | iOS only |
-| GMS/HMS detection | ❌ | ✅ | Android only |
-| DeviceCheck | ✅ | ❌ | iOS 11+ only |
-| Display Zoom | ✅ | ❌ | iOS only |
-| Brightness | ✅ | ❌ | iOS only |
-| System features | ❌ | ✅ | Android only |
-| Media codecs | ❌ | ✅ | Android only |
+| Feature                 | iOS | Android | Notes                               |
+| ----------------------- | --- | ------- | ----------------------------------- |
+| Core device info        | ✅  | ✅      | All platforms                       |
+| Battery info            | ✅  | ✅      | Low power mode iOS only             |
+| System resources        | ✅  | ✅      | All platforms                       |
+| Network info            | ✅  | ✅      | MAC hardcoded on iOS 7+             |
+| Android Build info      | ❌  | ✅      | Android only                        |
+| hasNotch/Dynamic Island | ✅  | ❌      | iOS only                            |
+| Hardware KeyStore       | ✅  | ✅      | All platforms                       |
+| GMS/HMS detection       | ❌  | ✅      | Android only                        |
+| DeviceCheck             | ✅  | ❌      | iOS 11+ only                        |
+| Display Zoom            | ✅  | ❌      | iOS only                            |
+| Brightness              | ✅  | ❌      | iOS only                            |
+| Liquid Glass            | ✅  | ❌      | iOS 26.0+ only (requires Xcode 16+) |
+| System features         | ❌  | ✅      | Android only                        |
+| Media codecs            | ❌  | ✅      | Android only                        |
 
 ---
 
