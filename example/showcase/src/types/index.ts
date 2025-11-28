@@ -22,6 +22,7 @@ export enum PropertyCategory {
   SYSTEM_RESOURCES = 'System Resources',
   APP_METADATA = 'Application Metadata',
   NETWORK_CONNECTIVITY = 'Network & Connectivity',
+  LOCALIZATION_NAVIGATION = 'Localization & Navigation',
   PLATFORM_CAPABILITIES = 'Platform Capabilities',
   ANDROID_BUILD_INFO = 'Android Build Information',
   ADVANCED_FEATURES = 'Advanced Features',

@@ -10,6 +10,7 @@ import type {
   PowerState,
   BatteryState,
   DeviceType,
+  NavigationMode,
 } from 'react-native-nitro-device-info';
 ```
 
@@ -91,6 +92,49 @@ switch (powerState.batteryState) {
     break;
 }
 ```
+
+### NavigationMode
+
+Android navigation mode types.
+
+```typescript
+type NavigationMode = 'gesture' | 'buttons' | 'twobuttons' | 'unknown';
+```
+
+**Values**:
+
+- **gesture**: Full gesture navigation (swipe-based)
+- **buttons**: Traditional 3-button navigation (Back, Home, Recent)
+- **twobuttons**: 2-button navigation (Back, Home with swipe up)
+- **unknown**: Cannot determine (always returns this on iOS)
+
+**Usage**:
+
+```typescript
+const navMode = DeviceInfoModule.navigationMode;
+
+switch (navMode) {
+  case 'gesture':
+    console.log('Device uses gesture navigation');
+    // Add extra bottom padding for gesture conflicts
+    break;
+  case 'buttons':
+    console.log('Device uses 3-button navigation');
+    break;
+  case 'twobuttons':
+    console.log('Device uses 2-button navigation');
+    break;
+  case 'unknown':
+    console.log('Navigation mode unknown (iOS)');
+    break;
+}
+```
+
+**Platform Behavior**:
+
+- **Android API 29+**: Returns actual navigation mode
+- **Android API < 29**: Returns `"buttons"` (gesture nav didn't exist)
+- **iOS**: Always returns `"unknown"`
 
 ### DeviceType
 
@@ -241,6 +285,10 @@ interface DeviceInfo extends HybridObject {
 
   // Installation Methods
   getInstallReferrer(): Promise<string>;
+
+  // Localization & Navigation Properties
+  readonly systemLanguage: string;
+  readonly navigationMode: NavigationMode;
 
   // Advanced Capability Properties
   readonly isWiredHeadphonesConnected: boolean;

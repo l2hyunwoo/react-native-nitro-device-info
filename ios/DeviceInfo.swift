@@ -988,4 +988,17 @@ class DeviceInfo: HybridDeviceInfoSpec {
       return SecureEnclave.isAvailable
     #endif
   }
+
+  // MARK: - Localization & Navigation
+
+  /// Get device system language in BCP 47 format
+  /// Returns the user's preferred language, reflects per-app language settings on iOS 13.1+
+  var systemLanguage: String {
+    return Locale.preferredLanguages.first ?? "en"
+  }
+
+  /// Get navigation mode (iOS always returns "unknown" - no configurable navigation modes)
+  var navigationMode: NavigationMode {
+    return .unknown
+  }
 }

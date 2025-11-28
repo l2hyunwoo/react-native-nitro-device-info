@@ -297,7 +297,27 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
 
   // ==========================================================================
-  // CATEGORY 8: Platform Capabilities
+  // CATEGORY 8: Localization & Navigation
+  // ==========================================================================
+  {
+    key: 'systemLanguage',
+    label: 'System Language',
+    category: PropertyCategory.LOCALIZATION_NAVIGATION,
+    type: PropertyType.STRING,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+  {
+    key: 'navigationMode',
+    label: 'Navigation Mode',
+    category: PropertyCategory.LOCALIZATION_NAVIGATION,
+    type: PropertyType.STRING,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+
+  // ==========================================================================
+  // CATEGORY 9: Platform Capabilities
   // ==========================================================================
   {
     key: 'apiLevel',
