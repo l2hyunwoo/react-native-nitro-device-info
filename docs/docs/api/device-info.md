@@ -486,6 +486,87 @@ const deviceName = DeviceInfoModule.deviceName;
 
 ---
 
+## Localization & Navigation
+
+### `systemLanguage: string`
+
+Get device system language in BCP 47 format.
+
+```typescript
+const language = DeviceInfoModule.systemLanguage;
+// iOS: "en-US", "ko-KR", "ja-JP", "zh-Hans-CN"
+// Android: "en-US", "ko-KR", "ja-JP", "zh-Hans-CN"
+```
+
+**Platform**: iOS, Android
+
+**Examples**:
+
+| Language | Code |
+|----------|------|
+| English (US) | `en-US` |
+| Korean | `ko-KR` |
+| Japanese | `ja-JP` |
+| Simplified Chinese | `zh-Hans-CN` |
+| French (France) | `fr-FR` |
+| German | `de-DE` |
+
+**Use Case**:
+
+```typescript
+const language = DeviceInfoModule.systemLanguage;
+
+if (language.startsWith('ko')) {
+  console.log('Korean device detected');
+} else if (language.startsWith('ja')) {
+  console.log('Japanese device detected');
+}
+```
+
+### `navigationMode: NavigationMode`
+
+Get Android navigation mode.
+
+```typescript
+const navMode = DeviceInfoModule.navigationMode;
+// Android with gesture nav → "gesture"
+// Android with 3-button nav → "buttons"
+// Android with 2-button nav → "2buttons"
+// iOS → "unknown"
+```
+
+**Type**: `'gesture' | 'buttons' | '2buttons' | 'unknown'`
+
+**Platform**: Android only (returns "unknown" on iOS)
+
+**Values**:
+
+| Value | Description |
+|-------|-------------|
+| `gesture` | Full gesture navigation (swipe-based) |
+| `buttons` | Traditional 3-button navigation (Back, Home, Recent) |
+| `2buttons` | 2-button navigation (Back, Home with swipe up) |
+| `unknown` | Cannot determine (always on iOS) |
+
+**Use Case**:
+
+```typescript
+const navMode = DeviceInfoModule.navigationMode;
+
+if (navMode === 'gesture') {
+  // Avoid bottom gesture conflicts
+  // Add extra bottom padding for bottom sheets
+  console.log('Using gesture navigation - add extra padding');
+} else if (navMode === 'buttons') {
+  // Traditional navigation bar is present
+  console.log('Using button navigation');
+}
+```
+
+**Note**: Navigation mode detection requires Android 10 (API 29) or later. On older Android versions, returns `"buttons"` since gesture navigation was not available.
+
+---
+
 ## Platform-Specific Properties
 
 ### `apiLevel: number`
@@ -903,6 +984,8 @@ This provides fast access while keeping data reasonably fresh.
 | Battery info            | ✅  | ✅      | Low power mode iOS only             |
 | System resources        | ✅  | ✅      | All platforms                       |
 | Network info            | ✅  | ✅      | MAC hardcoded on iOS 7+             |
+| System language         | ✅  | ✅      | BCP 47 format                       |
+| Navigation mode         | ❌  | ✅      | Android only (API 29+)              |
 | Android Build info      | ❌  | ✅      | Android only                        |
 | hasNotch/Dynamic Island | ✅  | ❌      | iOS only                            |
 | Hardware KeyStore       | ✅  | ✅      | All platforms                       |
