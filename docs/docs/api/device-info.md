@@ -531,11 +531,11 @@ Get Android navigation mode.
 const navMode = DeviceInfoModule.navigationMode;
 // Android with gesture nav → "gesture"
 // Android with 3-button nav → "buttons"
-// Android with 2-button nav → "2buttons"
+// Android with 2-button nav → "twobuttons"
 // iOS → "unknown"
 ```
 
-**Type**: `'gesture' | 'buttons' | '2buttons' | 'unknown'`
+**Type**: `'gesture' | 'buttons' | 'twobuttons' | 'unknown'`
 
 **Platform**: Android only (returns "unknown" on iOS)
 
@@ -545,7 +545,7 @@ const navMode = DeviceInfoModule.navigationMode;
 |-------|-------------|
 | `gesture` | Full gesture navigation (swipe-based) |
 | `buttons` | Traditional 3-button navigation (Back, Home, Recent) |
-| `2buttons` | 2-button navigation (Back, Home with swipe up) |
+| `twobuttons` | 2-button navigation (Back, Home with swipe up) |
 | `unknown` | Cannot determine (always on iOS) |
 
 **Use Case**:

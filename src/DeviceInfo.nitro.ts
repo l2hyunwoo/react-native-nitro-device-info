@@ -50,7 +50,7 @@ export type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
  *
  * @platform Android (returns 'unknown' on iOS)
  */
-export type NavigationMode = 'gesture' | 'buttons' | '2buttons' | 'unknown';
+export type NavigationMode = 'gesture' | 'buttons' | 'twobuttons' | 'unknown';
 
 /**
  * Main DeviceInfo HybridObject providing comprehensive device information
@@ -1076,7 +1076,7 @@ export interface DeviceInfo
    * @example
    * Android gesture navigation → "gesture"
    * Android 3-button navigation → "buttons"
-   * Android 2-button navigation → "2buttons"
+   * Android 2-button navigation → "twobuttons"
    * iOS → "unknown" (not applicable)
    *
    * @platform Android (returns "unknown" on iOS)

@@ -98,14 +98,14 @@ switch (powerState.batteryState) {
 Android navigation mode types.
 
 ```typescript
-type NavigationMode = 'gesture' | 'buttons' | '2buttons' | 'unknown';
+type NavigationMode = 'gesture' | 'buttons' | 'twobuttons' | 'unknown';
 ```
 
 **Values**:
 
 - **gesture**: Full gesture navigation (swipe-based)
 - **buttons**: Traditional 3-button navigation (Back, Home, Recent)
-- **2buttons**: 2-button navigation (Back, Home with swipe up)
+- **twobuttons**: 2-button navigation (Back, Home with swipe up)
 - **unknown**: Cannot determine (always returns this on iOS)
 
 **Usage**:
@@ -121,7 +121,7 @@ switch (navMode) {
   case 'buttons':
     console.log('Device uses 3-button navigation');
     break;
-  case '2buttons':
+  case 'twobuttons':
     console.log('Device uses 2-button navigation');
     break;
   case 'unknown':

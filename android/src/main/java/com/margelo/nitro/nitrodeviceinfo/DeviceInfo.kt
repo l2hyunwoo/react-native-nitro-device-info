@@ -47,9 +47,7 @@ import java.security.KeyStore
 import java.util.Locale
 import kotlin.coroutines.resume
 
-/**
- * Build information cache to avoid repeated Build.* lookups
- */
+/** Build information cache to avoid repeated Build.* lookups */
 private data class BuildInfoCache(
     val serialNumber: String,
     val androidId: String,
@@ -116,16 +114,15 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     }
 
     /**
-     * Get serial number with permission check
-     * Requires READ_PHONE_STATE permission on Android 8.0+
+     * Get serial number with permission check Requires READ_PHONE_STATE permission on Android 8.0+
      */
     @SuppressLint("MissingPermission")
     private fun getSerialNumberInternal(): String {
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 // Android 8.0+ requires READ_PHONE_STATE permission
-                if (context.checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE)
-                    == PackageManager.PERMISSION_GRANTED
+                if (context.checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE) ==
+                    PackageManager.PERMISSION_GRANTED
                 ) {
                     Build.getSerial()
                 } else {
@@ -148,7 +145,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 Settings.Secure.getString(
                     context.contentResolver,
                     Settings.Secure.ANDROID_ID,
-                ) ?: "unknown",
+                )
+                    ?: "unknown",
             securityPatch = Build.VERSION.SECURITY_PATCH,
             bootloader = Build.BOOTLOADER,
             codename = Build.VERSION.CODENAME,
@@ -169,9 +167,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Cached system features list */
     private val systemFeatures: List<String> by lazy {
-        context.packageManager.systemAvailableFeatures
-            .mapNotNull { it.name }
-            .sorted()
+        context.packageManager.systemAvailableFeatures.mapNotNull { it.name }.sorted()
     }
 
     /** Cached supported media types */
@@ -180,9 +176,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             val codecList = MediaCodecList(MediaCodecList.ALL_CODECS)
             val types = mutableSetOf<String>()
             codecList.codecInfos?.forEach { codecInfo ->
-                codecInfo.supportedTypes.forEach { type ->
-                    types.add(type)
-                }
+                codecInfo.supportedTypes.forEach { type -> types.add(type) }
             }
 
             types.sorted()
@@ -260,7 +254,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         get() = false
 
     /**
-     * Check if device has Dynamic Island Android devices don't have Dynamic Island (iOS-only feature)
+     * Check if device has Dynamic Island Android devices don't have Dynamic Island (iOS-only
+     * feature)
      */
     override val hasDynamicIsland: Boolean
         get() = false
@@ -330,7 +325,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 when {
                     batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS) ==
                         BatteryManager.BATTERY_STATUS_FULL -> BatteryState.FULL
-
                     isCharging -> BatteryState.CHARGING
                     else -> BatteryState.UNPLUGGED
                 }
@@ -503,7 +497,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val hasGms: Boolean
         get() {
             return try {
-                val result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+                val result =
+                    GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
                 result == ConnectionResult.SUCCESS
             } catch (e: Exception) {
                 Log.w(NAME, "GMS not available or GMS library not found", e)
@@ -601,7 +596,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         get() {
             return try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    context.packageManager.getInstallSourceInfo(context.packageName).installingPackageName
+                    context.packageManager.getInstallSourceInfo(context.packageName)
+                        .installingPackageName
                         ?: "unknown"
                 } else {
                     @Suppress("DEPRECATION")
@@ -645,7 +641,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                                         continuation.resume("unknown")
                                     }
                                 }
-
                                 else -> {
                                     referrerClient.endConnection()
                                     continuation.resume("unknown")
@@ -788,7 +783,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 val locationManager =
                     context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-                locationManager.allProviders
+                locationManager
+                    .allProviders
                     .filter { locationManager.isProviderEnabled(it) }
                     .toTypedArray()
             } catch (e: Exception) {
@@ -836,9 +832,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Get device token (iOS-specific, throws error on Android) */
     override fun getDeviceToken(): Promise<String> {
-        return Promise.async {
-            throw Exception("getDeviceToken() is only available on iOS")
-        }
+        return Promise.async { throw Exception("getDeviceToken() is only available on iOS") }
     }
 
     /** Get IP address with 5-second cache */
@@ -939,8 +933,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val isLiquidGlassAvailable: Boolean = false
 
     /**
-     * Check if hardware-backed key storage is available
-     * Android KeyStore is always hardware-backed on API 23+ (TEE or StrongBox)
+     * Check if hardware-backed key storage is available Android KeyStore is always hardware-backed
+     * on API 23+ (TEE or StrongBox)
      */
     override val isHardwareKeyStoreAvailable: Boolean
         get() {
@@ -1014,10 +1008,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val systemLanguage: String
         get() = Locale.getDefault().toLanguageTag()
 
-    /**
-     * Get Android navigation mode
-     * Values: 0 = 3-button, 1 = 2-button, 2 = gesture
-     */
+    /** Get Android navigation mode Values: 0 = 3-button, 1 = 2-button, 2 = gesture */
     override val navigationMode: NavigationMode
         get() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -1026,9 +1017,9 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
             return try {
                 when (Settings.Secure.getInt(context.contentResolver, "navigation_mode", 0)) {
-                    0 -> NavigationMode.BUTTONS      // 3-button navigation
-                    1 -> NavigationMode._2BUTTONS    // 2-button navigation
-                    2 -> NavigationMode.GESTURE      // Gesture navigation
+                    0 -> NavigationMode.BUTTONS // 3-button navigation
+                    1 -> NavigationMode.TWOBUTTONS // 2-button navigation
+                    2 -> NavigationMode.GESTURE // Gesture navigation
                     else -> NavigationMode.UNKNOWN
                 }
             } catch (e: Exception) {
