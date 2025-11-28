@@ -44,6 +44,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.net.Inet4Address
 import java.net.NetworkInterface
 import java.security.KeyStore
+import java.util.Locale
 import kotlin.coroutines.resume
 
 /**
@@ -1004,6 +1005,35 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 stat.availableBlocksLong * stat.blockSizeLong.toDouble()
             } catch (e: Exception) {
                 -1.0
+            }
+        }
+
+    // MARK: - Localization & Navigation
+
+    /** Get device system language in BCP 47 format */
+    override val systemLanguage: String
+        get() = Locale.getDefault().toLanguageTag()
+
+    /**
+     * Get Android navigation mode
+     * Values: 0 = 3-button, 1 = 2-button, 2 = gesture
+     */
+    override val navigationMode: NavigationMode
+        get() {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                // Pre-Android 10 only has 3-button navigation
+                return NavigationMode.BUTTONS
+            }
+            return try {
+                when (Settings.Secure.getInt(context.contentResolver, "navigation_mode", 0)) {
+                    0 -> NavigationMode.BUTTONS      // 3-button navigation
+                    1 -> NavigationMode._2BUTTONS    // 2-button navigation
+                    2 -> NavigationMode.GESTURE      // Gesture navigation
+                    else -> NavigationMode.UNKNOWN
+                }
+            } catch (e: Exception) {
+                Log.w(NAME, "Failed to get navigation mode", e)
+                NavigationMode.UNKNOWN
             }
         }
 
