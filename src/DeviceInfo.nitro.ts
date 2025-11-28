@@ -46,6 +46,13 @@ export type DeviceType =
 export type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
 
 /**
+ * Android navigation mode types
+ *
+ * @platform Android (returns 'unknown' on iOS)
+ */
+export type NavigationMode = 'gesture' | 'buttons' | '2buttons' | 'unknown';
+
+/**
  * Main DeviceInfo HybridObject providing comprehensive device information
  *
  * This interface exposes device information methods through Nitro's
@@ -1040,6 +1047,42 @@ export interface DeviceInfo
    *
    */
   readonly isHardwareKeyStoreAvailable: boolean;
+
+  // LOCALIZATION & NAVIGATION
+
+  /**
+   * Get device system language in BCP 47 format
+   *
+   * Returns the user's preferred language/locale.
+   * On iOS 13.1+ and Android 13+, this reflects per-app language settings if configured.
+   *
+   * @returns Language tag string in BCP 47 format
+   * @example
+   * iOS: "en-US", "ko-KR", "zh-Hans-CN"
+   * Android: "en-US", "ko-KR", "ja-JP"
+   *
+   * @platform iOS, Android
+   *
+   */
+  readonly systemLanguage: string;
+
+  /**
+   * Get Android navigation mode
+   *
+   * Detects the current navigation mode on Android devices.
+   * Useful for adjusting UI to avoid gesture conflicts.
+   *
+   * @returns Navigation mode type
+   * @example
+   * Android gesture navigation → "gesture"
+   * Android 3-button navigation → "buttons"
+   * Android 2-button navigation → "2buttons"
+   * iOS → "unknown" (not applicable)
+   *
+   * @platform Android (returns "unknown" on iOS)
+   *
+   */
+  readonly navigationMode: NavigationMode;
 
   /**
    * Get Apple DeviceCheck token.
