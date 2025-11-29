@@ -1132,7 +1132,7 @@ export interface DeviceInfo
    * On iOS: alias to getFreeDiskStorage().
    * This value changes with file writes/deletes.
    *
-   * @returns Free storage in bytes, -1 if error
+   * @returns Free storage in bytes. Returns -1 on error (Android), 0 on error (iOS).
    * @platform Android (alias on iOS)
    */
   getFreeDiskStorageOld(): number;
