@@ -912,8 +912,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     }
 
     /** Check if any headphones are connected */
-    override fun getIsHeadphonesConnected(): Boolean =
-        getIsWiredHeadphonesConnected() || getIsBluetoothHeadphonesConnected()
+    override fun getIsHeadphonesConnected(): Boolean = getIsWiredHeadphonesConnected() || getIsBluetoothHeadphonesConnected()
 
     override val isLiquidGlassAvailable: Boolean = false
 
