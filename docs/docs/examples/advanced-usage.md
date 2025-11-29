@@ -13,8 +13,8 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 function getDeviceDetails() {
   if (Platform.OS === 'ios') {
     return {
-      hasNotch: DeviceInfoModule.hasNotch,
-      hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
+      hasNotch: DeviceInfoModule.getHasNotch(),
+      hasDynamicIsland: DeviceInfoModule.getHasDynamicIsland(),
       isDisplayZoomed: DeviceInfoModule.isDisplayZoomed,
       brightness: DeviceInfoModule.getBrightness(),
     };
@@ -22,8 +22,8 @@ function getDeviceDetails() {
     return {
       apiLevel: DeviceInfoModule.apiLevel,
       securityPatch: DeviceInfoModule.securityPatch,
-      hasGms: DeviceInfoModule.hasGms,
-      hasHms: DeviceInfoModule.hasHms,
+      hasGms: DeviceInfoModule.getHasGms(),
+      hasHms: DeviceInfoModule.getHasHms(),
     };
   }
 }
@@ -55,8 +55,8 @@ function getAndroidDetails() {
     supported64BitAbis: DeviceInfoModule.supported64BitAbis,
 
     // Mobile Services
-    hasGooglePlayServices: DeviceInfoModule.hasGms,
-    hasHuaweiMobileServices: DeviceInfoModule.hasHms,
+    hasGooglePlayServices: DeviceInfoModule.getHasGms(),
+    hasHuaweiMobileServices: DeviceInfoModule.getHasHms(),
 
     // Device State
     isAirplaneMode: DeviceInfoModule.getIsAirplaneMode(),
@@ -85,7 +85,7 @@ async function getIOSDetails() {
 
   return {
     // Display Features
-    hasNotch: DeviceInfoModule.hasNotch,
+    hasNotch: DeviceInfoModule.getHasNotch(),
     hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
     isDisplayZoomed: DeviceInfoModule.isDisplayZoomed,
 
@@ -356,7 +356,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function AdaptiveLayout({ children }: { children: React.ReactNode }) {
   const isTablet = DeviceInfoModule.isTablet;
-  const hasNotch = DeviceInfoModule.hasNotch;
+  const hasNotch = DeviceInfoModule.getHasNotch();
 
   return (
     <View style={[
@@ -393,8 +393,8 @@ import { View, Text } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function FeatureAwareUI() {
-  const hasNotch = DeviceInfoModule.hasNotch;
-  const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland;
+  const hasNotch = DeviceInfoModule.getHasNotch();
+  const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland();
   const hasCamera = DeviceInfoModule.isCameraPresent;
 
   return (
@@ -580,12 +580,12 @@ export default function AdvancedDeviceInfo() {
 
   // Platform-specific info
   const platformInfo = Platform.OS === 'ios' ? {
-    hasNotch: DeviceInfoModule.hasNotch,
+    hasNotch: DeviceInfoModule.getHasNotch(),
     hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
     brightness: DeviceInfoModule.getBrightness(),
   } : {
     apiLevel: DeviceInfoModule.apiLevel,
-    hasGms: DeviceInfoModule.hasGms,
+    hasGms: DeviceInfoModule.getHasGms(),
     isAirplaneMode: DeviceInfoModule.getIsAirplaneMode(),
   };
 

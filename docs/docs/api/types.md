@@ -225,10 +225,10 @@ interface DeviceInfo extends HybridObject {
   getIsLocationEnabled(): boolean;
   getIsHeadphonesConnected(): boolean;
 
-  // Device Capability Properties
+  // Device Capability Methods
   readonly isTablet: boolean;
-  readonly hasNotch: boolean;
-  readonly hasDynamicIsland: boolean;
+  getHasNotch(): boolean;
+  getHasDynamicIsland(): boolean;
   readonly isHardwareKeyStoreAvailable: boolean;
   readonly isCameraPresent: boolean;
   readonly isPinOrFingerprintSet: boolean;
@@ -382,8 +382,8 @@ type DeviceCapabilities = {
 
 function getDeviceCapabilities(): DeviceCapabilities {
   return {
-    hasNotch: DeviceInfoModule.hasNotch,
-    hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
+    hasNotch: DeviceInfoModule.getHasNotch(),
+    hasDynamicIsland: DeviceInfoModule.getHasDynamicIsland(),
     isTablet: DeviceInfoModule.isTablet,
     isEmulator: DeviceInfoModule.isEmulator,
   };

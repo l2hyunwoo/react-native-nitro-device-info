@@ -89,8 +89,8 @@ const uniqueId = DeviceInfoModule.uniqueId; // "FCDBD8EF-..."
 
 // Device Capabilities
 const isTablet = DeviceInfoModule.isTablet; // false
-const hasNotch = DeviceInfoModule.hasNotch; // true
-const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland; // false
+const hasNotch = DeviceInfoModule.getHasNotch(); // true
+const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland(); // false
 const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
 const isEmulator = DeviceInfoModule.isEmulator; // false
 
@@ -138,7 +138,7 @@ console.log(`Location Services: ${isLocationEnabled ? 'enabled' : 'disabled'}`);
 // Platform-Specific
 const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
 const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
-const hasGms = DeviceInfoModule.hasGms; // Android only
+const hasGms = DeviceInfoModule.getHasGms(); // Android only
 ```
 
 ## API Reference

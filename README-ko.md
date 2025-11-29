@@ -90,8 +90,8 @@ const uniqueId = DeviceInfoModule.uniqueId; // "FCDBD8EF-..."
 
 // 디바이스 기능
 const isTablet = DeviceInfoModule.isTablet; // false
-const hasNotch = DeviceInfoModule.hasNotch; // true
-const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland; // false
+const hasNotch = DeviceInfoModule.getHasNotch(); // true
+const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland(); // false
 const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
 const isEmulator = DeviceInfoModule.isEmulator; // false
 
@@ -139,7 +139,7 @@ console.log(`위치 서비스: ${isLocationEnabled ? '활성화' : '비활성화
 // 플랫폼별
 const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
 const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
-const hasGms = DeviceInfoModule.hasGms; // Android 전용
+const hasGms = DeviceInfoModule.getHasGms(); // Android 전용
 ```
 
 ## API 레퍼런스
