@@ -71,8 +71,8 @@ Check what features the device supports:
 
 ```typescript
 const isTablet = DeviceInfoModule.isTablet; // false
-const hasNotch = DeviceInfoModule.hasNotch; // true
-const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland; // false
+const hasNotch = DeviceInfoModule.getHasNotch(); // true
+const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland(); // false
 const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
 const isEmulator = DeviceInfoModule.isEmulator; // false
 ```

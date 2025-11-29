@@ -191,7 +191,7 @@ export interface DeviceInfo
    * @platform ios
    *
    */
-  readonly hasNotch: boolean;
+  getHasNotch(): boolean;
 
   /**
    * Check if device has Dynamic Island
@@ -207,7 +207,7 @@ export interface DeviceInfo
    * @platform ios 16+
    *
    */
-  readonly hasDynamicIsland: boolean;
+  getHasDynamicIsland(): boolean;
 
   // DEVICE IDENTIFICATION (Sync)
 
@@ -529,7 +529,7 @@ export interface DeviceInfo
    * @platform android
    *
    */
-  readonly hasGms: boolean;
+  getHasGms(): boolean;
 
   /**
    * Check if Huawei Mobile Services (HMS) is available
@@ -544,7 +544,7 @@ export interface DeviceInfo
    * @platform android (Huawei devices)
    *
    */
-  readonly hasHms: boolean;
+  getHasHms(): boolean;
 
   // ANDROID BUILD INFORMATION (Synchronous Properties)
 

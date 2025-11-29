@@ -250,15 +250,13 @@ class DeviceInfo : HybridDeviceInfoSpec() {
      * Check if device has a display notch Not implemented for Android (detection complex and varies
      * by manufacturer)
      */
-    override val hasNotch: Boolean
-        get() = false
+    override fun getHasNotch(): Boolean = false
 
     /**
      * Check if device has Dynamic Island Android devices don't have Dynamic Island (iOS-only
      * feature)
      */
-    override val hasDynamicIsland: Boolean
-        get() = false
+    override fun getHasDynamicIsland(): Boolean = false
 
     // MARK: - Synchronous Properties - Device Identification
 
@@ -489,30 +487,28 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         get() = Build.SUPPORTED_ABIS
 
     /** Check if Google Mobile Services (GMS) is available */
-    override val hasGms: Boolean
-        get() {
-            return try {
-                val result =
-                    GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
-                result == ConnectionResult.SUCCESS
-            } catch (e: Exception) {
-                Log.w(NAME, "GMS not available or GMS library not found", e)
-                false
-            }
+    override fun getHasGms(): Boolean {
+        return try {
+            val result =
+                GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+            result == ConnectionResult.SUCCESS
+        } catch (e: Exception) {
+            Log.w(NAME, "GMS not available or GMS library not found", e)
+            false
         }
+    }
 
     /** Check if Huawei Mobile Services (HMS) is available */
-    override val hasHms: Boolean
-        get() {
-            return try {
-                // Check if HMS Core is available - use cached packageManager
-                val hmsPackageInfo = packageManager.getPackageInfo("com.huawei.hwid", 0)
-                hmsPackageInfo != null
-            } catch (e: PackageManager.NameNotFoundException) {
-                Log.d(NAME, "HMS not available - not a Huawei device")
-                false
-            }
+    override fun getHasHms(): Boolean {
+        return try {
+            // Check if HMS Core is available - use cached packageManager
+            val hmsPackageInfo = packageManager.getPackageInfo("com.huawei.hwid", 0)
+            hmsPackageInfo != null
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.d(NAME, "HMS not available - not a Huawei device")
+            false
         }
+    }
 
     // MARK: - Android Build Information Properties
 

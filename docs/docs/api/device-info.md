@@ -90,12 +90,12 @@ const isTablet = DeviceInfoModule.isTablet;
 - **iOS**: Based on UIDevice.userInterfaceIdiom
 - **Android**: Based on smallest screen width >= 600dp
 
-### `hasNotch: boolean`
+### `getHasNotch(): boolean`
 
 Check if device has a display notch.
 
 ```typescript
-const hasNotch = DeviceInfoModule.hasNotch;
+const hasNotch = DeviceInfoModule.getHasNotch();
 // iPhone X, 11, 12, 13 → true
 // iPhone SE, 8 → false
 ```
@@ -103,12 +103,12 @@ const hasNotch = DeviceInfoModule.hasNotch;
 - **iOS only** - Detects iPhone X and later models
 - **Android**: Always returns `false`
 
-### `hasDynamicIsland: boolean`
+### `getHasDynamicIsland(): boolean`
 
 Check if device has Dynamic Island.
 
 ```typescript
-const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland;
+const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland();
 // iPhone 14 Pro, 15 Pro → true
 // iPhone 14, 13 → false
 ```
@@ -614,12 +614,12 @@ const abis64 = DeviceInfoModule.supported64BitAbis;
 // Android API 21+: ["arm64-v8a", "x86_64"]
 ```
 
-### `hasGms: boolean`
+### `getHasGms(): boolean`
 
 Check if Google Mobile Services is available.
 
 ```typescript
-const hasGms = DeviceInfoModule.hasGms;
+const hasGms = DeviceInfoModule.getHasGms();
 // Android with Play Services → true
 // Huawei devices without GMS → false
 // iOS → false
@@ -627,12 +627,12 @@ const hasGms = DeviceInfoModule.hasGms;
 
 **Platform**: Android only
 
-### `hasHms: boolean`
+### `getHasHms(): boolean`
 
 Check if Huawei Mobile Services is available.
 
 ```typescript
-const hasHms = DeviceInfoModule.hasHms;
+const hasHms = DeviceInfoModule.getHasHms();
 // Huawei devices → true
 // Other Android/iOS → false
 ```
@@ -987,7 +987,7 @@ This provides fast access while keeping data reasonably fresh.
 | System language         | ✅  | ✅      | BCP 47 format                       |
 | Navigation mode         | ❌  | ✅      | Android only (API 29+)              |
 | Android Build info      | ❌  | ✅      | Android only                        |
-| hasNotch/Dynamic Island | ✅  | ❌      | iOS only                            |
+| getHasNotch/Dynamic Island | ✅  | ❌      | iOS only                            |
 | Hardware KeyStore       | ✅  | ✅      | All platforms                       |
 | GMS/HMS detection       | ❌  | ✅      | Android only                        |
 | DeviceCheck             | ✅  | ❌      | iOS 11+ only                        |

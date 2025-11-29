@@ -66,6 +66,13 @@ Properties that return values which can change during app runtime have been conv
 - `fontScale` → `getFontScale()`: System font scale multiplier
 - `brightness` → `getBrightness()`: Screen brightness (iOS only)
 
+**Platform Detection** (4 APIs):
+
+- `hasNotch` → `getHasNotch()`: Check if device has a display notch (iOS only)
+- `hasDynamicIsland` → `getHasDynamicIsland()`: Check if device has Dynamic Island (iOS only)
+- `hasGms` → `getHasGms()`: Check if Google Mobile Services is available (Android only)
+- `hasHms` → `getHasHms()`: Check if Huawei Mobile Services is available (Android only)
+
 **Migration Example**:
 
 ```typescript

@@ -93,12 +93,12 @@ console.log(getDeviceCategory());
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 // Check if device has a notch
-if (DeviceInfoModule.hasNotch) {
+if (DeviceInfoModule.getHasNotch()) {
   console.log('Device has a notch - adjust UI accordingly');
 }
 
 // Check if device has Dynamic Island (iPhone 14 Pro+)
-if (DeviceInfoModule.hasDynamicIsland) {
+if (DeviceInfoModule.getHasDynamicIsland()) {
   console.log('Device has Dynamic Island');
 }
 

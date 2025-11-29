@@ -74,7 +74,7 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
   {
     name: 'hasNotch',
-    nitroFn: () => DeviceInfoModule.hasNotch,
+    nitroFn: () => DeviceInfoModule.getHasNotch(),
     deviceInfoFn: () => DeviceInfo.hasNotch(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
