@@ -148,7 +148,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   // CATEGORY 4: Battery & Power
   // ==========================================================================
   {
-    key: 'batteryLevel',
+    key: 'getBatteryLevel',
     label: 'Battery Level',
     category: PropertyCategory.BATTERY_POWER,
     type: PropertyType.NUMBER,
@@ -156,7 +156,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'isBatteryCharging',
+    key: 'getIsBatteryCharging',
     label: 'Is Charging',
     category: PropertyCategory.BATTERY_POWER,
     type: PropertyType.BOOLEAN,
@@ -164,19 +164,11 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'powerState',
+    key: 'getPowerState',
     label: 'Power State',
     category: PropertyCategory.BATTERY_POWER,
     type: PropertyType.OBJECT,
     platform: PlatformAvailability.ALL,
-    isSync: true,
-  },
-  {
-    key: 'lowPowerMode',
-    label: 'Low Power Mode',
-    category: PropertyCategory.BATTERY_POWER,
-    type: PropertyType.BOOLEAN,
-    platform: PlatformAvailability.IOS_ONLY,
     isSync: true,
   },
 
@@ -192,7 +184,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'usedMemory',
+    key: 'getUsedMemory',
     label: 'Used Memory',
     category: PropertyCategory.SYSTEM_RESOURCES,
     type: PropertyType.BYTES,
@@ -208,7 +200,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'freeDiskStorage',
+    key: 'getFreeDiskStorage',
     label: 'Free Disk Storage',
     category: PropertyCategory.SYSTEM_RESOURCES,
     type: PropertyType.BYTES,

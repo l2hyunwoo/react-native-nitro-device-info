@@ -109,24 +109,24 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
 
   // Synchronous Battery & Power
   {
-    name: 'batteryLevel',
-    nitroFn: () => DeviceInfoModule.batteryLevel,
+    name: 'getBatteryLevel',
+    nitroFn: () => DeviceInfoModule.getBatteryLevel(),
     deviceInfoFn: () => DeviceInfo.getBatteryLevel(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
     target: SYNC_TARGET,
   },
   {
-    name: 'isBatteryCharging',
-    nitroFn: () => DeviceInfoModule.isBatteryCharging,
+    name: 'getIsBatteryCharging',
+    nitroFn: () => DeviceInfoModule.getIsBatteryCharging(),
     deviceInfoFn: () => DeviceInfo.isBatteryCharging(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
     target: SYNC_TARGET,
   },
   {
-    name: 'powerState',
-    nitroFn: () => DeviceInfoModule.powerState,
+    name: 'getPowerState',
+    nitroFn: () => DeviceInfoModule.getPowerState(),
     deviceInfoFn: () => DeviceInfo.getPowerState(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -143,8 +143,8 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
     target: SYNC_TARGET,
   },
   {
-    name: 'usedMemory',
-    nitroFn: () => DeviceInfoModule.usedMemory,
+    name: 'getUsedMemory',
+    nitroFn: () => DeviceInfoModule.getUsedMemory(),
     deviceInfoFn: () => DeviceInfo.getUsedMemory(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
@@ -159,8 +159,8 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
     target: SYNC_TARGET,
   },
   {
-    name: 'freeDiskStorage',
-    nitroFn: () => DeviceInfoModule.freeDiskStorage,
+    name: 'getFreeDiskStorage',
+    nitroFn: () => DeviceInfoModule.getFreeDiskStorage(),
     deviceInfoFn: () => DeviceInfo.getFreeDiskStorage(),
     isAsync: false,
     iterations: SYNC_ITERATIONS,
