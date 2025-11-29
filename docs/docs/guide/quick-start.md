@@ -175,7 +175,7 @@ import type {
 } from 'react-native-nitro-device-info';
 
 // Use types for better IntelliSense and type safety
-const powerState: PowerState = DeviceInfoModule.getPowerState();
+const powerState: PowerState = DeviceInfoModule.powerState;
 // TypeScript knows: powerState.lowPowerMode, powerState.batteryLevel, etc.
 ```
 

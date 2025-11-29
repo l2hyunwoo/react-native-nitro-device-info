@@ -114,9 +114,9 @@ Most device information is instantly available from system APIs:
 
 ```typescript
 // Everything synchronous except I/O-bound operations
-const deviceId = DeviceInfoModule.deviceId;           // Sync
-const totalMemory = DeviceInfoModule.getTotalMemory(); // Sync
-const isTablet = DeviceInfoModule.isTablet();         // Sync
+const deviceId = DeviceInfoModule.deviceId;     // Sync
+const totalMemory = DeviceInfoModule.totalMemory; // Sync
+const isTablet = DeviceInfoModule.isTablet;     // Sync
 
 // Only network/async operations remain async
 const ipAddress = await DeviceInfoModule.getIpAddress(); // Async (I/O)
@@ -130,7 +130,7 @@ Nitrogen generates complete type definitions from the source specification:
 import type { DeviceInfo, PowerState, BatteryState } from 'react-native-nitro-device-info';
 
 // Full IntelliSense support
-const powerState: PowerState = DeviceInfoModule.getPowerState();
+const powerState: PowerState = DeviceInfoModule.powerState;
 // TypeScript knows all properties: lowPowerMode, batteryLevel, batteryState
 ```
 

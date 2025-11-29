@@ -56,17 +56,17 @@ console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
 console.log(DeviceInfoModule.model); // "iPhone"
 
-// 동기 메서드 (즉시 - <1ms)
-const uniqueId = DeviceInfoModule.getUniqueId();
+// 동기 속성 (즉시 - <1ms)
+const uniqueId = DeviceInfoModule.uniqueId;
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
-const manufacturer = DeviceInfoModule.getManufacturer();
+const manufacturer = DeviceInfoModule.manufacturer;
 console.log(manufacturer); // "Apple"
 
-const isTablet = DeviceInfoModule.isTablet();
+const isTablet = DeviceInfoModule.isTablet;
 console.log(isTablet); // false
 
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const batteryLevel = DeviceInfoModule.batteryLevel;
 console.log(`배터리: ${(batteryLevel * 100).toFixed(0)}%`); // "배터리: 85%"
 
 // 비동기 메서드 (Promise 기반 - <100ms)
@@ -85,21 +85,21 @@ import type { PowerState, DeviceType } from 'react-native-nitro-device-info';
 
 // 디바이스 식별
 const deviceId = DeviceInfoModule.deviceId; // "iPhone14,2"
-const manufacturer = DeviceInfoModule.getManufacturer(); // "Apple"
-const uniqueId = DeviceInfoModule.getUniqueId(); // "FCDBD8EF-..."
+const manufacturer = DeviceInfoModule.manufacturer; // "Apple"
+const uniqueId = DeviceInfoModule.uniqueId; // "FCDBD8EF-..."
 
 // 디바이스 기능
-const isTablet = DeviceInfoModule.isTablet(); // false
-const hasNotch = DeviceInfoModule.hasNotch(); // true
-const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland(); // false
-const isCameraPresent = DeviceInfoModule.isCameraPresent(); // true
-const isEmulator = DeviceInfoModule.isEmulator(); // false
+const isTablet = DeviceInfoModule.isTablet; // false
+const hasNotch = DeviceInfoModule.hasNotch; // true
+const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland; // false
+const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
+const isEmulator = DeviceInfoModule.isEmulator; // false
 
 // 시스템 리소스
-const totalMemory = DeviceInfoModule.getTotalMemory();
-const usedMemory = DeviceInfoModule.getUsedMemory();
-const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
-const freeDisk = DeviceInfoModule.getFreeDiskStorage();
+const totalMemory = DeviceInfoModule.totalMemory;
+const usedMemory = DeviceInfoModule.usedMemory;
+const totalDisk = DeviceInfoModule.totalDiskCapacity;
+const freeDisk = DeviceInfoModule.freeDiskStorage;
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
@@ -109,9 +109,9 @@ console.log(
 );
 
 // 배터리 정보
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
-const isCharging = DeviceInfoModule.isBatteryCharging();
-const powerState: PowerState = DeviceInfoModule.getPowerState();
+const batteryLevel = DeviceInfoModule.batteryLevel;
+const isCharging = DeviceInfoModule.isBatteryCharging;
+const powerState: PowerState = DeviceInfoModule.powerState;
 
 console.log(
   `배터리: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(충전 중)' : ''}`
@@ -119,10 +119,10 @@ console.log(
 console.log(`저전력 모드: ${powerState.lowPowerMode}`);
 
 // 앱 메타데이터
-const version = DeviceInfoModule.getVersion();
-const buildNumber = DeviceInfoModule.getBuildNumber();
-const bundleId = DeviceInfoModule.getBundleId();
-const appName = DeviceInfoModule.getApplicationName();
+const version = DeviceInfoModule.version;
+const buildNumber = DeviceInfoModule.buildNumber;
+const bundleId = DeviceInfoModule.bundleId;
+const appName = DeviceInfoModule.applicationName;
 
 console.log(`${appName} (${bundleId})`);
 console.log(`버전: ${version} (${buildNumber})`);
@@ -137,9 +137,9 @@ console.log(`통신사: ${carrier}`);
 console.log(`위치 서비스: ${isLocationEnabled ? '활성화' : '비활성화'}`);
 
 // 플랫폼별
-const apiLevel = DeviceInfoModule.getApiLevel(); // Android: 33, iOS: -1
-const abis = DeviceInfoModule.getSupportedAbis(); // ["arm64-v8a"]
-const hasGms = DeviceInfoModule.hasGms(); // Android 전용
+const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
+const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
+const hasGms = DeviceInfoModule.hasGms; // Android 전용
 ```
 
 ## API 레퍼런스
@@ -157,20 +157,20 @@ DeviceInfoModule.systemVersion; // "15.0"
 DeviceInfoModule.model; // "iPhone"
 ```
 
-#### 주요 메서드
+#### 주요 속성
 
 ```typescript
 // 디바이스 정보
-DeviceInfoModule.getUniqueId(); // 동기
-DeviceInfoModule.isTablet(); // 동기
-DeviceInfoModule.getTotalMemory(); // 동기
-DeviceInfoModule.getBatteryLevel(); // 동기
+DeviceInfoModule.uniqueId; // 동기
+DeviceInfoModule.isTablet; // 동기
+DeviceInfoModule.totalMemory; // 동기
+DeviceInfoModule.batteryLevel; // 동기
 
 // 앱 정보
-DeviceInfoModule.getVersion(); // 동기
-DeviceInfoModule.getBundleId(); // 동기
+DeviceInfoModule.version; // 동기
+DeviceInfoModule.bundleId; // 동기
 
-// 네트워크 (비동기)
+// 네트워크 (비동기 메서드)
 await DeviceInfoModule.getIpAddress(); // ~20-50ms
 await DeviceInfoModule.getCarrier(); // ~20-50ms
 ```
@@ -217,13 +217,13 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 const deviceId = DeviceInfoModule.deviceId; // 메서드가 아닌 속성
 const brand = DeviceInfoModule.brand; // 메서드가 아닌 속성
 
-// 대부분의 메서드가 이제 동기
-const uniqueId = DeviceInfoModule.getUniqueId(); // 이제 동기!
-const totalMemory = DeviceInfoModule.getTotalMemory(); // 이제 동기!
-const batteryLevel = DeviceInfoModule.getBatteryLevel(); // 이제 동기!
-const isTablet = DeviceInfoModule.isTablet(); // 이전과 동일
+// 대부분의 값이 이제 동기 속성
+const uniqueId = DeviceInfoModule.uniqueId; // 속성, 동기!
+const totalMemory = DeviceInfoModule.totalMemory; // 속성, 동기!
+const batteryLevel = DeviceInfoModule.batteryLevel; // 속성, 동기!
+const isTablet = DeviceInfoModule.isTablet; // 속성, 동기!
 
-// 네트워크/연결만 비동기로 유지
+// 네트워크/연결만 비동기 메서드로 유지
 const ipAddress = await DeviceInfoModule.getIpAddress();
 ```
 
