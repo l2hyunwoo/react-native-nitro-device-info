@@ -581,7 +581,7 @@ export default function AdvancedDeviceInfo() {
   // Platform-specific info
   const platformInfo = Platform.OS === 'ios' ? {
     hasNotch: DeviceInfoModule.getHasNotch(),
-    hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
+    hasDynamicIsland: DeviceInfoModule.getHasDynamicIsland(),
     brightness: DeviceInfoModule.getBrightness(),
   } : {
     apiLevel: DeviceInfoModule.apiLevel,
