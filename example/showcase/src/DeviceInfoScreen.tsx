@@ -47,11 +47,15 @@ export default function DeviceInfoScreen() {
           let value: any;
 
           // Access property based on whether it's sync or async
-          if (config.isSync) {
+          // Note: Some sync methods start with 'get' prefix (e.g., getBatteryLevel)
+          if (config.isSync && !config.key.startsWith('get')) {
             // Synchronous property - direct access
             value = (deviceInfo as any)[config.key];
+          } else if (config.isSync && config.key.startsWith('get')) {
+            // Synchronous method - call as function without await
+            value = (deviceInfo as any)[config.key]();
           } else {
-            // Asynchronous property - call as function
+            // Asynchronous method - call as function with await
             value = await (deviceInfo as any)[config.key]();
           }
 

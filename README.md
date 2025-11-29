@@ -65,7 +65,7 @@ console.log(manufacturer); // "Apple"
 const isTablet = DeviceInfoModule.isTablet;
 console.log(isTablet); // false
 
-const batteryLevel = DeviceInfoModule.batteryLevel;
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
 console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`); // "Battery: 85%"
 
 // Asynchronous methods (Promise-based - <100ms)
@@ -96,9 +96,9 @@ const isEmulator = DeviceInfoModule.isEmulator; // false
 
 // System Resources
 const totalMemory = DeviceInfoModule.totalMemory;
-const usedMemory = DeviceInfoModule.usedMemory;
+const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.totalDiskCapacity;
-const freeDisk = DeviceInfoModule.freeDiskStorage;
+const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
@@ -108,9 +108,9 @@ console.log(
 );
 
 // Battery Information
-const batteryLevel = DeviceInfoModule.batteryLevel;
-const isCharging = DeviceInfoModule.isBatteryCharging;
-const powerState: PowerState = DeviceInfoModule.powerState;
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const isCharging = DeviceInfoModule.getIsBatteryCharging();
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 
 console.log(
   `Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`
@@ -163,7 +163,7 @@ DeviceInfoModule.model; // "iPhone"
 DeviceInfoModule.uniqueId; // Sync
 DeviceInfoModule.isTablet; // Sync
 DeviceInfoModule.totalMemory; // Sync
-DeviceInfoModule.batteryLevel; // Sync
+DeviceInfoModule.getBatteryLevel(); // Sync method
 
 // App Info
 DeviceInfoModule.version; // Sync
@@ -216,10 +216,10 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 const deviceId = DeviceInfoModule.deviceId; // Property, not method
 const brand = DeviceInfoModule.brand; // Property, not method
 
-// Most values are now synchronous properties
+// Most values are now synchronous properties or methods
 const uniqueId = DeviceInfoModule.uniqueId; // Property, sync!
 const totalMemory = DeviceInfoModule.totalMemory; // Property, sync!
-const batteryLevel = DeviceInfoModule.batteryLevel; // Property, sync!
+const batteryLevel = DeviceInfoModule.getBatteryLevel(); // Method, sync!
 const isTablet = DeviceInfoModule.isTablet; // Property, sync!
 
 // Only network/connectivity remain async methods

@@ -255,13 +255,12 @@ export interface DeviceInfo
    * Get current app memory usage in bytes
    *
    * Returns the current memory footprint of this app.
+   * This value changes constantly with memory allocation.
    *
-   * @returns Used memory in bytes
+   * @returns Used memory in bytes, 0 if error
    * @example 134217728 (128 MB)
-   *
-   *
    */
-  readonly usedMemory: number;
+  getUsedMemory(): number;
 
   /**
    * Get total disk storage capacity in bytes
@@ -279,51 +278,48 @@ export interface DeviceInfo
    * Get free disk storage in bytes
    *
    * Returns the currently available free storage space.
+   * This value changes with file writes/deletes.
    *
-   * @returns Free storage in bytes
+   * @returns Free storage in bytes, 0 if error
    * @example 51539607552 (48 GB)
-   *
-   *
    */
-  readonly freeDiskStorage: number;
+  getFreeDiskStorage(): number;
 
   /**
    * Get current battery level
    *
    * Returns battery charge level as a float between 0.0 and 1.0.
+   * This value changes as battery drains/charges.
    *
-   * @returns Battery level (0.0 to 1.0)
+   * @returns Battery level (0.0 to 1.0), 0.0 if unavailable
    * @example 0.75 represents 75% battery
-   *
-   *
    */
-  readonly batteryLevel: number;
+  getBatteryLevel(): number;
 
   /**
    * Get comprehensive power state information
    *
    * Returns an object containing battery level, charging state,
-   * and low power mode status.
+   * and low power mode status. Values change with charging/low-power mode.
    *
-   * @returns PowerState object
+   * @returns PowerState object with battery level, state, and low power mode
    * @example
    * {
    *   batteryLevel: 0.75,
    *   batteryState: 'charging',
    *   lowPowerMode: false
    * }
-   *
-   *
    */
-  readonly powerState: PowerState;
+  getPowerState(): PowerState;
 
   /**
    * Check if battery is currently charging
    *
-   * @returns true if charging
+   * This value changes when device is plugged/unplugged.
    *
+   * @returns true if charging or full
    */
-  readonly isBatteryCharging: boolean;
+  getIsBatteryCharging(): boolean;
 
   // APPLICATION METADATA (Sync)
 
@@ -770,30 +766,33 @@ export interface DeviceInfo
 
   /**
    * Check if wired headphones are currently connected.
-   * Returns false on platforms other than iOS/Android.
    *
+   * This value changes when headphones are plugged/unplugged.
+   *
+   * @returns true if wired headphones detected
    * @platform iOS, Android
-   *
    */
-  readonly isWiredHeadphonesConnected: boolean;
+  getIsWiredHeadphonesConnected(): boolean;
 
   /**
    * Check if Bluetooth headphones are currently connected.
-   * Returns false on platforms other than iOS/Android.
    *
+   * This value changes when Bluetooth audio devices connect/disconnect.
+   *
+   * @returns true if Bluetooth audio device detected
    * @platform iOS, Android
-   *
    */
-  readonly isBluetoothHeadphonesConnected: boolean;
+  getIsBluetoothHeadphonesConnected(): boolean;
 
   /**
    * Check if airplane mode is enabled.
-   * Returns false on iOS (not available).
    *
-   * @platform Android (returns false on iOS)
+   * This value changes when user toggles airplane mode.
    *
+   * @returns true if airplane mode is on
+   * @platform Android only (returns false on iOS)
    */
-  readonly isAirplaneMode: boolean;
+  getIsAirplaneMode(): boolean;
 
   /**
    * Check if device is classified as low RAM device.
@@ -824,12 +823,14 @@ export interface DeviceInfo
 
   /**
    * Check if device is in landscape orientation.
+   *
+   * This value changes with device rotation.
    * Computed from Dimensions API (width > height).
    *
+   * @returns true if width > height
    * @platform All
-   *
    */
-  readonly isLandscape: boolean;
+  getIsLandscape(): boolean;
 
   /**
    * Get list of supported 32-bit ABIs.
@@ -851,12 +852,13 @@ export interface DeviceInfo
 
   /**
    * Get current font scale multiplier.
-   * Returns 1.0 (normal) on platforms without font scaling.
    *
+   * This value changes with accessibility settings.
+   *
+   * @returns Font scale (1.0 = normal)
    * @platform iOS, Android
-   *
    */
-  readonly fontScale: number;
+  getFontScale(): number;
 
   /**
    * Check if specific system feature is available.
@@ -879,12 +881,13 @@ export interface DeviceInfo
 
   /**
    * Get list of enabled location providers.
-   * Returns [] on platforms without location services or if all providers are disabled.
    *
+   * This value changes with provider enable/disable.
+   *
+   * @returns Array of provider names (e.g., ["gps", "network"])
    * @platform iOS, Android
-   * @returns Array of enabled provider names (e.g., ["gps", "network"])
    */
-  readonly availableLocationProviders: string[];
+  getAvailableLocationProviders(): string[];
 
   /**
    * Get list of Windows host names.
@@ -944,48 +947,53 @@ export interface DeviceInfo
   readonly deviceName: string;
 
   /**
-   * Get IP address (sync variant).
-   * Uses cached value (refreshed every 5 seconds).
+   * Get current IP address (cached for 5 seconds).
    *
+   * This value changes with network switch.
+   *
+   * @returns IP address string or "unknown"
    * @platform iOS, Android
-   *
    */
-  readonly ipAddressSync: string;
+  getIpAddressSync(): string;
 
   /**
-   * Get MAC address (sync variant).
-   * iOS returns "02:00:00:00:00:00" (hardcoded per Apple privacy policy).
+   * Get MAC address (cached for 5 seconds).
    *
-   * @platform iOS (hardcoded), Android
-   *
+   * @returns MAC address string or "unknown"
+   * @platform iOS: Always returns "02:00:00:00:00:00" (privacy restriction)
+   * @platform Android: Actual MAC address
    */
-  readonly macAddressSync: string;
+  getMacAddressSync(): string;
 
   /**
-   * Get carrier name (sync variant).
-   * Uses cached value from telephony manager.
+   * Get carrier name (cached for 5 seconds).
    *
+   * This value can change with SIM swap.
+   *
+   * @returns Carrier name or "unknown"
    * @platform iOS, Android
-   *
    */
-  readonly carrierSync: string;
+  getCarrierSync(): string;
 
   /**
-   * Check if location services enabled (sync variant).
+   * Check if location services are enabled.
    *
+   * This value changes with settings toggle.
+   *
+   * @returns true if location services enabled
    * @platform iOS, Android
-   *
    */
-  readonly isLocationEnabledSync: boolean;
+  getIsLocationEnabled(): boolean;
 
   /**
-   * Check if headphones connected (sync variant).
-   * Checks for wired OR Bluetooth headphones.
+   * Check if any headphones are connected (wired or Bluetooth).
    *
+   * This value changes when headphones connect/disconnect.
+   *
+   * @returns true if any headphones connected
    * @platform iOS, Android
-   *
    */
-  readonly isHeadphonesConnectedSync: boolean;
+  getIsHeadphonesConnected(): boolean;
 
   /**
    * Get HTTP User-Agent string.
@@ -1010,12 +1018,13 @@ export interface DeviceInfo
 
   /**
    * Get current screen brightness level.
-   * Returns -1 on Android.
    *
-   * @platform iOS (returns -1 on Android)
+   * This value changes with user adjustment.
    *
+   * @returns Brightness 0.0-1.0 on iOS, -1 on Android
+   * @platform iOS only (returns -1 on Android)
    */
-  readonly brightness: number;
+  getBrightness(): number;
 
   /**
    * Check if liquid glass effect is available.
@@ -1117,12 +1126,14 @@ export interface DeviceInfo
   readonly totalDiskCapacityOld: number;
 
   /**
-   * Get free disk storage using legacy Android API.
+   * Get free disk storage using legacy API.
+   *
    * On Android: uses old StatFs API (pre-Jelly Bean compatibility).
    * On iOS: alias to getFreeDiskStorage().
+   * This value changes with file writes/deletes.
    *
+   * @returns Free storage in bytes. Returns -1 on error (Android), 0 on error (iOS).
    * @platform Android (alias on iOS)
-   *
    */
-  readonly freeDiskStorageOld: number;
+  getFreeDiskStorageOld(): number;
 }

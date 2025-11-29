@@ -66,7 +66,7 @@ console.log(manufacturer); // "Apple"
 const isTablet = DeviceInfoModule.isTablet;
 console.log(isTablet); // false
 
-const batteryLevel = DeviceInfoModule.batteryLevel;
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
 console.log(`배터리: ${(batteryLevel * 100).toFixed(0)}%`); // "배터리: 85%"
 
 // 비동기 메서드 (Promise 기반 - <100ms)
@@ -97,9 +97,9 @@ const isEmulator = DeviceInfoModule.isEmulator; // false
 
 // 시스템 리소스
 const totalMemory = DeviceInfoModule.totalMemory;
-const usedMemory = DeviceInfoModule.usedMemory;
+const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.totalDiskCapacity;
-const freeDisk = DeviceInfoModule.freeDiskStorage;
+const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
@@ -109,9 +109,9 @@ console.log(
 );
 
 // 배터리 정보
-const batteryLevel = DeviceInfoModule.batteryLevel;
-const isCharging = DeviceInfoModule.isBatteryCharging;
-const powerState: PowerState = DeviceInfoModule.powerState;
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const isCharging = DeviceInfoModule.getIsBatteryCharging();
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 
 console.log(
   `배터리: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(충전 중)' : ''}`
@@ -164,7 +164,7 @@ DeviceInfoModule.model; // "iPhone"
 DeviceInfoModule.uniqueId; // 동기
 DeviceInfoModule.isTablet; // 동기
 DeviceInfoModule.totalMemory; // 동기
-DeviceInfoModule.batteryLevel; // 동기
+DeviceInfoModule.getBatteryLevel(); // 동기 메서드
 
 // 앱 정보
 DeviceInfoModule.version; // 동기
@@ -217,10 +217,10 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 const deviceId = DeviceInfoModule.deviceId; // 메서드가 아닌 속성
 const brand = DeviceInfoModule.brand; // 메서드가 아닌 속성
 
-// 대부분의 값이 이제 동기 속성
+// 대부분의 값이 이제 동기 속성 또는 메서드
 const uniqueId = DeviceInfoModule.uniqueId; // 속성, 동기!
 const totalMemory = DeviceInfoModule.totalMemory; // 속성, 동기!
-const batteryLevel = DeviceInfoModule.batteryLevel; // 속성, 동기!
+const batteryLevel = DeviceInfoModule.getBatteryLevel(); // 메서드, 동기!
 const isTablet = DeviceInfoModule.isTablet; // 속성, 동기!
 
 // 네트워크/연결만 비동기 메서드로 유지

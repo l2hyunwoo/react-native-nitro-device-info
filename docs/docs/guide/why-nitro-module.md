@@ -130,7 +130,7 @@ Nitrogen generates complete type definitions from the source specification:
 import type { DeviceInfo, PowerState, BatteryState } from 'react-native-nitro-device-info';
 
 // Full IntelliSense support
-const powerState: PowerState = DeviceInfoModule.powerState;
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 // TypeScript knows all properties: lowPowerMode, batteryLevel, batteryState
 ```
 

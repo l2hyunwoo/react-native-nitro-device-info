@@ -282,13 +282,12 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
 
     /** Get current app memory usage in bytes */
-    override val usedMemory: Double
-        get() {
-            // Use Debug.getMemoryInfo which doesn't require ActivityManager
-            val memInfo = Debug.MemoryInfo()
-            Debug.getMemoryInfo(memInfo)
-            return (memInfo.totalPss * 1024).toDouble() // Convert KB to bytes
-        }
+    override fun getUsedMemory(): Double {
+        // Use Debug.getMemoryInfo which doesn't require ActivityManager
+        val memInfo = Debug.MemoryInfo()
+        Debug.getMemoryInfo(memInfo)
+        return (memInfo.totalPss * 1024).toDouble() // Convert KB to bytes
+    }
 
     /** Get total disk storage capacity in bytes */
     override val totalDiskCapacity: Double
@@ -299,50 +298,46 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
 
     /** Get free disk storage in bytes */
-    override val freeDiskStorage: Double
-        get() {
-            val path = Environment.getDataDirectory()
-            val stat = StatFs(path.path)
-            return (stat.availableBlocksLong * stat.blockSizeLong).toDouble()
-        }
+    override fun getFreeDiskStorage(): Double {
+        val path = Environment.getDataDirectory()
+        val stat = StatFs(path.path)
+        return (stat.availableBlocksLong * stat.blockSizeLong).toDouble()
+    }
 
     /** Get current battery level (0.0 to 1.0) */
-    override val batteryLevel: Double
-        get() {
-            // Use cached BatteryManager to avoid repeated system service lookups
-            val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            return (level / 100.0)
-        }
+    override fun getBatteryLevel(): Double {
+        // Use cached BatteryManager to avoid repeated system service lookups
+        val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        return (level / 100.0)
+    }
 
     /** Get comprehensive power state information */
-    override val powerState: PowerState
-        get() {
-            // Use cached BatteryManager to avoid repeated system service lookups
-            val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            val isCharging = batteryManager.isCharging
+    override fun getPowerState(): PowerState {
+        // Use cached BatteryManager to avoid repeated system service lookups
+        val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        val isCharging = batteryManager.isCharging
 
-            val batteryState =
-                when {
-                    batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS) ==
-                        BatteryManager.BATTERY_STATUS_FULL -> BatteryState.FULL
-                    isCharging -> BatteryState.CHARGING
-                    else -> BatteryState.UNPLUGGED
-                }
+        val batteryState =
+            when {
+                batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS) ==
+                    BatteryManager.BATTERY_STATUS_FULL -> BatteryState.FULL
+                isCharging -> BatteryState.CHARGING
+                else -> BatteryState.UNPLUGGED
+            }
 
-            // Android doesn't have a direct equivalent to iOS low power mode
-            return PowerState(
-                batteryLevel = level / 100.0,
-                batteryState = batteryState,
-                lowPowerMode = false,
-            )
-        }
+        // Android doesn't have a direct equivalent to iOS low power mode
+        return PowerState(
+            batteryLevel = level / 100.0,
+            batteryState = batteryState,
+            lowPowerMode = false,
+        )
+    }
 
     /** Check if battery is currently charging */
-    override val isBatteryCharging: Boolean
-        get() {
-            // Use cached BatteryManager to avoid repeated system service lookups
-            return batteryManager.isCharging
-        }
+    override fun getIsBatteryCharging(): Boolean {
+        // Use cached BatteryManager to avoid repeated system service lookups
+        return batteryManager.isCharging
+    }
 
     // MARK: - Synchronous Properties - Application Metadata
 
@@ -684,51 +679,48 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     // MARK: - Device Capability Detection
 
     /** Check if wired headphones are connected */
-    override val isWiredHeadphonesConnected: Boolean
-        get() {
-            return try {
-                val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
-                audioDevices.any { device ->
-                    device.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
-                        device.type == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            device.type == AudioDeviceInfo.TYPE_USB_HEADSET
-                        } else {
-                            true
-                        }
-                }
-            } catch (e: Exception) {
-                false
+    override fun getIsWiredHeadphonesConnected(): Boolean {
+        return try {
+            val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+            audioDevices.any { device ->
+                device.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
+                    device.type == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        device.type == AudioDeviceInfo.TYPE_USB_HEADSET
+                    } else {
+                        true
+                    }
             }
+        } catch (e: Exception) {
+            false
         }
+    }
 
     /** Check if Bluetooth headphones are connected */
-    override val isBluetoothHeadphonesConnected: Boolean
-        get() {
-            return try {
-                val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
-                audioDevices.any { device ->
-                    device.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
-                        device.type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO
-                }
-            } catch (e: Exception) {
-                false
+    override fun getIsBluetoothHeadphonesConnected(): Boolean {
+        return try {
+            val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+            audioDevices.any { device ->
+                device.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
+                    device.type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO
             }
+        } catch (e: Exception) {
+            false
         }
+    }
 
     /** Check if airplane mode is enabled */
-    override val isAirplaneMode: Boolean
-        get() {
-            return try {
-                Settings.Global.getInt(
-                    context.contentResolver,
-                    Settings.Global.AIRPLANE_MODE_ON,
-                    0,
-                ) != 0
-            } catch (e: Exception) {
-                false
-            }
+    override fun getIsAirplaneMode(): Boolean {
+        return try {
+            Settings.Global.getInt(
+                context.contentResolver,
+                Settings.Global.AIRPLANE_MODE_ON,
+                0,
+            ) != 0
+        } catch (e: Exception) {
+            false
         }
+    }
 
     /** Check if device is low RAM device */
     override val isLowRamDevice: Boolean
@@ -743,11 +735,10 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         get() = false
 
     /** Check if device is in landscape orientation */
-    override val isLandscape: Boolean
-        get() {
-            val orientation = context.resources.configuration.orientation
-            return orientation == Configuration.ORIENTATION_LANDSCAPE
-        }
+    override fun getIsLandscape(): Boolean {
+        val orientation = context.resources.configuration.orientation
+        return orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
 
     // MARK: - Advanced System Information
 
@@ -760,8 +751,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         get() = Build.SUPPORTED_64_BIT_ABIS.toList().toTypedArray()
 
     /** Get system font scale */
-    override val fontScale: Double
-        get() = context.resources.configuration.fontScale.toDouble()
+    override fun getFontScale(): Double = context.resources.configuration.fontScale.toDouble()
 
     /** Check if system has a specific feature */
     override fun hasSystemFeature(feature: String): Boolean {
@@ -777,20 +767,19 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         get() = systemFeatures.toTypedArray()
 
     /** Get list of enabled location providers */
-    override val availableLocationProviders: Array<String>
-        get() {
-            return try {
-                val locationManager =
-                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    override fun getAvailableLocationProviders(): Array<String> {
+        return try {
+            val locationManager =
+                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-                locationManager
-                    .allProviders
-                    .filter { locationManager.isProviderEnabled(it) }
-                    .toTypedArray()
-            } catch (e: Exception) {
-                emptyArray()
-            }
+            locationManager
+                .allProviders
+                .filter { locationManager.isProviderEnabled(it) }
+                .toTypedArray()
+        } catch (e: Exception) {
+            emptyArray()
         }
+    }
 
     /** Get host names (Windows-specific, not available on Android) */
     override val hostNames: Array<String>
@@ -836,15 +825,14 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     }
 
     /** Get IP address with 5-second cache */
-    override val ipAddressSync: String
-        get() {
-            val now = System.currentTimeMillis()
-            if (now - ipAddressCacheTime > ipCacheDurationMs) {
-                cachedIpAddress = queryIpAddressInternal()
-                ipAddressCacheTime = now
-            }
-            return cachedIpAddress
+    override fun getIpAddressSync(): String {
+        val now = System.currentTimeMillis()
+        if (now - ipAddressCacheTime > ipCacheDurationMs) {
+            cachedIpAddress = queryIpAddressInternal()
+            ipAddressCacheTime = now
         }
+        return cachedIpAddress
+    }
 
     /** Query IP address from network interfaces */
     private fun queryIpAddressInternal(): String {
@@ -865,15 +853,14 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     }
 
     /** Get MAC address with 5-second cache */
-    override val macAddressSync: String
-        get() {
-            val now = System.currentTimeMillis()
-            if (now - macAddressCacheTime > ipCacheDurationMs) {
-                cachedMacAddress = queryMacAddressInternal()
-                macAddressCacheTime = now
-            }
-            return cachedMacAddress
+    override fun getMacAddressSync(): String {
+        val now = System.currentTimeMillis()
+        if (now - macAddressCacheTime > ipCacheDurationMs) {
+            cachedMacAddress = queryMacAddressInternal()
+            macAddressCacheTime = now
         }
+        return cachedMacAddress
+    }
 
     /** Query MAC address from network interfaces */
     private fun queryMacAddressInternal(): String {
@@ -892,43 +879,40 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     }
 
     /** Get carrier name with 5-second cache */
-    override val carrierSync: String
-        get() {
-            val now = System.currentTimeMillis()
-            if (now - carrierCacheTime > ipCacheDurationMs) {
-                val telephonyManager =
-                    context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
-                cachedCarrier = telephonyManager?.networkOperatorName ?: "unknown"
-                carrierCacheTime = now
-            }
-            return cachedCarrier
+    override fun getCarrierSync(): String {
+        val now = System.currentTimeMillis()
+        if (now - carrierCacheTime > ipCacheDurationMs) {
+            val telephonyManager =
+                context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+            cachedCarrier = telephonyManager?.networkOperatorName ?: "unknown"
+            carrierCacheTime = now
         }
+        return cachedCarrier
+    }
 
     /** Check if location services are enabled */
-    override val isLocationEnabledSync: Boolean
-        get() {
-            return try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    val locationManager =
-                        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                    locationManager.isLocationEnabled
-                } else {
-                    val mode =
-                        Settings.Secure.getInt(
-                            context.contentResolver,
-                            Settings.Secure.LOCATION_MODE,
-                            Settings.Secure.LOCATION_MODE_OFF,
-                        )
-                    mode != Settings.Secure.LOCATION_MODE_OFF
-                }
-            } catch (e: Exception) {
-                false
+    override fun getIsLocationEnabled(): Boolean {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val locationManager =
+                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                locationManager.isLocationEnabled
+            } else {
+                val mode =
+                    Settings.Secure.getInt(
+                        context.contentResolver,
+                        Settings.Secure.LOCATION_MODE,
+                        Settings.Secure.LOCATION_MODE_OFF,
+                    )
+                mode != Settings.Secure.LOCATION_MODE_OFF
             }
+        } catch (e: Exception) {
+            false
         }
+    }
 
     /** Check if any headphones are connected */
-    override val isHeadphonesConnectedSync: Boolean
-        get() = isWiredHeadphonesConnected || isBluetoothHeadphonesConnected
+    override fun getIsHeadphonesConnected(): Boolean = getIsWiredHeadphonesConnected() || getIsBluetoothHeadphonesConnected()
 
     override val isLiquidGlassAvailable: Boolean = false
 
@@ -955,8 +939,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         get() = false
 
     /** Get screen brightness (iOS-specific, returns -1 on Android) */
-    override val brightness: Double
-        get() = -1.0
+    override fun getBrightness(): Double = -1.0
 
     /** Get unique ID from Keychain (iOS-specific, returns device ID on Android) */
     override fun syncUniqueId(): Promise<String> {
@@ -973,7 +956,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Check if battery level is below threshold */
     override fun isLowBatteryLevel(threshold: Double): Boolean {
-        return batteryLevel < threshold
+        return getBatteryLevel() < threshold
     }
 
     /** Check if device is in tablet mode (Windows-specific, returns false on Android) */
@@ -992,15 +975,14 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
 
     /** Get free disk storage using old API (for legacy compatibility) */
-    override val freeDiskStorageOld: Double
-        get() {
-            return try {
-                val stat = StatFs(Environment.getDataDirectory().path)
-                stat.availableBlocksLong * stat.blockSizeLong.toDouble()
-            } catch (e: Exception) {
-                -1.0
-            }
+    override fun getFreeDiskStorageOld(): Double {
+        return try {
+            val stat = StatFs(Environment.getDataDirectory().path)
+            stat.availableBlocksLong * stat.blockSizeLong.toDouble()
+        } catch (e: Exception) {
+            -1.0
         }
+    }
 
     // MARK: - Localization & Navigation
 

@@ -16,7 +16,7 @@ function getDeviceDetails() {
       hasNotch: DeviceInfoModule.hasNotch,
       hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
       isDisplayZoomed: DeviceInfoModule.isDisplayZoomed,
-      brightness: DeviceInfoModule.brightness,
+      brightness: DeviceInfoModule.getBrightness(),
     };
   } else {
     return {
@@ -59,7 +59,7 @@ function getAndroidDetails() {
     hasHuaweiMobileServices: DeviceInfoModule.hasHms,
 
     // Device State
-    isAirplaneMode: DeviceInfoModule.isAirplaneMode,
+    isAirplaneMode: DeviceInfoModule.getIsAirplaneMode(),
     isLowRamDevice: DeviceInfoModule.isLowRamDevice,
 
     // System Features
@@ -90,7 +90,7 @@ async function getIOSDetails() {
     isDisplayZoomed: DeviceInfoModule.isDisplayZoomed,
 
     // Screen Brightness
-    brightness: DeviceInfoModule.brightness,
+    brightness: DeviceInfoModule.getBrightness(),
 
     // DeviceCheck Token (async, requires network)
     deviceToken: await DeviceInfoModule.getDeviceToken().catch(() => null),
@@ -138,11 +138,11 @@ class DeviceInfoCache {
 
   // Use synchronous cached values when available
   static getIpAddressSync(): string {
-    return DeviceInfoModule.ipAddressSync;
+    return DeviceInfoModule.getIpAddressSync();
   }
 
   static getCarrierSync(): string {
-    return DeviceInfoModule.carrierSync;
+    return DeviceInfoModule.getCarrierSync();
   }
 }
 ```
@@ -182,17 +182,17 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 function getNetworkInfoFast() {
   return {
     // 5-second cache, instant access
-    ipAddress: DeviceInfoModule.ipAddressSync,
-    macAddress: DeviceInfoModule.macAddressSync,
-    carrier: DeviceInfoModule.carrierSync,
+    ipAddress: DeviceInfoModule.getIpAddressSync(),
+    macAddress: DeviceInfoModule.getMacAddressSync(),
+    carrier: DeviceInfoModule.getCarrierSync(),
 
     // Cached install times
     firstInstallTime: DeviceInfoModule.firstInstallTimeSync,
     lastUpdateTime: DeviceInfoModule.lastUpdateTimeSync,
 
     // Cached connectivity
-    isLocationEnabled: DeviceInfoModule.isLocationEnabledSync,
-    isHeadphonesConnected: DeviceInfoModule.isHeadphonesConnectedSync,
+    isLocationEnabled: DeviceInfoModule.getIsLocationEnabled(),
+    isHeadphonesConnected: DeviceInfoModule.getIsHeadphonesConnected(),
   };
 }
 ```
@@ -224,7 +224,7 @@ export function useDeviceInfo(): DeviceInfo {
   const model = DeviceInfoModule.model;
   const systemVersion = DeviceInfoModule.systemVersion;
   const isTablet = DeviceInfoModule.isTablet;
-  const batteryLevel = DeviceInfoModule.batteryLevel;
+  const batteryLevel = DeviceInfoModule.getBatteryLevel();
 
   // Async values - fetch on mount
   useEffect(() => {
@@ -263,12 +263,12 @@ import type { PowerState } from 'react-native-nitro-device-info';
 
 export function useBatteryMonitor(intervalMs: number = 5000) {
   const [powerState, setPowerState] = useState<PowerState>(
-    DeviceInfoModule.powerState
+    DeviceInfoModule.getPowerState()
   );
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setPowerState(DeviceInfoModule.powerState);
+      setPowerState(DeviceInfoModule.getPowerState());
     }, intervalMs);
 
     return () => clearInterval(interval);
@@ -306,7 +306,7 @@ type MemoryInfo = {
 export function useMemoryMonitor(intervalMs: number = 1000): MemoryInfo {
   const [memoryInfo, setMemoryInfo] = useState<MemoryInfo>(() => {
     const total = DeviceInfoModule.totalMemory;
-    const used = DeviceInfoModule.usedMemory;
+    const used = DeviceInfoModule.getUsedMemory();
     return {
       totalMemory: total,
       usedMemory: used,
@@ -317,7 +317,7 @@ export function useMemoryMonitor(intervalMs: number = 1000): MemoryInfo {
   useEffect(() => {
     const interval = setInterval(() => {
       const total = DeviceInfoModule.totalMemory;
-      const used = DeviceInfoModule.usedMemory;
+      const used = DeviceInfoModule.getUsedMemory();
       setMemoryInfo({
         totalMemory: total,
         usedMemory: used,
@@ -482,7 +482,7 @@ function getBatteryStatusMessage(state: BatteryState): string {
 }
 
 function checkBattery() {
-  const powerState = DeviceInfoModule.powerState;
+  const powerState = DeviceInfoModule.getPowerState();
   const message = getBatteryStatusMessage(powerState.batteryState);
   console.log(message);
 }
@@ -519,7 +519,7 @@ function getAndroidCapabilities() {
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function getLocationCapabilities() {
-  const providers = DeviceInfoModule.availableLocationProviders;
+  const providers = DeviceInfoModule.getAvailableLocationProviders();
 
   return {
     hasGps: providers['gps'] || false,
@@ -544,7 +544,7 @@ export default function AdvancedDeviceInfo() {
   });
 
   const [powerState, setPowerState] = useState<PowerState>(
-    DeviceInfoModule.powerState
+    DeviceInfoModule.getPowerState()
   );
 
   // Fetch async data on mount
@@ -564,7 +564,7 @@ export default function AdvancedDeviceInfo() {
   // Monitor battery every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setPowerState(DeviceInfoModule.powerState);
+      setPowerState(DeviceInfoModule.getPowerState());
     }, 5000);
 
     return () => clearInterval(interval);
@@ -576,17 +576,17 @@ export default function AdvancedDeviceInfo() {
   const model = DeviceInfoModule.model;
   const isTablet = DeviceInfoModule.isTablet;
   const totalMemory = DeviceInfoModule.totalMemory;
-  const usedMemory = DeviceInfoModule.usedMemory;
+  const usedMemory = DeviceInfoModule.getUsedMemory();
 
   // Platform-specific info
   const platformInfo = Platform.OS === 'ios' ? {
     hasNotch: DeviceInfoModule.hasNotch,
     hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
-    brightness: DeviceInfoModule.brightness,
+    brightness: DeviceInfoModule.getBrightness(),
   } : {
     apiLevel: DeviceInfoModule.apiLevel,
     hasGms: DeviceInfoModule.hasGms,
-    isAirplaneMode: DeviceInfoModule.isAirplaneMode,
+    isAirplaneMode: DeviceInfoModule.getIsAirplaneMode(),
   };
 
   return (

@@ -31,7 +31,7 @@ const isTablet = DeviceInfoModule.isTablet;
 console.log(isTablet); // false
 
 // Battery information
-const batteryLevel = DeviceInfoModule.batteryLevel;
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
 console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`); // "Battery: 85%"
 ```
 
@@ -83,9 +83,9 @@ Monitor memory and storage:
 
 ```typescript
 const totalMemory = DeviceInfoModule.totalMemory;
-const usedMemory = DeviceInfoModule.usedMemory;
+const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.totalDiskCapacity;
-const freeDisk = DeviceInfoModule.freeDiskStorage;
+const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
@@ -102,9 +102,9 @@ Get detailed battery status with TypeScript types:
 ```typescript
 import type { PowerState } from 'react-native-nitro-device-info';
 
-const batteryLevel = DeviceInfoModule.batteryLevel;
-const isCharging = DeviceInfoModule.isBatteryCharging;
-const powerState: PowerState = DeviceInfoModule.powerState;
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const isCharging = DeviceInfoModule.getIsBatteryCharging();
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 
 console.log(
   `Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`
@@ -175,7 +175,7 @@ import type {
 } from 'react-native-nitro-device-info';
 
 // Use types for better IntelliSense and type safety
-const powerState: PowerState = DeviceInfoModule.powerState;
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 // TypeScript knows: powerState.lowPowerMode, powerState.batteryLevel, etc.
 ```
 
@@ -197,10 +197,10 @@ export default function DeviceInfoScreen() {
   const brand = DeviceInfoModule.brand;
   const systemVersion = DeviceInfoModule.systemVersion;
 
-  // Sync properties - instant access
+  // Sync properties/methods - instant access
   const isTablet = DeviceInfoModule.isTablet;
-  const batteryLevel = DeviceInfoModule.batteryLevel;
-  const powerState: PowerState = DeviceInfoModule.powerState;
+  const batteryLevel = DeviceInfoModule.getBatteryLevel();
+  const powerState: PowerState = DeviceInfoModule.getPowerState();
 
   useEffect(() => {
     // Async methods - fetch on mount

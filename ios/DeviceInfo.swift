@@ -188,7 +188,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Get current app memory usage in bytes
    */
-  public var usedMemory: Double {
+  public func getUsedMemory() -> Double {
     var info = mach_task_basic_info()
     var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
 
@@ -224,7 +224,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Get free disk storage in bytes
    */
-  public var freeDiskStorage: Double {
+  public func getFreeDiskStorage() -> Double {
     do {
       let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
       let freeSpace = (systemAttributes[.systemFreeSize] as? NSNumber)?.doubleValue ?? 0
@@ -238,7 +238,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Get current battery level (0.0 to 1.0)
    */
-  public var batteryLevel: Double {
+  public func getBatteryLevel() -> Double {
     // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
     let level = UIDevice.current.batteryLevel
@@ -248,7 +248,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Get comprehensive power state information
    */
-  public var powerState: PowerState {
+  public func getPowerState() -> PowerState {
     // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
 
@@ -270,7 +270,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /**
    * Check if battery is currently charging
    */
-  public var isBatteryCharging: Bool {
+  public func getIsBatteryCharging() -> Bool {
     // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
     return UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
@@ -643,20 +643,15 @@ class DeviceInfo: HybridDeviceInfoSpec {
   // MARK: - Device Capability Detection
 
   /// Check if wired headphones are connected
-  var isWiredHeadphonesConnected: Bool {
-    do {
-      let route = AVAudioSession.sharedInstance().currentRoute
-      return route.outputs.contains { output in
-        output.portType == .headphones
-      }
-    } catch {
-      // Handle error silently and return false
-      return false
+  func getIsWiredHeadphonesConnected() -> Bool {
+    let route = AVAudioSession.sharedInstance().currentRoute
+    return route.outputs.contains { output in
+      output.portType == .headphones
     }
   }
 
   /// Check if Bluetooth headphones are connected
-  var isBluetoothHeadphonesConnected: Bool {
+  func getIsBluetoothHeadphonesConnected() -> Bool {
     let route = AVAudioSession.sharedInstance().currentRoute
     return route.outputs.contains { output in
       output.portType == .bluetoothA2DP ||
@@ -666,7 +661,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Check if airplane mode is enabled (not available on iOS - returns false)
-  var isAirplaneMode: Bool {
+  func getIsAirplaneMode() -> Bool {
     return false
   }
 
@@ -686,7 +681,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Check if device is in landscape orientation
-  var isLandscape: Bool {
+  func getIsLandscape() -> Bool {
     let orientation = UIDevice.current.orientation
     return orientation == .landscapeLeft || orientation == .landscapeRight
   }
@@ -714,7 +709,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get system font scale
-  var fontScale: Double {
+  func getFontScale() -> Double {
     let preferredFont = UIFont.preferredFont(forTextStyle: .body)
     let defaultSize: CGFloat = 17.0  // iOS default body font size
     return Double(preferredFont.pointSize / defaultSize)
@@ -731,7 +726,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get list of enabled location providers
-  var availableLocationProviders: [String] {
+  func getAvailableLocationProviders() -> [String] {
     let enabled = CLLocationManager.locationServicesEnabled()
     if enabled {
       return ["gps", "network"]
@@ -811,7 +806,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get IP address with 5-second cache
-  var ipAddressSync: String {
+  func getIpAddressSync() -> String {
     let now = Date().timeIntervalSince1970
     if now - ipAddressCacheTime > IP_CACHE_DURATION {
       cachedIpAddress = queryIpAddressInternal()
@@ -858,12 +853,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
-  var macAddressSync: String {
+  func getMacAddressSync() -> String {
     return "02:00:00:00:00:00"
   }
 
   /// Get carrier name with 5-second cache
-  var carrierSync: String {
+  func getCarrierSync() -> String {
     let now = Date().timeIntervalSince1970
     if now - carrierCacheTime > CARRIER_CACHE_DURATION {
       let networkInfo = CTTelephonyNetworkInfo()
@@ -880,13 +875,13 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Check if location services are enabled
-  var isLocationEnabledSync: Bool {
+  func getIsLocationEnabled() -> Bool {
     return CLLocationManager.locationServicesEnabled()
   }
 
   /// Check if any headphones are connected
-  var isHeadphonesConnectedSync: Bool {
-    return isWiredHeadphonesConnected || isBluetoothHeadphonesConnected
+  func getIsHeadphonesConnected() -> Bool {
+    return getIsWiredHeadphonesConnected() || getIsBluetoothHeadphonesConnected()
   }
 
   // MARK: - iOS-Specific Features
@@ -898,7 +893,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get screen brightness (0.0 to 1.0)
-  var brightness: Double {
+  func getBrightness() -> Double {
     return Double(UIScreen.main.brightness)
   }
 
@@ -941,7 +936,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if battery level is below threshold
   func isLowBatteryLevel(threshold: Double) -> Bool {
-    return batteryLevel < threshold
+    return getBatteryLevel() < threshold
   }
 
   /// Check if device is in tablet mode (Windows-specific, returns false on iOS)
@@ -955,8 +950,8 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Get free disk storage using old API (alias to main method on iOS)
-  var freeDiskStorageOld: Double {
-    return freeDiskStorage
+  func getFreeDiskStorageOld() -> Double {
+    return getFreeDiskStorage()
   }
 
   /// Check if liquid glass effect is available

@@ -200,12 +200,12 @@ const totalMemory = DeviceInfoModule.totalMemory;
 console.log(`Total RAM: ${(totalMemory / 1024 / 1024 / 1024).toFixed(1)}GB`);
 ```
 
-### `usedMemory: number`
+### `getUsedMemory(): number`
 
 Get current app memory usage in bytes.
 
 ```typescript
-const usedMemory = DeviceInfoModule.usedMemory;
+const usedMemory = DeviceInfoModule.getUsedMemory();
 // Example: 134217728 (128 MB)
 console.log(`Used Memory: ${(usedMemory / 1024 / 1024).toFixed(0)}MB`);
 ```
@@ -220,12 +220,12 @@ const totalDisk = DeviceInfoModule.totalDiskCapacity;
 console.log(`Total Storage: ${(totalDisk / 1024 / 1024 / 1024).toFixed(0)}GB`);
 ```
 
-### `freeDiskStorage: number`
+### `getFreeDiskStorage(): number`
 
 Get available free storage space in bytes.
 
 ```typescript
-const freeDisk = DeviceInfoModule.freeDiskStorage;
+const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 // Example: 51539607552 (48 GB)
 console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 ```
@@ -234,22 +234,22 @@ console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 ## Battery Information
 
-### `batteryLevel: number`
+### `getBatteryLevel(): number`
 
 Get current battery level (0.0 to 1.0).
 
 ```typescript
-const batteryLevel = DeviceInfoModule.batteryLevel;
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
 console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
 // Output: "Battery: 75%"
 ```
 
-### `powerState: PowerState`
+### `getPowerState(): PowerState`
 
 Get comprehensive power state information.
 
 ```typescript
-const powerState = DeviceInfoModule.powerState;
+const powerState = DeviceInfoModule.getPowerState();
 console.log(`Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
 console.log(`Status: ${powerState.batteryState}`);
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`); // iOS only
@@ -265,12 +265,12 @@ interface PowerState {
 }
 ```
 
-### `isBatteryCharging: boolean`
+### `getIsBatteryCharging(): boolean`
 
 Check if battery is currently charging.
 
 ```typescript
-const isCharging = DeviceInfoModule.isBatteryCharging;
+const isCharging = DeviceInfoModule.getIsBatteryCharging();
 ```
 
 ### `isLowBatteryLevel(threshold: number): boolean`
@@ -391,7 +391,7 @@ const ipAddress = await DeviceInfoModule.getIpAddress();
 **Synchronous variant** (with 5-second cache):
 
 ```typescript
-const ipAddressSync = DeviceInfoModule.ipAddressSync;
+const ipAddressSync = DeviceInfoModule.getIpAddressSync();
 ```
 
 ### `getMacAddress(): Promise<string>`
@@ -409,7 +409,7 @@ const macAddress = await DeviceInfoModule.getMacAddress();
 **Synchronous variant**:
 
 ```typescript
-const macAddressSync = DeviceInfoModule.macAddressSync;
+const macAddressSync = DeviceInfoModule.getMacAddressSync();
 ```
 
 ### `getCarrier(): Promise<string>`
@@ -426,7 +426,7 @@ const carrier = await DeviceInfoModule.getCarrier();
 **Synchronous variant** (with 5-second cache):
 
 ```typescript
-const carrierSync = DeviceInfoModule.carrierSync;
+const carrierSync = DeviceInfoModule.getCarrierSync();
 ```
 
 ### `isLocationEnabled(): Promise<boolean>`
@@ -442,7 +442,7 @@ const isLocationEnabled = await DeviceInfoModule.isLocationEnabled();
 **Synchronous variant**:
 
 ```typescript
-const isLocationEnabledSync = DeviceInfoModule.isLocationEnabledSync;
+const isLocationEnabled = DeviceInfoModule.getIsLocationEnabled();
 ```
 
 ### `isHeadphonesConnected(): Promise<boolean>`
@@ -458,7 +458,7 @@ const hasHeadphones = await DeviceInfoModule.isHeadphonesConnected();
 **Synchronous variant**:
 
 ```typescript
-const isHeadphonesConnectedSync = DeviceInfoModule.isHeadphonesConnectedSync;
+const isHeadphonesConnected = DeviceInfoModule.getIsHeadphonesConnected();
 ```
 
 ### `getUserAgent(): Promise<string>`
@@ -639,12 +639,12 @@ const hasHms = DeviceInfoModule.hasHms;
 
 **Platform**: Android (Huawei devices) only
 
-### `fontScale: number`
+### `getFontScale(): number`
 
 Get current font scale multiplier.
 
 ```typescript
-const fontScale = DeviceInfoModule.fontScale;
+const fontScale = DeviceInfoModule.getFontScale();
 // Example: 1.0 (normal), 1.2 (large), 0.85 (small)
 ```
 
@@ -679,12 +679,12 @@ const features = DeviceInfoModule.systemAvailableFeatures;
 
 **Platform**: Android only
 
-### `availableLocationProviders: string[]`
+### `getAvailableLocationProviders(): string[]`
 
 Get list of enabled location providers.
 
 ```typescript
-const providers = DeviceInfoModule.availableLocationProviders;
+const providers = DeviceInfoModule.getAvailableLocationProviders();
 // ["gps", "network"]
 ```
 
@@ -791,30 +791,30 @@ const referrer = await DeviceInfoModule.getInstallReferrer();
 
 ### Headphone Detection
 
-#### `isWiredHeadphonesConnected: boolean`
+#### `getIsWiredHeadphonesConnected(): boolean`
 
 Check if wired headphones are connected.
 
 ```typescript
-const hasWiredHeadphones = DeviceInfoModule.isWiredHeadphonesConnected;
+const hasWiredHeadphones = DeviceInfoModule.getIsWiredHeadphonesConnected();
 ```
 
-#### `isBluetoothHeadphonesConnected: boolean`
+#### `getIsBluetoothHeadphonesConnected(): boolean`
 
 Check if Bluetooth headphones are connected.
 
 ```typescript
-const hasBluetoothHeadphones = DeviceInfoModule.isBluetoothHeadphonesConnected;
+const hasBluetoothHeadphones = DeviceInfoModule.getIsBluetoothHeadphonesConnected();
 ```
 
 ### Device State
 
-#### `isAirplaneMode: boolean`
+#### `getIsAirplaneMode(): boolean`
 
 Check if airplane mode is enabled.
 
 ```typescript
-const isAirplaneMode = DeviceInfoModule.isAirplaneMode;
+const isAirplaneMode = DeviceInfoModule.getIsAirplaneMode();
 // Android: true/false
 // iOS: false (not available)
 ```
@@ -833,12 +833,12 @@ const isLowRam = DeviceInfoModule.isLowRamDevice;
 
 **Platform**: Android API 19+
 
-#### `isLandscape: boolean`
+#### `getIsLandscape(): boolean`
 
 Check if device is in landscape orientation.
 
 ```typescript
-const isLandscape = DeviceInfoModule.isLandscape;
+const isLandscape = DeviceInfoModule.getIsLandscape();
 ```
 
 ---
@@ -857,12 +857,12 @@ const isZoomed = DeviceInfoModule.isDisplayZoomed;
 
 **Platform**: iOS only
 
-### `brightness: number`
+### `getBrightness(): number`
 
 Get current screen brightness level (0.0 to 1.0).
 
 ```typescript
-const brightness = DeviceInfoModule.brightness;
+const brightness = DeviceInfoModule.getBrightness();
 console.log(`Brightness: ${(brightness * 100).toFixed(0)}%`);
 // iOS: 0.0 to 1.0
 // Android: -1
@@ -931,14 +931,14 @@ const totalDiskOld = DeviceInfoModule.totalDiskCapacityOld;
 // iOS: Alias to totalDiskCapacity
 ```
 
-### `freeDiskStorageOld: number`
+### `getFreeDiskStorageOld(): number`
 
 Get free disk storage using legacy Android API.
 
 ```typescript
-const freeDiskOld = DeviceInfoModule.freeDiskStorageOld;
+const freeDiskOld = DeviceInfoModule.getFreeDiskStorageOld();
 // Android: Uses old StatFs API (pre-Jelly Bean compatibility)
-// iOS: Alias to freeDiskStorage
+// iOS: Alias to getFreeDiskStorage()
 ```
 
 ---
