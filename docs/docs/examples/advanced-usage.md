@@ -86,7 +86,7 @@ async function getIOSDetails() {
   return {
     // Display Features
     hasNotch: DeviceInfoModule.getHasNotch(),
-    hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
+    hasDynamicIsland: DeviceInfoModule.getHasDynamicIsland(),
     isDisplayZoomed: DeviceInfoModule.isDisplayZoomed,
 
     // Screen Brightness
