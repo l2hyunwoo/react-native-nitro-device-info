@@ -5,7 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.0]
+
+### Changed
+
+#### BREAKING: Runtime-Mutable Properties Converted to Methods (18 APIs)
+
+Properties that return values which can change during app runtime have been converted from readonly properties to synchronous getter methods. This provides clearer semantics - methods indicate "query on each call" while properties implied cached/stable values.
+
+**Battery & Power** (3 APIs):
+
+- `batteryLevel` → `getBatteryLevel()`: Returns current battery level (0.0-1.0)
+- `powerState` → `getPowerState()`: Returns PowerState object
+- `isBatteryCharging` → `getIsBatteryCharging()`: Returns charging status
+
+**System Resources** (3 APIs):
+
+- `usedMemory` → `getUsedMemory()`: Returns current app memory usage
+- `freeDiskStorage` → `getFreeDiskStorage()`: Returns free disk space
+- `freeDiskStorageOld` → `getFreeDiskStorageOld()`: Returns free disk space (legacy API)
+
+**Audio/Peripherals** (3 APIs):
+
+- `isWiredHeadphonesConnected` → `getIsWiredHeadphonesConnected()`: Wired headphone detection
+- `isBluetoothHeadphonesConnected` → `getIsBluetoothHeadphonesConnected()`: Bluetooth headphone detection
+- `isHeadphonesConnectedSync` → `getIsHeadphonesConnected()`: Any headphone detection
+
+**Network & Connectivity** (6 APIs):
+
+- `isAirplaneMode` → `getIsAirplaneMode()`: Airplane mode status (Android only)
+- `ipAddressSync` → `getIpAddressSync()`: Current IP address (cached 5s)
+- `carrierSync` → `getCarrierSync()`: Carrier name (cached 5s)
+- `isLocationEnabledSync` → `getIsLocationEnabled()`: Location services status
+- `macAddressSync` → `getMacAddressSync()`: MAC address (cached 5s)
+- `availableLocationProviders` → `getAvailableLocationProviders()`: Enabled location providers
+
+**Display & Orientation** (3 APIs):
+
+- `isLandscape` → `getIsLandscape()`: Device orientation
+- `fontScale` → `getFontScale()`: System font scale multiplier
+- `brightness` → `getBrightness()`: Screen brightness (iOS only)
+
+**Migration Example**:
+
+```typescript
+// Before (v1.2.1)
+const level = DeviceInfoModule.batteryLevel;
+const charging = DeviceInfoModule.isBatteryCharging;
+
+// After (v1.3.0)
+const level = DeviceInfoModule.getBatteryLevel();
+const charging = DeviceInfoModule.getIsBatteryCharging();
+```
 
 ### Added
 
@@ -38,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 All methods listed below have been converted from Promise-based to synchronous for instant access (<1ms):
 
 **Device Identification** (2 methods):
+
 - `getUniqueId()`: `Promise<string>` → `string`
   - Returns device-unique ID (iOS: IDFV, Android: ANDROID_ID)
   - **Before**: `const id = await deviceInfo.getUniqueId()`
@@ -49,6 +101,7 @@ All methods listed below have been converted from Promise-based to synchronous f
   - **After**: `const manufacturer = deviceInfo.getManufacturer()`
 
 **Battery & Power** (3 methods):
+
 - `getBatteryLevel()`: `Promise<number>` → `number`
   - Returns battery level (0.0 to 1.0)
   - **Before**: `const level = await deviceInfo.getBatteryLevel()`
@@ -65,6 +118,7 @@ All methods listed below have been converted from Promise-based to synchronous f
   - **After**: `const state = deviceInfo.getPowerState()`
 
 **Application Metadata** (4 methods):
+
 - `getVersion()`: `Promise<string>` → `string`
   - Returns app version (e.g., "1.0.0")
   - **Before**: `const version = await deviceInfo.getVersion()`
@@ -86,6 +140,7 @@ All methods listed below have been converted from Promise-based to synchronous f
   - **After**: `const name = deviceInfo.getApplicationName()`
 
 **System Resources** (4 methods):
+
 - `getTotalMemory()`: `Promise<number>` → `number`
   - Returns total device RAM in bytes
   - **Before**: `const memory = await deviceInfo.getTotalMemory()`
@@ -107,6 +162,7 @@ All methods listed below have been converted from Promise-based to synchronous f
   - **After**: `const free = deviceInfo.getFreeDiskStorage()`
 
 **Device Capabilities** (3 methods):
+
 - `isCameraPresent()`: `Promise<boolean>` → `boolean`
   - Returns camera availability
   - **Before**: `const hasCamera = await deviceInfo.isCameraPresent()`
@@ -123,6 +179,7 @@ All methods listed below have been converted from Promise-based to synchronous f
   - **After**: `const isEmu = deviceInfo.isEmulator()`
 
 **Platform-Specific** (2 methods):
+
 - `getApiLevel()`: `Promise<number>` → `number`
   - Returns Android API level (or -1 on iOS)
   - **Before**: `const apiLevel = await deviceInfo.getApiLevel()`
@@ -154,6 +211,7 @@ All methods listed below have been converted from Promise-based to synchronous f
 #### Simplified Component Usage
 
 **Before (v0.1.0)**:
+
 ```typescript
 function MyComponent() {
   const [manufacturer, setManufacturer] = useState('');
@@ -183,6 +241,7 @@ function MyComponent() {
 ```
 
 **After (v1.0.0)**:
+
 ```typescript
 function MyComponent() {
   // Direct synchronous access - no useState, no useEffect, no async/await!
