@@ -123,8 +123,8 @@ import { View, Text } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 export default function BatteryIndicator() {
-  const batteryLevel = DeviceInfoModule.batteryLevel;
-  const isCharging = DeviceInfoModule.isBatteryCharging;
+  const batteryLevel = DeviceInfoModule.getBatteryLevel();
+  const isCharging = DeviceInfoModule.getIsBatteryCharging();
 
   const percentage = (batteryLevel * 100).toFixed(0);
 
@@ -143,7 +143,7 @@ export default function BatteryIndicator() {
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function checkBatteryStatus() {
-  const batteryLevel = DeviceInfoModule.batteryLevel;
+  const batteryLevel = DeviceInfoModule.getBatteryLevel();
 
   if (DeviceInfoModule.isLowBatteryLevel(0.2)) {
     console.warn(`Battery low: ${(batteryLevel * 100).toFixed(0)}%`);
@@ -167,7 +167,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import type { PowerState } from 'react-native-nitro-device-info';
 
 export default function PowerStateDisplay() {
-  const powerState: PowerState = DeviceInfoModule.powerState;
+  const powerState: PowerState = DeviceInfoModule.getPowerState();
 
   const percentage = (powerState.batteryLevel * 100).toFixed(0);
 
@@ -192,7 +192,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 export default function MemoryInfo() {
   const totalMemory = DeviceInfoModule.totalMemory;
-  const usedMemory = DeviceInfoModule.usedMemory;
+  const usedMemory = DeviceInfoModule.getUsedMemory();
 
   const totalGB = (totalMemory / 1024 / 1024 / 1024).toFixed(1);
   const usedMB = (usedMemory / 1024 / 1024).toFixed(0);
@@ -215,7 +215,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 export default function StorageInfo() {
   const totalDisk = DeviceInfoModule.totalDiskCapacity;
-  const freeDisk = DeviceInfoModule.freeDiskStorage;
+  const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
   const totalGB = (totalDisk / 1024 / 1024 / 1024).toFixed(0);
   const freeGB = (freeDisk / 1024 / 1024 / 1024).toFixed(1);
@@ -382,9 +382,9 @@ export default function DeviceInfoScreen() {
   const model = DeviceInfoModule.model;
   const systemVersion = DeviceInfoModule.systemVersion;
   const isTablet = DeviceInfoModule.isTablet;
-  const batteryLevel = DeviceInfoModule.batteryLevel;
+  const batteryLevel = DeviceInfoModule.getBatteryLevel();
   const totalMemory = DeviceInfoModule.totalMemory;
-  const freeDisk = DeviceInfoModule.freeDiskStorage;
+  const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 
   // Async data - fetch on mount
   useEffect(() => {

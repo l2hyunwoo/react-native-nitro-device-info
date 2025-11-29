@@ -66,7 +66,7 @@ const isTablet = DeviceInfo.isTablet();               // Sync method
 ```typescript
 const uniqueId = DeviceInfoModule.uniqueId;      // Sync property now!
 const totalMemory = DeviceInfoModule.totalMemory; // Sync property now!
-const batteryLevel = DeviceInfoModule.batteryLevel; // Sync property now!
+const batteryLevel = DeviceInfoModule.getBatteryLevel(); // Sync method now!
 const isTablet = DeviceInfoModule.isTablet;      // Sync property
 ```
 
@@ -106,17 +106,17 @@ const installTime = await DeviceInfoModule.getFirstInstallTime();
 | react-native-device-info | `react-native-nitro-device-info` | Notes |
 |---------------------------|--------------------------------|-------|
 | `await DeviceInfo.getTotalMemory()` | `DeviceInfoModule.totalMemory` | Now sync property |
-| `await DeviceInfo.getUsedMemory()` | `DeviceInfoModule.usedMemory` | Now sync property |
+| `await DeviceInfo.getUsedMemory()` | `DeviceInfoModule.getUsedMemory()` | Now sync method |
 | `await DeviceInfo.getTotalDiskCapacity()` | `DeviceInfoModule.totalDiskCapacity` | Now sync property |
-| `await DeviceInfo.getFreeDiskStorage()` | `DeviceInfoModule.freeDiskStorage` | Now sync property |
+| `await DeviceInfo.getFreeDiskStorage()` | `DeviceInfoModule.getFreeDiskStorage()` | Now sync method |
 
 ### Battery Information
 
 | react-native-device-info | `react-native-nitro-device-info` | Notes |
 |---------------------------|--------------------------------|-------|
-| `await DeviceInfo.getBatteryLevel()` | `DeviceInfoModule.batteryLevel` | Now sync property |
-| `await DeviceInfo.getPowerState()` | `DeviceInfoModule.powerState` | Now sync property |
-| `await DeviceInfo.isBatteryCharging()` | `DeviceInfoModule.isBatteryCharging` | Now sync property |
+| `await DeviceInfo.getBatteryLevel()` | `DeviceInfoModule.getBatteryLevel()` | Now sync method |
+| `await DeviceInfo.getPowerState()` | `DeviceInfoModule.getPowerState()` | Now sync method |
+| `await DeviceInfo.isBatteryCharging()` | `DeviceInfoModule.getIsBatteryCharging()` | Now sync method |
 
 ### Application Metadata
 
@@ -208,10 +208,10 @@ const uniqueId = await DeviceInfo.getUniqueId();
 const totalMemory = await DeviceInfo.getTotalMemory();
 const batteryLevel = await DeviceInfo.getBatteryLevel();
 
-// After (no await needed, now properties)
+// After (no await needed, now sync properties/methods)
 const uniqueId = DeviceInfoModule.uniqueId;
 const totalMemory = DeviceInfoModule.totalMemory;
-const batteryLevel = DeviceInfoModule.batteryLevel;
+const batteryLevel = DeviceInfoModule.getBatteryLevel();
 ```
 
 ### 6. Test Your Changes
@@ -263,7 +263,7 @@ function DeviceInfoScreen() {
       <Text>Device: {brand} {deviceId}</Text>
       <Text>Unique ID: {uniqueId}</Text>
       <Text>Memory: {totalMemory}</Text>
-      <Text>Battery: {batteryLevel * 100}%</Text>
+      <Text>Battery: {(batteryLevel * 100).toFixed(0)}%</Text>
       <Text>IP: {ipAddress}</Text>
     </View>
   );
@@ -279,12 +279,12 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 function DeviceInfoScreen() {
   const [ipAddress, setIpAddress] = useState('');
 
-  // Sync properties - instant access, no state needed
+  // Sync properties/methods - instant access, no state needed
   const deviceId = DeviceInfoModule.deviceId;
   const brand = DeviceInfoModule.brand;
   const uniqueId = DeviceInfoModule.uniqueId;
   const totalMemory = DeviceInfoModule.totalMemory;
-  const batteryLevel = DeviceInfoModule.batteryLevel;
+  const batteryLevel = DeviceInfoModule.getBatteryLevel();
 
   useEffect(() => {
     // Only async operations need useEffect
@@ -296,7 +296,7 @@ function DeviceInfoScreen() {
       <Text>Device: {brand} {deviceId}</Text>
       <Text>Unique ID: {uniqueId}</Text>
       <Text>Memory: {totalMemory}</Text>
-      <Text>Battery: {batteryLevel * 100}%</Text>
+      <Text>Battery: {(batteryLevel * 100).toFixed(0)}%</Text>
       <Text>IP: {ipAddress}</Text>
     </View>
   );
@@ -344,7 +344,7 @@ Full type definitions with excellent IntelliSense:
 ```typescript
 import type { PowerState, BatteryState } from 'react-native-nitro-device-info';
 
-const powerState: PowerState = DeviceInfoModule.powerState;
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 // TypeScript knows: powerState.batteryLevel, powerState.batteryState, powerState.lowPowerMode
 ```
 

@@ -44,7 +44,7 @@ interface PowerState {
 **Usage**:
 
 ```typescript
-const powerState: PowerState = DeviceInfoModule.powerState;
+const powerState: PowerState = DeviceInfoModule.getPowerState();
 
 console.log(`Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
 console.log(`Status: ${powerState.batteryState}`);
@@ -75,7 +75,7 @@ type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full';
 **Usage**:
 
 ```typescript
-const powerState = DeviceInfoModule.powerState;
+const powerState = DeviceInfoModule.getPowerState();
 
 switch (powerState.batteryState) {
   case 'charging':
@@ -216,14 +216,14 @@ interface DeviceInfo extends HybridObject {
   readonly incremental: string;
   readonly buildId: string;
 
-  // Synchronous Cached Network Properties
-  readonly ipAddressSync: string;
-  readonly macAddressSync: string;
-  readonly carrierSync: string;
+  // Synchronous Cached Network Methods
+  getIpAddressSync(): string;
+  getMacAddressSync(): string;
+  getCarrierSync(): string;
   readonly firstInstallTimeSync: number;
   readonly lastUpdateTimeSync: number;
-  readonly isLocationEnabledSync: boolean;
-  readonly isHeadphonesConnectedSync: boolean;
+  getIsLocationEnabled(): boolean;
+  getIsHeadphonesConnected(): boolean;
 
   // Device Capability Properties
   readonly isTablet: boolean;
@@ -240,16 +240,16 @@ interface DeviceInfo extends HybridObject {
 
   // System Resource Properties
   readonly totalMemory: number;
-  readonly usedMemory: number;
+  getUsedMemory(): number;
   readonly totalDiskCapacity: number;
-  readonly freeDiskStorage: number;
+  getFreeDiskStorage(): number;
   readonly totalDiskCapacityOld: number;
-  readonly freeDiskStorageOld: number;
+  getFreeDiskStorageOld(): number;
 
-  // Battery Properties
-  readonly batteryLevel: number;
-  readonly powerState: PowerState;
-  readonly isBatteryCharging: boolean;
+  // Battery Methods
+  getBatteryLevel(): number;
+  getPowerState(): PowerState;
+  getIsBatteryCharging(): boolean;
   isLowBatteryLevel(threshold: number): boolean;
 
   // Application Metadata Properties
@@ -276,10 +276,10 @@ interface DeviceInfo extends HybridObject {
   readonly supported64BitAbis: string[];
   readonly hasGms: boolean;
   readonly hasHms: boolean;
-  readonly fontScale: number;
+  getFontScale(): number;
   hasSystemFeature(feature: string): boolean;
   readonly systemAvailableFeatures: string[];
-  readonly availableLocationProviders: string[];
+  getAvailableLocationProviders(): string[];
   readonly maxMemory: number;
   readonly supportedMediaTypeList: string[];
 
@@ -290,12 +290,12 @@ interface DeviceInfo extends HybridObject {
   readonly systemLanguage: string;
   readonly navigationMode: NavigationMode;
 
-  // Advanced Capability Properties
-  readonly isWiredHeadphonesConnected: boolean;
-  readonly isBluetoothHeadphonesConnected: boolean;
-  readonly isAirplaneMode: boolean;
+  // Advanced Capability Methods
+  getIsWiredHeadphonesConnected(): boolean;
+  getIsBluetoothHeadphonesConnected(): boolean;
+  getIsAirplaneMode(): boolean;
   readonly isLowRamDevice: boolean;
-  readonly isLandscape: boolean;
+  getIsLandscape(): boolean;
   readonly isMouseConnected: boolean;
   readonly isKeyboardConnected: boolean;
   readonly isTabletMode: boolean;
@@ -303,7 +303,7 @@ interface DeviceInfo extends HybridObject {
 
   // iOS-Specific Properties
   readonly isDisplayZoomed: boolean;
-  readonly brightness: number;
+  getBrightness(): number;
   readonly isLiquidGlassAvailable: boolean;
   getDeviceToken(): Promise<string>;
   syncUniqueId(): Promise<string>;
@@ -319,7 +319,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import type { PowerState, BatteryState } from 'react-native-nitro-device-info';
 
 function getBatteryStatus(): string {
-  const powerState: PowerState = DeviceInfoModule.powerState;
+  const powerState: PowerState = DeviceInfoModule.getPowerState();
 
   const percentage = (powerState.batteryLevel * 100).toFixed(0);
   const state: BatteryState = powerState.batteryState;
