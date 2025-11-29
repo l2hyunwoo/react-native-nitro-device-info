@@ -55,10 +55,10 @@ console.log(DeviceInfoModule.deviceId);      // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand);         // "Apple"
 
-// Synchronous methods (immediate - <1ms)
-const uniqueId = DeviceInfoModule.getUniqueId();
-const isTablet = DeviceInfoModule.isTablet();
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
+// Synchronous properties (immediate - <1ms)
+const uniqueId = DeviceInfoModule.uniqueId;
+const isTablet = DeviceInfoModule.isTablet;
+const batteryLevel = DeviceInfoModule.batteryLevel;
 
 // Asynchronous methods (Promise-based - <100ms)
 const ipAddress = await DeviceInfoModule.getIpAddress();

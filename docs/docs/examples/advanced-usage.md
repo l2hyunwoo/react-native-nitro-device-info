@@ -223,8 +223,8 @@ export function useDeviceInfo(): DeviceInfo {
   const brand = DeviceInfoModule.brand;
   const model = DeviceInfoModule.model;
   const systemVersion = DeviceInfoModule.systemVersion;
-  const isTablet = DeviceInfoModule.isTablet();
-  const batteryLevel = DeviceInfoModule.getBatteryLevel();
+  const isTablet = DeviceInfoModule.isTablet;
+  const batteryLevel = DeviceInfoModule.batteryLevel;
 
   // Async values - fetch on mount
   useEffect(() => {
@@ -263,12 +263,12 @@ import type { PowerState } from 'react-native-nitro-device-info';
 
 export function useBatteryMonitor(intervalMs: number = 5000) {
   const [powerState, setPowerState] = useState<PowerState>(
-    DeviceInfoModule.getPowerState()
+    DeviceInfoModule.powerState
   );
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setPowerState(DeviceInfoModule.getPowerState());
+      setPowerState(DeviceInfoModule.powerState);
     }, intervalMs);
 
     return () => clearInterval(interval);
@@ -305,8 +305,8 @@ type MemoryInfo = {
 
 export function useMemoryMonitor(intervalMs: number = 1000): MemoryInfo {
   const [memoryInfo, setMemoryInfo] = useState<MemoryInfo>(() => {
-    const total = DeviceInfoModule.getTotalMemory();
-    const used = DeviceInfoModule.getUsedMemory();
+    const total = DeviceInfoModule.totalMemory;
+    const used = DeviceInfoModule.usedMemory;
     return {
       totalMemory: total,
       usedMemory: used,
@@ -316,8 +316,8 @@ export function useMemoryMonitor(intervalMs: number = 1000): MemoryInfo {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const total = DeviceInfoModule.getTotalMemory();
-      const used = DeviceInfoModule.getUsedMemory();
+      const total = DeviceInfoModule.totalMemory;
+      const used = DeviceInfoModule.usedMemory;
       setMemoryInfo({
         totalMemory: total,
         usedMemory: used,
@@ -355,8 +355,8 @@ import { View, StyleSheet } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function AdaptiveLayout({ children }: { children: React.ReactNode }) {
-  const isTablet = DeviceInfoModule.isTablet();
-  const hasNotch = DeviceInfoModule.hasNotch();
+  const isTablet = DeviceInfoModule.isTablet;
+  const hasNotch = DeviceInfoModule.hasNotch;
 
   return (
     <View style={[
@@ -393,9 +393,9 @@ import { View, Text } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function FeatureAwareUI() {
-  const hasNotch = DeviceInfoModule.hasNotch();
-  const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland();
-  const hasCamera = DeviceInfoModule.isCameraPresent();
+  const hasNotch = DeviceInfoModule.hasNotch;
+  const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland;
+  const hasCamera = DeviceInfoModule.isCameraPresent;
 
   return (
     <View>
@@ -482,7 +482,7 @@ function getBatteryStatusMessage(state: BatteryState): string {
 }
 
 function checkBattery() {
-  const powerState = DeviceInfoModule.getPowerState();
+  const powerState = DeviceInfoModule.powerState;
   const message = getBatteryStatusMessage(powerState.batteryState);
   console.log(message);
 }
@@ -519,7 +519,7 @@ function getAndroidCapabilities() {
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 function getLocationCapabilities() {
-  const providers = DeviceInfoModule.getAvailableLocationProviders();
+  const providers = DeviceInfoModule.availableLocationProviders;
 
   return {
     hasGps: providers['gps'] || false,
@@ -544,7 +544,7 @@ export default function AdvancedDeviceInfo() {
   });
 
   const [powerState, setPowerState] = useState<PowerState>(
-    DeviceInfoModule.getPowerState()
+    DeviceInfoModule.powerState
   );
 
   // Fetch async data on mount
@@ -564,7 +564,7 @@ export default function AdvancedDeviceInfo() {
   // Monitor battery every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setPowerState(DeviceInfoModule.getPowerState());
+      setPowerState(DeviceInfoModule.powerState);
     }, 5000);
 
     return () => clearInterval(interval);
@@ -574,19 +574,19 @@ export default function AdvancedDeviceInfo() {
   const deviceId = DeviceInfoModule.deviceId;
   const brand = DeviceInfoModule.brand;
   const model = DeviceInfoModule.model;
-  const isTablet = DeviceInfoModule.isTablet();
-  const totalMemory = DeviceInfoModule.getTotalMemory();
-  const usedMemory = DeviceInfoModule.getUsedMemory();
+  const isTablet = DeviceInfoModule.isTablet;
+  const totalMemory = DeviceInfoModule.totalMemory;
+  const usedMemory = DeviceInfoModule.usedMemory;
 
   // Platform-specific info
   const platformInfo = Platform.OS === 'ios' ? {
-    hasNotch: DeviceInfoModule.hasNotch(),
-    hasDynamicIsland: DeviceInfoModule.hasDynamicIsland(),
-    brightness: DeviceInfoModule.getBrightness(),
+    hasNotch: DeviceInfoModule.hasNotch,
+    hasDynamicIsland: DeviceInfoModule.hasDynamicIsland,
+    brightness: DeviceInfoModule.brightness,
   } : {
-    apiLevel: DeviceInfoModule.getApiLevel(),
-    hasGms: DeviceInfoModule.hasGms(),
-    isAirplaneMode: DeviceInfoModule.isAirplaneMode(),
+    apiLevel: DeviceInfoModule.apiLevel,
+    hasGms: DeviceInfoModule.hasGms,
+    isAirplaneMode: DeviceInfoModule.isAirplaneMode,
   };
 
   return (

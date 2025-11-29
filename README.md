@@ -55,17 +55,17 @@ console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
 console.log(DeviceInfoModule.model); // "iPhone"
 
-// Synchronous methods (immediate - <1ms)
-const uniqueId = DeviceInfoModule.getUniqueId();
+// Synchronous properties (immediate - <1ms)
+const uniqueId = DeviceInfoModule.uniqueId;
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
-const manufacturer = DeviceInfoModule.getManufacturer();
+const manufacturer = DeviceInfoModule.manufacturer;
 console.log(manufacturer); // "Apple"
 
-const isTablet = DeviceInfoModule.isTablet();
+const isTablet = DeviceInfoModule.isTablet;
 console.log(isTablet); // false
 
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
+const batteryLevel = DeviceInfoModule.batteryLevel;
 console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`); // "Battery: 85%"
 
 // Asynchronous methods (Promise-based - <100ms)
@@ -84,21 +84,21 @@ import type { PowerState, DeviceType } from 'react-native-nitro-device-info';
 
 // Device Identification
 const deviceId = DeviceInfoModule.deviceId; // "iPhone14,2"
-const manufacturer = DeviceInfoModule.getManufacturer(); // "Apple"
-const uniqueId = DeviceInfoModule.getUniqueId(); // "FCDBD8EF-..."
+const manufacturer = DeviceInfoModule.manufacturer; // "Apple"
+const uniqueId = DeviceInfoModule.uniqueId; // "FCDBD8EF-..."
 
 // Device Capabilities
-const isTablet = DeviceInfoModule.isTablet(); // false
-const hasNotch = DeviceInfoModule.hasNotch(); // true
-const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland(); // false
-const isCameraPresent = DeviceInfoModule.isCameraPresent(); // true
-const isEmulator = DeviceInfoModule.isEmulator(); // false
+const isTablet = DeviceInfoModule.isTablet; // false
+const hasNotch = DeviceInfoModule.hasNotch; // true
+const hasDynamicIsland = DeviceInfoModule.hasDynamicIsland; // false
+const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
+const isEmulator = DeviceInfoModule.isEmulator; // false
 
 // System Resources
-const totalMemory = DeviceInfoModule.getTotalMemory();
-const usedMemory = DeviceInfoModule.getUsedMemory();
-const totalDisk = DeviceInfoModule.getTotalDiskCapacity();
-const freeDisk = DeviceInfoModule.getFreeDiskStorage();
+const totalMemory = DeviceInfoModule.totalMemory;
+const usedMemory = DeviceInfoModule.usedMemory;
+const totalDisk = DeviceInfoModule.totalDiskCapacity;
+const freeDisk = DeviceInfoModule.freeDiskStorage;
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
@@ -108,9 +108,9 @@ console.log(
 );
 
 // Battery Information
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
-const isCharging = DeviceInfoModule.isBatteryCharging();
-const powerState: PowerState = DeviceInfoModule.getPowerState();
+const batteryLevel = DeviceInfoModule.batteryLevel;
+const isCharging = DeviceInfoModule.isBatteryCharging;
+const powerState: PowerState = DeviceInfoModule.powerState;
 
 console.log(
   `Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`
@@ -118,10 +118,10 @@ console.log(
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`);
 
 // Application Metadata
-const version = DeviceInfoModule.getVersion();
-const buildNumber = DeviceInfoModule.getBuildNumber();
-const bundleId = DeviceInfoModule.getBundleId();
-const appName = DeviceInfoModule.getApplicationName();
+const version = DeviceInfoModule.version;
+const buildNumber = DeviceInfoModule.buildNumber;
+const bundleId = DeviceInfoModule.bundleId;
+const appName = DeviceInfoModule.applicationName;
 
 console.log(`${appName} (${bundleId})`);
 console.log(`Version: ${version} (${buildNumber})`);
@@ -136,9 +136,9 @@ console.log(`Carrier: ${carrier}`);
 console.log(`Location Services: ${isLocationEnabled ? 'enabled' : 'disabled'}`);
 
 // Platform-Specific
-const apiLevel = DeviceInfoModule.getApiLevel(); // Android: 33, iOS: -1
-const abis = DeviceInfoModule.getSupportedAbis(); // ["arm64-v8a"]
-const hasGms = DeviceInfoModule.hasGms(); // Android only
+const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
+const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
+const hasGms = DeviceInfoModule.hasGms; // Android only
 ```
 
 ## API Reference
@@ -156,20 +156,20 @@ DeviceInfoModule.systemVersion; // "15.0"
 DeviceInfoModule.model; // "iPhone"
 ```
 
-#### Common Methods
+#### Common Properties
 
 ```typescript
 // Device Info
-DeviceInfoModule.getUniqueId(); // Sync
-DeviceInfoModule.isTablet(); // Sync
-DeviceInfoModule.getTotalMemory(); // Sync
-DeviceInfoModule.getBatteryLevel(); // Sync
+DeviceInfoModule.uniqueId; // Sync
+DeviceInfoModule.isTablet; // Sync
+DeviceInfoModule.totalMemory; // Sync
+DeviceInfoModule.batteryLevel; // Sync
 
 // App Info
-DeviceInfoModule.getVersion(); // Sync
-DeviceInfoModule.getBundleId(); // Sync
+DeviceInfoModule.version; // Sync
+DeviceInfoModule.bundleId; // Sync
 
-// Network (Async)
+// Network (Async methods)
 await DeviceInfoModule.getIpAddress(); // ~20-50ms
 await DeviceInfoModule.getCarrier(); // ~20-50ms
 ```
@@ -216,13 +216,13 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 const deviceId = DeviceInfoModule.deviceId; // Property, not method
 const brand = DeviceInfoModule.brand; // Property, not method
 
-// Most methods are now synchronous
-const uniqueId = DeviceInfoModule.getUniqueId(); // Sync now!
-const totalMemory = DeviceInfoModule.getTotalMemory(); // Sync now!
-const batteryLevel = DeviceInfoModule.getBatteryLevel(); // Sync now!
-const isTablet = DeviceInfoModule.isTablet(); // Same as before
+// Most values are now synchronous properties
+const uniqueId = DeviceInfoModule.uniqueId; // Property, sync!
+const totalMemory = DeviceInfoModule.totalMemory; // Property, sync!
+const batteryLevel = DeviceInfoModule.batteryLevel; // Property, sync!
+const isTablet = DeviceInfoModule.isTablet; // Property, sync!
 
-// Only network/connectivity remain async
+// Only network/connectivity remain async methods
 const ipAddress = await DeviceInfoModule.getIpAddress();
 ```
 
