@@ -256,8 +256,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
      * Check if device has Dynamic Island Android devices don't have Dynamic Island (iOS-only
      * feature)
      */
-    override val hasDynamicIsland: Boolean
-        get() = false
+    override fun getHasDynamicIsland(): Boolean = false
 
     // MARK: - Synchronous Properties - Device Identification
 

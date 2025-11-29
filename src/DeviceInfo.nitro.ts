@@ -207,7 +207,7 @@ export interface DeviceInfo
    * @platform ios 16+
    *
    */
-  readonly hasDynamicIsland: boolean;
+  getHasDynamicIsland(): boolean;
 
   // DEVICE IDENTIFICATION (Sync)
 

@@ -145,7 +145,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
    * Check if device has Dynamic Island
    * Only iPhone 14 Pro and later
    */
-  public var hasDynamicIsland: Bool {
+  public func getHasDynamicIsland() -> Bool {
     if #available(iOS 16.0, *) {
       // Use cached model identifier to avoid repeated syscalls
       let modelIdentifier = cachedDeviceModelIdentifier
