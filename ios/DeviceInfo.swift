@@ -129,14 +129,28 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /**
+   * Get the key window using modern scene-based API (iOS 13+)
+   * Falls back to deprecated API for iOS 11-12
+   */
+  private var keyWindow: UIWindow? {
+    if #available(iOS 13.0, *) {
+      return UIApplication.shared.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .flatMap { $0.windows }
+        .first { $0.isKeyWindow }
+    } else {
+      return UIApplication.shared.windows.first
+    }
+  }
+
+  /**
    * Check if device has a display notch
    * Detects iPhone X and later models with notch
    */
   public func getHasNotch() -> Bool {
     if #available(iOS 11.0, *) {
-      let window = UIApplication.shared.windows.first
-      let bottomInset = window?.safeAreaInsets.bottom ?? 0
-      return bottomInset > 0
+      guard let window = keyWindow else { return false }
+      return window.safeAreaInsets.bottom > 0
     }
     return false
   }
@@ -157,11 +171,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
       return false
     }
 
-    // Get the key window's safe area insets
-    guard let window = UIApplication.shared.connectedScenes
-      .compactMap({ $0 as? UIWindowScene })
-      .flatMap({ $0.windows })
-      .first(where: { $0.isKeyWindow }) else {
+    guard let window = keyWindow else {
       return false
     }
 
