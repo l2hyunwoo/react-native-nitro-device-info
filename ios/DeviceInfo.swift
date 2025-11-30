@@ -143,20 +143,32 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /**
    * Check if device has Dynamic Island
-   * Only iPhone 14 Pro and later
+   * Detects via safe area inset threshold (>= 51pt)
+   * Works for iPhone 14 Pro and all future Dynamic Island devices
    */
   public func getHasDynamicIsland() -> Bool {
-    if #available(iOS 16.0, *) {
-      // Use cached model identifier to avoid repeated syscalls
-      let modelIdentifier = cachedDeviceModelIdentifier
-      // iPhone 14 Pro models: iPhone15,2 and iPhone15,3
-      // iPhone 15 Pro models: iPhone16,1 and iPhone16,2
-      return modelIdentifier == "iPhone15,2" ||
-             modelIdentifier == "iPhone15,3" ||
-             modelIdentifier == "iPhone16,1" ||
-             modelIdentifier == "iPhone16,2"
+    // Dynamic Island requires iOS 16.0+
+    guard #available(iOS 16.0, *) else {
+      return false
     }
-    return false
+
+    // Only iPhones have Dynamic Island
+    guard UIDevice.current.userInterfaceIdiom == .phone else {
+      return false
+    }
+
+    // Get the key window's safe area insets
+    guard let window = UIApplication.shared.connectedScenes
+      .compactMap({ $0 as? UIWindowScene })
+      .flatMap({ $0.windows })
+      .first(where: { $0.isKeyWindow }) else {
+      return false
+    }
+
+    // Dynamic Island devices have top safe area inset >= 51pt
+    // (59pt default, 51pt with Display Zoom Large Text)
+    // Notch devices have 44-48pt
+    return window.safeAreaInsets.top >= 51
   }
 
   // MARK: - Synchronous Properties - Device Identification
