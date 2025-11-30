@@ -76,7 +76,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'hasNotch',
+    key: 'getHasNotch',
     label: 'Has Notch',
     category: PropertyCategory.DEVICE_CAPABILITIES,
     type: PropertyType.BOOLEAN,
@@ -84,7 +84,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'hasDynamicIsland',
+    key: 'getHasDynamicIsland',
     label: 'Has Dynamic Island',
     category: PropertyCategory.DEVICE_CAPABILITIES,
     type: PropertyType.BOOLEAN,
@@ -328,7 +328,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'hasGms',
+    key: 'getHasGms',
     label: 'Has Google Services',
     category: PropertyCategory.PLATFORM_CAPABILITIES,
     type: PropertyType.BOOLEAN,
@@ -336,7 +336,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
-    key: 'hasHms',
+    key: 'getHasHms',
     label: 'Has Huawei Services',
     category: PropertyCategory.PLATFORM_CAPABILITIES,
     type: PropertyType.BOOLEAN,
