@@ -1,0 +1,199 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-ios:
+    name: E2E Tests (iOS)
+    runs-on: macos-14
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: |
+            example/showcase/ios/Pods
+            ~/Library/Caches/CocoaPods
+          key: pods-e2e-${{ runner.os }}-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            pods-e2e-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build library
+        run: yarn prepare
+
+      - name: Install example dependencies
+        working-directory: example/showcase
+        run: yarn install --immutable
+
+      - name: Install Pods
+        working-directory: example/showcase/ios
+        run: pod install
+
+      - name: List available simulators
+        run: xcrun simctl list devices available
+
+      - name: Boot iOS Simulator
+        run: |
+          # Find a suitable iPhone simulator
+          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone 15 Pro" | head -1 | grep -oE '[A-F0-9-]{36}')
+          if [ -z "$DEVICE_ID" ]; then
+            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | grep -oE '[A-F0-9-]{36}')
+          fi
+          echo "Booting simulator: $DEVICE_ID"
+          xcrun simctl boot "$DEVICE_ID" || true
+          echo "SIMULATOR_DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
+
+      - name: Run E2E Tests
+        working-directory: example/showcase
+        run: npx react-native-harness --harnessRunner ios
+        env:
+          CI: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ios-results
+          path: |
+            example/showcase/jest-results.xml
+            example/showcase/coverage/
+          retention-days: 7
+
+  e2e-android:
+    name: E2E Tests (Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-e2e-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-e2e-${{ runner.os }}-
+
+      - name: Cache AVD
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-api-34-${{ runner.os }}
+          restore-keys: |
+            avd-api-34-
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build library
+        run: yarn prepare
+
+      - name: Install example dependencies
+        working-directory: example/showcase
+        run: yarn install --immutable
+
+      - name: Create AVD and run E2E tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          profile: pixel_7
+          target: google_apis
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            cd example/showcase
+            npx react-native-harness --harnessRunner android
+        env:
+          CI: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-android-results
+          path: |
+            example/showcase/jest-results.xml
+            example/showcase/coverage/
+          retention-days: 7
+
+  report:
+    name: E2E Test Report
+    needs: [e2e-ios, e2e-android]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Download iOS results
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-ios-results
+          path: ios-results
+        continue-on-error: true
+
+      - name: Download Android results
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-android-results
+          path: android-results
+        continue-on-error: true
+
+      - name: Report Status
+        run: |
+          echo "## E2E Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.e2e-ios.result }}" == "success" ]; then
+            echo "- iOS: ✅ Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- iOS: ❌ Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.e2e-android.result }}" == "success" ]; then
+            echo "- Android: ✅ Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- Android: ❌ Failed" >> $GITHUB_STEP_SUMMARY
+          fi
