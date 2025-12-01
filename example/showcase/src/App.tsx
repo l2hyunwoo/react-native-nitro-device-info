@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  StatusBar,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 import DeviceInfoScreen from './DeviceInfoScreen';
 import HooksDemo from './screens/HooksDemo';
@@ -21,6 +23,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="white" />
       {/* Tab Bar */}
       <View style={styles.tabBar}>
         <TouchableOpacity
@@ -62,7 +65,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'white',
+    // Android SafeAreaView doesn't handle status bar, so add padding manually
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   tabBar: {
     flexDirection: 'row',
@@ -89,5 +94,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
 });
