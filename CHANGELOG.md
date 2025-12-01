@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1]
+
+### Fixed
+
+- **iOS**: `getIpAddress()` and `getIpAddressSync()` now consistently return IPv4 addresses when available ([#39](https://github.com/l2hyunwoo/react-native-nitro-device-info/issues/39))
+  - Previously, the functions could return IPv6 addresses inconsistently due to network interface enumeration order
+  - IPv4 addresses are now prioritized, with IPv6 used only as a fallback when no IPv4 is available
+
+- **Android**: `getHasGms()` no longer crashes when `play-services-base` dependency is not included ([#40](https://github.com/l2hyunwoo/react-native-nitro-device-info/issues/40))
+  - Previously, calling `getHasGms()` without the GMS dependency would throw a JNI exception (`NoClassDefFoundError`)
+  - The function now catches `NoClassDefFoundError` explicitly (not `Throwable`) to avoid masking serious JVM errors
+  - This allows apps distributed on non-GMS stores (Amazon, Huawei AppGallery) to safely use this API
+
 ## [1.4.0] - 2025-12-01
 
 ### Added
@@ -161,6 +174,7 @@ const charging = DeviceInfoModule.getIsBatteryCharging();
 All getter functions have been converted to readonly properties for cleaner, more intuitive access ([#20](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/20)):
 
 **Before (v1.1.x)**:
+
 ```typescript
 const brand = DeviceInfoModule.getBrand();
 const model = DeviceInfoModule.getModel();
@@ -168,6 +182,7 @@ const isTablet = DeviceInfoModule.isTablet();
 ```
 
 **After (v1.2.0)**:
+
 ```typescript
 const brand = DeviceInfoModule.brand;
 const model = DeviceInfoModule.model;

@@ -486,14 +486,23 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val supportedAbis: Array<String>
         get() = Build.SUPPORTED_ABIS
 
-    /** Check if Google Mobile Services (GMS) is available */
+    /**
+     * Check if Google Mobile Services (GMS) is available
+     * Catches both Exception and NoClassDefFoundError to handle cases where
+     * play-services-base dependency is not included in the app.
+     */
     override fun getHasGms(): Boolean {
         return try {
             val result =
                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
             result == ConnectionResult.SUCCESS
         } catch (e: Exception) {
-            Log.w(NAME, "GMS not available or GMS library not found", e)
+            Log.d(NAME, "GMS not available", e)
+            false
+        } catch (e: NoClassDefFoundError) {
+            // NoClassDefFoundError is thrown when GMS library is not included
+            // This is expected in apps distributed on non-GMS stores (Amazon, Huawei AppGallery)
+            Log.d(NAME, "GMS library not found", e)
             false
         }
     }
