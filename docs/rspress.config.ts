@@ -30,6 +30,7 @@ export default defineConfig({
           { text: 'Why Nitro Module', link: '/guide/why-nitro-module' },
           { text: 'Getting Started', link: '/guide/getting-started' },
           { text: 'Quick Start', link: '/guide/quick-start' },
+          { text: 'React Hooks', link: '/guide/react-hooks' },
         ],
       },
       {
@@ -37,6 +38,7 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/api/' },
           { text: 'DeviceInfo Module', link: '/api/device-info' },
+          { text: 'React Hooks', link: '/api/hooks' },
           { text: 'Type Definitions', link: '/api/types' },
           { text: 'Migration Guide', link: '/api/migration' },
         ],
@@ -68,6 +70,7 @@ export default defineConfig({
             { text: 'Why Nitro Module', link: '/guide/why-nitro-module' },
             { text: 'Getting Started', link: '/guide/getting-started' },
             { text: 'Quick Start', link: '/guide/quick-start' },
+            { text: 'React Hooks', link: '/guide/react-hooks' },
           ],
         },
       ],
@@ -78,6 +81,7 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/api/' },
             { text: 'DeviceInfo Module', link: '/api/device-info' },
+            { text: 'React Hooks', link: '/api/hooks' },
             { text: 'Type Definitions', link: '/api/types' },
             { text: 'Migration Guide', link: '/api/migration' },
           ],
