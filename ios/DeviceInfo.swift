@@ -402,7 +402,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
             // Prioritize IPv4 (AF_INET) over IPv6 (AF_INET6)
             if addrFamily == UInt8(AF_INET) {
-              // Found IPv4, return immediately
+              // Found IPv4, store it
               ipv4Address = address
             } else if addrFamily == UInt8(AF_INET6) && ipv6Address == nil {
               // Store IPv6 as fallback (only first one found)
