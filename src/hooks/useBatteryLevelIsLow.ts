@@ -51,11 +51,8 @@ export function useBatteryLevelIsLow(): number | null {
     // Check initial value
     const checkBatteryLevel = () => {
       const level = DeviceInfoModule.getBatteryLevel();
-      if (isLowBatteryLevel(level)) {
-        setBatteryLevelIsLow(level);
-      } else {
-        setBatteryLevelIsLow(null);
-      }
+      const newValue = isLowBatteryLevel(level) ? level : null;
+      setBatteryLevelIsLow(prev => prev === newValue ? prev : newValue);
     };
 
     // Set initial state

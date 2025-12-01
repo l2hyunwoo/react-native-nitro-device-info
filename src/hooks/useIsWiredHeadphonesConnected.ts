@@ -42,7 +42,7 @@ export function useIsWiredHeadphonesConnected(): boolean {
     // Set initial value from sync property
     const updateStatus = () => {
       const connected = DeviceInfoModule.getIsWiredHeadphonesConnected();
-      setIsConnected(connected);
+      setIsConnected(prev => prev === connected ? prev : connected);
     };
 
     // Get initial state

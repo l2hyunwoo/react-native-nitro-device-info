@@ -40,7 +40,7 @@ export function useBatteryLevel(): number | null {
   useEffect(() => {
     const updateBatteryLevel = () => {
       const currentLevel = DeviceInfoModule.getBatteryLevel();
-      setBatteryLevel(currentLevel);
+      setBatteryLevel(prev => prev === currentLevel ? prev : currentLevel);
     };
 
     // Set initial value
