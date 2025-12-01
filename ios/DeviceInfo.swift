@@ -370,10 +370,13 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /**
    * Get device IP address
+   * Prioritizes IPv4 addresses over IPv6 for compatibility with most applications.
+   * Returns IPv6 only as a fallback when no IPv4 address is available.
    */
   public func getIpAddress() throws -> Promise<String> {
     return Promise.async {
-      var address = ""
+      var ipv4Address: String?
+      var ipv6Address: String?
       var ifaddr: UnsafeMutablePointer<ifaddrs>?
 
       if getifaddrs(&ifaddr) == 0 {
@@ -381,24 +384,37 @@ class DeviceInfo: HybridDeviceInfoSpec {
         while ptr != nil {
           defer { ptr = ptr?.pointee.ifa_next }
 
-          let interface = ptr?.pointee
-          let addrFamily = interface?.ifa_addr.pointee.sa_family
+          guard let interface = ptr?.pointee else { continue }
 
-          if addrFamily == UInt8(AF_INET) || addrFamily == UInt8(AF_INET6) {
-            let name = String(cString: (interface?.ifa_name)!)
-            if name == "en0" || name == "pdp_ip0" {
-              var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-              getnameinfo(interface?.ifa_addr, socklen_t((interface?.ifa_addr.pointee.sa_len)!),
-                         &hostname, socklen_t(hostname.count),
-                         nil, socklen_t(0), NI_NUMERICHOST)
-              address = String(cString: hostname)
+          // Only process en0 (WiFi) and pdp_ip0 (cellular) interfaces
+          let name = String(cString: interface.ifa_name)
+          guard name == "en0" || name == "pdp_ip0" else { continue }
+
+          // Safe nil check for ifa_addr
+          guard let addr = interface.ifa_addr else { continue }
+          let addrFamily = addr.pointee.sa_family
+
+          var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+          if getnameinfo(addr, socklen_t(addr.pointee.sa_len),
+                        &hostname, socklen_t(hostname.count),
+                        nil, socklen_t(0), NI_NUMERICHOST) == 0 {
+            let address = String(cString: hostname)
+
+            // Prioritize IPv4 (AF_INET) over IPv6 (AF_INET6)
+            if addrFamily == UInt8(AF_INET) {
+              // Found IPv4, store it
+              ipv4Address = address
+            } else if addrFamily == UInt8(AF_INET6) && ipv6Address == nil {
+              // Store IPv6 as fallback (only first one found)
+              ipv6Address = address
             }
           }
         }
         freeifaddrs(ifaddr)
       }
 
-      return address
+      // Return IPv4 if available, otherwise IPv6, otherwise "unknown"
+      return ipv4Address ?? ipv6Address ?? "unknown"
     }
   }
 
@@ -841,40 +857,54 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// Query IP address from network interfaces
+  /// Prioritizes IPv4 addresses over IPv6 for compatibility with most applications.
+  /// Returns IPv6 only as a fallback when no IPv4 address is available.
   private func queryIpAddressInternal() -> String {
-    var address: String = "unknown"
+    var ipv4Address: String?
+    var ipv6Address: String?
     var ifaddr: UnsafeMutablePointer<ifaddrs>?
 
-    guard getifaddrs(&ifaddr) == 0 else { return address }
-    guard let firstAddr = ifaddr else { return address }
+    guard getifaddrs(&ifaddr) == 0 else { return "unknown" }
+    guard let firstAddr = ifaddr else { return "unknown" }
 
     defer { freeifaddrs(ifaddr) }
 
     for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
       let interface = ptr.pointee
-      let addrFamily = interface.ifa_addr.pointee.sa_family
 
-      if addrFamily == UInt8(AF_INET) || addrFamily == UInt8(AF_INET6) {
-        let name = String(cString: interface.ifa_name)
-        if name == "en0" || name == "pdp_ip0" {
-          var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-          if getnameinfo(
-            interface.ifa_addr,
-            socklen_t(interface.ifa_addr.pointee.sa_len),
-            &hostname,
-            socklen_t(hostname.count),
-            nil,
-            0,
-            NI_NUMERICHOST
-          ) == 0 {
-            address = String(cString: hostname)
-            break
-          }
+      // Only process en0 (WiFi) and pdp_ip0 (cellular) interfaces
+      let name = String(cString: interface.ifa_name)
+      guard name == "en0" || name == "pdp_ip0" else { continue }
+
+      // Safe nil check for ifa_addr
+      guard let addr = interface.ifa_addr else { continue }
+      let addrFamily = addr.pointee.sa_family
+
+      var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+      if getnameinfo(
+        addr,
+        socklen_t(addr.pointee.sa_len),
+        &hostname,
+        socklen_t(hostname.count),
+        nil,
+        0,
+        NI_NUMERICHOST
+      ) == 0 {
+        let address = String(cString: hostname)
+
+        // Prioritize IPv4 (AF_INET) over IPv6 (AF_INET6)
+        if addrFamily == UInt8(AF_INET) {
+          // Found IPv4, store it
+          ipv4Address = address
+        } else if addrFamily == UInt8(AF_INET6) && ipv6Address == nil {
+          // Store IPv6 as fallback (only first one found)
+          ipv6Address = address
         }
       }
     }
 
-    return address
+    // Return IPv4 if available, otherwise IPv6, otherwise "unknown"
+    return ipv4Address ?? ipv6Address ?? "unknown"
   }
 
   /// Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
