@@ -488,18 +488,21 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /**
      * Check if Google Mobile Services (GMS) is available
-     * Catches Throwable (not just Exception) to handle NoClassDefFoundError
-     * when play-services-base dependency is not included in the app.
+     * Catches both Exception and NoClassDefFoundError to handle cases where
+     * play-services-base dependency is not included in the app.
      */
     override fun getHasGms(): Boolean {
         return try {
             val result =
                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
             result == ConnectionResult.SUCCESS
-        } catch (e: Throwable) {
-            // Using Throwable to catch NoClassDefFoundError when GMS library is not included
+        } catch (e: Exception) {
+            Log.d(NAME, "GMS not available", e)
+            false
+        } catch (e: NoClassDefFoundError) {
+            // NoClassDefFoundError is thrown when GMS library is not included
             // This is expected in apps distributed on non-GMS stores (Amazon, Huawei AppGallery)
-            Log.d(NAME, "GMS not available or GMS library not found", e)
+            Log.d(NAME, "GMS library not found", e)
             false
         }
     }
