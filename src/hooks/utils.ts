@@ -22,13 +22,3 @@ export const LOW_BATTERY_THRESHOLD = Platform.OS === 'android' ? 0.15 : 0.2;
 export function isLowBatteryLevel(level: number): boolean {
   return level < LOW_BATTERY_THRESHOLD;
 }
-
-/**
- * Default throttle values for various properties (in milliseconds)
- */
-export const THROTTLE_DEFAULTS = {
-  batteryLevel: 500,
-  powerState: 500,
-  headphones: 0, // instant for connection changes
-  brightness: 200,
-} as const;

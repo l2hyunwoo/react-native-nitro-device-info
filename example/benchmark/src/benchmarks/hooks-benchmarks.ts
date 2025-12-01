@@ -2,9 +2,9 @@
  * Hooks Benchmarks
  *
  * Performance validation for React hooks:
- * - Hook registration time (<10ms)
+ * - Hook registration time
  * - Hook cleanup validation (no memory leaks)
- * - Callback latency (p95 <500ms)
+ * - Callback latency (p95)
  */
 
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -24,7 +24,6 @@ export interface HookBenchmarkResult {
 /**
  * Benchmark hook registration time
  *
- * Target: <10ms per hook
  * Measures the time to get initial value from native module
  */
 export async function benchmarkHookRegistration(): Promise<HookBenchmarkResult> {
@@ -67,7 +66,6 @@ export async function benchmarkHookRegistration(): Promise<HookBenchmarkResult> 
 /**
  * Benchmark hook cleanup validation
  *
- * Target: No significant memory growth after 1000 cycles
  * Note: Actual memory measurement is limited in React Native JS context
  * This test validates that repeated getter calls don't leak memory
  */
@@ -108,8 +106,7 @@ export async function benchmarkHookCleanup(): Promise<HookBenchmarkResult> {
 /**
  * Benchmark callback latency
  *
- * Target: 95% of callbacks within 500ms
- * Measures the time for sync getter calls which simulate callback behavior
+ * Measures the p95 latency for sync getter calls
  */
 export async function benchmarkCallbackLatency(): Promise<HookBenchmarkResult> {
   const iterations = 100;
