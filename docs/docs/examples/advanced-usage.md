@@ -199,7 +199,53 @@ function getNetworkInfoFast() {
 
 ## React Hooks
 
-### Custom Device Info Hook
+### Built-in Hooks (Recommended)
+
+The library provides built-in React hooks for common reactive state monitoring. These are the recommended way to monitor device state:
+
+```typescript
+import {
+  useBatteryLevel,
+  useBatteryLevelIsLow,
+  usePowerState,
+  useIsHeadphonesConnected,
+  useIsWiredHeadphonesConnected,
+  useIsBluetoothHeadphonesConnected,
+  useBrightness,
+} from 'react-native-nitro-device-info';
+
+function DeviceMonitor() {
+  // Battery monitoring
+  const batteryLevel = useBatteryLevel();         // 0.0 - 1.0
+  const lowBattery = useBatteryLevelIsLow();      // null or level when low
+  const powerState = usePowerState();             // { batteryLevel, batteryState, lowPowerMode }
+
+  // Audio monitoring
+  const headphones = useIsHeadphonesConnected();  // boolean
+  const wired = useIsWiredHeadphonesConnected();  // boolean
+  const bluetooth = useIsBluetoothHeadphonesConnected(); // boolean
+
+  // Display monitoring (iOS only)
+  const brightness = useBrightness();             // 0.0 - 1.0 on iOS, -1 on Android
+
+  return (
+    <View>
+      <Text>Battery: {batteryLevel !== null ? `${Math.round(batteryLevel * 100)}%` : 'Loading...'}</Text>
+      <Text>Charging: {powerState.batteryState === 'charging' ? 'Yes' : 'No'}</Text>
+      <Text>Headphones: {headphones ? 'Connected' : 'Disconnected'}</Text>
+      {lowBattery !== null && <Text>⚠️ Low Battery Warning!</Text>}
+    </View>
+  );
+}
+```
+
+For complete documentation, see the [React Hooks Guide](/guide/react-hooks).
+
+### Custom Hooks for Extended Functionality
+
+For use cases not covered by the built-in hooks, you can create custom hooks:
+
+#### Custom Device Info Hook
 
 ```typescript
 import { useEffect, useState } from 'react';
@@ -254,13 +300,16 @@ function MyComponent() {
 }
 ```
 
-### Battery Monitoring Hook
+#### Custom Battery Monitoring Hook
+
+For custom polling intervals or additional logic, you can extend the built-in hooks:
 
 ```typescript
 import { useEffect, useState } from 'react';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import type { PowerState } from 'react-native-nitro-device-info';
 
+// Custom hook with configurable polling interval
 export function useBatteryMonitor(intervalMs: number = 5000) {
   const [powerState, setPowerState] = useState<PowerState>(
     DeviceInfoModule.getPowerState()
@@ -291,7 +340,7 @@ function BatteryMonitor() {
 }
 ```
 
-### Memory Monitoring Hook
+#### Memory Monitoring Hook
 
 ```typescript
 import { useEffect, useState } from 'react';
@@ -684,6 +733,7 @@ const styles = StyleSheet.create({
 
 ## Next Steps
 
+- Learn about [React Hooks](/guide/react-hooks) for reactive state monitoring
 - Check the [API Reference](/api/device-info) for all available methods
 - View [Type Definitions](/api/types) for TypeScript types
 - Read the [Migration Guide](/api/migration) for upgrading from other libraries

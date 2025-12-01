@@ -352,14 +352,55 @@ const powerState: PowerState = DeviceInfoModule.getPowerState();
 
 Built on React Native's New Architecture (Fabric + JSI) for long-term support.
 
+## React Hooks Migration
+
+React hooks work as drop-in replacements with identical APIs:
+
+### Hook Migration Table
+
+| react-native-device-info | react-native-nitro-device-info | Notes |
+|--------------------------|-------------------------------|-------|
+| `useBatteryLevel()` | `useBatteryLevel()` | Identical |
+| `useBatteryLevelIsLow()` | `useBatteryLevelIsLow()` | Identical |
+| `usePowerState()` | `usePowerState()` | Identical |
+| `useIsHeadphonesConnected()` | `useIsHeadphonesConnected()` | Identical |
+| `useIsWiredHeadphonesConnected()` | `useIsWiredHeadphonesConnected()` | Identical |
+| `useIsBluetoothHeadphonesConnected()` | `useIsBluetoothHeadphonesConnected()` | Identical |
+| `useBrightness()` | `useBrightness()` | Identical |
+
+### Hook Migration Example
+
+```tsx
+// Before (react-native-device-info)
+import { useBatteryLevel, usePowerState } from 'react-native-device-info';
+
+// After (react-native-nitro-device-info)
+import { useBatteryLevel, usePowerState } from 'react-native-nitro-device-info';
+
+// Usage remains exactly the same
+function BatteryWidget() {
+  const batteryLevel = useBatteryLevel();
+  const powerState = usePowerState();
+
+  return (
+    <View>
+      <Text>Battery: {batteryLevel !== null ? `${Math.round(batteryLevel * 100)}%` : 'Loading...'}</Text>
+      <Text>State: {powerState.batteryState}</Text>
+    </View>
+  );
+}
+```
+
+See the [React Hooks Guide](/guide/react-hooks) for detailed hook documentation.
+
 ## Breaking Changes
 
 ### Removed Methods
 
 These methods from `react-native-device-info` are not available:
 
-- Event listeners (use polling instead for battery/network state changes)
 - Some niche Android-only methods may have different names
+- Event listeners for battery/network state changes are not available. Use the provided React hooks (e.g., `useBatteryLevel`, `usePowerState`) for reactive state monitoring instead.
 
 ### Behavioral Changes
 

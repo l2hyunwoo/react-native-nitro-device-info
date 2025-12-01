@@ -441,5 +441,6 @@ const styles = StyleSheet.create({
 ## Next Steps
 
 - Explore [Advanced Usage](/examples/advanced-usage) for more complex patterns
+- Learn about [React Hooks](/guide/react-hooks) for reactive state monitoring
 - Check the [API Reference](/api/device-info) for all available methods
 - View [Type Definitions](/api/types) for TypeScript support
