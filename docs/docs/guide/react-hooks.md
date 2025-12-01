@@ -54,6 +54,7 @@ function BatteryWidget() {
     </View>
   );
 }
+// Note: styles (widget, label, value, status) need to be defined in a StyleSheet
 ```
 
 ### Low Battery Alerts
@@ -82,6 +83,7 @@ function LowBatteryAlert() {
     </View>
   );
 }
+// Note: styles (alert, alertText, alertHint) need to be defined in a StyleSheet
 ```
 
 ### Headphone Detection
@@ -145,6 +147,7 @@ function BrightnessDisplay() {
     </View>
   );
 }
+// Note: styles.brightnessBar needs to be defined in a StyleSheet
 ```
 
 ## Complete Example: Device Monitor Dashboard
@@ -229,6 +232,50 @@ function formatPercent(value: number | null): string {
   if (value === null) return 'Loading...';
   return `${Math.round(value * 100)}%`;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  section: {
+    marginBottom: 20,
+    padding: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+  },
+  label: {
+    fontWeight: '500',
+  },
+  value: {
+    color: '#666',
+  },
+  warning: {
+    backgroundColor: '#fff3cd',
+    padding: 8,
+    borderRadius: 4,
+    marginTop: 8,
+  },
+  warningText: {
+    color: '#856404',
+  },
+});
 ```
 
 ## Troubleshooting
@@ -246,7 +293,7 @@ console.log('DeviceInfoModule:', DeviceInfoModule);
 
 ### Updates not received
 
-Ensure the app is in the foreground - hooks pause monitoring in background to save battery.
+Ensure the app is in the foreground to receive updates from hooks.
 
 ### Brightness returns -1
 

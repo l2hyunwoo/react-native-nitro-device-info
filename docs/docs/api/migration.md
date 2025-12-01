@@ -400,6 +400,7 @@ See the [React Hooks Guide](/guide/react-hooks) for detailed hook documentation.
 These methods from `react-native-device-info` are not available:
 
 - Some niche Android-only methods may have different names
+- Event listeners for battery/network state changes are not available. Use the provided React hooks (e.g., `useBatteryLevel`, `usePowerState`) for reactive state monitoring instead.
 
 ### Behavioral Changes
 

@@ -104,10 +104,10 @@ Monitor comprehensive power state including battery level, charging status, and 
 function usePowerState(): Partial<PowerState>
 ```
 
-**Returns**: `PowerState` object with:
-- `batteryLevel: number` - Battery charge level (0.0 to 1.0)
-- `batteryState: BatteryState` - Charging status ('unknown', 'unplugged', 'charging', 'full')
-- `lowPowerMode: boolean` - Whether low power mode is enabled (iOS only)
+**Returns**: A `Partial<PowerState>` object. All properties are optional and may be `undefined` during initial load or if unavailable on the platform:
+- `batteryLevel?: number` - Battery charge level (0.0 to 1.0)
+- `batteryState?: BatteryState` - Charging status ('unknown', 'unplugged', 'charging', 'full')
+- `lowPowerMode?: boolean` - Whether low power mode is enabled (iOS only)
 
 **Platform Support**:
 | Platform | Supported | Notes |
