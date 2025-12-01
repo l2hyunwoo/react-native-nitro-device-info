@@ -129,34 +129,59 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /**
+   * Get the key window using modern scene-based API (iOS 13+)
+   * Uses deprecated API on iOS 11-12 for compatibility
+   */
+  private var keyWindow: UIWindow? {
+    if #available(iOS 13.0, *) {
+      return UIApplication.shared.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .flatMap { $0.windows }
+        .first { $0.isKeyWindow }
+    } else {
+      return UIApplication.shared.windows.first
+    }
+  }
+
+  /**
    * Check if device has a display notch
    * Detects iPhone X and later models with notch
    */
   public func getHasNotch() -> Bool {
     if #available(iOS 11.0, *) {
-      let window = UIApplication.shared.windows.first
-      let bottomInset = window?.safeAreaInsets.bottom ?? 0
-      return bottomInset > 0
+      guard let window = keyWindow else { return false }
+      return window.safeAreaInsets.bottom > 0
     }
     return false
   }
 
   /**
    * Check if device has Dynamic Island
-   * Only iPhone 14 Pro and later
+   * Detects via safe area inset threshold (>= 51pt)
+   * Works for iPhone 14 Pro and all future Dynamic Island devices
    */
   public func getHasDynamicIsland() -> Bool {
-    if #available(iOS 16.0, *) {
-      // Use cached model identifier to avoid repeated syscalls
-      let modelIdentifier = cachedDeviceModelIdentifier
-      // iPhone 14 Pro models: iPhone15,2 and iPhone15,3
-      // iPhone 15 Pro models: iPhone16,1 and iPhone16,2
-      return modelIdentifier == "iPhone15,2" ||
-             modelIdentifier == "iPhone15,3" ||
-             modelIdentifier == "iPhone16,1" ||
-             modelIdentifier == "iPhone16,2"
+    // Dynamic Island requires iOS 16.0+
+    guard #available(iOS 16.0, *) else {
+      return false
     }
-    return false
+
+    // Only iPhones have Dynamic Island
+    guard UIDevice.current.userInterfaceIdiom == .phone else {
+      return false
+    }
+
+    guard let window = keyWindow else {
+      return false
+    }
+
+    // Dynamic Island devices have safe area inset >= 51pt
+    // Portrait: top = 59pt (51pt with Display Zoom)
+    // Landscape: left/right = 59pt
+    // Notch devices have 44-48pt in all orientations
+    let insets = window.safeAreaInsets
+    let maxInset = max(insets.top, insets.left, insets.right)
+    return maxInset >= 51
   }
 
   // MARK: - Synchronous Properties - Device Identification

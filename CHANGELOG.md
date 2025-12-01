@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2025-12-01
+
+### Fixed
+
+- **Dynamic Island Detection**: Fixed `getHasDynamicIsland()` returning `false` on iPhone 15/16/17 series and iPhone Air ([#36](https://github.com/l2hyunwoo/react-native-nitro-device-info/issues/36))
+  - Replaced hardcoded device model list with safe area inset detection (>= 51pt threshold)
+  - Now automatically supports all current and future Dynamic Island devices
+  - Works correctly with Display Zoom accessibility settings
+  - No library updates needed for new iPhone models
+
 ## [1.3.0] - 2025-11-29
 
 ### Added
