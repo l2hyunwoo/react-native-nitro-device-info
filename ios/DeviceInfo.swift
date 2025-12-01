@@ -413,8 +413,8 @@ class DeviceInfo: HybridDeviceInfoSpec {
         freeifaddrs(ifaddr)
       }
 
-      // Return IPv4 if available, otherwise IPv6, otherwise empty string
-      return ipv4Address ?? ipv6Address ?? ""
+      // Return IPv4 if available, otherwise IPv6, otherwise "unknown"
+      return ipv4Address ?? ipv6Address ?? "unknown"
     }
   }
 
@@ -864,8 +864,8 @@ class DeviceInfo: HybridDeviceInfoSpec {
     var ipv6Address: String?
     var ifaddr: UnsafeMutablePointer<ifaddrs>?
 
-    guard getifaddrs(&ifaddr) == 0 else { return "" }
-    guard let firstAddr = ifaddr else { return "" }
+    guard getifaddrs(&ifaddr) == 0 else { return "unknown" }
+    guard let firstAddr = ifaddr else { return "unknown" }
 
     defer { freeifaddrs(ifaddr) }
 
@@ -903,8 +903,8 @@ class DeviceInfo: HybridDeviceInfoSpec {
       }
     }
 
-    // Return IPv4 if available, otherwise IPv6, otherwise empty string
-    return ipv4Address ?? ipv6Address ?? ""
+    // Return IPv4 if available, otherwise IPv6, otherwise "unknown"
+    return ipv4Address ?? ipv6Address ?? "unknown"
   }
 
   /// Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
