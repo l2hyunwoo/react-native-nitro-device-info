@@ -67,8 +67,8 @@ describe('Android-Specific APIs', () => {
         const hasGms = DeviceInfoModule.getHasGms();
         expect(typeof hasGms).toBe('boolean');
       } catch {
-        // NoClassDefFoundError is expected on emulators without Google Play Services
-        expect(true).toBe(true);
+        // NoClassDefFoundError is expected on emulators without Google Play Services.
+        // Test passes if no unexpected error propagates.
       }
     }
   });
