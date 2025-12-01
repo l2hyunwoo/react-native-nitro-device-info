@@ -9,7 +9,7 @@ import type {
   PowerState,
 } from 'react-native-nitro-device-info';
 
-export { DeviceType, BatteryState, NavigationMode, PowerState };
+export type { DeviceType, BatteryState, NavigationMode, PowerState };
 
 /**
  * Valid device types for assertions
