@@ -122,9 +122,9 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-api-34-${{ runner.os }}
+          key: avd-api-35-${{ runner.os }}
           restore-keys: |
-            avd-api-34-
+            avd-api-35-
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -139,9 +139,9 @@ jobs:
       - name: Create AVD and run E2E tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 35
           arch: x86_64
-          profile: pixel_7
+          profile: pixel_9
           target: google_apis
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true

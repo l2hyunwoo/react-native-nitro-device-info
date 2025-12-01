@@ -20,8 +20,8 @@ const config = {
     }),
     androidPlatform({
       name: 'android',
-      device: androidEmulator('Pixel_7_API_34'),
-      bundleId: 'com.nitrodeviceinfoexample',
+      device: androidEmulator('Pixel_9_Pro'),
+      bundleId: 'nitrodeviceinfo.example',
     }),
   ],
 
