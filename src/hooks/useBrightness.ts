@@ -44,7 +44,12 @@ export function useBrightness(): number | null {
   const [brightness, setBrightness] = useState<number | null>(null);
 
   useEffect(() => {
-    // Set initial value from sync property
+    // Skip entirely on Android since brightness monitoring is not supported
+    if (Platform.OS === 'android') {
+      setBrightness(-1);
+      return;
+    }
+
     const updateBrightness = () => {
       const currentBrightness = DeviceInfoModule.getBrightness();
       setBrightness(currentBrightness);
@@ -52,11 +57,6 @@ export function useBrightness(): number | null {
 
     // Get initial state
     updateBrightness();
-
-    // Skip polling on Android since brightness is not supported
-    if (Platform.OS === 'android') {
-      return;
-    }
 
     // Poll for changes (brightness changes can be frequent with auto-brightness)
     const intervalId = setInterval(updateBrightness, 500);

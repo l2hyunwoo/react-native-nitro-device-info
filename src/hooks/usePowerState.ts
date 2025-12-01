@@ -46,7 +46,17 @@ export function usePowerState(): Partial<PowerState> {
     // Set initial value from sync property
     const updatePowerState = () => {
       const state = DeviceInfoModule.getPowerState();
-      setPowerState(state);
+      // Only update state if values have changed to prevent unnecessary re-renders
+      setPowerState(prev => {
+        if (
+          prev.batteryLevel === state.batteryLevel &&
+          prev.batteryState === state.batteryState &&
+          prev.lowPowerMode === state.lowPowerMode
+        ) {
+          return prev;
+        }
+        return state;
+      });
     };
 
     // Get initial state
