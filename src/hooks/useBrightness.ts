@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Platform } from 'react-native';
 import { DeviceInfoModule } from '../index';
 
 /**
@@ -51,6 +52,11 @@ export function useBrightness(): number | null {
 
     // Get initial state
     updateBrightness();
+
+    // Skip polling on Android since brightness is not supported
+    if (Platform.OS === 'android') {
+      return;
+    }
 
     // Poll for changes (brightness changes can be frequent with auto-brightness)
     const intervalId = setInterval(updateBrightness, 500);

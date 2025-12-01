@@ -272,7 +272,7 @@ export default function BenchmarkScreen() {
                       {result.value.toFixed(3)} {result.unit}
                     </Text>
                     <Text style={styles.hookResultThreshold}>
-                      Threshold: &lt;{result.threshold} {result.unit}
+                      Threshold: {'<'}{result.threshold} {result.unit}
                     </Text>
                   </View>
                   {result.error && (
@@ -295,7 +295,7 @@ export default function BenchmarkScreen() {
               • Each method is tested multiple times for accuracy
             </Text>
             <Text style={styles.instructionsText}>
-              • Sync methods target: &lt;1ms | Async methods target: &lt;100ms
+              • Sync methods target: {'<'}1ms | Async methods target: {'<'}100ms
             </Text>
             <Text style={styles.instructionsText}>
               • Speedup multiplier shows how many times faster Nitro is

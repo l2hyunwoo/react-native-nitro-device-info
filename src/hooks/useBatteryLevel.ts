@@ -38,16 +38,16 @@ export function useBatteryLevel(): number | null {
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
 
   useEffect(() => {
-    // Set initial value from sync property
-    const initialLevel = DeviceInfoModule.getBatteryLevel();
-    setBatteryLevel(initialLevel);
-
-    // Set up polling for battery level changes
-    // Poll every 5 seconds to provide reactive updates
-    const intervalId = setInterval(() => {
+    const updateBatteryLevel = () => {
       const currentLevel = DeviceInfoModule.getBatteryLevel();
       setBatteryLevel(currentLevel);
-    }, 5000);
+    };
+
+    // Set initial value
+    updateBatteryLevel();
+
+    // Poll every 5 seconds for reactive updates
+    const intervalId = setInterval(updateBatteryLevel, 5000);
 
     return () => {
       clearInterval(intervalId);

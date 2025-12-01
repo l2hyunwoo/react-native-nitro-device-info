@@ -36,12 +36,12 @@ function useTimestampedValue<T>(value: T): TimestampedValue<T> {
   });
 
   useEffect(() => {
-    if (value !== state.value) {
-      setState({
-        value,
-        lastUpdated: new Date(),
-      });
-    }
+    setState(prev => {
+      if (value !== prev.value) {
+        return { value, lastUpdated: new Date() };
+      }
+      return prev;
+    });
   }, [value]);
 
   return state;
