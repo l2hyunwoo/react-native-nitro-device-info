@@ -130,7 +130,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /**
    * Get the key window using modern scene-based API (iOS 13+)
-   * Falls back to deprecated API for iOS 11-12
+   * Uses deprecated API on iOS 11-12 for compatibility
    */
   private var keyWindow: UIWindow? {
     if #available(iOS 13.0, *) {
@@ -175,10 +175,13 @@ class DeviceInfo: HybridDeviceInfoSpec {
       return false
     }
 
-    // Dynamic Island devices have top safe area inset >= 51pt
-    // (59pt default, 51pt with Display Zoom Large Text)
-    // Notch devices have 44-48pt
-    return window.safeAreaInsets.top >= 51
+    // Dynamic Island devices have safe area inset >= 51pt
+    // Portrait: top = 59pt (51pt with Display Zoom)
+    // Landscape: left/right = 59pt
+    // Notch devices have 44-48pt in all orientations
+    let insets = window.safeAreaInsets
+    let maxInset = max(insets.top, insets.left, insets.right)
+    return maxInset >= 51
   }
 
   // MARK: - Synchronous Properties - Device Identification
