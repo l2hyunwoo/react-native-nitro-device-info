@@ -57,3 +57,14 @@ export const DeviceInfoModule: DeviceInfo = createDeviceInfo();
 
 // Re-export types for convenience
 export type { DeviceInfo, PowerState, DeviceType, BatteryState };
+
+// Re-export React hooks for runtime monitoring
+export {
+  useBatteryLevel,
+  useBatteryLevelIsLow,
+  usePowerState,
+  useIsHeadphonesConnected,
+  useIsWiredHeadphonesConnected,
+  useIsBluetoothHeadphonesConnected,
+  useBrightness,
+} from './hooks';
