@@ -385,14 +385,17 @@ class DeviceInfo: HybridDeviceInfoSpec {
           defer { ptr = ptr?.pointee.ifa_next }
 
           guard let interface = ptr?.pointee else { continue }
-          let addrFamily = interface.ifa_addr?.pointee.sa_family
 
           // Only process en0 (WiFi) and pdp_ip0 (cellular) interfaces
           let name = String(cString: interface.ifa_name)
           guard name == "en0" || name == "pdp_ip0" else { continue }
 
+          // Safe nil check for ifa_addr
+          guard let addr = interface.ifa_addr else { continue }
+          let addrFamily = addr.pointee.sa_family
+
           var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-          if getnameinfo(interface.ifa_addr, socklen_t((interface.ifa_addr?.pointee.sa_len)!),
+          if getnameinfo(addr, socklen_t(addr.pointee.sa_len),
                         &hostname, socklen_t(hostname.count),
                         nil, socklen_t(0), NI_NUMERICHOST) == 0 {
             let address = String(cString: hostname)
@@ -868,16 +871,19 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
     for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
       let interface = ptr.pointee
-      let addrFamily = interface.ifa_addr.pointee.sa_family
 
       // Only process en0 (WiFi) and pdp_ip0 (cellular) interfaces
       let name = String(cString: interface.ifa_name)
       guard name == "en0" || name == "pdp_ip0" else { continue }
 
+      // Safe nil check for ifa_addr
+      guard let addr = interface.ifa_addr else { continue }
+      let addrFamily = addr.pointee.sa_family
+
       var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
       if getnameinfo(
-        interface.ifa_addr,
-        socklen_t(interface.ifa_addr.pointee.sa_len),
+        addr,
+        socklen_t(addr.pointee.sa_len),
         &hostname,
         socklen_t(hostname.count),
         nil,
