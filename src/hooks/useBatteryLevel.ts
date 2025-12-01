@@ -43,8 +43,7 @@ export function useBatteryLevel(): number | null {
     setBatteryLevel(initialLevel);
 
     // Set up polling for battery level changes
-    // Note: Native event listeners would be more efficient but require Feature 011 listener infrastructure
-    // For now, we poll every 5 seconds to provide reactive updates
+    // Poll every 5 seconds to provide reactive updates
     const intervalId = setInterval(() => {
       const currentLevel = DeviceInfoModule.getBatteryLevel();
       setBatteryLevel(currentLevel);

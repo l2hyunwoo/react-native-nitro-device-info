@@ -25,7 +25,6 @@ export function isLowBatteryLevel(level: number): boolean {
 
 /**
  * Default throttle values for various properties (in milliseconds)
- * These match the defaults from Feature 011
  */
 export const THROTTLE_DEFAULTS = {
   batteryLevel: 500,

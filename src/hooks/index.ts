@@ -2,7 +2,7 @@
  * React Hooks for Device Info Monitoring
  *
  * These hooks provide reactive access to runtime device properties,
- * wrapping the native event listener infrastructure from Feature 011.
+ * automatically updating your components when device state changes.
  *
  * @module react-native-nitro-device-info/hooks
  */
