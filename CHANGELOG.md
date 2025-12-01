@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-12-01
+
+### Added
+
+- **React Hooks for Device State Monitoring** ([#38](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/38)): 7 new React hooks for reactive device state monitoring
+
+  **Battery & Power** (3 hooks):
+  - `useBatteryLevel()`: Real-time battery level monitoring (0.0-1.0), polls every 5s
+  - `useBatteryLevelIsLow()`: Low battery detection with platform-specific thresholds (iOS: 20%, Android: 15%)
+  - `usePowerState()`: Comprehensive power state object with level, charging state, and low power mode
+
+  **Audio Output** (3 hooks):
+  - `useIsHeadphonesConnected()`: Any headphone connection monitoring, polls every 1s
+  - `useIsWiredHeadphonesConnected()`: Wired headphone detection, polls every 1s
+  - `useIsBluetoothHeadphonesConnected()`: Bluetooth audio device detection, polls every 1s
+
+  **Display** (1 hook):
+  - `useBrightness()`: Screen brightness monitoring (iOS only, returns -1 on Android), polls every 500ms
+
+- **Example App Enhancements**:
+  - Showcase app: Added HooksDemo screen with tab navigation for interactive hook demonstrations
+  - Benchmark app: Added React hooks performance benchmarks (registration time, cleanup validation, callback latency)
+
+- **Documentation**:
+  - New hooks API reference (`docs/api/hooks.md`) with complete signatures and platform support tables
+  - New React hooks usage guide (`docs/guide/react-hooks.md`) with 5+ examples
+  - Updated migration guide with hooks comparison table
+
+**Usage Example**:
+
+```typescript
+import { useBatteryLevel, useIsHeadphonesConnected } from 'react-native-nitro-device-info';
+
+function BatteryStatus() {
+  const batteryLevel = useBatteryLevel();
+  const isHeadphonesConnected = useIsHeadphonesConnected();
+
+  return (
+    <View>
+      <Text>Battery: {(batteryLevel * 100).toFixed(0)}%</Text>
+      <Text>Headphones: {isHeadphonesConnected ? 'Connected' : 'Disconnected'}</Text>
+    </View>
+  );
+}
+```
+
 ## [1.3.1] - 2025-12-01
 
 ### Fixed
@@ -94,6 +140,77 @@ const charging = DeviceInfoModule.isBatteryCharging;
 const level = DeviceInfoModule.getBatteryLevel();
 const charging = DeviceInfoModule.getIsBatteryCharging();
 ```
+
+## [1.2.1] - 2025-11-04
+
+### Added
+
+- **Hardware Security**: `isHardwareKeyStoreAvailable` property to check hardware-backed keystore availability ([#25](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/25))
+  - iOS: Returns `true` if Secure Enclave is available
+  - Android: Returns `true` if hardware-backed KeyStore is available
+
+- **iOS 26 Liquid Glass**: `supportsLiquidGlass` property to detect iOS 26+ Liquid Glass UI support ([#24](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/24))
+  - Returns `true` on iOS 26+ devices, `false` on Android and older iOS versions
+
+## [1.2.0] - 2025-10-28
+
+### Changed
+
+#### API Design: Functions Converted to Properties
+
+All getter functions have been converted to readonly properties for cleaner, more intuitive access ([#20](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/20)):
+
+**Before (v1.1.x)**:
+```typescript
+const brand = DeviceInfoModule.getBrand();
+const model = DeviceInfoModule.getModel();
+const isTablet = DeviceInfoModule.isTablet();
+```
+
+**After (v1.2.0)**:
+```typescript
+const brand = DeviceInfoModule.brand;
+const model = DeviceInfoModule.model;
+const isTablet = DeviceInfoModule.isTablet;
+```
+
+This change affects all static device information properties that don't change during runtime.
+
+## [1.1.2] - 2025-10-27
+
+### Changed
+
+- **Documentation**: Updated documentation with new logo and improved styling ([#17](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/17))
+- **Documentation**: Simplified documentation structure without i18n ([#16](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/16))
+
+### Fixed
+
+- **CI/CD**: Fixed docs deployment script ([#15](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/15))
+
+## [1.1.1] - 2025-10-26
+
+### Changed
+
+- **Example Apps**: Enhanced showcase and benchmark apps with improved UI and functionality ([#14](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/14))
+  - Showcase: Reorganized property display with category sections and platform badges
+  - Benchmark: Added comparison charts, statistics panels, and performance multiplier displays
+
+## [1.1.0] - 2025-10-26
+
+### Added
+
+- **Additional APIs**: Added remaining APIs from `react-native-device-info` for full feature parity ([#11](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/11))
+  - Network: `getIpAddress()`, `getMacAddress()`, `getCarrier()`
+  - Storage: `getTotalDiskCapacity()`, `getFreeDiskStorage()`, `getFreeDiskStorageOld()`
+  - Memory: `getTotalMemory()`, `getUsedMemory()`, `getMaxMemory()`
+  - Device: `getDeviceName()`, `getUserAgent()`, `getInstanceId()`, `getInstallReferrer()`
+  - Location: `isLocationEnabled()`, `getAvailableLocationProviders()`
+  - Audio: `isHeadphonesConnected()`, `isWiredHeadphonesConnected()`, `isBluetoothHeadphonesConnected()`
+  - Display: `getFontScale()`, `getBrightness()`, `isLandscape()`
+  - Security: `isPinOrFingerprintSet()`, `isEmulator()`
+  - Platform-specific: `getApiLevel()`, `getPreviewSdkInt()`, `getSecurityPatch()`, `getCodename()`
+
+- **Documentation Site**: Added RSPress-based documentation site with comprehensive API reference ([#12](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/12))
 
 ## [1.0.0] - 2025-10-25
 
@@ -304,5 +421,13 @@ The following methods remain Promise-based as they perform I/O operations:
 - iOS and Android native implementations
 - Example apps (showcase and benchmark)
 
-[1.0.0]: https://github.com/your-org/react-native-nitro-device-info/compare/v0.1.0...v1.0.0
-[0.1.0]: https://github.com/your-org/react-native-nitro-device-info/releases/tag/v0.1.0
+[1.4.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.3.1...v1.4.0
+[1.3.1]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.3.0...v1.3.1
+[1.3.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.2.1...v1.3.0
+[1.2.1]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.1.2...v1.2.0
+[1.1.2]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.1.1...v1.1.2
+[1.1.1]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/releases/tag/v0.1.0
