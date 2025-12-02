@@ -1,0 +1,18 @@
+/**
+ * Test fixtures index
+ */
+
+export {
+  SAMPLE_DEVICE_INFO_CONTENT,
+  EXPECTED_API_COUNT,
+  EXPECTED_API_NAMES,
+} from './sample-device-info.js';
+
+export {
+  SAMPLE_README_CONTENT,
+  SAMPLE_API_DOC_CONTENT,
+  SAMPLE_TROUBLESHOOTING_CONTENT,
+  EXPECTED_README_CHUNKS,
+  EXPECTED_API_DOC_CHUNKS,
+  EXPECTED_TROUBLESHOOTING_CHUNKS,
+} from './sample-docs.js';
