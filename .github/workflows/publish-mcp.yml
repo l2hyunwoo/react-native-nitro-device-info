@@ -119,6 +119,26 @@ jobs:
             echo "✓ Version commit pushed to remote"
           fi
 
+      - name: Check for existing tag
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if git rev-parse "mcp-server-v$VERSION" >/dev/null 2>&1; then
+            echo "::error title=Tag Already Exists::Tag mcp-server-v$VERSION already exists. Please use a different version number."
+            exit 1
+          fi
+          echo "✓ Tag mcp-server-v$VERSION does not exist"
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Would create and push tag mcp-server-v$VERSION"
+          else
+            git tag "mcp-server-v$VERSION"
+            git push origin "mcp-server-v$VERSION"
+            echo "✓ Tag mcp-server-v$VERSION created and pushed"
+          fi
+
       - name: Publish to NPM
         run: |
           VERSION="${{ github.event.inputs.version }}"
@@ -134,3 +154,77 @@ jobs:
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # Job 3: Create GitHub Release
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: publish
+    if: github.event.inputs.dry_run != 'true'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+
+          # Find previous mcp-server tag
+          PREVIOUS_TAG=$(git tag -l "mcp-server-v*" --sort=-v:refname | head -2 | tail -1 || echo "")
+
+          echo "Generating release notes for mcp-server-v$VERSION..." >&2
+          echo "Previous tag: $PREVIOUS_TAG" >&2
+
+          {
+            echo "## @react-native-nitro-device-info/mcp-server v$VERSION"
+            echo ""
+            echo "MCP (Model Context Protocol) server for react-native-nitro-device-info AI tool integration."
+            echo ""
+            echo "## Installation"
+            echo ""
+            echo '```bash'
+            echo "npx @react-native-nitro-device-info/mcp-server"
+            echo "# or"
+            echo "npm install -g @react-native-nitro-device-info/mcp-server"
+            echo '```'
+            echo ""
+            echo "## Quick Setup"
+            echo ""
+            echo '```bash'
+            echo "cd your-react-native-project"
+            echo "npx @react-native-nitro-device-info/mcp-server init"
+            echo '```'
+            echo ""
+            echo "## Documentation"
+            echo ""
+            echo "- [MCP Server README](https://github.com/mj-studio-library/react-native-nitro-device-info/tree/main/packages/mcp-server#readme)"
+            echo "- [Changelog](https://github.com/mj-studio-library/react-native-nitro-device-info/blob/main/packages/mcp-server/CHANGELOG.md)"
+            echo ""
+            if [ -n "$PREVIOUS_TAG" ]; then
+              echo "**Full Changelog**: https://github.com/mj-studio-library/react-native-nitro-device-info/compare/$PREVIOUS_TAG...mcp-server-v$VERSION"
+            fi
+          } > release_notes.md
+
+          {
+            echo "release_notes<<RELEASE_NOTES_EOF"
+            cat release_notes.md
+            echo "RELEASE_NOTES_EOF"
+          } >> $GITHUB_OUTPUT
+
+          echo "✓ Release notes generated" >&2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: mcp-server-v${{ github.event.inputs.version }}
+          name: "@react-native-nitro-device-info/mcp-server v${{ github.event.inputs.version }}"
+          body: ${{ steps.release_notes.outputs.release_notes }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
