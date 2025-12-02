@@ -283,6 +283,73 @@ yarn android
 - [쇼케이스 앱 README](example/showcase/README-ko.md)
 - [벤치마크 앱 README](example/benchmark/README-ko.md)
 
+## AI 통합을 위한 MCP 서버
+
+Claude, Cursor, Copilot 같은 AI 도구가 MCP (Model Context Protocol) 서버를 통해 정확한 라이브러리 문서에 접근할 수 있도록 합니다.
+
+### 빠른 설정 (권장)
+
+React Native 프로젝트에서 `init` 명령어를 실행하면 Cursor와 Claude Code에 대한 MCP 설정이 자동으로 구성됩니다:
+
+```bash
+cd your-react-native-project
+npx @react-native-nitro-device-info/mcp-server init
+```
+
+생성되는 파일:
+- `.cursor/mcp.json` - Cursor IDE 설정
+- `.mcp.json` - Claude Code 프로젝트 설정
+
+그 다음 IDE를 재시작하고 질문을 시작하세요!
+
+### 수동 설정
+
+#### Claude Desktop
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "nitro-device-info": {
+      "command": "npx",
+      "args": ["@react-native-nitro-device-info/mcp-server"]
+    }
+  }
+}
+```
+
+저장 후 Claude Desktop을 완전히 재시작하세요 (Cmd+Q 후 다시 실행).
+
+#### Cursor IDE
+
+프로젝트 루트에 `.cursor/mcp.json` 파일을 생성하세요:
+
+```json
+{
+  "mcpServers": {
+    "nitro-device-info": {
+      "command": "npx",
+      "args": ["@react-native-nitro-device-info/mcp-server"]
+    }
+  }
+}
+```
+
+### 사용 가능한 도구
+
+| 도구 | 용도 | 예시 질문 |
+|------|------|----------|
+| `search_docs` | 자연어 문서 검색 | "디바이스 모델 가져오는 방법" |
+| `get_api` | 특정 API 상세 정보 | "getBatteryLevel 보여줘" |
+| `list_apis` | 카테고리/플랫폼/타입별 API 목록 | "네트워크 API 모두 나열" |
+
+그런 다음 AI에게 물어보세요: "react-native-nitro-device-info로 배터리 레벨을 어떻게 가져오나요?"
+
+전체 MCP 서버 문서는 [packages/mcp-server/README.md](packages/mcp-server/README.md)를 참고하세요.
+
 ## 지원 플랫폼
 
 - **iOS**: 13.4+

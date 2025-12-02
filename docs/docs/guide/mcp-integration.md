@@ -11,9 +11,24 @@ Enable AI coding assistants like Claude, Cursor, and Copilot to access accurate 
 - Answer platform-specific questions (iOS vs Android)
 - Help troubleshoot common issues
 
-## Installation
+## Quick Setup (Recommended)
 
-### Using npx (Recommended)
+Run the `init` command in your React Native project to automatically configure MCP for Cursor and Claude Code:
+
+```bash
+cd your-react-native-project
+npx @react-native-nitro-device-info/mcp-server init
+```
+
+This creates:
+- `.cursor/mcp.json` - Cursor IDE configuration
+- `.mcp.json` - Claude Code project configuration
+
+Then restart your IDE and start asking questions!
+
+## Manual Installation
+
+### Using npx
 
 No installation required. Configure your AI tool to run:
 
@@ -33,7 +48,7 @@ Then run:
 nitro-device-info-mcp
 ```
 
-## Configuration
+## Manual Configuration
 
 ### Claude Desktop
 

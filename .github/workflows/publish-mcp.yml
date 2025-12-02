@@ -207,11 +207,11 @@ jobs:
             echo ""
             echo "## Documentation"
             echo ""
-            echo "- [MCP Server README](https://github.com/mj-studio-library/react-native-nitro-device-info/tree/main/packages/mcp-server#readme)"
-            echo "- [Changelog](https://github.com/mj-studio-library/react-native-nitro-device-info/blob/main/packages/mcp-server/CHANGELOG.md)"
+            echo "- [MCP Server README](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/mcp-server#readme)"
+            echo "- [Changelog](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/mcp-server/CHANGELOG.md)"
             echo ""
             if [ -n "$PREVIOUS_TAG" ]; then
-              echo "**Full Changelog**: https://github.com/mj-studio-library/react-native-nitro-device-info/compare/$PREVIOUS_TAG...mcp-server-v$VERSION"
+              echo "**Full Changelog**: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/$PREVIOUS_TAG...mcp-server-v$VERSION"
             fi
           } > release_notes.md
 

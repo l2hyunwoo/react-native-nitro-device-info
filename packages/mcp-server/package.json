@@ -35,13 +35,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mj-studio-library/react-native-nitro-device-info.git",
+    "url": "git+https://github.com/l2hyunwoo/react-native-nitro-device-info.git",
     "directory": "packages/mcp-server"
   },
   "bugs": {
-    "url": "https://github.com/mj-studio-library/react-native-nitro-device-info/issues"
+    "url": "https://github.com/l2hyunwoo/react-native-nitro-device-info/issues"
   },
-  "homepage": "https://github.com/mj-studio-library/react-native-nitro-device-info#readme",
+  "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info#readme",
   "engines": {
     "node": ">=20.0.0"
   },

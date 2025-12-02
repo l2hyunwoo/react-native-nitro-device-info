@@ -202,7 +202,7 @@ console.log(`Battery: ${Math.round(batteryLevel * 100)}%`);
 ### Run from Source
 
 ```bash
-git clone https://github.com/mj-studio-library/react-native-nitro-device-info.git
+git clone https://github.com/l2hyunwoo/react-native-nitro-device-info.git
 cd react-native-nitro-device-info
 yarn install
 yarn workspace @react-native-nitro-device-info/mcp-server build

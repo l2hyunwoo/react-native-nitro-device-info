@@ -288,15 +288,28 @@ For more details, see:
 
 Enable AI tools like Claude, Cursor, and Copilot to access accurate library documentation through the MCP (Model Context Protocol) server.
 
-### Quick Setup
+### Quick Setup (Recommended)
+
+Run the `init` command in your React Native project to automatically configure MCP for Cursor and Claude Code:
 
 ```bash
-npx @react-native-nitro-device-info/mcp-server
+cd your-react-native-project
+npx @react-native-nitro-device-info/mcp-server init
 ```
 
-### Configure Claude Desktop
+This creates:
+- `.cursor/mcp.json` - Cursor IDE configuration
+- `.mcp.json` - Claude Code project configuration
 
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Then restart your IDE and start asking questions!
+
+### Manual Configuration
+
+#### Claude Desktop
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
 ```json
 {
@@ -309,7 +322,32 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
-Then ask Claude: "How do I get the device's battery level with react-native-nitro-device-info?"
+After saving, restart Claude Desktop completely (Cmd+Q, then reopen).
+
+#### Cursor IDE
+
+Create `.cursor/mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "nitro-device-info": {
+      "command": "npx",
+      "args": ["@react-native-nitro-device-info/mcp-server"]
+    }
+  }
+}
+```
+
+### Available Tools
+
+| Tool | Purpose | Example Query |
+|------|---------|---------------|
+| `search_docs` | Natural language documentation search | "how to get device model" |
+| `get_api` | Detailed info about a specific API | "show me getBatteryLevel" |
+| `list_apis` | List APIs by category/platform/type | "list all network APIs" |
+
+Then ask your AI: "How do I get the device's battery level with react-native-nitro-device-info?"
 
 For complete MCP server documentation, see [packages/mcp-server/README.md](packages/mcp-server/README.md).
 

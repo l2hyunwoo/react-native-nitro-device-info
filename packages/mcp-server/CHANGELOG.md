@@ -48,4 +48,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Claude Code (auto-configured via `init`)
   - Any MCP-compatible client with stdio transport
 
-[1.0.0]: https://github.com/mj-studio-library/react-native-nitro-device-info/releases/tag/mcp-server-v1.0.0
+[1.0.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/releases/tag/mcp-server-v1.0.0
