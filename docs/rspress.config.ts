@@ -31,6 +31,7 @@ export default defineConfig({
           { text: 'Getting Started', link: '/guide/getting-started' },
           { text: 'Quick Start', link: '/guide/quick-start' },
           { text: 'React Hooks', link: '/guide/react-hooks' },
+          { text: 'MCP Integration', link: '/guide/mcp-integration' },
         ],
       },
       {
@@ -71,6 +72,7 @@ export default defineConfig({
             { text: 'Getting Started', link: '/guide/getting-started' },
             { text: 'Quick Start', link: '/guide/quick-start' },
             { text: 'React Hooks', link: '/guide/react-hooks' },
+            { text: 'MCP Integration', link: '/guide/mcp-integration' },
           ],
         },
       ],

@@ -284,6 +284,35 @@ For more details, see:
 - [Showcase App README](example/showcase/README.md)
 - [Benchmark App README](example/benchmark/README.md)
 
+## MCP Server for AI Integration
+
+Enable AI tools like Claude, Cursor, and Copilot to access accurate library documentation through the MCP (Model Context Protocol) server.
+
+### Quick Setup
+
+```bash
+npx @react-native-nitro-device-info/mcp-server
+```
+
+### Configure Claude Desktop
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "nitro-device-info": {
+      "command": "npx",
+      "args": ["@react-native-nitro-device-info/mcp-server"]
+    }
+  }
+}
+```
+
+Then ask Claude: "How do I get the device's battery level with react-native-nitro-device-info?"
+
+For complete MCP server documentation, see [packages/mcp-server/README.md](packages/mcp-server/README.md).
+
 ## Platform Support
 
 - **iOS**: 13.4+
