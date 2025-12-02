@@ -264,6 +264,7 @@ jobs:
             echo "## Documentation"
             echo ""
             echo "- [README](https://github.com/l2hyunwoo/react-native-nitro-device-info#readme)"
+            echo "- [API Documentation](https://l2hyunwoo.github.io/react-native-nitro-device-info/)"
             echo ""
             if [ -n "$PREVIOUS_TAG" ]; then
               echo "**Full Changelog**: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/$PREVIOUS_TAG...v$VERSION"

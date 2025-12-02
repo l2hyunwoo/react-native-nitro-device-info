@@ -1,0 +1,3 @@
+# Default code owner for all files
+# This user will be automatically requested for review on all PRs
+*       @l2hyunwoo
