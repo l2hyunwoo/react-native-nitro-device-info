@@ -263,6 +263,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Type check MCP server
+        run: yarn workspace @react-native-nitro-device-info/mcp-server typecheck
+
       - name: Build MCP server
         run: yarn workspace @react-native-nitro-device-info/mcp-server build
 
