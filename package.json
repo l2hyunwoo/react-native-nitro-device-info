@@ -98,7 +98,8 @@
   },
   "workspaces": [
     "example/showcase",
-    "example/benchmark"
+    "example/benchmark",
+    "packages/mcp-server"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {

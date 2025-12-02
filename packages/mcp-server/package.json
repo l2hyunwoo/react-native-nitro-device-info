@@ -1,0 +1,58 @@
+{
+  "name": "@react-native-nitro-device-info/mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for react-native-nitro-device-info AI tool integration",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "nitro-device-info-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "inspector": "npx @anthropic-ai/mcp-inspector node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "react-native",
+    "react-native-nitro-device-info",
+    "ai",
+    "claude",
+    "cursor"
+  ],
+  "author": "HyunWoo Lee <l2hyunwoo@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mj-studio-library/react-native-nitro-device-info.git",
+    "directory": "packages/mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/mj-studio-library/react-native-nitro-device-info/issues"
+  },
+  "homepage": "https://github.com/mj-studio-library/react-native-nitro-device-info#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  }
+}
