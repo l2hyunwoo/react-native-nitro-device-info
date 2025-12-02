@@ -85,8 +85,6 @@ function extractPlatforms(content: string): ('ios' | 'android')[] {
  * Extract API names mentioned in content
  */
 function extractMentionedApis(content: string): string[] {
-  const apis: string[] = [];
-
   // Match camelCase or PascalCase API-like names
   const apiPattern =
     /\b(get[A-Z]\w+|is[A-Z]\w+|has[A-Z]\w+|sync[A-Z]\w+|[a-z]+[A-Z]\w*)\b/g;

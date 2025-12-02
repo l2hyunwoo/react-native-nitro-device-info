@@ -4,8 +4,6 @@
  * Combines API and documentation parsers to build a complete search index.
  */
 
-import * as path from 'path';
-import * as fs from 'fs';
 import type { SearchIndex, ApiDefinition, DocumentationChunk } from '../types/index.js';
 import { parseDeviceInfoFile, parseDeviceInfoContent, getDeviceInfoPath } from './api-parser.js';
 import {
