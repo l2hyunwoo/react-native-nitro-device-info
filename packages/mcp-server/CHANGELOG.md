@@ -35,9 +35,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Global: `npm install -g @react-native-nitro-device-info/mcp-server`
   - CLI command: `nitro-device-info-mcp`
 
+- **CLI Commands**:
+  - `init`: Automatically create MCP configuration files in your project
+    - Creates `.cursor/mcp.json` for Cursor IDE
+    - Creates `.mcp.json` for Claude Code
+    - Safely merges with existing configurations
+  - `--help`: Show usage information
+
 - **AI Tool Configuration**:
   - Claude Desktop (macOS/Windows)
-  - Cursor IDE
+  - Cursor IDE (auto-configured via `init`)
+  - Claude Code (auto-configured via `init`)
   - Any MCP-compatible client with stdio transport
 
 [1.0.0]: https://github.com/mj-studio-library/react-native-nitro-device-info/releases/tag/mcp-server-v1.0.0

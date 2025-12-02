@@ -4,6 +4,11 @@
  *
  * Enables AI tools like Claude, Cursor, and Copilot to access
  * accurate API documentation for the react-native-nitro-device-info library.
+ *
+ * Usage:
+ *   npx @react-native-nitro-device-info/mcp-server         # Start MCP server
+ *   npx @react-native-nitro-device-info/mcp-server init    # Initialize config files
+ *   npx @react-native-nitro-device-info/mcp-server --help  # Show help
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -12,6 +17,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import { runInit } from './cli/init.js';
 import type { SearchIndex } from './types/index.js';
 import { buildIndex, getIndexStats, validateIndex } from './indexer/index.js';
 import {
@@ -354,9 +360,58 @@ async function createServer(): Promise<Server> {
 }
 
 /**
+ * Show help message
+ */
+function showHelp(): void {
+  console.log(`
+@react-native-nitro-device-info/mcp-server
+
+MCP server enabling AI tools to access react-native-nitro-device-info documentation.
+
+Usage:
+  npx @react-native-nitro-device-info/mcp-server          Start the MCP server (stdio)
+  npx @react-native-nitro-device-info/mcp-server init     Initialize config files
+  npx @react-native-nitro-device-info/mcp-server --help   Show this help message
+
+Commands:
+  init    Create .cursor/mcp.json and .mcp.json in your project
+          Enables Cursor IDE and Claude Code to use this MCP server
+
+Examples:
+  # Initialize MCP config in your React Native project
+  cd my-react-native-app
+  npx @react-native-nitro-device-info/mcp-server init
+
+  # Then restart your IDE and ask:
+  "How do I get the device's battery level?"
+`);
+}
+
+/**
  * Main entry point
  */
 async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+  const command = args[0];
+
+  // Handle CLI commands
+  if (command === 'init') {
+    await runInit();
+    return;
+  }
+
+  if (command === '--help' || command === '-h' || command === 'help') {
+    showHelp();
+    return;
+  }
+
+  if (command && command !== '--stdio') {
+    console.error(`Unknown command: ${command}`);
+    console.error('Run with --help to see available commands.');
+    process.exit(1);
+  }
+
+  // Default: start MCP server
   try {
     const server = await createServer();
     const transport = new StdioServerTransport();

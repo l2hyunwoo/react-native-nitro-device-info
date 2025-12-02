@@ -36,7 +36,22 @@ Then run:
 nitro-device-info-mcp
 ```
 
-## Configuration
+## Quick Setup (Recommended)
+
+Run the `init` command in your React Native project to automatically configure MCP for Cursor and Claude Code:
+
+```bash
+cd your-react-native-project
+npx @react-native-nitro-device-info/mcp-server init
+```
+
+This creates:
+- `.cursor/mcp.json` - Cursor IDE configuration
+- `.mcp.json` - Claude Code project configuration
+
+Then restart your IDE and start asking questions!
+
+## Manual Configuration
 
 ### Claude Desktop (macOS)
 
