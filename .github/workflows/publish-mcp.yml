@@ -99,7 +99,13 @@ jobs:
           if [ "$CURRENT_VERSION" = "$VERSION" ]; then
             echo "✓ packages/mcp-server/package.json already at version $VERSION"
           else
-            npm version $VERSION --no-git-tag-version
+            # Update version directly without npm to avoid monorepo workspace resolution
+            node -e "
+              const fs = require('fs');
+              const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+              pkg.version = '$VERSION';
+              fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
+            "
             echo "✓ packages/mcp-server/package.json updated to version $VERSION"
           fi
 
@@ -147,11 +153,30 @@ jobs:
       - name: Publish to NPM
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          cd packages/mcp-server
+
+          # Copy mcp-server to temp directory to isolate from monorepo
+          TEMP_DIR=$(mktemp -d)
+          echo "Creating isolated publish directory: $TEMP_DIR"
+
+          cp -r packages/mcp-server/dist "$TEMP_DIR/"
+          cp packages/mcp-server/README.md "$TEMP_DIR/"
+
+          # Copy package.json and remove prepublishOnly script (build already done)
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('packages/mcp-server/package.json', 'utf8'));
+            delete pkg.scripts.prepublishOnly;
+            fs.writeFileSync('$TEMP_DIR/package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+          cd "$TEMP_DIR"
+          echo "Publishing from: $(pwd)"
+          ls -la
+
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             echo "🔍 DRY RUN: Testing NPM publish..."
             npm publish --dry-run --access public
-            echo "✓ Dry run completed - package would be published to NPM registry"
+            echo "✓ Dry run completed successfully"
           else
             echo "Publishing to NPM with provenance..."
             npm publish --provenance --access public
