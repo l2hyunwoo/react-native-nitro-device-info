@@ -2514,8 +2514,8 @@ __metadata:
   linkType: hard
 
 "@modelcontextprotocol/sdk@npm:^1.0.0":
-  version: 1.23.0
-  resolution: "@modelcontextprotocol/sdk@npm:1.23.0"
+  version: 1.24.0
+  resolution: "@modelcontextprotocol/sdk@npm:1.24.0"
   dependencies:
     ajv: ^8.17.1
     ajv-formats: ^3.0.1
@@ -2526,6 +2526,7 @@ __metadata:
     eventsource-parser: ^3.0.0
     express: ^5.0.1
     express-rate-limit: ^7.5.0
+    jose: ^6.1.1
     pkce-challenge: ^5.0.0
     raw-body: ^3.0.0
     zod: ^3.25 || ^4.0
@@ -2538,7 +2539,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: de4d2844c62478e1dbf8c7f2e074a22b1e1620996cb51a7a0975417717ee796968d5348ad69521c4bb5b301796c5eb00b9500e6120dc68afab7c1c2db417f237
+  checksum: bcd500b3b5e4c003eaba4e65d6f7daba84467f7250db32231e8f03c2dda99ae134dda8a2b6eb65dc57b2e8c50f7120bcde0e438195d6dcd61a1e5344688449ac
   languageName: node
   linkType: hard
 
@@ -8439,6 +8440,13 @@ __metadata:
     "@sideway/formula": ^3.0.1
     "@sideway/pinpoint": ^2.0.0
   checksum: 66ed454fee3d8e8da1ce21657fd2c7d565d98f3e539d2c5c028767e5f38cbd6297ce54df8312d1d094e62eb38f9452ebb43da4ce87321df66cf5e3f128cbc400
+  languageName: node
+  linkType: hard
+
+"jose@npm:^6.1.1":
+  version: 6.1.3
+  resolution: "jose@npm:6.1.3"
+  checksum: 7f51c7e77f82b70ef88ede9fd1760298bc0ffbf143b9d94f78c08462987ae61864535c1856bc6c26d335f857c7d41f4fffcc29134212c19ea929ce34a4c790f0
   languageName: node
   linkType: hard
 
