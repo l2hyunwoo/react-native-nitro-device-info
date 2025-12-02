@@ -391,13 +391,22 @@ export function parseDeviceInfoContent(content: string): ApiDefinition[] {
 
 /**
  * Get the path to DeviceInfo.nitro.ts relative to package
+ *
+ * When running from dist (packages/mcp-server/dist), we need to go up 3 levels
+ * to reach the repository root where src/DeviceInfo.nitro.ts lives.
  */
 export function getDeviceInfoPath(packageRoot: string): string {
-  // Try common locations
+  // Try common locations (ordered from most specific to least)
   const possiblePaths = [
+    // From packages/mcp-server/dist -> repo root (3 levels up)
+    path.join(packageRoot, '..', '..', '..', 'src', 'DeviceInfo.nitro.ts'),
+    // From packages/mcp-server/src -> repo root (3 levels up, for dev mode)
+    path.join(packageRoot, '..', '..', '..', 'src', 'DeviceInfo.nitro.ts'),
+    // From packages/mcp-server -> repo root (2 levels up)
     path.join(packageRoot, '..', '..', 'src', 'DeviceInfo.nitro.ts'),
-    path.join(packageRoot, 'src', 'DeviceInfo.nitro.ts'),
+    // Legacy paths for other configurations
     path.join(packageRoot, '..', 'src', 'DeviceInfo.nitro.ts'),
+    path.join(packageRoot, 'src', 'DeviceInfo.nitro.ts'),
   ];
 
   for (const p of possiblePaths) {

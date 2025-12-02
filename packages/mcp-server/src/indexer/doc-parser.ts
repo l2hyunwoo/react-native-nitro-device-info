@@ -246,11 +246,19 @@ export function parseDocsDirectory(dirPath: string): DocumentationChunk[] {
 
 /**
  * Get documentation paths relative to package root
+ *
+ * When running from dist (packages/mcp-server/dist), we need to go up 3 levels
+ * to reach the repository root where docs/ lives.
  */
 export function getDocsPaths(packageRoot: string): string[] {
   const possiblePaths = [
+    // From packages/mcp-server/dist -> repo root (3 levels up)
+    path.join(packageRoot, '..', '..', '..', 'docs', 'docs'),
+    path.join(packageRoot, '..', '..', '..', 'docs'),
+    // From packages/mcp-server -> repo root (2 levels up)
     path.join(packageRoot, '..', '..', 'docs', 'docs'),
     path.join(packageRoot, '..', '..', 'docs'),
+    // Legacy paths
     path.join(packageRoot, '..', 'docs'),
     path.join(packageRoot, 'docs'),
   ];
@@ -260,10 +268,17 @@ export function getDocsPaths(packageRoot: string): string[] {
 
 /**
  * Parse README file for quick reference content
+ *
+ * When running from dist (packages/mcp-server/dist), we need to go up 3 levels
+ * to reach the repository root where README.md lives.
  */
 export function parseReadme(packageRoot: string): DocumentationChunk[] {
   const possiblePaths = [
+    // From packages/mcp-server/dist -> repo root (3 levels up)
+    path.join(packageRoot, '..', '..', '..', 'README.md'),
+    // From packages/mcp-server -> repo root (2 levels up)
     path.join(packageRoot, '..', '..', 'README.md'),
+    // Legacy paths
     path.join(packageRoot, '..', 'README.md'),
     path.join(packageRoot, 'README.md'),
   ];
