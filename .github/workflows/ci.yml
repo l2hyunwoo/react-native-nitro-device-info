@@ -8,9 +8,55 @@ on:
   workflow_call:
 
 jobs:
+  # Detect which files changed to conditionally run jobs
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      library: ${{ steps.filter.outputs.library }}
+      mcp-server: ${{ steps.filter.outputs.mcp-server }}
+      docs: ${{ steps.filter.outputs.docs }}
+      deps: ${{ steps.filter.outputs.deps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            library:
+              - 'src/**'
+              - 'ios/**'
+              - 'android/**'
+              - 'nitrogen/**'
+              - 'tsconfig.json'
+              - 'babel.config.js'
+              - 'react-native.config.js'
+              - 'example/**'
+            mcp-server:
+              - 'packages/mcp-server/**'
+            docs:
+              - 'docs/**'
+            deps:
+              - 'package.json'
+              - 'yarn.lock'
+
+      - name: Debug outputs
+        run: |
+          echo "library=${{ steps.filter.outputs.library }}"
+          echo "mcp-server=${{ steps.filter.outputs.mcp-server }}"
+          echo "docs=${{ steps.filter.outputs.docs }}"
+          echo "deps=${{ steps.filter.outputs.deps }}"
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.mcp-server == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,6 +79,8 @@ jobs:
   build:
     name: Build Library
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,6 +106,8 @@ jobs:
   build-ios:
     name: Build iOS
     runs-on: macos-15
+    needs: changes
+    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -115,6 +165,8 @@ jobs:
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -163,6 +215,8 @@ jobs:
   validate-package:
     name: Validate NPM Package
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -189,3 +243,33 @@ jobs:
           tar -tzf *.tgz | grep "package/src/DeviceInfo.nitro.ts"
           tar -tzf *.tgz | grep "package/ios/DeviceInfo.swift"
           tar -tzf *.tgz | grep "package/android"
+
+  # MCP Server CI - only runs when packages/mcp-server changes
+  mcp-server:
+    name: MCP Server
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.mcp-server == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build MCP server
+        run: yarn workspace @react-native-nitro-device-info/mcp-server build
+
+      - name: Run MCP server tests
+        run: yarn workspace @react-native-nitro-device-info/mcp-server test
+
+      - name: Verify build outputs
+        run: |
+          test -d packages/mcp-server/dist || exit 1
+          test -f packages/mcp-server/dist/index.js || exit 1
