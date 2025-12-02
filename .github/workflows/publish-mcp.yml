@@ -1,0 +1,136 @@
+name: Publish MCP Server
+
+# Manual trigger with version input
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.0 - no v prefix)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run mode (test without publishing)'
+        required: false
+        type: boolean
+        default: false
+
+# Required permissions for version commits and npm provenance
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  # Job 1: Validate and test
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check dry run mode
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN MODE ENABLED - No changes will be pushed to remote"
+            echo "================================================"
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error title=Invalid Version Format::Version must be in X.Y.Z format (e.g., 1.0.0). Got: $VERSION"
+            exit 1
+          fi
+          echo "✓ Version format valid: $VERSION"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build MCP server
+        run: yarn workspace @react-native-nitro-device-info/mcp-server build
+
+      - name: Run MCP server tests
+        run: yarn workspace @react-native-nitro-device-info/mcp-server test
+
+      - name: Verify build outputs
+        run: |
+          echo "Verifying build outputs..."
+          test -d packages/mcp-server/dist || (echo "::error::packages/mcp-server/dist directory not found" && exit 1)
+          test -f packages/mcp-server/dist/index.js || (echo "::error::packages/mcp-server/dist/index.js not found" && exit 1)
+          echo "✓ All build outputs verified"
+
+  # Job 2: Update version and publish
+  publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Update MCP server version
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          cd packages/mcp-server
+          npm version $VERSION --no-git-tag-version
+          echo "✓ packages/mcp-server/package.json updated to version $VERSION"
+
+      - name: Build MCP server
+        run: yarn workspace @react-native-nitro-device-info/mcp-server build
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit version change
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git add packages/mcp-server/package.json
+          git commit -m "chore(mcp-server): bump version to $VERSION" || echo "No changes to commit"
+
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Would push version commit to remote"
+          else
+            git push origin HEAD
+            echo "✓ Version commit pushed to remote"
+          fi
+
+      - name: Publish to NPM
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          cd packages/mcp-server
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Testing NPM publish..."
+            npm publish --dry-run --access public
+            echo "✓ Dry run completed - package would be published to NPM registry"
+          else
+            echo "Publishing to NPM with provenance..."
+            npm publish --provenance --access public
+            echo "✓ Package published to NPM registry as @react-native-nitro-device-info/mcp-server@$VERSION"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
