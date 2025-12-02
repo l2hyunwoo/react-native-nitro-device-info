@@ -95,8 +95,13 @@ jobs:
         run: |
           VERSION="${{ github.event.inputs.version }}"
           cd packages/mcp-server
-          npm version $VERSION --no-git-tag-version
-          echo "✓ packages/mcp-server/package.json updated to version $VERSION"
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if [ "$CURRENT_VERSION" = "$VERSION" ]; then
+            echo "✓ packages/mcp-server/package.json already at version $VERSION"
+          else
+            npm version $VERSION --no-git-tag-version
+            echo "✓ packages/mcp-server/package.json updated to version $VERSION"
+          fi
 
       - name: Build MCP server
         run: yarn workspace @react-native-nitro-device-info/mcp-server build
