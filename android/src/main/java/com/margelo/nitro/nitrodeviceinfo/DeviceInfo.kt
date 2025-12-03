@@ -1015,7 +1015,223 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
+    // MARK: - Device Integrity / Security
+
+    /**
+     * Synchronously checks for root status
+     *
+     * Always returns false on emulator for development convenience.
+     * Uses multiple detection methods to identify root status.
+     */
+    override fun isDeviceCompromised(): Boolean {
+        // Emulator exception - for development convenience
+        if (isEmulator) {
+            return false
+        }
+
+        return checkSuBinaries() ||
+            checkMagisk() ||
+            checkKernelSU() ||
+            checkAPatch() ||
+            checkBusybox() ||
+            checkBuildProps() ||
+            checkSuperuserApps()
+    }
+
+    /**
+     * Asynchronous wrapper for device integrity verification
+     *
+     * Currently identical to isDeviceCompromised() but wrapped in a Promise.
+     * Provided for API consistency with iOS and for future extensibility.
+     */
+    override fun verifyDeviceIntegrity(): Promise<Boolean> {
+        return Promise.async {
+            isDeviceCompromised()
+        }
+    }
+
+    // MARK: - Root Detection Helpers
+
+    /**
+     * Checks su binary paths
+     */
+    private fun checkSuBinaries(): Boolean {
+        return SU_PATHS.any { path ->
+            java.io.File(path).exists()
+        }
+    }
+
+    /**
+     * Detects Magisk
+     */
+    private fun checkMagisk(): Boolean {
+        if (MAGISK_PATHS.any { java.io.File(it).exists() }) {
+            return true
+        }
+        return isAnyPackageInstalled(MAGISK_PACKAGES)
+    }
+
+    /**
+     * Detects KernelSU
+     */
+    private fun checkKernelSU(): Boolean {
+        if (KERNELSU_PATHS.any { java.io.File(it).exists() }) {
+            return true
+        }
+        return isAnyPackageInstalled(KERNELSU_PACKAGES)
+    }
+
+    /**
+     * Detects APatch
+     */
+    private fun checkAPatch(): Boolean {
+        if (APATCH_PATHS.any { java.io.File(it).exists() }) {
+            return true
+        }
+        return isAnyPackageInstalled(APATCH_PACKAGES)
+    }
+
+    /**
+     * Checks for Busybox
+     */
+    private fun checkBusybox(): Boolean {
+        return BUSYBOX_PATHS.any { java.io.File(it).exists() }
+    }
+
+    /**
+     * Helper to check if any package from a list is installed
+     */
+    private fun isAnyPackageInstalled(packages: List<String>): Boolean {
+        return packages.any { pkg ->
+            try {
+                packageManager.getPackageInfo(pkg, 0)
+                true
+            } catch (e: PackageManager.NameNotFoundException) {
+                false
+            }
+        }
+    }
+
+    /**
+     * Checks build props
+     *
+     * Uses Runtime.exec("getprop") for maximum compatibility across Android versions
+     * and manufacturer customizations. SystemProperties reflection was considered but
+     * rejected due to Hidden API restrictions in Android 9+ (API 28).
+     */
+    private fun checkBuildProps(): Boolean {
+        // Check debug build
+        val debuggable = try {
+            val debugProp = Runtime.getRuntime()
+                .exec("getprop ro.debuggable")
+                .inputStream
+                .bufferedReader()
+                .readLine()
+            debugProp == "1"
+        } catch (e: Exception) {
+            false
+        }
+
+        // Check security settings
+        val notSecure = try {
+            val secureProp = Runtime.getRuntime()
+                .exec("getprop ro.secure")
+                .inputStream
+                .bufferedReader()
+                .readLine()
+            secureProp == "0"
+        } catch (e: Exception) {
+            false
+        }
+
+        // Check build tags
+        val testKeys = Build.TAGS?.contains("test-keys") == true
+
+        return debuggable || notSecure || testKeys
+    }
+
+    /**
+     * Checks for Superuser apps (legacy)
+     */
+    private fun checkSuperuserApps(): Boolean {
+        return SUPERUSER_PATHS.any { java.io.File(it).exists() }
+    }
+
     companion object {
         const val NAME = "NitroDeviceInfo"
+
+        // Root detection constant paths (moved here to avoid repeated memory allocation)
+        private val SU_PATHS = listOf(
+            "/system/app/Superuser.apk",
+            "/system/xbin/su",
+            "/system/bin/su",
+            "/sbin/su",
+            "/su/bin/su",
+            "/data/local/xbin/su",
+            "/data/local/bin/su",
+            "/data/local/su",
+            "/system/sd/xbin/su",
+            "/system/bin/failsafe/su",
+            "/system/bin/.ext/.su",
+            "/system/usr/we-need-root/su-backup",
+            "/system/xbin/mu"
+        )
+
+        private val MAGISK_PATHS = listOf(
+            "/data/adb/magisk",
+            "/data/adb/magisk.db",
+            "/data/adb/magisk.img",
+            "/cache/.disable_magisk",
+            "/sbin/.magisk",
+            "/sbin/.core",
+            "/dev/.magisk.unblock"
+        )
+
+        private val MAGISK_PACKAGES = listOf(
+            "com.topjohnwu.magisk",
+            "io.github.vvb2060.magisk",  // Magisk Delta
+            "com.kingroot.kinguser",
+            "com.kingo.root",
+            "com.noshufou.android.su",
+            "eu.chainfire.supersu",
+            "com.koushikdutta.superuser",
+            "com.thirdparty.superuser",
+            "com.yellowes.su"
+        )
+
+        private val KERNELSU_PATHS = listOf(
+            "/data/adb/ksu",
+            "/data/adb/ksud",
+            "/data/adb/ksu/modules"
+        )
+
+        private val KERNELSU_PACKAGES = listOf(
+            "me.weishu.kernelsu",
+            "com.topjohnwu.magisk.ksu"  // KernelSU Manager
+        )
+
+        private val APATCH_PATHS = listOf(
+            "/data/adb/apatch",
+            "/data/adb/ap",
+            "/data/adb/apd"
+        )
+
+        private val APATCH_PACKAGES = listOf(
+            "me.bmax.apatch"
+        )
+
+        private val BUSYBOX_PATHS = listOf(
+            "/system/xbin/busybox",
+            "/system/bin/busybox",
+            "/sbin/busybox",
+            "/su/bin/busybox",
+            "/data/local/xbin/busybox"
+        )
+
+        private val SUPERUSER_PATHS = listOf(
+            "/system/app/Superuser.apk",
+            "/system/app/SuperSU.apk",
+            "/system/app/SuperSU/SuperSU.apk"
+        )
     }
 }
