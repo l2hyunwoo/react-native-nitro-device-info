@@ -5,46 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.2] - 2025-12-03
+## [1.4.2] - 2025-12-04
 
 ### Added
 
-- **Device Integrity / Root Detection API**: New **local-only** APIs for detecting rooted (Android) or jailbroken (iOS) devices
+- **Expo Device Parity APIs**: New APIs to achieve feature parity with `expo-device`
 
-  **Synchronous API** - `isDeviceCompromised(): boolean`:
-  - Fast local-only detection (<50ms)
+  **Device Integrity** ([#48](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/48)) - `isRootedExperimentalAsync()` equivalent:
+  - `isDeviceCompromised(): boolean`: Synchronous local-only detection (<50ms)
+  - `verifyDeviceIntegrity(): Promise<boolean>`: Async with SSH port scan on iOS (up to 200ms)
   - Returns `false` on emulators/simulators for development convenience
 
-  **Asynchronous API** - `verifyDeviceIntegrity(): Promise<boolean>`:
-  - iOS: Includes SSH port scanning (up to 200ms) in addition to all sync checks
-  - Android: Async wrapper for `isDeviceCompromised()` (same checks)
-  - Returns `false` on emulators/simulators
-
-  **Android Detection Methods** (Enhanced):
-  - su binary paths (`/system/xbin/su`, `/system/bin/su`, `/sbin/su`, etc.)
-  - Magisk detection (`/data/adb/magisk`, Magisk Manager package)
-  - KernelSU detection (`/data/adb/ksu`, KernelSU Manager package)
-  - APatch detection (`/data/adb/apatch`, APatch Manager package)
-  - Busybox (`/system/xbin/busybox`)
+  **Android Root Detection**:
+  - su binary paths, Magisk, KernelSU, APatch, Busybox
   - Build props (`ro.debuggable`, `ro.secure`, test-keys)
   - Legacy Superuser apps (SuperSU, Superuser.apk)
 
-  **iOS Detection Methods** (Enhanced):
+  **iOS Jailbreak Detection**:
   - Jailbreak apps (Cydia, Sileo, Zebra, Installer 5)
-  - URL schemes (`cydia://`, `sileo://`, `zbra://`, `filza://`)
-  - System file write test (`/private/jailbreak.txt`)
-  - DYLD injection detection (MobileSubstrate, libhooker, TweakInject)
-  - Symbolic links (`/Applications`, `/Library/Ringtones`)
-  - SSH ports (22, 44)
+  - URL schemes, system file write test, DYLD injection
+  - Symbolic links, SSH ports (22, 44)
 
-  **Emulator/Simulator Policy**:
-  - Both APIs return `false` when `isEmulator === true`
-  - Prevents false positives during development
+  **System Resources** ([#49](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/49)) - `getUptimeAsync()` equivalent:
+  - `getUptime(): number`: Device uptime since boot in milliseconds
+    - iOS: Uses `systemUptime` (excludes deep sleep)
+    - Android: Uses `elapsedRealtime()` (includes deep sleep)
 
-  **Limitations** (Important):
+  **Device Capabilities** ([#49](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/49)) - `deviceYearClass` equivalent:
+  - `deviceYearClass: number`: Estimated device year class based on hardware specs
+    - Extended Facebook algorithm updated for 2025 (supports 16GB+ RAM)
+    - RAM-based: ≤2GB→2013, ≤4GB→2015, ≤8GB→2019, ≤16GB→2023, >16GB→2025
+    - Cached after first access
+
+  **Platform Capabilities** ([#49](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/49)) - `isSideLoadingEnabledAsync()` equivalent:
+  - `isSideLoadingEnabled(): boolean`: Check if sideloading is enabled (Android only)
+    - Android 8.0+: Per-app permission (`canRequestPackageInstalls()`)
+    - Android 7.x: Global device setting
+    - iOS: Always returns `false`
+
+  **Limitations** (Device Integrity):
   - **Local detection only** - Does NOT use Play Integrity API or iOS App Attest
   - All detection methods can be bypassed (Magisk + Shamiko, RootHide, etc.)
-  - "Not detected" does NOT guarantee a secure device
   - Use as one layer of defense-in-depth, not as sole security measure
 
 **Usage Example**:
@@ -52,16 +53,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-// Synchronous check (local only)
+// Device integrity check
 if (DeviceInfoModule.isDeviceCompromised()) {
   console.warn('Rooted/Jailbroken device detected');
-  // Restrict security-sensitive features
 }
 
-// Asynchronous check (iOS includes SSH port scan, Android same as sync)
-const isCompromised = await DeviceInfoModule.verifyDeviceIntegrity();
-if (isCompromised) {
-  // Block financial transactions, etc.
+// Device uptime
+const uptime = DeviceInfoModule.getUptime();
+console.log(`Running for ${Math.floor(uptime / 1000 / 60 / 60)}h`);
+
+// Device year class for feature toggling
+const yearClass = DeviceInfoModule.deviceYearClass;
+if (yearClass >= 2020) {
+  enableHighEndFeatures();
+}
+
+// Sideloading check (Android)
+if (DeviceInfoModule.isSideLoadingEnabled()) {
+  console.warn('Sideloading enabled');
 }
 ```
 
@@ -496,6 +505,8 @@ The following methods remain Promise-based as they perform I/O operations:
 - iOS and Android native implementations
 - Example apps (showcase and benchmark)
 
+[1.4.2]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.4.1...v1.4.2
+[1.4.1]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/v1.2.1...v1.3.0
