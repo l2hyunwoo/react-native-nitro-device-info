@@ -1136,4 +1136,72 @@ export interface DeviceInfo
    * @platform Android (alias on iOS)
    */
   getFreeDiskStorageOld(): number;
+
+  // DEVICE INTEGRITY / SECURITY (LOCAL DETECTION ONLY)
+
+  /**
+   * Synchronously detects rooted (Android) or jailbroken (iOS) device status
+   *
+   * **LOCAL DETECTION ONLY** - Does NOT use Play Integrity API or iOS App Attest.
+   * All detection methods can be bypassed by sophisticated tools.
+   * Always returns `false` on emulators/simulators for development convenience.
+   *
+   * **Android Detection:**
+   * - su binary paths (`/system/xbin/su`, `/system/bin/su`, `/sbin/su`, etc.)
+   * - Magisk files/packages (`/data/adb/magisk`, Magisk Manager)
+   * - KernelSU files (`/data/adb/ksu`)
+   * - APatch files (`/data/adb/apatch`)
+   * - Busybox presence (`/system/xbin/busybox`)
+   * - Build props tampering (`ro.debuggable=1`, `ro.secure=0`)
+   * - Superuser apps (legacy)
+   *
+   * **iOS Detection:**
+   * - Jailbreak apps (Cydia, Sileo, Zebra, Installer 5)
+   * - URL scheme responses (`cydia://`, `sileo://`)
+   * - System file write test (`/private/jailbreak.txt`)
+   * - DYLD injection detection
+   * - Symbolic links (`/Applications`, `/Library/Ringtones`)
+   * - SSH ports (22, 44)
+   *
+   * **Limitations:**
+   * - All detection methods can be bypassed (Magisk + Shamiko, RootHide, etc.)
+   * - "Not detected" does NOT mean the device is secure
+   *
+   * @returns `true` if device is rooted/jailbroken, `false` otherwise
+   * @example
+   * ```typescript
+   * if (DeviceInfoModule.isDeviceCompromised()) {
+   *   // Restrict security-sensitive features
+   *   console.warn('Rooted/Jailbroken device detected');
+   * }
+   * ```
+   *
+   * @platform iOS, Android
+   */
+  isDeviceCompromised(): boolean;
+
+  /**
+   * Asynchronous wrapper for device integrity verification
+   *
+   * Currently identical to `isDeviceCompromised()` but wrapped in a Promise.
+   * Provided for API consistency and future extensibility.
+   *
+   * **iOS:** Includes SSH port scanning (can take up to 200ms) in addition to
+   * all checks performed by `isDeviceCompromised()`.
+   *
+   * **Android:** Same as `isDeviceCompromised()` (async wrapper only).
+   *
+   * @returns Promise resolving to `true` if device is rooted/jailbroken
+   * @example
+   * ```typescript
+   * const isCompromised = await DeviceInfoModule.verifyDeviceIntegrity();
+   * if (isCompromised) {
+   *   // Block financial transactions, etc.
+   * }
+   * ```
+   *
+   * @platform iOS, Android
+   * @async iOS: up to 200ms (includes SSH port scan), Android: <50ms
+   */
+  verifyDeviceIntegrity(): Promise<boolean>;
 }
