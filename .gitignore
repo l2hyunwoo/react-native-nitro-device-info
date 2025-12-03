@@ -94,5 +94,10 @@ CLAUDE.md
 specs/
 .specify/
 
+# openspec
+AGENTS.md
+**/AGENTS.md
+openspec/
+
 # ios
 Pods/

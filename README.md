@@ -140,32 +140,10 @@ const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
 const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
 const hasGms = DeviceInfoModule.getHasGms(); // Android only
 
-// Device Integrity (Root/Jailbreak Detection)
+// Device Integrity (Root/Jailbreak Detection) - Local detection only
 const isCompromised = DeviceInfoModule.isDeviceCompromised(); // Sync, <50ms
 const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // Async
 ```
-
-### Device Integrity Check
-
-Detect rooted (Android) or jailbroken (iOS) devices:
-
-```typescript
-import { DeviceInfoModule } from 'react-native-nitro-device-info';
-
-// Synchronous check (fast, <50ms)
-if (DeviceInfoModule.isDeviceCompromised()) {
-  console.warn('Rooted/Jailbroken device detected');
-  // Restrict security-sensitive features
-}
-
-// Asynchronous check (iOS: includes SSH port scan, up to 200ms)
-const isCompromised = await DeviceInfoModule.verifyDeviceIntegrity();
-if (isCompromised) {
-  // Block financial transactions, etc.
-}
-```
-
-> ⚠️ **Warning**: Local detection only. Does NOT use Play Integrity API or iOS App Attest. All detection methods can be bypassed by sophisticated tools (Magisk + Shamiko, RootHide, etc.). "Not detected" does NOT guarantee a secure device. Use as one layer of defense-in-depth.
 
 ## API Reference
 
