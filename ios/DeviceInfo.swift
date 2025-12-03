@@ -1284,7 +1284,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /**
-   * Checks if local port is connectable
+   * Checks if local port is connectable using poll() for better portability
    */
   private func canConnectToPort(port: Int) -> Bool {
     var addr = sockaddr_in()
@@ -1310,15 +1310,11 @@ class DeviceInfo: HybridDeviceInfoSpec {
       return true
     }
 
-    // EINPROGRESS means connection in progress - port may be open
+    // EINPROGRESS means connection in progress - use poll() to wait
     if errno == EINPROGRESS {
-      var fdSet = fd_set()
-      __darwin_fd_zero(&fdSet)
-      __darwin_fd_set(sock, &fdSet)
-
-      var timeout = timeval(tv_sec: 0, tv_usec: 100000)  // 100ms timeout
-      let selectResult = select(sock + 1, nil, &fdSet, nil, &timeout)
-      return selectResult > 0
+      var pollFd = pollfd(fd: sock, events: Int16(POLLOUT), revents: 0)
+      let pollResult = poll(&pollFd, 1, 100)  // 100ms timeout
+      return pollResult > 0 && (pollFd.revents & Int16(POLLOUT)) != 0
     }
 
     return false
