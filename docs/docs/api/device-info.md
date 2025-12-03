@@ -268,7 +268,7 @@ console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 ### `getUptime(): number`
 
-Get device uptime since boot in milliseconds.
+Get device uptime since boot in milliseconds, excluding deep sleep time.
 
 ```typescript
 const uptime = DeviceInfoModule.getUptime();
@@ -277,11 +277,11 @@ const minutes = Math.floor((uptime / 1000 / 60) % 60);
 console.log(`Device running for ${hours}h ${minutes}m`);
 ```
 
-**Platform behavior difference**:
-- **iOS**: Uses `systemUptime` which excludes deep sleep time
-- **Android**: Uses `elapsedRealtime()` which includes deep sleep time
+**Platform behavior**:
+- **iOS**: Uses `systemUptime` (excludes deep sleep)
+- **Android**: Uses `uptimeMillis()` (excludes deep sleep)
 
-This represents the wall-clock time since the device was last booted.
+Both platforms return consistent "active time" since boot, matching the behavior of `expo-device.getUptimeAsync()`.
 
 ---
 
@@ -1062,7 +1062,7 @@ This provides fast access while keeping data reasonably fresh.
 | Core device info        | ✅  | ✅      | All platforms                       |
 | Battery info            | ✅  | ✅      | Low power mode iOS only             |
 | System resources        | ✅  | ✅      | All platforms                       |
-| getUptime               | ✅  | ✅      | iOS excludes deep sleep             |
+| getUptime               | ✅  | ✅      | Both exclude deep sleep             |
 | deviceYearClass         | ✅  | ✅      | Extended 2025 algorithm             |
 | isSideLoadingEnabled    | ❌  | ✅      | Android only (per-app on 8.0+)      |
 | Network info            | ✅  | ✅      | MAC hardcoded on iOS 7+             |

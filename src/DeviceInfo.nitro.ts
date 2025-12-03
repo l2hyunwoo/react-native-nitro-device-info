@@ -1210,13 +1210,17 @@ export interface DeviceInfo
   /**
    * Get device uptime since boot in milliseconds
    *
-   * Returns the time elapsed since the device was last booted.
+   * Returns the time elapsed since the device was last booted,
+   * excluding time spent in deep sleep.
    *
    * **Platform behavior:**
-   * - **iOS**: Uses `systemUptime` which excludes deep sleep time
-   * - **Android**: Uses `elapsedRealtime()` which includes deep sleep time
+   * - **iOS**: Uses `systemUptime` (excludes deep sleep)
+   * - **Android**: Uses `uptimeMillis()` (excludes deep sleep)
    *
-   * @returns Uptime in milliseconds
+   * Both platforms return consistent "active time" since boot.
+   * This matches the behavior of `expo-device.getUptimeAsync()`.
+   *
+   * @returns Uptime in milliseconds (excludes deep sleep on both platforms)
    * @example
    * ```typescript
    * const uptime = DeviceInfoModule.getUptime();
@@ -1278,6 +1282,13 @@ export interface DeviceInfo
    * **Important:** On Android 8.0+, even if the user has enabled "Install unknown apps"
    * for other apps, this will return `false` unless they specifically granted
    * permission to this app.
+   *
+   * **Prerequisite (Android 8.0+):** For `canRequestPackageInstalls()` to return `true`,
+   * your app must declare `REQUEST_INSTALL_PACKAGES` permission in AndroidManifest.xml:
+   * ```xml
+   * <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+   * ```
+   * Without this permission, this method will always return `false` on Android 8.0+.
    *
    * @returns `true` if this app can install packages from unknown sources
    * @example

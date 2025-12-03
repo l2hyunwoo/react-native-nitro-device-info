@@ -536,10 +536,11 @@ These `expo-device` APIs do not have direct equivalents:
 
 #### Uptime Behavior
 
-- **expo-device**: Returns uptime in milliseconds
-- **react-native-nitro-device-info**: Returns uptime in milliseconds
-  - iOS: Time since last boot (excludes deep sleep)
-  - Android: Time since last boot (includes deep sleep via `elapsedRealtime`)
+- **expo-device**: Returns uptime in milliseconds (excludes deep sleep)
+- **react-native-nitro-device-info**: Returns uptime in milliseconds (excludes deep sleep)
+  - iOS: Uses `systemUptime`
+  - Android: Uses `uptimeMillis()`
+  - Both platforms return consistent "active time" matching expo-device behavior
 
 #### Device Year Class
 

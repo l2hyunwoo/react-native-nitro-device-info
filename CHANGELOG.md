@@ -27,9 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Symbolic links, SSH ports (22, 44)
 
   **System Resources** ([#49](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/49)) - `getUptimeAsync()` equivalent:
-  - `getUptime(): number`: Device uptime since boot in milliseconds
-    - iOS: Uses `systemUptime` (excludes deep sleep)
-    - Android: Uses `elapsedRealtime()` (includes deep sleep)
+  - `getUptime(): number`: Device uptime since boot in milliseconds (excludes deep sleep)
+    - iOS: Uses `systemUptime`
+    - Android: Uses `uptimeMillis()`
+    - Both platforms return consistent "active time" matching expo-device behavior
 
   **Device Capabilities** ([#49](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/49)) - `deviceYearClass` equivalent:
   - `deviceYearClass: number`: Estimated device year class based on hardware specs
@@ -40,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   **Platform Capabilities** ([#49](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/49)) - `isSideLoadingEnabledAsync()` equivalent:
   - `isSideLoadingEnabled(): boolean`: Check if sideloading is enabled (Android only)
     - Android 8.0+: Per-app permission (`canRequestPackageInstalls()`)
+      - Requires `REQUEST_INSTALL_PACKAGES` permission in AndroidManifest.xml
     - Android 7.x: Global device setting
     - iOS: Always returns `false`
 

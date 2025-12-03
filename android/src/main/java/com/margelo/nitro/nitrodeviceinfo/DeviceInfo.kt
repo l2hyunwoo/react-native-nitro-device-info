@@ -1020,17 +1020,14 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     /**
      * Get device uptime since boot in milliseconds
      *
-     * Uses elapsedRealtime() which includes time spent in deep sleep.
-     * This represents actual wall-clock time since boot.
+     * Uses uptimeMillis() which excludes time spent in deep sleep.
+     * This matches the behavior of expo-device and iOS systemUptime.
      *
-     * Note: iOS uses systemUptime which excludes deep sleep.
-     *
-     * @returns Uptime in milliseconds
+     * @returns Uptime in milliseconds (excludes deep sleep)
      */
     override fun getUptime(): Double {
-        // elapsedRealtime() includes time spent in deep sleep
-        // uptimeMillis() excludes deep sleep and should NOT be used here
-        return SystemClock.elapsedRealtime().toDouble()
+        // uptimeMillis() excludes deep sleep, matching iOS systemUptime and expo-device
+        return SystemClock.uptimeMillis().toDouble()
     }
 
     /**
@@ -1209,6 +1206,13 @@ class DeviceInfo : HybridDeviceInfoSpec() {
      *
      * On Android 8.0+, even if the user has enabled "Install unknown apps" for other apps,
      * this will return false unless they specifically granted permission to this app.
+     *
+     * PREREQUISITE: For Android 8.0+, your app must declare REQUEST_INSTALL_PACKAGES
+     * permission in AndroidManifest.xml for canRequestPackageInstalls() to return true:
+     * ```xml
+     * <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+     * ```
+     * Without this permission, this method will always return false on Android 8.0+.
      *
      * @returns true if this app can install packages from unknown sources
      */
