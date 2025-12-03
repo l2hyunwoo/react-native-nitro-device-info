@@ -457,7 +457,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
 
   // ==========================================================================
-  // CATEGORY 12: Device Integrity
+  // CATEGORY 11: Device Integrity
   // ==========================================================================
   {
     key: 'isDeviceCompromised',

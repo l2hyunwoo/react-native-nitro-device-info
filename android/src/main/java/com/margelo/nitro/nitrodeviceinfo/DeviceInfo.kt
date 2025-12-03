@@ -1121,33 +1121,32 @@ class DeviceInfo : HybridDeviceInfoSpec() {
      */
     private fun checkBuildProps(): Boolean {
         // Check debug build
-        val debuggable = try {
-            val debugProp = Runtime.getRuntime()
-                .exec("getprop ro.debuggable")
-                .inputStream
-                .bufferedReader()
-                .readLine()
-            debugProp == "1"
-        } catch (e: Exception) {
-            false
-        }
+        val debuggable = getSystemProp("ro.debuggable") == "1"
 
         // Check security settings
-        val notSecure = try {
-            val secureProp = Runtime.getRuntime()
-                .exec("getprop ro.secure")
-                .inputStream
-                .bufferedReader()
-                .readLine()
-            secureProp == "0"
-        } catch (e: Exception) {
-            false
-        }
+        val notSecure = getSystemProp("ro.secure") == "0"
 
         // Check build tags
         val testKeys = Build.TAGS?.contains("test-keys") == true
 
         return debuggable || notSecure || testKeys
+    }
+
+    /**
+     * Gets system property via getprop command with proper resource cleanup
+     */
+    private fun getSystemProp(key: String): String? {
+        var process: Process? = null
+        return try {
+            process = Runtime.getRuntime().exec("getprop $key")
+            process.inputStream.bufferedReader().use { reader ->
+                reader.readLine()
+            }
+        } catch (e: Exception) {
+            null
+        } finally {
+            process?.destroy()
+        }
     }
 
     /**
