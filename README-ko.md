@@ -140,7 +140,33 @@ console.log(`위치 서비스: ${isLocationEnabled ? '활성화' : '비활성화
 const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
 const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
 const hasGms = DeviceInfoModule.getHasGms(); // Android 전용
+
+// 디바이스 무결성 (루팅/탈옥 탐지)
+const isCompromised = DeviceInfoModule.isDeviceCompromised(); // 동기, <50ms
+const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // 비동기
 ```
+
+### 디바이스 무결성 검사
+
+루팅(Android) 또는 탈옥(iOS) 디바이스를 탐지합니다:
+
+```typescript
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+
+// 동기 검사 (빠름, <50ms)
+if (DeviceInfoModule.isDeviceCompromised()) {
+  console.warn('루팅/탈옥 디바이스가 감지되었습니다');
+  // 보안 민감 기능 제한
+}
+
+// 비동기 검사 (iOS: SSH 포트 스캔 포함, 최대 200ms)
+const isCompromised = await DeviceInfoModule.verifyDeviceIntegrity();
+if (isCompromised) {
+  // 금융 거래 차단 등 보안 조치
+}
+```
+
+> ⚠️ **주의**: 로컬 탐지 전용입니다. Play Integrity API나 iOS App Attest는 사용하지 않습니다. 모든 탐지 방법은 Magisk + Shamiko, RootHide 등으로 우회될 수 있습니다. "탐지되지 않음"이 안전한 디바이스를 보장하지 않습니다. 다층 방어 전략의 일부로 사용하세요.
 
 ## API 레퍼런스
 
