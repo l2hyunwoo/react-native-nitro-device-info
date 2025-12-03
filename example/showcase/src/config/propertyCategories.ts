@@ -345,7 +345,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
 
   // ==========================================================================
-  // CATEGORY 9: Android Build Information
+  // CATEGORY 10: Android Build Information
   // ==========================================================================
   {
     key: 'bootloader',
@@ -429,7 +429,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
 
   // ==========================================================================
-  // CATEGORY 10: Advanced Features
+  // CATEGORY 11: Advanced Features
   // ==========================================================================
   {
     key: 'getFirstInstallTime',
@@ -457,7 +457,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
 
   // ==========================================================================
-  // CATEGORY 11: Device Integrity
+  // CATEGORY 12: Device Integrity
   // ==========================================================================
   {
     key: 'isDeviceCompromised',
