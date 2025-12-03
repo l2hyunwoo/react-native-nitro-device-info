@@ -5,6 +5,16 @@ All notable changes to `@react-native-nitro-device-info/mcp-server` will be docu
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-12-03
+
+### Fixed
+
+- **npm publish workspace protocol error**: Added `.npmrc` with `workspaces=false` to fix npm publish failing due to yarn workspace protocol in dependencies
+
+### Changed
+
+- **@modelcontextprotocol/sdk**: Bumped from 1.23.0 to 1.24.0
+
 ## [1.0.0] - 2025-12-02
 
 ### Added
@@ -48,4 +58,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Claude Code (auto-configured via `init`)
   - Any MCP-compatible client with stdio transport
 
+[1.0.1]: https://github.com/l2hyunwoo/react-native-nitro-device-info/releases/tag/mcp-server-v1.0.1
 [1.0.0]: https://github.com/l2hyunwoo/react-native-nitro-device-info/releases/tag/mcp-server-v1.0.0
