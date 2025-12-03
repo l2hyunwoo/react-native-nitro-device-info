@@ -139,6 +139,10 @@ console.log(`Location Services: ${isLocationEnabled ? 'enabled' : 'disabled'}`);
 const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
 const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
 const hasGms = DeviceInfoModule.getHasGms(); // Android only
+
+// Device Integrity (Root/Jailbreak Detection) - Local detection only
+const isCompromised = DeviceInfoModule.isDeviceCompromised(); // Sync, <50ms
+const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // Async
 ```
 
 ## API Reference

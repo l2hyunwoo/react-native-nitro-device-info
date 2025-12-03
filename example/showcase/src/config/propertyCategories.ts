@@ -345,7 +345,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
 
   // ==========================================================================
-  // CATEGORY 9: Android Build Information
+  // CATEGORY 10: Android Build Information
   // ==========================================================================
   {
     key: 'bootloader',
@@ -429,7 +429,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
 
   // ==========================================================================
-  // CATEGORY 10: Advanced Features
+  // CATEGORY 11: Advanced Features
   // ==========================================================================
   {
     key: 'getFirstInstallTime',
@@ -453,6 +453,26 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     category: PropertyCategory.ADVANCED_FEATURES,
     type: PropertyType.STRING,
     platform: PlatformAvailability.ANDROID_ONLY,
+    isSync: false,
+  },
+
+  // ==========================================================================
+  // CATEGORY 12: Device Integrity
+  // ==========================================================================
+  {
+    key: 'isDeviceCompromised',
+    label: 'Device Compromised',
+    category: PropertyCategory.DEVICE_INTEGRITY,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+  {
+    key: 'verifyDeviceIntegrity',
+    label: 'Verify Integrity (Async)',
+    category: PropertyCategory.DEVICE_INTEGRITY,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ALL,
     isSync: false,
   },
 ];

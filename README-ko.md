@@ -140,6 +140,10 @@ console.log(`위치 서비스: ${isLocationEnabled ? '활성화' : '비활성화
 const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
 const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
 const hasGms = DeviceInfoModule.getHasGms(); // Android 전용
+
+// 디바이스 무결성 (루팅/탈옥 탐지) - 로컬 탐지 전용
+const isCompromised = DeviceInfoModule.isDeviceCompromised(); // 동기, <50ms
+const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // 비동기
 ```
 
 ## API 레퍼런스
