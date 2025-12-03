@@ -1051,4 +1051,279 @@ class DeviceInfo: HybridDeviceInfoSpec {
   var navigationMode: NavigationMode {
     return .unknown
   }
+
+  // MARK: - Device Integrity / Security
+
+  /**
+   * Synchronously checks for jailbreak status
+   *
+   * Always returns false on simulator for development convenience.
+   * Uses fast detection methods only (file system checks, no network/socket operations).
+   * For comprehensive checks including SSH port scanning, use `verifyDeviceIntegrity()`.
+   */
+  func isDeviceCompromised() -> Bool {
+    // Simulator exception - for development convenience
+    #if targetEnvironment(simulator)
+      return false
+    #else
+      // Fast checks only (no socket operations to avoid blocking)
+      return checkJailbreakFiles() ||
+             checkJailbreakUrlSchemes() ||
+             checkSystemFileWritable() ||
+             checkSuspiciousDylibs() ||
+             checkSymbolicLinks()
+    #endif
+  }
+
+  /**
+   * Asynchronous integrity verification
+   *
+   * Performs all local checks including SSH port scanning which may take up to 200ms.
+   * Currently local checks only (App Attest may be added in future).
+   */
+  func verifyDeviceIntegrity() throws -> Promise<Bool> {
+    return Promise.async {
+      #if targetEnvironment(simulator)
+        return false
+      #else
+        // Include SSH port check in async method (can take up to 200ms)
+        return self.checkJailbreakFiles() ||
+               self.checkJailbreakUrlSchemes() ||
+               self.checkSystemFileWritable() ||
+               self.checkSuspiciousDylibs() ||
+               self.checkSymbolicLinks() ||
+               self.checkSshPorts()
+      #endif
+    }
+  }
+
+  // MARK: - Jailbreak Detection Helpers
+
+  /**
+   * Checks for jailbreak-related apps and files
+   */
+  private func checkJailbreakFiles() -> Bool {
+    let jailbreakPaths = [
+      // Package manager apps
+      "/Applications/Cydia.app",
+      "/Applications/Sileo.app",
+      "/Applications/Zebra.app",
+      "/Applications/Installer.app",
+      "/Applications/blackra1n.app",
+      "/Applications/FakeCarrier.app",
+      "/Applications/Icy.app",
+      "/Applications/IntelliScreen.app",
+      "/Applications/MxTube.app",
+      "/Applications/RockApp.app",
+      "/Applications/SBSettings.app",
+      "/Applications/WinterBoard.app",
+      // System paths
+      "/Library/MobileSubstrate/MobileSubstrate.dylib",
+      "/Library/MobileSubstrate/DynamicLibraries/",
+      "/var/lib/cydia",
+      "/var/lib/apt",
+      "/var/cache/apt",
+      "/var/log/syslog",
+      "/bin/bash",
+      "/bin/sh",
+      "/usr/sbin/sshd",
+      "/usr/bin/sshd",
+      "/usr/libexec/sftp-server",
+      "/etc/apt",
+      "/private/var/lib/apt/",
+      "/private/var/lib/cydia",
+      "/private/var/mobile/Library/SBSettings/Themes",
+      "/private/var/stash",
+      "/private/var/tmp/cydia.log",
+      "/System/Library/LaunchDaemons/com.ikey.bbot.plist",
+      "/System/Library/LaunchDaemons/com.saurik.Cydia.Startup.plist",
+      // Jailbreak tools
+      "/usr/bin/cycript",
+      "/usr/local/bin/cycript",
+      "/usr/lib/libcycript.dylib",
+      "/var/checkra1n.dmg",
+      "/var/binpack"
+    ]
+
+    let fileManager = FileManager.default
+    for path in jailbreakPaths {
+      if fileManager.fileExists(atPath: path) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * Checks for jailbreak-related URL schemes
+   */
+  private func checkJailbreakUrlSchemes() -> Bool {
+    let jailbreakSchemes = [
+      "cydia://",
+      "sileo://",
+      "zbra://",       // Zebra
+      "filza://",      // Filza file manager
+      "activator://"   // Activator tweak
+    ]
+
+    for scheme in jailbreakSchemes {
+      if let url = URL(string: scheme), UIApplication.shared.canOpenURL(url) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * Checks if system files are writable
+   */
+  private func checkSystemFileWritable() -> Bool {
+    let testPaths = [
+      "/private/jailbreak.txt",
+      "/private/var/mobile/Library/jailbreak.txt"
+    ]
+
+    let fileManager = FileManager.default
+    let testString = "jailbreak_test"
+
+    for path in testPaths {
+      do {
+        try testString.write(toFile: path, atomically: true, encoding: .utf8)
+        // Write succeeded - delete file and detect jailbreak
+        try? fileManager.removeItem(atPath: path)
+        return true
+      } catch {
+        // Write failure is normal (not jailbroken)
+      }
+    }
+    return false
+  }
+
+  /**
+   * Detects suspicious DYLD injections
+   */
+  private func checkSuspiciousDylibs() -> Bool {
+    let suspiciousDylibs = [
+      "MobileSubstrate",
+      "SubstrateLoader",
+      "SubstrateInserter",
+      "SubstrateBootstrap",
+      "CydiaSubstrate",
+      "cynject",
+      "CustomWidgetIcons",
+      "PreferenceLoader",
+      "RocketBootstrap",
+      "weeLoader",
+      "/.telegramloaded",
+      "libhooker",
+      "substrate",
+      "TweakInject",
+      "bfdecrypt",
+      "cycript",
+      "pspawn",
+      "rocketbootstrap",
+      "colors",
+      "libcolorpicker"
+    ]
+
+    let imageCount = _dyld_image_count()
+    for i in 0..<imageCount {
+      if let imageName = _dyld_get_image_name(i) {
+        let name = String(cString: imageName)
+        for suspicious in suspiciousDylibs {
+          if name.lowercased().contains(suspicious.lowercased()) {
+            return true
+          }
+        }
+      }
+    }
+    return false
+  }
+
+  /**
+   * Checks for symbolic links (created during jailbreak)
+   */
+  private func checkSymbolicLinks() -> Bool {
+    let symbolicLinkPaths = [
+      "/Applications",
+      "/Library/Ringtones",
+      "/Library/Wallpaper",
+      "/usr/arm-apple-darwin9",
+      "/usr/include",
+      "/usr/libexec",
+      "/usr/share"
+    ]
+
+    let fileManager = FileManager.default
+    for path in symbolicLinkPaths {
+      do {
+        let attributes = try fileManager.attributesOfItem(atPath: path)
+        if let fileType = attributes[.type] as? FileAttributeType,
+           fileType == .typeSymbolicLink {
+          return true
+        }
+      } catch {
+        // File not found or inaccessible - normal
+      }
+    }
+    return false
+  }
+
+  /**
+   * Checks SSH ports (OpenSSH installed during jailbreak)
+   */
+  private func checkSshPorts() -> Bool {
+    let sshPorts = [22, 44]  // 22: OpenSSH, 44: checkra1n
+
+    for port in sshPorts {
+      if canConnectToPort(port: port) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * Checks if local port is connectable
+   */
+  private func canConnectToPort(port: Int) -> Bool {
+    var addr = sockaddr_in()
+    addr.sin_family = sa_family_t(AF_INET)
+    addr.sin_port = in_port_t(port).bigEndian
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1")
+
+    let sock = socket(AF_INET, SOCK_STREAM, 0)
+    guard sock != -1 else { return false }
+    defer { close(sock) }
+
+    // Set non-blocking mode
+    let flags = fcntl(sock, F_GETFL, 0)
+    _ = fcntl(sock, F_SETFL, flags | O_NONBLOCK)
+
+    let result = withUnsafePointer(to: &addr) {
+      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        connect(sock, $0, socklen_t(MemoryLayout<sockaddr_in>.size))
+      }
+    }
+
+    if result == 0 {
+      return true
+    }
+
+    // EINPROGRESS means connection in progress - port may be open
+    if errno == EINPROGRESS {
+      var fdSet = fd_set()
+      __darwin_fd_zero(&fdSet)
+      withUnsafeMutablePointer(to: &fdSet) { ptr in
+        let fd = Int32(sock)
+        ptr.pointee.__fds_bits.0 |= (1 << fd)
+      }
+
+      var timeout = timeval(tv_sec: 0, tv_usec: 100000)  // 100ms timeout
+      let selectResult = select(sock + 1, nil, &fdSet, nil, &timeout)
+      return selectResult > 0
+    }
+
+    return false
+  }
 }
