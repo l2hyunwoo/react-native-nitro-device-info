@@ -1078,23 +1078,22 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
     // iOS RAM-based year class (updated for 2025)
     // iOS devices have consistent RAM per generation
-    switch totalRam {
-    case ...512 * MB:
-      return 2010  // iPhone 4 and earlier
-    case ...1024 * MB:
-      return 2012  // iPhone 5, 5c
-    case ...2048 * MB:
-      return 2014  // iPhone 6, 6s
-    case ...3072 * MB:
-      return 2016  // iPhone 7, 8
-    case ...4096 * MB:
-      return 2018  // iPhone XS, 11
-    case ...6144 * MB:
-      return 2020  // iPhone 12, 13
-    case ...8192 * MB:
-      return 2022  // iPhone 14 Pro, 15 Pro
-    default:
-      return 2024  // 8GB+ (iPhone 16 Pro, future devices)
+    if totalRam <= 512 * MB {
+      return 2010 // iPhone 4 and earlier
+    } else if totalRam <= 1024 * MB {
+      return 2012 // iPhone 5, 5c
+    } else if totalRam <= 2048 * MB {
+      return 2014 // iPhone 6, 6s
+    } else if totalRam <= 3072 * MB {
+      return 2016 // iPhone 7, 8
+    } else if totalRam <= 4096 * MB {
+      return 2018 // iPhone XS, 11
+    } else if totalRam <= 6144 * MB {
+      return 2020 // iPhone 12, 13
+    } else if totalRam <= 8192 * MB {
+      return 2022 // iPhone 14 Pro, 15 Pro
+    } else {
+      return 2024 // 8GB+ (iPhone 16 Pro, future devices)
     }
   }()
 
