@@ -16,6 +16,7 @@ A high-performance device information library for React Native, built on [Nitro 
 - 🚀 **Zero-overhead JSI bindings** - Direct JavaScript-to-native communication
 - 📱 **100+ device properties** - Comprehensive device information
 - 📦 **TypeScript-first** - Full type definitions included
+- 🔄 **Familiar APIs** - Compatible with `react-native-device-info` and `expo-device` APIs
 
 ## Installation
 

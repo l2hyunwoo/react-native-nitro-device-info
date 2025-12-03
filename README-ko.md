@@ -16,6 +16,7 @@
 - 🚀 **제로 오버헤드 JSI 바인딩** — JavaScript에서 네이티브 코드로 직접 접근
 - 📱 **100개 이상의 속성 제공** — 포괄적인 디바이스 정보 조회
 - 📦 **TypeScript 우선 설계** — 완전한 타입 정의 포함
+- 🔄 **익숙한 API** — `react-native-device-info` 및 `expo-device` API와 호환
 
 ## 설치 방법
 
