@@ -13,6 +13,7 @@ import type {
   PowerState,
   DeviceType,
   BatteryState,
+  NavigationMode,
 } from './DeviceInfo.nitro';
 
 /**
@@ -56,7 +57,7 @@ export function createDeviceInfo(): DeviceInfo {
 export const DeviceInfoModule: DeviceInfo = createDeviceInfo();
 
 // Re-export types for convenience
-export type { DeviceInfo, PowerState, DeviceType, BatteryState };
+export type { DeviceInfo, PowerState, DeviceType, BatteryState, NavigationMode };
 
 // Re-export React hooks for runtime monitoring
 export {
