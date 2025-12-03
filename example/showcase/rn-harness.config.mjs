@@ -14,9 +14,9 @@ const isCI = process.env.CI === 'true';
 const config = {
   entryPoint: './index.js',
   appRegistryComponentName: 'NitroDeviceInfoExample',
-  // CI: 180s timeout for slower Metro startup on shared runners
+  // CI: 300s timeout for slower Metro startup and simulator response on shared runners
   // Local: 60s timeout for faster feedback during development
-  bridgeTimeout: isCI ? 180000 : 60000,
+  bridgeTimeout: isCI ? 300000 : 60000,
 
   runners: [
     applePlatform({
