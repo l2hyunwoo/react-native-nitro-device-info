@@ -1064,7 +1064,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             totalRam <= 8 * GB -> 2019
             totalRam <= 12 * GB -> 2021
             totalRam <= 16 * GB -> 2023
-            else -> 2025  // 16GB+ devices
+            else -> 2025 // 16GB+ devices
         }
     }
 
@@ -1156,7 +1156,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             cores <= 3 -> 2011
             cores <= 5 -> 2012
             cores <= 7 -> 2015
-            else -> 2018  // 8+ cores
+            else -> 2018 // 8+ cores
         }
     }
 
@@ -1172,7 +1172,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             freqKHz <= 2020 * MHZ_IN_KHZ -> 2013
             freqKHz <= 2500 * MHZ_IN_KHZ -> 2015
             freqKHz <= 3000 * MHZ_IN_KHZ -> 2018
-            else -> 2021  // 3GHz+ modern chips
+            else -> 2021 // 3GHz+ modern chips
         }
     }
 
