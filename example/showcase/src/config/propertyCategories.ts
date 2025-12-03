@@ -455,6 +455,26 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     platform: PlatformAvailability.ANDROID_ONLY,
     isSync: false,
   },
+
+  // ==========================================================================
+  // CATEGORY 12: Device Integrity
+  // ==========================================================================
+  {
+    key: 'isDeviceCompromised',
+    label: 'Device Compromised',
+    category: PropertyCategory.DEVICE_INTEGRITY,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+  {
+    key: 'verifyDeviceIntegrity',
+    label: 'Verify Integrity (Async)',
+    category: PropertyCategory.DEVICE_INTEGRITY,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ALL,
+    isSync: false,
+  },
 ];
 
 /**

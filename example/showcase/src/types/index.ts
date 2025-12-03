@@ -26,6 +26,7 @@ export enum PropertyCategory {
   PLATFORM_CAPABILITIES = 'Platform Capabilities',
   ANDROID_BUILD_INFO = 'Android Build Information',
   ADVANCED_FEATURES = 'Advanced Features',
+  DEVICE_INTEGRITY = 'Device Integrity',
 }
 
 /**
