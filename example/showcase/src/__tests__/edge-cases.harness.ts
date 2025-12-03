@@ -142,16 +142,7 @@ describe('Tier 3 - Security APIs (Type Verification Only)', () => {
 });
 
 describe('Tier 3 - User Agent (Type Verification Only)', () => {
-  // Skip on CI - WKWebView can hang in simulator environment
-  const isCI = process.env.CI === 'true';
-
   test('getUserAgent returns string', async () => {
-    if (isCI && Platform.OS === 'ios') {
-      // Skip on iOS CI - WKWebView may timeout in simulator
-      expect(true).toBe(true);
-      return;
-    }
-
     const userAgent = await DeviceInfoModule.getUserAgent();
     expect(typeof userAgent).toBe('string');
     expect(userAgent.length).toBeGreaterThan(0);

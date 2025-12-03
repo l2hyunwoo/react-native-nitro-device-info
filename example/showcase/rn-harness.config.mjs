@@ -17,6 +17,9 @@ const config = {
   // CI: 300s timeout for slower Metro startup and simulator response on shared runners
   // Local: 60s timeout for faster feedback during development
   bridgeTimeout: isCI ? 300000 : 60000,
+  // CI: Disable app restart between test files to avoid simulator timeout issues
+  // Local: Enable for better test isolation during development
+  resetEnvironmentBetweenTestFiles: !isCI,
 
   runners: [
     applePlatform({
