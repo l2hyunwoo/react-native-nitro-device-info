@@ -1160,76 +1160,87 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         const val NAME = "NitroDeviceInfo"
 
         // Root detection constant paths (moved here to avoid repeated memory allocation)
-        private val SU_PATHS = listOf(
-            "/system/xbin/su",
-            "/system/bin/su",
-            "/sbin/su",
-            "/su/bin/su",
-            "/data/local/xbin/su",
-            "/data/local/bin/su",
-            "/data/local/su",
-            "/system/sd/xbin/su",
-            "/system/bin/failsafe/su",
-            "/system/bin/.ext/.su",
-            "/system/usr/we-need-root/su-backup",
-            "/system/xbin/mu"
-        )
+        private val SU_PATHS =
+            listOf(
+                "/system/xbin/su",
+                "/system/bin/su",
+                "/sbin/su",
+                "/su/bin/su",
+                "/data/local/xbin/su",
+                "/data/local/bin/su",
+                "/data/local/su",
+                "/system/sd/xbin/su",
+                "/system/bin/failsafe/su",
+                "/system/bin/.ext/.su",
+                "/system/usr/we-need-root/su-backup",
+                "/system/xbin/mu",
+            )
 
-        private val MAGISK_PATHS = listOf(
-            "/data/adb/magisk",
-            "/data/adb/magisk.db",
-            "/data/adb/magisk.img",
-            "/cache/.disable_magisk",
-            "/sbin/.magisk",
-            "/sbin/.core",
-            "/dev/.magisk.unblock"
-        )
+        private val MAGISK_PATHS =
+            listOf(
+                "/data/adb/magisk",
+                "/data/adb/magisk.db",
+                "/data/adb/magisk.img",
+                "/cache/.disable_magisk",
+                "/sbin/.magisk",
+                "/sbin/.core",
+                "/dev/.magisk.unblock",
+            )
 
-        private val MAGISK_PACKAGES = listOf(
-            "com.topjohnwu.magisk",
-            "io.github.vvb2060.magisk",  // Magisk Delta
-            "com.kingroot.kinguser",
-            "com.kingo.root",
-            "com.noshufou.android.su",
-            "eu.chainfire.supersu",
-            "com.koushikdutta.superuser",
-            "com.thirdparty.superuser",
-            "com.yellowes.su"
-        )
+        private val MAGISK_PACKAGES =
+            listOf(
+                "com.topjohnwu.magisk",
+                // Magisk Delta
+                "io.github.vvb2060.magisk",
+                "com.kingroot.kinguser",
+                "com.kingo.root",
+                "com.noshufou.android.su",
+                "eu.chainfire.supersu",
+                "com.koushikdutta.superuser",
+                "com.thirdparty.superuser",
+                "com.yellowes.su",
+            )
 
-        private val KERNELSU_PATHS = listOf(
-            "/data/adb/ksu",
-            "/data/adb/ksud",
-            "/data/adb/ksu/modules"
-        )
+        private val KERNELSU_PATHS =
+            listOf(
+                "/data/adb/ksu",
+                "/data/adb/ksud",
+                "/data/adb/ksu/modules",
+            )
 
-        private val KERNELSU_PACKAGES = listOf(
-            "me.weishu.kernelsu",
-            "com.topjohnwu.magisk.ksu"  // KernelSU Manager
-        )
+        private val KERNELSU_PACKAGES =
+            listOf(
+                "me.weishu.kernelsu",
+                // KernelSU Manager
+                "com.topjohnwu.magisk.ksu",
+            )
 
-        private val APATCH_PATHS = listOf(
-            "/data/adb/apatch",
-            "/data/adb/ap",
-            "/data/adb/apd"
-        )
+        private val APATCH_PATHS =
+            listOf(
+                "/data/adb/apatch",
+                "/data/adb/ap",
+                "/data/adb/apd",
+            )
 
-        private val APATCH_PACKAGES = listOf(
-            "me.bmax.apatch"
-        )
+        private val APATCH_PACKAGES =
+            listOf(
+                "me.bmax.apatch",
+            )
 
-        private val BUSYBOX_PATHS = listOf(
-            "/system/xbin/busybox",
-            "/system/bin/busybox",
-            "/sbin/busybox",
-            "/su/bin/busybox",
-            "/data/local/xbin/busybox"
-        )
+        private val BUSYBOX_PATHS =
+            listOf(
+                "/system/xbin/busybox",
+                "/system/bin/busybox",
+                "/sbin/busybox",
+                "/su/bin/busybox",
+                "/data/local/xbin/busybox",
+            )
 
-        private val SUPERUSER_PATHS = listOf(
-            "/system/app/Superuser.apk",
-            "/system/app/SuperSU.apk",
-            "/system/app/SuperSU/SuperSU.apk"
-        )
+        private val SUPERUSER_PATHS =
+            listOf(
+                "/system/app/Superuser.apk",
+                "/system/app/SuperSU.apk",
+                "/system/app/SuperSU/SuperSU.apk",
+            )
     }
 }
