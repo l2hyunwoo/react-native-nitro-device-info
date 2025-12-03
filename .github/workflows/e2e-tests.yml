@@ -66,7 +66,14 @@ jobs:
 
       - name: Build iOS App
         working-directory: example/showcase
-        run: npx react-native build-ios --mode=Debug --simulator
+        run: |
+          xcodebuild -workspace ios/NitroDeviceInfoExample.xcworkspace \
+            -scheme NitroDeviceInfoExample \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "id=$SIMULATOR_DEVICE_ID" \
+            -derivedDataPath ios/build \
+            build
 
       - name: Install iOS App
         run: |
@@ -146,6 +153,10 @@ jobs:
         working-directory: example/showcase
         run: yarn install --immutable
 
+      - name: Build Android App
+        working-directory: example/showcase/android
+        run: ./gradlew assembleDebug
+
       - name: Create AVD and run E2E tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -157,8 +168,7 @@ jobs:
           disable-animations: true
           working-directory: example/showcase
           script: |
-            # Build and install the Android app
-            npx react-native build-android --mode=debug
+            # Install the Android app
             adb install android/app/build/outputs/apk/debug/app-debug.apk
             # Run E2E tests
             npx react-native-harness --harnessRunner android
