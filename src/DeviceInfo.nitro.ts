@@ -1204,4 +1204,90 @@ export interface DeviceInfo
    * @async iOS: up to 200ms (includes SSH port scan), Android: <50ms
    */
   verifyDeviceIntegrity(): Promise<boolean>;
+
+  // EXPO-DEVICE PARITY APIs
+
+  /**
+   * Get device uptime since boot in milliseconds
+   *
+   * Returns the time elapsed since the device was last booted.
+   *
+   * **Platform behavior:**
+   * - **iOS**: Uses `systemUptime` which excludes deep sleep time
+   * - **Android**: Uses `elapsedRealtime()` which includes deep sleep time
+   *
+   * @returns Uptime in milliseconds
+   * @example
+   * ```typescript
+   * const uptime = DeviceInfoModule.getUptime();
+   * const hours = Math.floor(uptime / 1000 / 60 / 60);
+   * console.log(`Device has been running for ${hours} hours`);
+   * ```
+   *
+   * @platform iOS, Android
+   */
+  getUptime(): number;
+
+  /**
+   * Get estimated device year class based on hardware specifications
+   *
+   * Returns an estimated "year class" representing when this device's
+   * hardware would have been considered flagship/high-end.
+   *
+   * Based on extended Facebook device-year-class algorithm updated for 2025:
+   * - Uses RAM as primary classifier with CPU cores/frequency as secondary
+   * - Supports modern devices with 16GB+ RAM (returns 2025)
+   * - Cached after first access (hardware specs don't change)
+   *
+   * **RAM → Year Class mapping:**
+   * - ≤2 GB: 2013
+   * - ≤4 GB: 2015
+   * - ≤6 GB: 2017
+   * - ≤8 GB: 2019
+   * - ≤12 GB: 2021
+   * - ≤16 GB: 2023
+   * - >16 GB: 2025
+   *
+   * @returns Year class (2008-2025) or -1 if unknown
+   * @example
+   * ```typescript
+   * const yearClass = DeviceInfoModule.deviceYearClass;
+   * if (yearClass >= 2020) {
+   *   enableHighEndFeatures();
+   * } else if (yearClass >= 2015) {
+   *   enableStandardFeatures();
+   * } else {
+   *   enableLowEndFeatures();
+   * }
+   * ```
+   *
+   * @platform iOS, Android
+   */
+  readonly deviceYearClass: number;
+
+  /**
+   * Check if sideloading (installing from unknown sources) is enabled
+   *
+   * **Platform behavior:**
+   * - **Android 7 and below**: Returns whether the device allows unknown sources globally
+   *   (checks `Settings.Global.INSTALL_NON_MARKET_APPS`)
+   * - **Android 8.0+**: Returns whether THIS APP has permission to install other apps
+   *   (per-app permission via `canRequestPackageInstalls()`)
+   * - **iOS**: Always returns `false` (sideloading not possible without jailbreak)
+   *
+   * **Important:** On Android 8.0+, even if the user has enabled "Install unknown apps"
+   * for other apps, this will return `false` unless they specifically granted
+   * permission to this app.
+   *
+   * @returns `true` if this app can install packages from unknown sources
+   * @example
+   * ```typescript
+   * if (DeviceInfoModule.isSideLoadingEnabled()) {
+   *   console.warn('Device allows sideloading - potential security risk');
+   * }
+   * ```
+   *
+   * @platform Android (returns false on iOS)
+   */
+  isSideLoadingEnabled(): boolean;
 }

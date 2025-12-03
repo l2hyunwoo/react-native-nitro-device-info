@@ -1015,6 +1015,221 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
+    // MARK: - Expo Device Parity APIs
+
+    /**
+     * Get device uptime since boot in milliseconds
+     *
+     * Uses elapsedRealtime() which includes time spent in deep sleep.
+     * This represents actual wall-clock time since boot.
+     *
+     * Note: iOS uses systemUptime which excludes deep sleep.
+     *
+     * @returns Uptime in milliseconds
+     */
+    override fun getUptime(): Double {
+        // elapsedRealtime() includes time spent in deep sleep
+        // uptimeMillis() excludes deep sleep and should NOT be used here
+        return SystemClock.elapsedRealtime().toDouble()
+    }
+
+    /**
+     * Cached device year class based on RAM and CPU specs
+     *
+     * Uses extended 2025 algorithm that supports modern devices (16GB+ RAM).
+     * Primary source is RAM with CPU cores as fallback.
+     */
+    override val deviceYearClass: Double by lazy {
+        calculateYearClass().toDouble()
+    }
+
+    /**
+     * Calculate year class using extended 2025 algorithm
+     *
+     * Uses RAM as primary classifier with support for modern devices.
+     * Falls back to median of component years if RAM info unavailable.
+     */
+    private fun calculateYearClass(): Int {
+        val totalRam = getTotalMemoryBytes()
+        if (totalRam <= 0) {
+            return calculateYearClassFallback()
+        }
+
+        // 2025 Extended Method - RAM-based with modern thresholds
+        return when {
+            totalRam <= 768 * MB -> if (getCpuCoreCount() <= 1) 2009 else 2010
+            totalRam <= 1024 * MB -> if (getCpuMaxFreqKHzSafe() < 1300 * MHZ_IN_KHZ) 2011 else 2012
+            totalRam <= 1536 * MB -> if (getCpuMaxFreqKHzSafe() < 1800 * MHZ_IN_KHZ) 2012 else 2013
+            totalRam <= 2048 * MB -> 2013
+            totalRam <= 3 * 1024 * MB -> 2014
+            totalRam <= 4 * 1024 * MB -> 2015
+            totalRam <= 6 * 1024 * MB -> 2017
+            totalRam <= 8 * 1024 * MB -> 2019
+            totalRam <= 12 * 1024 * MB -> 2021
+            totalRam <= 16 * 1024 * MB -> 2023
+            else -> 2025  // 16GB+ devices
+        }
+    }
+
+    /**
+     * Fallback method using median of component years
+     * Used when RAM info is unavailable
+     */
+    private fun calculateYearClassFallback(): Int {
+        val years = mutableListOf<Int>()
+
+        getCpuCoresYear().takeIf { it != -1 }?.let { years.add(it) }
+        getCpuFreqYear().takeIf { it != -1 }?.let { years.add(it) }
+        getRamYear().takeIf { it != -1 }?.let { years.add(it) }
+
+        if (years.isEmpty()) return -1
+
+        years.sort()
+        return if (years.size % 2 == 1) {
+            years[years.size / 2]
+        } else {
+            val baseIndex = years.size / 2 - 1
+            years[baseIndex] + (years[baseIndex + 1] - years[baseIndex]) / 2
+        }
+    }
+
+    /**
+     * Get CPU core count with robust fallback
+     * Android 10+ restricts /sys access, so use Runtime API as primary
+     */
+    private fun getCpuCoreCount(): Int {
+        // Primary: Use Runtime API (always works)
+        val runtimeCores = Runtime.getRuntime().availableProcessors()
+        if (runtimeCores > 0) return runtimeCores
+
+        // Fallback: Try /sys files (may fail on Android 10+)
+        return runCatching {
+            val possibleFile = java.io.File("/sys/devices/system/cpu/possible")
+            if (possibleFile.exists() && possibleFile.canRead()) {
+                val content = possibleFile.readText().trim()
+                if (content.matches(Regex("0-\\d+"))) {
+                    return content.substring(2).toInt() + 1
+                }
+            }
+            runtimeCores.coerceAtLeast(1)
+        }.getOrElse { runtimeCores.coerceAtLeast(1) }
+    }
+
+    /**
+     * Get max CPU frequency with safe fallback
+     * Returns -1 if unavailable (common on Android 10+)
+     */
+    private fun getCpuMaxFreqKHzSafe(): Int {
+        return runCatching {
+            var maxFreq = -1
+            val coreCount = getCpuCoreCount()
+
+            for (i in 0 until coreCount) {
+                val file = java.io.File("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_max_freq")
+                if (file.exists() && file.canRead()) {
+                    val freq = file.readText().trim().toIntOrNull()
+                    if (freq != null && freq > maxFreq) {
+                        maxFreq = freq
+                    }
+                }
+            }
+
+            // If /sys access failed, return -1 to trigger RAM-only classification
+            maxFreq
+        }.getOrElse { -1 }
+    }
+
+    /**
+     * Get total memory using ActivityManager (always works)
+     */
+    private fun getTotalMemoryBytes(): Long {
+        return runCatching {
+            val memInfo = ActivityManager.MemoryInfo()
+            activityManager.getMemoryInfo(memInfo)
+            memInfo.totalMem
+        }.getOrElse { -1L }
+    }
+
+    // Component year methods for fallback
+    private fun getCpuCoresYear(): Int {
+        val cores = getCpuCoreCount()
+        return when {
+            cores < 1 -> -1
+            cores == 1 -> 2008
+            cores <= 3 -> 2011
+            cores <= 5 -> 2012
+            cores <= 7 -> 2015
+            else -> 2018  // 8+ cores
+        }
+    }
+
+    private fun getCpuFreqYear(): Int {
+        val freqKHz = getCpuMaxFreqKHzSafe()
+        if (freqKHz <= 0) return -1
+        return when {
+            freqKHz <= 528 * MHZ_IN_KHZ -> 2008
+            freqKHz <= 620 * MHZ_IN_KHZ -> 2009
+            freqKHz <= 1020 * MHZ_IN_KHZ -> 2010
+            freqKHz <= 1220 * MHZ_IN_KHZ -> 2011
+            freqKHz <= 1520 * MHZ_IN_KHZ -> 2012
+            freqKHz <= 2020 * MHZ_IN_KHZ -> 2013
+            freqKHz <= 2500 * MHZ_IN_KHZ -> 2015
+            freqKHz <= 3000 * MHZ_IN_KHZ -> 2018
+            else -> 2021  // 3GHz+ modern chips
+        }
+    }
+
+    private fun getRamYear(): Int {
+        val totalRam = getTotalMemoryBytes()
+        if (totalRam <= 0) return -1
+        return when {
+            totalRam <= 192 * MB -> 2008
+            totalRam <= 290 * MB -> 2009
+            totalRam <= 512 * MB -> 2010
+            totalRam <= 1024 * MB -> 2011
+            totalRam <= 1536 * MB -> 2012
+            totalRam <= 2048 * MB -> 2013
+            totalRam <= 3072 * MB -> 2014
+            totalRam <= 4096 * MB -> 2015
+            totalRam <= 6144 * MB -> 2017
+            totalRam <= 8192 * MB -> 2019
+            totalRam <= 12288 * MB -> 2021
+            totalRam <= 16384 * MB -> 2023
+            else -> 2025
+        }
+    }
+
+    /**
+     * Check if sideloading (installing from unknown sources) is enabled
+     *
+     * IMPORTANT: Behavior differs by Android version:
+     * - Android 7 and below: Returns whether the device allows unknown sources globally
+     * - Android 8.0+: Returns whether THIS APP has permission to install other apps
+     *   (per-app permission, not global device setting)
+     *
+     * On Android 8.0+, even if the user has enabled "Install unknown apps" for other apps,
+     * this will return false unless they specifically granted permission to this app.
+     *
+     * @returns true if this app can install packages from unknown sources
+     */
+    override fun isSideLoadingEnabled(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Android 8.0+ - per-app permission
+            // Returns whether THIS app can request package installs
+            context.packageManager.canRequestPackageInstalls()
+        } else {
+            // Android 7.x and below - global device setting
+            runCatching {
+                @Suppress("DEPRECATION")
+                Settings.Global.getInt(
+                    context.contentResolver,
+                    Settings.Global.INSTALL_NON_MARKET_APPS,
+                    0
+                ) == 1
+            }.getOrElse { false }
+        }
+    }
+
     // MARK: - Device Integrity / Security
 
     /**
@@ -1158,6 +1373,10 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     companion object {
         const val NAME = "NitroDeviceInfo"
+
+        // Device year class constants
+        private const val MB = 1024L * 1024L
+        private const val MHZ_IN_KHZ = 1000
 
         // Root detection constant paths (moved here to avoid repeated memory allocation)
         private val SU_PATHS =
