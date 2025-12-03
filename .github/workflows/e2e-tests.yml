@@ -55,10 +55,10 @@ jobs:
 
       - name: Boot iOS Simulator
         run: |
-          # Find a suitable iPhone simulator
-          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone 15 Pro" | head -1 | grep -oE '[A-F0-9-]{36}')
+          # Find iPhone 16 Pro first (available on macos-15), fallback to any iPhone
+          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | head -1 | awk -F '[()]' '{print $2}')
           if [ -z "$DEVICE_ID" ]; then
-            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | grep -oE '[A-F0-9-]{36}')
+            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
           fi
           echo "Booting simulator: $DEVICE_ID"
           xcrun simctl boot "$DEVICE_ID" || true
