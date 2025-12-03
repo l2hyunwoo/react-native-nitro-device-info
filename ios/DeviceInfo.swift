@@ -1314,10 +1314,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     if errno == EINPROGRESS {
       var fdSet = fd_set()
       __darwin_fd_zero(&fdSet)
-      withUnsafeMutablePointer(to: &fdSet) { ptr in
-        let fd = Int32(sock)
-        ptr.pointee.__fds_bits.0 |= (1 << fd)
-      }
+      __darwin_fd_set(sock, &fdSet)
 
       var timeout = timeval(tv_sec: 0, tv_usec: 100000)  // 100ms timeout
       let selectResult = select(sock + 1, nil, &fdSet, nil, &timeout)
