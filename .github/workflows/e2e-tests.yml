@@ -145,9 +145,8 @@ jobs:
           target: google_apis
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
-          script: |
-            cd example/showcase
-            npx react-native-harness --harnessRunner android
+          working-directory: example/showcase
+          script: npx react-native-harness --harnessRunner android
         env:
           CI: true
 
