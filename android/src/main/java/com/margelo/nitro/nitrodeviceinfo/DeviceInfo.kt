@@ -1224,7 +1224,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
                 Settings.Global.getInt(
                     context.contentResolver,
                     Settings.Global.INSTALL_NON_MARKET_APPS,
-                    0
+                    0,
                 ) == 1
             }.getOrElse { false }
         }
