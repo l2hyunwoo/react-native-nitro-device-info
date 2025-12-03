@@ -64,6 +64,16 @@ jobs:
           xcrun simctl boot "$DEVICE_ID" || true
           echo "SIMULATOR_DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
 
+      - name: Build iOS App
+        working-directory: example/showcase
+        run: npx react-native build-ios --mode=Debug --simulator
+
+      - name: Install iOS App
+        run: |
+          APP_PATH=$(find example/showcase/ios/build -name "*.app" -type d | head -1)
+          echo "Installing app from: $APP_PATH"
+          xcrun simctl install "$SIMULATOR_DEVICE_ID" "$APP_PATH"
+
       - name: Run E2E Tests
         working-directory: example/showcase
         run: npx react-native-harness --harnessRunner ios
@@ -146,7 +156,12 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
           working-directory: example/showcase
-          script: npx react-native-harness --harnessRunner android
+          script: |
+            # Build and install the Android app
+            npx react-native build-android --mode=debug
+            adb install android/app/build/outputs/apk/debug/app-debug.apk
+            # Run E2E tests
+            npx react-native-harness --harnessRunner android
         env:
           CI: true
 
