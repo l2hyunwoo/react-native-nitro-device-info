@@ -1058,15 +1058,15 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         // 2025 Extended Method - RAM-based with modern thresholds
         return when {
             totalRam <= 768 * MB -> if (getCpuCoreCount() <= 1) 2009 else 2010
-            totalRam <= 1024 * MB -> if (getCpuMaxFreqKHzSafe() < 1300 * MHZ_IN_KHZ) 2011 else 2012
+            totalRam <= 1 * GB -> if (getCpuMaxFreqKHzSafe() < 1300 * MHZ_IN_KHZ) 2011 else 2012
             totalRam <= 1536 * MB -> if (getCpuMaxFreqKHzSafe() < 1800 * MHZ_IN_KHZ) 2012 else 2013
-            totalRam <= 2048 * MB -> 2013
-            totalRam <= 3 * 1024 * MB -> 2014
-            totalRam <= 4 * 1024 * MB -> 2015
-            totalRam <= 6 * 1024 * MB -> 2017
-            totalRam <= 8 * 1024 * MB -> 2019
-            totalRam <= 12 * 1024 * MB -> 2021
-            totalRam <= 16 * 1024 * MB -> 2023
+            totalRam <= 2 * GB -> 2013
+            totalRam <= 3 * GB -> 2014
+            totalRam <= 4 * GB -> 2015
+            totalRam <= 6 * GB -> 2017
+            totalRam <= 8 * GB -> 2019
+            totalRam <= 12 * GB -> 2021
+            totalRam <= 16 * GB -> 2023
             else -> 2025  // 16GB+ devices
         }
     }
@@ -1186,15 +1186,15 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             totalRam <= 192 * MB -> 2008
             totalRam <= 290 * MB -> 2009
             totalRam <= 512 * MB -> 2010
-            totalRam <= 1024 * MB -> 2011
+            totalRam <= 1 * GB -> 2011
             totalRam <= 1536 * MB -> 2012
-            totalRam <= 2048 * MB -> 2013
-            totalRam <= 3072 * MB -> 2014
-            totalRam <= 4096 * MB -> 2015
-            totalRam <= 6144 * MB -> 2017
-            totalRam <= 8192 * MB -> 2019
-            totalRam <= 12288 * MB -> 2021
-            totalRam <= 16384 * MB -> 2023
+            totalRam <= 2 * GB -> 2013
+            totalRam <= 3 * GB -> 2014
+            totalRam <= 4 * GB -> 2015
+            totalRam <= 6 * GB -> 2017
+            totalRam <= 8 * GB -> 2019
+            totalRam <= 12 * GB -> 2021
+            totalRam <= 16 * GB -> 2023
             else -> 2025
         }
     }
@@ -1376,6 +1376,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
         // Device year class constants
         private const val MB = 1024L * 1024L
+        private const val GB = 1024L * MB
         private const val MHZ_IN_KHZ = 1000
 
         // Root detection constant paths (moved here to avoid repeated memory allocation)
