@@ -1161,7 +1161,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
         // Root detection constant paths (moved here to avoid repeated memory allocation)
         private val SU_PATHS = listOf(
-            "/system/app/Superuser.apk",
             "/system/xbin/su",
             "/system/bin/su",
             "/sbin/su",
