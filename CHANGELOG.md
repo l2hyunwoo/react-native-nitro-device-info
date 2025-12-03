@@ -5,6 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2] - 2025-12-03
+
+### Added
+
+- **Device Integrity / Root Detection API**: New **local-only** APIs for detecting rooted (Android) or jailbroken (iOS) devices
+
+  **Synchronous API** - `isDeviceCompromised(): boolean`:
+  - Fast local-only detection (<50ms)
+  - Returns `false` on emulators/simulators for development convenience
+
+  **Asynchronous API** - `verifyDeviceIntegrity(): Promise<boolean>`:
+  - iOS: Includes SSH port scanning (up to 200ms) in addition to all sync checks
+  - Android: Async wrapper for `isDeviceCompromised()` (same checks)
+  - Returns `false` on emulators/simulators
+
+  **Android Detection Methods** (Enhanced):
+  - su binary paths (`/system/xbin/su`, `/system/bin/su`, `/sbin/su`, etc.)
+  - Magisk detection (`/data/adb/magisk`, Magisk Manager package)
+  - KernelSU detection (`/data/adb/ksu`, KernelSU Manager package)
+  - APatch detection (`/data/adb/apatch`, APatch Manager package)
+  - Busybox (`/system/xbin/busybox`)
+  - Build props (`ro.debuggable`, `ro.secure`, test-keys)
+  - Legacy Superuser apps (SuperSU, Superuser.apk)
+
+  **iOS Detection Methods** (Enhanced):
+  - Jailbreak apps (Cydia, Sileo, Zebra, Installer 5)
+  - URL schemes (`cydia://`, `sileo://`, `zbra://`, `filza://`)
+  - System file write test (`/private/jailbreak.txt`)
+  - DYLD injection detection (MobileSubstrate, libhooker, TweakInject)
+  - Symbolic links (`/Applications`, `/Library/Ringtones`)
+  - SSH ports (22, 44)
+
+  **Emulator/Simulator Policy**:
+  - Both APIs return `false` when `isEmulator === true`
+  - Prevents false positives during development
+
+  **Limitations** (Important):
+  - **Local detection only** - Does NOT use Play Integrity API or iOS App Attest
+  - All detection methods can be bypassed (Magisk + Shamiko, RootHide, etc.)
+  - "Not detected" does NOT guarantee a secure device
+  - Use as one layer of defense-in-depth, not as sole security measure
+
+**Usage Example**:
+
+```typescript
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+
+// Synchronous check (local only)
+if (DeviceInfoModule.isDeviceCompromised()) {
+  console.warn('Rooted/Jailbroken device detected');
+  // Restrict security-sensitive features
+}
+
+// Asynchronous check (iOS includes SSH port scan, Android same as sync)
+const isCompromised = await DeviceInfoModule.verifyDeviceIntegrity();
+if (isCompromised) {
+  // Block financial transactions, etc.
+}
+```
+
 ## [1.4.1] - 2025-12-02
 
 ### Fixed
