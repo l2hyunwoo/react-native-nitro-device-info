@@ -93,18 +93,23 @@ const hasNotch = DeviceInfoModule.getHasNotch(); // true
 const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland(); // false
 const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
 const isEmulator = DeviceInfoModule.isEmulator; // false
+const deviceYearClass = DeviceInfoModule.deviceYearClass; // 2021 (estimated year class)
 
 // System Resources
 const totalMemory = DeviceInfoModule.totalMemory;
 const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.totalDiskCapacity;
 const freeDisk = DeviceInfoModule.getFreeDiskStorage();
+const uptime = DeviceInfoModule.getUptime(); // Uptime in milliseconds
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
 );
 console.log(
   `Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB free of ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB`
+);
+console.log(
+  `Uptime: ${Math.floor(uptime / 1000 / 60 / 60)}h ${Math.floor((uptime / 1000 / 60) % 60)}m`
 );
 
 // Battery Information
@@ -139,6 +144,7 @@ console.log(`Location Services: ${isLocationEnabled ? 'enabled' : 'disabled'}`);
 const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
 const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
 const hasGms = DeviceInfoModule.getHasGms(); // Android only
+const canSideload = DeviceInfoModule.isSideLoadingEnabled(); // Android only
 
 // Device Integrity (Root/Jailbreak Detection) - Local detection only
 const isCompromised = DeviceInfoModule.isDeviceCompromised(); // Sync, <50ms
@@ -168,10 +174,15 @@ DeviceInfoModule.uniqueId; // Sync
 DeviceInfoModule.isTablet; // Sync
 DeviceInfoModule.totalMemory; // Sync
 DeviceInfoModule.getBatteryLevel(); // Sync method
+DeviceInfoModule.deviceYearClass; // Sync - estimated device year class
+DeviceInfoModule.getUptime(); // Sync - uptime in milliseconds
 
 // App Info
 DeviceInfoModule.version; // Sync
 DeviceInfoModule.bundleId; // Sync
+
+// Platform (Android)
+DeviceInfoModule.isSideLoadingEnabled(); // Sync - check sideloading permission
 
 // Network (Async methods)
 await DeviceInfoModule.getIpAddress(); // ~20-50ms

@@ -158,6 +158,42 @@ Check if running in simulator/emulator.
 const isEmulator = DeviceInfoModule.isEmulator;
 ```
 
+### `deviceYearClass: number`
+
+Get estimated device year class based on hardware specifications.
+
+```typescript
+const yearClass = DeviceInfoModule.deviceYearClass;
+
+if (yearClass >= 2020) {
+  enableHighEndFeatures();
+} else if (yearClass >= 2015) {
+  enableStandardFeatures();
+} else {
+  enableLowEndFeatures();
+}
+```
+
+Returns an estimated "year class" representing when this device's hardware would have been considered flagship/high-end. Based on extended Facebook device-year-class algorithm updated for 2025.
+
+**RAM → Year Class mapping**:
+
+| RAM | Year Class | Example Devices |
+|-----|------------|-----------------|
+| ≤2 GB | 2013 | Budget devices |
+| ≤4 GB | 2015 | Mid-range 2015-2016 |
+| ≤6 GB | 2017 | Flagship 2017-2018 |
+| ≤8 GB | 2019 | Flagship 2019-2020 |
+| ≤12 GB | 2021 | Flagship 2021-2022 |
+| ≤16 GB | 2023 | Flagship 2023-2024 |
+| >16 GB | 2025 | Latest flagships |
+
+**Use cases**:
+- Feature toggling based on device capability
+- Performance budgeting for animations
+- Image quality selection
+- Lazy loading thresholds
+
 ---
 
 ## Device Identification
@@ -229,6 +265,23 @@ const freeDisk = DeviceInfoModule.getFreeDiskStorage();
 // Example: 51539607552 (48 GB)
 console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 ```
+
+### `getUptime(): number`
+
+Get device uptime since boot in milliseconds.
+
+```typescript
+const uptime = DeviceInfoModule.getUptime();
+const hours = Math.floor(uptime / 1000 / 60 / 60);
+const minutes = Math.floor((uptime / 1000 / 60) % 60);
+console.log(`Device running for ${hours}h ${minutes}m`);
+```
+
+**Platform behavior difference**:
+- **iOS**: Uses `systemUptime` which excludes deep sleep time
+- **Android**: Uses `elapsedRealtime()` which includes deep sleep time
+
+This represents the wall-clock time since the device was last booted.
 
 ---
 
@@ -639,6 +692,32 @@ const hasHms = DeviceInfoModule.getHasHms();
 
 **Platform**: Android (Huawei devices) only
 
+### `isSideLoadingEnabled(): boolean`
+
+Check if sideloading (installing from unknown sources) is enabled.
+
+```typescript
+const canSideload = DeviceInfoModule.isSideLoadingEnabled();
+
+if (canSideload) {
+  console.warn('Device allows sideloading - potential security risk');
+}
+```
+
+**Platform behavior difference**:
+- **Android 7 and below**: Returns whether the device allows unknown sources globally (checks `Settings.Global.INSTALL_NON_MARKET_APPS`)
+- **Android 8.0+**: Returns whether THIS APP has permission to install other apps (per-app permission via `canRequestPackageInstalls()`)
+- **iOS**: Always returns `false` (sideloading not possible without jailbreak)
+
+**Important**: On Android 8.0+, even if the user has enabled "Install unknown apps" for other apps, this will return `false` unless they specifically granted permission to this app.
+
+**Use cases**:
+- Security policy enforcement
+- Distribution channel detection
+- Enterprise deployment verification
+
+**Platform**: Android (returns `false` on iOS)
+
 ### `getFontScale(): number`
 
 Get current font scale multiplier.
@@ -983,6 +1062,9 @@ This provides fast access while keeping data reasonably fresh.
 | Core device info        | ✅  | ✅      | All platforms                       |
 | Battery info            | ✅  | ✅      | Low power mode iOS only             |
 | System resources        | ✅  | ✅      | All platforms                       |
+| getUptime               | ✅  | ✅      | iOS excludes deep sleep             |
+| deviceYearClass         | ✅  | ✅      | Extended 2025 algorithm             |
+| isSideLoadingEnabled    | ❌  | ✅      | Android only (per-app on 8.0+)      |
 | Network info            | ✅  | ✅      | MAC hardcoded on iOS 7+             |
 | System language         | ✅  | ✅      | BCP 47 format                       |
 | Navigation mode         | ❌  | ✅      | Android only (API 29+)              |
