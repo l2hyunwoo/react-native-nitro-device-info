@@ -1058,7 +1058,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
    * Get device uptime since boot in milliseconds
    *
    * Uses `systemUptime` which excludes deep sleep time on iOS.
-   * Note: Android uses `elapsedRealtime()` which includes deep sleep.
+   * Note: Android uses `uptimeMillis()` which excludes deep sleep, matching iOS behavior.
    *
    * @returns Uptime in milliseconds
    */
