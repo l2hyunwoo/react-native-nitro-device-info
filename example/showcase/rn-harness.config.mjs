@@ -29,7 +29,14 @@ const config = {
     }),
     androidPlatform({
       name: 'android',
-      device: androidEmulator('test'),
+      device: androidEmulator('test', {
+        avd: {
+          apiLevel: 30,
+          profile: 'pixel_4',
+          diskSize: '2G',
+          heapSize: '512M',
+        },
+      }),
       bundleId: 'nitrodeviceinfo.example',
     }),
   ],
