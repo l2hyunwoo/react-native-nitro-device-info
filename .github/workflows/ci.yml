@@ -29,13 +29,13 @@ jobs:
         with:
           filters: |
             library:
-              - 'src/**'
-              - 'ios/**'
-              - 'android/**'
-              - 'nitrogen/**'
-              - 'tsconfig.json'
-              - 'babel.config.js'
-              - 'react-native.config.js'
+              - 'packages/react-native-nitro-device-info/src/**'
+              - 'packages/react-native-nitro-device-info/ios/**'
+              - 'packages/react-native-nitro-device-info/android/**'
+              - 'packages/react-native-nitro-device-info/nitrogen/**'
+              - 'packages/react-native-nitro-device-info/package.json'
+              - 'packages/react-native-nitro-device-info/tsconfig.json'
+              - 'packages/react-native-nitro-device-info/babel.config.js'
               - 'example/**'
             mcp-server:
               - 'packages/mcp-server/**'
@@ -99,9 +99,9 @@ jobs:
 
       - name: Verify build outputs
         run: |
-          test -d lib/module || exit 1
-          test -d lib/typescript || exit 1
-          test -d nitrogen/generated || exit 1
+          test -d packages/react-native-nitro-device-info/lib/module || exit 1
+          test -d packages/react-native-nitro-device-info/lib/typescript || exit 1
+          test -d packages/react-native-nitro-device-info/nitrogen/generated || exit 1
 
   build-ios:
     name: Build iOS
@@ -234,9 +234,11 @@ jobs:
         run: yarn prepare
 
       - name: Pack NPM package
+        working-directory: packages/react-native-nitro-device-info
         run: npm pack
 
       - name: Verify package contents
+        working-directory: packages/react-native-nitro-device-info
         run: |
           tar -tzf *.tgz | grep "package/lib/module/index.js"
           tar -tzf *.tgz | grep "package/lib/typescript"
