@@ -42,6 +42,10 @@
     "url": "https://github.com/l2hyunwoo/react-native-nitro-device-info/issues"
   },
   "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "engines": {
     "node": ">=20.0.0"
   },

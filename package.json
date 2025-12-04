@@ -1,55 +1,22 @@
 {
-  "name": "react-native-nitro-device-info",
-  "version": "1.4.2",
-  "description": "Get device info for React Native using Nitro",
-  "main": "./lib/module/index.js",
-  "types": "./lib/typescript/src/index.d.ts",
-  "exports": {
-    ".": {
-      "source": "./src/index.ts",
-      "types": "./lib/typescript/src/index.d.ts",
-      "default": "./lib/module/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "src",
-    "lib",
-    "android",
-    "ios",
-    "cpp",
-    "nitrogen",
-    "nitro.json",
-    "*.podspec",
-    "react-native.config.js",
-    "!ios/build",
-    "!android/build",
-    "!android/gradle",
-    "!android/gradlew",
-    "!android/gradlew.bat",
-    "!android/local.properties",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__",
-    "!**/.*"
-  ],
+  "name": "react-native-nitro-device-info-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monorepo for react-native-nitro-device-info",
   "scripts": {
     "showcase": "yarn workspace react-native-nitro-device-info-example",
     "benchmark": "yarn workspace react-native-nitro-device-info-benchmark",
     "test": "jest",
-    "typecheck": "tsc",
+    "typecheck": "tsc --noEmit",
     "lint": "oxlint .",
     "lint:eslint": "eslint \"**/*.{js,ts,tsx}\"",
-    "clean": "del-cli android/build example/showcase/android/build example/showcase/android/app/build example/showcase/ios/build example/benchmark/android/build example/benchmark/android/app/build example/benchmark/ios/build lib",
-    "prepare": "bob build",
-    "nitrogen": "nitrogen",
-    "release": "release-it --only-version"
+    "clean": "del-cli packages/react-native-nitro-device-info/lib packages/react-native-nitro-device-info/nitrogen/generated packages/react-native-nitro-device-info/android/build example/showcase/android/build example/showcase/android/app/build example/showcase/ios/build example/benchmark/android/build example/benchmark/android/app/build example/benchmark/ios/build",
+    "prepare": "yarn workspace react-native-nitro-device-info prepare",
+    "nitrogen": "yarn workspace react-native-nitro-device-info nitrogen",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "changeset publish"
   },
-  "keywords": [
-    "react-native",
-    "ios",
-    "android"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/l2hyunwoo/react-native-nitro-device-info.git"
@@ -60,10 +27,9 @@
     "url": "https://github.com/l2hyunwoo/react-native-nitro-device-info/issues"
   },
   "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
     "@commitlint/config-conventional": "20.0.0",
     "@eslint/compat": "2.0.0",
     "@eslint/eslintrc": "3.3.1",
@@ -71,7 +37,6 @@
     "@evilmartians/lefthook": "2.0.7",
     "@react-native/babel-preset": "0.82.1",
     "@react-native/eslint-config": "0.82.1",
-    "@release-it/conventional-changelog": "10.0.1",
     "@types/jest": "30.0.0",
     "@types/react": "19.1.0",
     "commitlint": "20.1.0",
@@ -87,26 +52,21 @@
     "react-native": "0.82.1",
     "react-native-builder-bob": "0.40.13",
     "react-native-nitro-modules": "0.31.2",
-    "release-it": "19.0.4",
     "turbo": "2.6.2",
     "typescript": "5.9.2"
   },
-  "peerDependencies": {
-    "react": "*",
-    "react-native": "*",
-    "react-native-nitro-modules": "0.31.2"
-  },
   "workspaces": [
+    "packages/react-native-nitro-device-info",
+    "packages/mcp-server",
     "example/showcase",
-    "example/benchmark",
-    "packages/mcp-server"
+    "example/benchmark"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
+      "<rootDir>/packages/react-native-nitro-device-info/lib/"
     ]
   },
   "commitlint": {
@@ -114,60 +74,11 @@
       "@commitlint/config-conventional"
     ]
   },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": {
-          "name": "angular"
-        }
-      }
-    }
-  },
   "prettier": {
     "quoteProps": "consistent",
     "singleQuote": true,
     "tabWidth": 2,
     "trailingComma": "es5",
     "useTabs": false
-  },
-  "react-native-builder-bob": {
-    "source": "src",
-    "output": "lib",
-    "targets": [
-      [
-        "custom",
-        {
-          "script": "nitrogen",
-          "clean": "nitrogen/"
-        }
-      ],
-      [
-        "module",
-        {
-          "esm": true
-        }
-      ],
-      [
-        "typescript",
-        {
-          "project": "tsconfig.build.json"
-        }
-      ]
-    ]
-  },
-  "create-react-native-library": {
-    "languages": "kotlin-swift",
-    "type": "nitro-module",
-    "version": "0.54.7"
   }
 }

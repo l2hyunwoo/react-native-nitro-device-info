@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-nitro-device-info": ["./packages/react-native-nitro-device-info/src/index"]
+      "react-native-nitro-device-info": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -27,6 +27,6 @@
     "target": "ESNext",
     "verbatimModuleSyntax": true
   },
-  "include": ["packages/react-native-nitro-device-info/src"],
-  "exclude": ["node_modules", "lib", "docs", "specs"]
+  "include": ["src"],
+  "exclude": ["node_modules", "lib"]
 }
