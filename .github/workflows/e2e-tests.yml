@@ -3,8 +3,18 @@ name: E2E Tests
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'packages/mcp-server/**'
+      - 'docs/**'
+      - '*.md'
+      - '.github/workflows/mcp-*.yml'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'packages/mcp-server/**'
+      - 'docs/**'
+      - '*.md'
+      - '.github/workflows/mcp-*.yml'
   workflow_dispatch:
 
 concurrency:

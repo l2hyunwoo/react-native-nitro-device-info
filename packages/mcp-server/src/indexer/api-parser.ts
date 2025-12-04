@@ -84,6 +84,16 @@ const CATEGORY_KEYWORDS: Record<string, ApiCategory> = {
   unique: 'identification',
   devicetoken: 'identification',
   idfv: 'identification',
+
+  // Security
+  sideload: 'security',
+  integrity: 'security',
+  jailbreak: 'security',
+  root: 'security',
+
+  // System
+  uptime: 'system',
+  yearclass: 'system',
 };
 
 /**
