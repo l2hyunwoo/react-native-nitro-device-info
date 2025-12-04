@@ -133,11 +133,8 @@ describe('Tier 3 - Security APIs (Type Verification Only)', () => {
   test('isHardwareKeyStoreAvailable returns boolean', () => {
     const available = DeviceInfoModule.isHardwareKeyStoreAvailable;
     expect(typeof available).toBe('boolean');
-
-    // On simulator, this is typically false
-    if (DeviceInfoModule.isEmulator) {
-      expect(available).toBe(false);
-    }
+    // Note: On Android emulators, this may return true depending on the
+    // emulator version and configuration (e.g., API 30+ with TEE support)
   });
 });
 
