@@ -74,8 +74,9 @@ jobs:
       - name: Run E2E tests with official Harness action
         uses: callstackincubator/react-native-harness/actions/ios@main
         with:
-          working-directory: example/showcase
-          app-path: ios/build/Build/Products/Debug-iphonesimulator/NitroDeviceInfoExample.app
+          app: ios/build/Build/Products/Debug-iphonesimulator/NitroDeviceInfoExample.app
+          runner: ios
+          projectRoot: example/showcase
         env:
           CI: true
 
@@ -153,9 +154,9 @@ jobs:
       - name: Run E2E tests with official Harness action
         uses: callstackincubator/react-native-harness/actions/android@main
         with:
-          working-directory: example/showcase
-          apk-path: android/app/build/outputs/apk/debug/app-debug.apk
-          api-level: 30
+          app: android/app/build/outputs/apk/debug/app-debug.apk
+          runner: android
+          projectRoot: example/showcase
         env:
           CI: true
 
