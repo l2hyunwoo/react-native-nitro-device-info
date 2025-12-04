@@ -40,7 +40,9 @@ export type ApiCategory =
   | 'display'
   | 'audio'
   | 'location'
-  | 'identification';
+  | 'identification'
+  | 'security'
+  | 'system';
 
 /**
  * Represents a single API method or property from the DeviceInfo interface

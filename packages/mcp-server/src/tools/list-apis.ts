@@ -57,6 +57,8 @@ const CATEGORY_NAMES: Record<ApiCategory, string> = {
   'audio': 'Audio',
   'location': 'Location',
   'identification': 'Identification',
+  'security': 'Security',
+  'system': 'System',
 };
 
 /**
