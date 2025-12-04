@@ -16,6 +16,7 @@
 - 🚀 **제로 오버헤드 JSI 바인딩** — JavaScript에서 네이티브 코드로 직접 접근
 - 📱 **100개 이상의 속성 제공** — 포괄적인 디바이스 정보 조회
 - 📦 **TypeScript 우선 설계** — 완전한 타입 정의 포함
+- 🔄 **익숙한 API** — `react-native-device-info` 및 `expo-device` API와 호환
 
 ## 설치 방법
 
@@ -94,18 +95,23 @@ const hasNotch = DeviceInfoModule.getHasNotch(); // true
 const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland(); // false
 const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
 const isEmulator = DeviceInfoModule.isEmulator; // false
+const deviceYearClass = DeviceInfoModule.deviceYearClass; // 2021 (추정 연도 클래스)
 
 // 시스템 리소스
 const totalMemory = DeviceInfoModule.totalMemory;
 const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.totalDiskCapacity;
 const freeDisk = DeviceInfoModule.getFreeDiskStorage();
+const uptime = DeviceInfoModule.getUptime(); // 부팅 후 경과 시간 (밀리초)
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
 );
 console.log(
   `저장공간: ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB 중 ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB 사용 가능`
+);
+console.log(
+  `가동 시간: ${Math.floor(uptime / 1000 / 60 / 60)}시간 ${Math.floor((uptime / 1000 / 60) % 60)}분`
 );
 
 // 배터리 정보
@@ -140,6 +146,7 @@ console.log(`위치 서비스: ${isLocationEnabled ? '활성화' : '비활성화
 const apiLevel = DeviceInfoModule.apiLevel; // Android: 33, iOS: -1
 const abis = DeviceInfoModule.supportedAbis; // ["arm64-v8a"]
 const hasGms = DeviceInfoModule.getHasGms(); // Android 전용
+const canSideload = DeviceInfoModule.isSideLoadingEnabled(); // Android 전용
 
 // 디바이스 무결성 (루팅/탈옥 탐지) - 로컬 탐지 전용
 const isCompromised = DeviceInfoModule.isDeviceCompromised(); // 동기, <50ms
@@ -169,10 +176,15 @@ DeviceInfoModule.uniqueId; // 동기
 DeviceInfoModule.isTablet; // 동기
 DeviceInfoModule.totalMemory; // 동기
 DeviceInfoModule.getBatteryLevel(); // 동기 메서드
+DeviceInfoModule.deviceYearClass; // 동기 - 추정 디바이스 연도 클래스
+DeviceInfoModule.getUptime(); // 동기 - 부팅 후 경과 시간 (밀리초)
 
 // 앱 정보
 DeviceInfoModule.version; // 동기
 DeviceInfoModule.bundleId; // 동기
+
+// 플랫폼 (Android)
+DeviceInfoModule.isSideLoadingEnabled(); // 동기 - 사이드로딩 권한 확인
 
 // 네트워크 (비동기 메서드)
 await DeviceInfoModule.getIpAddress(); // ~20-50ms

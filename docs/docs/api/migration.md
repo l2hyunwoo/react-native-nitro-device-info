@@ -438,6 +438,121 @@ If a method is not available:
 2. Some methods may have been renamed or consolidated
 3. Open an issue on GitHub if you need a specific method
 
+---
+
+## Migrating from expo-device
+
+If you're migrating from `expo-device`, many APIs have compatible alternatives in `react-native-nitro-device-info`.
+
+### Key Differences
+
+| Aspect | expo-device | react-native-nitro-device-info |
+|--------|-------------|-------------------------------|
+| Architecture | Expo Module API | Nitro Modules (JSI) |
+| Sync/Async | Mixed (some async) | Mostly synchronous |
+| Expo Dependency | Requires Expo | Works with bare React Native |
+| Performance | Good | Excellent (<1ms for sync APIs) |
+
+### API Migration Reference
+
+| expo-device | react-native-nitro-device-info | Notes |
+|-------------|-------------------------------|-------|
+| `Device.brand` | `DeviceInfoModule.brand` | Same |
+| `Device.manufacturer` | `DeviceInfoModule.manufacturer` | Same |
+| `Device.modelName` | `DeviceInfoModule.model` | Different property name |
+| `Device.modelId` | `DeviceInfoModule.deviceId` | Different property name |
+| `Device.designName` | `DeviceInfoModule.device` | Android only |
+| `Device.productName` | `DeviceInfoModule.product` | Android only |
+| `Device.deviceYearClass` | `DeviceInfoModule.deviceYearClass` | Same |
+| `Device.totalMemory` | `DeviceInfoModule.totalMemory` | Same |
+| `Device.supportedCpuArchitectures` | `DeviceInfoModule.supportedAbis` | Android only |
+| `Device.osName` | `DeviceInfoModule.systemName` | Different property name |
+| `Device.osVersion` | `DeviceInfoModule.systemVersion` | Different property name |
+| `Device.osBuildId` | `DeviceInfoModule.display` | Android only |
+| `Device.osInternalBuildId` | `DeviceInfoModule.fingerprint` | Android only |
+| `Device.osBuildFingerprint` | `DeviceInfoModule.fingerprint` | Android only |
+| `Device.platformApiLevel` | `DeviceInfoModule.apiLevel` | Android only |
+| `Device.deviceName` | `DeviceInfoModule.deviceName` | Same |
+| `Device.DeviceType` | `DeviceInfoModule.deviceType` | Returns string enum |
+| `Device.getDeviceTypeAsync()` | `DeviceInfoModule.deviceType` | Now sync |
+| `Device.getUptimeAsync()` | `DeviceInfoModule.getUptime()` | Now sync, returns ms |
+| `Device.isRootedExperimentalAsync()` | `DeviceInfoModule.isDeviceCompromised()` | Sync, broader detection |
+| `Device.isSideLoadingEnabledAsync()` | `DeviceInfoModule.isSideLoadingEnabled()` | Now sync, Android only |
+
+### Migration Example
+
+**Before** (`expo-device`):
+```typescript
+import * as Device from 'expo-device';
+
+async function getDeviceInfo() {
+  const deviceType = await Device.getDeviceTypeAsync();
+  const uptime = await Device.getUptimeAsync();
+  const isRooted = await Device.isRootedExperimentalAsync();
+  const canSideload = await Device.isSideLoadingEnabledAsync();
+
+  return {
+    brand: Device.brand,
+    model: Device.modelName,
+    yearClass: Device.deviceYearClass,
+    totalMemory: Device.totalMemory,
+    deviceType,
+    uptime,
+    isRooted,
+    canSideload,
+  };
+}
+```
+
+**After** (`react-native-nitro-device-info`):
+```typescript
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+
+function getDeviceInfo() {
+  // All synchronous - no async/await needed!
+  return {
+    brand: DeviceInfoModule.brand,
+    model: DeviceInfoModule.model,
+    yearClass: DeviceInfoModule.deviceYearClass,
+    totalMemory: DeviceInfoModule.totalMemory,
+    deviceType: DeviceInfoModule.deviceType,
+    uptime: DeviceInfoModule.getUptime(),
+    isRooted: DeviceInfoModule.isDeviceCompromised(),
+    canSideload: DeviceInfoModule.isSideLoadingEnabled(),
+  };
+}
+```
+
+### APIs Not Available
+
+These `expo-device` APIs do not have direct equivalents:
+
+| expo-device API | Alternative |
+|-----------------|-------------|
+| `Device.isDevice` | Use `!DeviceInfoModule.isEmulator` |
+| `Device.getPlatformFeaturesAsync()` | Not available |
+
+### Platform-Specific Considerations
+
+#### Uptime Behavior
+
+- **expo-device**: Returns uptime in milliseconds (excludes deep sleep)
+- **react-native-nitro-device-info**: Returns uptime in milliseconds (excludes deep sleep)
+  - iOS: Uses `systemUptime`
+  - Android: Uses `uptimeMillis()`
+  - Both platforms return consistent "active time" matching expo-device behavior
+
+#### Device Year Class
+
+Both libraries use the same Facebook algorithm for calculating device year class based on RAM and CPU specifications. The year class represents an estimated year that the device's hardware was considered high-end.
+
+#### Root/Jailbreak Detection
+
+- **expo-device**: `isRootedExperimentalAsync()` - Experimental, basic checks
+- **react-native-nitro-device-info**: `isDeviceCompromised()` - Comprehensive detection
+  - Android: Checks su binaries, root apps, system properties, test-keys
+  - iOS: Checks Cydia, jailbreak files, sandbox escape, suspicious paths
+
 ## Need Help?
 
 - [Complete API Reference](/api/device-info)

@@ -1052,6 +1052,68 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return .unknown
   }
 
+  // MARK: - Expo Device Parity APIs
+
+  /**
+   * Get device uptime since boot in milliseconds
+   *
+   * Uses `systemUptime` which excludes deep sleep time on iOS.
+   * Note: Android uses `uptimeMillis()` which excludes deep sleep, matching iOS behavior.
+   *
+   * @returns Uptime in milliseconds
+   */
+  func getUptime() -> Double {
+    return ProcessInfo.processInfo.systemUptime * 1000
+  }
+
+  /**
+   * Cached device year class based on RAM
+   *
+   * Uses RAM-based classification updated for 2025 devices.
+   * iOS devices have consistent RAM per generation so RAM is reliable.
+   */
+  private lazy var cachedDeviceYearClass: Double = {
+    let totalRam = Double(ProcessInfo.processInfo.physicalMemory)
+    let MB: Double = 1024 * 1024
+
+    // iOS RAM-based year class (updated for 2025)
+    // iOS devices have consistent RAM per generation
+    if totalRam <= 512 * MB {
+      return 2010 // iPhone 4 and earlier
+    } else if totalRam <= 1024 * MB {
+      return 2012 // iPhone 5, 5c
+    } else if totalRam <= 2048 * MB {
+      return 2014 // iPhone 6, 6s
+    } else if totalRam <= 3072 * MB {
+      return 2016 // iPhone 7, 8
+    } else if totalRam <= 4096 * MB {
+      return 2018 // iPhone XS, 11
+    } else if totalRam <= 6144 * MB {
+      return 2020 // iPhone 12, 13
+    } else if totalRam <= 8192 * MB {
+      return 2022 // iPhone 14 Pro, 15 Pro
+    } else {
+      return 2024 // 8GB+ (iPhone 16 Pro, future devices)
+    }
+  }()
+
+  /// Get estimated device year class based on hardware specifications
+  var deviceYearClass: Double {
+    return cachedDeviceYearClass
+  }
+
+  /**
+   * Check if sideloading is enabled
+   *
+   * iOS does not support sideloading without jailbreak.
+   * Enterprise apps and TestFlight are NOT considered sideloading.
+   *
+   * @returns Always false on iOS
+   */
+  func isSideLoadingEnabled() -> Bool {
+    return false
+  }
+
   // MARK: - Device Integrity / Security
 
   /**

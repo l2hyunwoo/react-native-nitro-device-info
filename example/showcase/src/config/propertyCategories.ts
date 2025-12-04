@@ -107,6 +107,14 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     platform: PlatformAvailability.ALL,
     isSync: true,
   },
+  {
+    key: 'deviceYearClass',
+    label: 'Device Year Class',
+    category: PropertyCategory.DEVICE_CAPABILITIES,
+    type: PropertyType.NUMBER,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
 
   // ==========================================================================
   // CATEGORY 3: Device Identification
@@ -204,6 +212,14 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     label: 'Free Disk Storage',
     category: PropertyCategory.SYSTEM_RESOURCES,
     type: PropertyType.BYTES,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+  {
+    key: 'getUptime',
+    label: 'Uptime',
+    category: PropertyCategory.SYSTEM_RESOURCES,
+    type: PropertyType.NUMBER,
     platform: PlatformAvailability.ALL,
     isSync: true,
   },
@@ -338,6 +354,14 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   {
     key: 'getHasHms',
     label: 'Has Huawei Services',
+    category: PropertyCategory.PLATFORM_CAPABILITIES,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ANDROID_ONLY,
+    isSync: true,
+  },
+  {
+    key: 'isSideLoadingEnabled',
+    label: 'Sideloading Enabled',
     category: PropertyCategory.PLATFORM_CAPABILITIES,
     type: PropertyType.BOOLEAN,
     platform: PlatformAvailability.ANDROID_ONLY,
