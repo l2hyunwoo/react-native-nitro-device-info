@@ -1,0 +1,41 @@
+# Documentation
+*.md
+!README.md
+!LICENSE.md
+
+# Configuration
+.editorconfig
+.eslintignore
+.eslintrc.js
+.prettierrc
+.prettierignore
+.yarnrc.yml
+.yarn/
+lefthook.yml
+tsconfig.json
+tsconfig.build.json
+
+# Development
+example/
+.vscode/
+.idea/
+*.log
+.DS_Store
+
+# Tests
+__tests__/
+__mocks__/
+__fixtures__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage/
+
+# Build artifacts (lib is included for npm publish)
+node_modules/
+.turbo/
+
+# Git
+.git/
+.github/

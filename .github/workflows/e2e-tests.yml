@@ -60,9 +60,6 @@ jobs:
         working-directory: example/showcase/ios
         run: pod install
 
-      - name: List available simulators
-        run: xcrun simctl list devices available
-
       - name: Boot iOS Simulator
         run: |
           # Find iPhone 16 Pro first (available on macos-15), fallback to any iPhone
@@ -91,9 +88,9 @@ jobs:
           echo "Installing app from: $APP_PATH"
           xcrun simctl install "$SIMULATOR_DEVICE_ID" "$APP_PATH"
 
-      - name: Run E2E Tests
+      - name: Run E2E tests
         working-directory: example/showcase
-        run: npx react-native-harness --harnessRunner ios
+        run: yarn react-native-harness --harnessRunner ios
         env:
           CI: true
 
@@ -138,12 +135,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
       - name: Cache Gradle
         uses: actions/cache@v4
         with:
@@ -153,16 +144,6 @@ jobs:
           key: gradle-e2e-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-e2e-${{ runner.os }}-
-
-      - name: Cache AVD
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-api-30-${{ runner.os }}
-          restore-keys: |
-            avd-api-30-
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -178,22 +159,27 @@ jobs:
         working-directory: example/showcase/android
         run: ./gradlew assembleDebug
 
-      - name: Create AVD and run E2E tests
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run E2E tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
           arch: x86_64
           profile: pixel_4
-          target: google_apis
+          avd-name: test
           disk-size: 2G
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -partition-size 2048
+          heap-size: 512M
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
           working-directory: example/showcase
           script: |
-            # Install the Android app
-            adb install android/app/build/outputs/apk/debug/app-debug.apk
-            # Run E2E tests
-            npx react-native-harness --harnessRunner android
+            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+            yarn react-native-harness --harnessRunner android
         env:
           CI: true
 
