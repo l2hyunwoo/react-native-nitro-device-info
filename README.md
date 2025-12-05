@@ -249,6 +249,15 @@ const ipAddress = await DeviceInfoModule.getIpAddress();
 - Most methods are synchronous for instant access (<1ms)
 - Only I/O-bound operations (network, install times) remain async
 
+## Acknowledgement
+
+- [This Week in React #256](https://thisweekinreact.com/newsletter/256#react-native)
+- [NativeWeekly - React Native dev briefing](https://nativeweekly.beehiiv.com/)
+  - [October 31 2025: Issue 3](https://nativeweekly.beehiiv.com/p/october-31-2025-issue-3)
+  - [Nov 14 2025: Issue 5](https://nativeweekly.beehiiv.com/p/nov-14-2025-issue-5)
+- [The React Native Rewind](https://thereactnativerewind.com/)
+  - [A Nitro Revolution, Building Games in React Native, and a New Era of Navigation](https://thereactnativerewind.com/issues-blog-post/a-nitro-revolution-building-games-in-react-native-and-a-new-era-of-navigation)
+
 ## Example Apps
 
 This repository includes two example applications to help you get started and test the library:
@@ -314,6 +323,7 @@ npx @react-native-nitro-device-info/mcp-server init
 ```
 
 This creates:
+
 - `.cursor/mcp.json` - Cursor IDE configuration
 - `.mcp.json` - Claude Code project configuration
 
@@ -357,11 +367,11 @@ Create `.cursor/mcp.json` in your project root:
 
 ### Available Tools
 
-| Tool | Purpose | Example Query |
-|------|---------|---------------|
+| Tool          | Purpose                               | Example Query             |
+| ------------- | ------------------------------------- | ------------------------- |
 | `search_docs` | Natural language documentation search | "how to get device model" |
-| `get_api` | Detailed info about a specific API | "show me getBatteryLevel" |
-| `list_apis` | List APIs by category/platform/type | "list all network APIs" |
+| `get_api`     | Detailed info about a specific API    | "show me getBatteryLevel" |
+| `list_apis`   | List APIs by category/platform/type   | "list all network APIs"   |
 
 Then ask your AI: "How do I get the device's battery level with react-native-nitro-device-info?"
 
