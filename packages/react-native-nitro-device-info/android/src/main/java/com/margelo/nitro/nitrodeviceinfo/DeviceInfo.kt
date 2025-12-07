@@ -895,6 +895,73 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return cachedCarrier
     }
 
+    // MARK: - Carrier Information (react-native-carrier-info parity)
+
+    /** Cached TelephonyManager for carrier info APIs */
+    private val carrierTelephonyManager: TelephonyManager? by lazy {
+        context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+    }
+
+    /**
+     * Check if carrier allows VoIP calls on its network
+     *
+     * Android does not have an equivalent API to iOS's CTCarrier.allowsVOIP.
+     * Always returns true per react-native-carrier-info implementation.
+     */
+    override val carrierAllowsVOIP: Boolean
+        get() = true
+
+    /**
+     * ISO 3166-1 country code for the carrier
+     *
+     * Returns the ISO country code (e.g., "US", "KR", "JP") or empty string if unavailable.
+     * Uses TelephonyManager.getSimCountryIso() for SIM-based country detection.
+     */
+    override val carrierIsoCountryCode: String
+        get() = carrierTelephonyManager?.simCountryIso?.uppercase() ?: ""
+
+    /**
+     * Mobile Country Code (MCC)
+     *
+     * Returns 3-digit MCC per ITU-T E.212 (e.g., "310" for USA, "450" for Korea).
+     * Parsed from TelephonyManager.getSimOperator() which returns MCC+MNC.
+     * Returns empty string if unavailable or invalid.
+     */
+    override val mobileCountryCode: String
+        get() {
+            val operator = carrierTelephonyManager?.simOperator
+            if (operator.isNullOrEmpty() || operator.length < 3) {
+                return ""
+            }
+            return operator.substring(0, 3)
+        }
+
+    /**
+     * Mobile Network Code (MNC)
+     *
+     * Returns 2 or 3-digit MNC (e.g., "260" for T-Mobile US).
+     * Parsed from TelephonyManager.getSimOperator() which returns MCC+MNC.
+     * Returns empty string if unavailable or invalid.
+     */
+    override val mobileNetworkCode: String
+        get() {
+            val operator = carrierTelephonyManager?.simOperator
+            if (operator.isNullOrEmpty() || operator.length < 5) {
+                return ""
+            }
+            return operator.substring(3)
+        }
+
+    /**
+     * Mobile Network Operator (MCC + MNC combined)
+     *
+     * Returns combined MCC+MNC (e.g., "310260" for T-Mobile US).
+     * Uses TelephonyManager.getSimOperator() directly.
+     * Returns empty string if unavailable.
+     */
+    override val mobileNetworkOperator: String
+        get() = carrierTelephonyManager?.simOperator ?: ""
+
     /** Check if location services are enabled */
     override fun getIsLocationEnabled(): Boolean {
         return try {

@@ -929,6 +929,73 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return cachedCarrier
   }
 
+  // MARK: - Carrier Information (react-native-carrier-info parity)
+
+  /// Cached CTCarrier for carrier info APIs
+  private var cachedCarrierObject: CTCarrier? {
+    let networkInfo = CTTelephonyNetworkInfo()
+    if let providers = networkInfo.serviceSubscriberCellularProviders {
+      return providers.values.first
+    }
+    return nil
+  }
+
+  /**
+   * Check if carrier allows VoIP calls on its network
+   *
+   * Uses CTCarrier.allowsVOIP (deprecated but still functional on iOS 16+)
+   * Returns true on Android (no equivalent API)
+   */
+  var carrierAllowsVOIP: Bool {
+    return cachedCarrierObject?.allowsVOIP ?? true
+  }
+
+  /**
+   * ISO 3166-1 country code for the carrier
+   *
+   * Returns the ISO country code (e.g., "US", "KR", "JP")
+   * Returns empty string if unavailable
+   */
+  var carrierIsoCountryCode: String {
+    return cachedCarrierObject?.isoCountryCode ?? ""
+  }
+
+  /**
+   * Mobile Country Code (MCC)
+   *
+   * Returns 3-digit MCC per ITU-T E.212 (e.g., "310" for USA, "450" for Korea)
+   * Returns empty string if unavailable
+   */
+  var mobileCountryCode: String {
+    return cachedCarrierObject?.mobileCountryCode ?? ""
+  }
+
+  /**
+   * Mobile Network Code (MNC)
+   *
+   * Returns 2 or 3-digit MNC (e.g., "260" for T-Mobile US)
+   * Returns empty string if unavailable
+   */
+  var mobileNetworkCode: String {
+    return cachedCarrierObject?.mobileNetworkCode ?? ""
+  }
+
+  /**
+   * Mobile Network Operator (MCC + MNC combined)
+   *
+   * Returns combined MCC+MNC (e.g., "310260" for T-Mobile US)
+   * Equivalent to mobileCountryCode + mobileNetworkCode
+   * Returns empty string if unavailable
+   */
+  var mobileNetworkOperator: String {
+    let mcc = mobileCountryCode
+    let mnc = mobileNetworkCode
+    if mcc.isEmpty && mnc.isEmpty {
+      return ""
+    }
+    return mcc + mnc
+  }
+
   /// Check if location services are enabled
   func getIsLocationEnabled() -> Bool {
     return CLLocationManager.locationServicesEnabled()
