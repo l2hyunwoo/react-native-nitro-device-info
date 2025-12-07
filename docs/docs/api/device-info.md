@@ -482,6 +482,87 @@ const carrier = await DeviceInfoModule.getCarrier();
 const carrierSync = DeviceInfoModule.getCarrierSync();
 ```
 
+### Carrier Information Properties
+
+Detailed carrier information for telecom apps, analytics, and geo-detection.
+
+#### `carrierAllowsVOIP: boolean`
+
+Check if carrier allows VoIP calls on its network.
+
+```typescript
+const allowsVOIP = DeviceInfoModule.carrierAllowsVOIP;
+// iOS: true/false based on carrier policy
+// Android: always true (no equivalent API)
+```
+
+**Platform**: iOS only (always returns `true` on Android)
+
+#### `carrierIsoCountryCode: string`
+
+Get ISO 3166-1 alpha-2 country code for the carrier.
+
+```typescript
+const countryCode = DeviceInfoModule.carrierIsoCountryCode;
+// Example: "US", "KR", "JP", "DE"
+// Returns "" if no SIM card
+```
+
+**Platform**: iOS, Android
+
+#### `mobileCountryCode: string`
+
+Get Mobile Country Code (MCC) per ITU-T Recommendation E.212.
+
+```typescript
+const mcc = DeviceInfoModule.mobileCountryCode;
+// Example: "310" (USA), "450" (Korea), "440" (Japan)
+// Returns "" if no carrier
+```
+
+**Platform**: iOS, Android
+
+**Common MCC values**:
+
+| Country | MCC |
+|---------|-----|
+| USA | 310-316 |
+| Korea | 450 |
+| Japan | 440-441 |
+| China | 460 |
+| Germany | 262 |
+
+#### `mobileNetworkCode: string`
+
+Get Mobile Network Code (MNC) that identifies the carrier within a country.
+
+```typescript
+const mnc = DeviceInfoModule.mobileNetworkCode;
+// Example: "260" (T-Mobile US), "05" (SKT Korea)
+// Returns "" if no carrier
+```
+
+**Platform**: iOS, Android
+
+#### `mobileNetworkOperator: string`
+
+Get combined MCC + MNC string.
+
+```typescript
+const operator = DeviceInfoModule.mobileNetworkOperator;
+// Example: "310260" (T-Mobile US), "45005" (SKT Korea)
+// Equivalent to: mobileCountryCode + mobileNetworkCode
+// Returns "" if no carrier
+```
+
+**Platform**: iOS, Android
+
+**Use cases**:
+- Carrier-specific feature toggling
+- Regional content delivery
+- Telecom analytics
+- Fraud detection (geo-location verification)
+
 ### `isLocationEnabled(): Promise<boolean>`
 
 Check if location services are enabled.
@@ -1066,6 +1147,8 @@ This provides fast access while keeping data reasonably fresh.
 | deviceYearClass         | ✅  | ✅      | Extended 2025 algorithm             |
 | isSideLoadingEnabled    | ❌  | ✅      | Android only (per-app on 8.0+)      |
 | Network info            | ✅  | ✅      | MAC hardcoded on iOS 7+             |
+| Carrier info (MCC/MNC)  | ✅  | ✅      | Empty string if no SIM              |
+| carrierAllowsVOIP       | ✅  | ⚠️      | Android always returns true         |
 | System language         | ✅  | ✅      | BCP 47 format                       |
 | Navigation mode         | ❌  | ✅      | Android only (API 29+)              |
 | Android Build info      | ❌  | ✅      | Android only                        |
