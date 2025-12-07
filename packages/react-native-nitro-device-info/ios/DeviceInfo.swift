@@ -28,31 +28,22 @@ import WebKit
  */
 class DeviceInfo: HybridDeviceInfoSpec {
 
-  // MARK: - Memory Optimization - Lazy Cached Values
+  // MARK: - Private Properties & Caches
 
-  /**
-   * Cached device model identifier to avoid repeated syscall overhead
-   */
+  /// Cached device model identifier to avoid repeated syscall overhead
   private lazy var cachedDeviceModelIdentifier: String = {
     return getDeviceModelIdentifier()
   }()
 
-  /**
-   * Enable battery monitoring once and keep it enabled
-   * Reduces overhead from repeatedly enabling/disabling
-   */
+  /// Enable battery monitoring once and keep it enabled
   private let batteryMonitoringInitializer: Void = {
     UIDevice.current.isBatteryMonitoringEnabled = true
   }()
 
-  /**
-   * Logger for error and diagnostic logging
-   */
+  /// Logger for error and diagnostic logging
   private let logger = OSLog(subsystem: "com.nitro.deviceinfo", category: "DeviceInfo")
 
-  /**
-   * Network info caches with periodic refresh (5 second cache)
-   */
+  /// Network info caches with periodic refresh (5 second cache)
   private var cachedUserAgent: String?
   private var cachedIpAddress: String = "unknown"
   private var ipAddressCacheTime: TimeInterval = 0
@@ -61,49 +52,99 @@ class DeviceInfo: HybridDeviceInfoSpec {
   private let IP_CACHE_DURATION: TimeInterval = 5.0
   private let CARRIER_CACHE_DURATION: TimeInterval = 5.0
 
-  // MARK: - Synchronous Properties (Cached Values)
+  /// Cached first install time (computed once)
+  private lazy var cachedFirstInstallTime: Double = {
+    if let documentsURL = FileManager.default.urls(
+      for: .documentDirectory,
+      in: .userDomainMask
+    ).first {
+      do {
+        let attributes = try FileManager.default.attributesOfItem(
+          atPath: documentsURL.path
+        )
+        if let creationDate = attributes[.creationDate] as? Date {
+          return creationDate.timeIntervalSince1970 * 1000
+        }
+      } catch {
+        // Handle error silently
+      }
+    }
+    return 0.0
+  }()
 
-  /**
-   * Device model identifier (e.g., "iPhone14,2")
-   * Cached value from UIDevice
-   */
+  /// Cached device year class based on RAM
+  private lazy var cachedDeviceYearClass: Double = {
+    let totalRam = Double(ProcessInfo.processInfo.physicalMemory)
+    let MB: Double = 1024 * 1024
+
+    if totalRam <= 512 * MB {
+      return 2010 // iPhone 4 and earlier
+    } else if totalRam <= 1024 * MB {
+      return 2012 // iPhone 5, 5c
+    } else if totalRam <= 2048 * MB {
+      return 2014 // iPhone 6, 6s
+    } else if totalRam <= 3072 * MB {
+      return 2016 // iPhone 7, 8
+    } else if totalRam <= 4096 * MB {
+      return 2018 // iPhone XS, 11
+    } else if totalRam <= 6144 * MB {
+      return 2020 // iPhone 12, 13
+    } else if totalRam <= 8192 * MB {
+      return 2022 // iPhone 14 Pro, 15 Pro
+    } else {
+      return 2024 // 8GB+ (iPhone 16 Pro, future devices)
+    }
+  }()
+
+  /// Get the key window using modern scene-based API (iOS 13+)
+  private var keyWindow: UIWindow? {
+    if #available(iOS 13.0, *) {
+      return UIApplication.shared.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .flatMap { $0.windows }
+        .first { $0.isKeyWindow }
+    } else {
+      return UIApplication.shared.windows.first
+    }
+  }
+
+  /// Cached CTCarrier for carrier info APIs
+  private var cachedCarrierObject: CTCarrier? {
+    let networkInfo = CTTelephonyNetworkInfo()
+    if let providers = networkInfo.serviceSubscriberCellularProviders {
+      return providers.values.first
+    }
+    return nil
+  }
+
+  // MARK: - Core Device Information
+
+  /// Device model identifier (e.g., "iPhone14,2")
   public var deviceId: String {
     return cachedDeviceModelIdentifier
   }
 
-  /**
-   * Device brand (always "Apple" on iOS)
-   */
+  /// Device brand (always "Apple" on iOS)
   public var brand: String {
     return "Apple"
   }
 
-  /**
-   * Operating system name
-   * Returns "iOS" or "iPadOS" depending on device
-   */
-  public var systemName: String {
-    return UIDevice.current.systemName
-  }
-
-  /**
-   * Operating system version (e.g., "15.0")
-   */
-  public var systemVersion: String {
-    return UIDevice.current.systemVersion
-  }
-
-  /**
-   * Device model name (e.g., "iPhone", "iPad")
-   */
+  /// Device model name (e.g., "iPhone", "iPad")
   public var model: String {
     return UIDevice.current.model
   }
 
-  /**
-   * Device type category
-   * Determined from UIUserInterfaceIdiom
-   */
+  /// Operating system name (e.g., "iOS" or "iPadOS")
+  public var systemName: String {
+    return UIDevice.current.systemName
+  }
+
+  /// Operating system version (e.g., "15.0")
+  public var systemVersion: String {
+    return UIDevice.current.systemVersion
+  }
+
+  /// Device type category
   public var deviceType: DeviceType {
     switch UIDevice.current.userInterfaceIdiom {
     case .phone:
@@ -119,34 +160,69 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  // MARK: - Synchronous Properties - Device Capabilities
+  /// Get unique device identifier (IDFV)
+  public var uniqueId: String {
+    return UIDevice.current.identifierForVendor?.uuidString ?? ""
+  }
 
-  /**
-   * Check if device is a tablet (iPad)
-   */
+  /// Get device manufacturer (always "Apple" on iOS)
+  public var manufacturer: String {
+    return "Apple"
+  }
+
+  /// Get device name
+  var deviceName: String {
+    return UIDevice.current.name
+  }
+
+  // MARK: - Device Capabilities
+
+  /// Check if device is a tablet (iPad)
   public var isTablet: Bool {
     return UIDevice.current.userInterfaceIdiom == .pad
   }
 
-  /**
-   * Get the key window using modern scene-based API (iOS 13+)
-   * Uses deprecated API on iOS 11-12 for compatibility
-   */
-  private var keyWindow: UIWindow? {
-    if #available(iOS 13.0, *) {
-      return UIApplication.shared.connectedScenes
-        .compactMap { $0 as? UIWindowScene }
-        .flatMap { $0.windows }
-        .first { $0.isKeyWindow }
-    } else {
-      return UIApplication.shared.windows.first
-    }
+  /// Check if running in simulator
+  public var isEmulator: Bool {
+    #if targetEnvironment(simulator)
+      return true
+    #else
+      return false
+    #endif
   }
 
-  /**
-   * Check if device has a display notch
-   * Detects iPhone X and later models with notch
-   */
+  /// Get estimated device year class based on hardware specifications
+  var deviceYearClass: Double {
+    return cachedDeviceYearClass
+  }
+
+  /// Check if camera is present
+  public var isCameraPresent: Bool {
+    return true
+  }
+
+  /// Check if PIN or biometric authentication is set
+  public var isPinOrFingerprintSet: Bool {
+    return false
+  }
+
+  /// Check if hardware-backed key storage (Secure Enclave) is available
+  var isHardwareKeyStoreAvailable: Bool {
+    #if targetEnvironment(simulator)
+      return false
+    #else
+      return SecureEnclave.isAvailable
+    #endif
+  }
+
+  /// Check if device is low RAM device (iOS doesn't have equivalent - returns false)
+  var isLowRamDevice: Bool {
+    return false
+  }
+
+  // MARK: - Display & Screen
+
+  /// Check if device has a display notch
   public func getHasNotch() -> Bool {
     if #available(iOS 11.0, *) {
       guard let window = keyWindow else { return false }
@@ -155,18 +231,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /**
-   * Check if device has Dynamic Island
-   * Detects via safe area inset threshold (>= 51pt)
-   * Works for iPhone 14 Pro and all future Dynamic Island devices
-   */
+  /// Check if device has Dynamic Island
   public func getHasDynamicIsland() -> Bool {
-    // Dynamic Island requires iOS 16.0+
     guard #available(iOS 16.0, *) else {
       return false
     }
 
-    // Only iPhones have Dynamic Island
     guard UIDevice.current.userInterfaceIdiom == .phone else {
       return false
     }
@@ -175,44 +245,57 @@ class DeviceInfo: HybridDeviceInfoSpec {
       return false
     }
 
-    // Dynamic Island devices have safe area inset >= 51pt
-    // Portrait: top = 59pt (51pt with Display Zoom)
-    // Landscape: left/right = 59pt
-    // Notch devices have 44-48pt in all orientations
     let insets = window.safeAreaInsets
     let maxInset = max(insets.top, insets.left, insets.right)
     return maxInset >= 51
   }
 
-  // MARK: - Synchronous Properties - Device Identification
-
-  /**
-   * Get unique device identifier (IDFV)
-   * Persists across app installs from same vendor
-   */
-  public var uniqueId: String {
-    return UIDevice.current.identifierForVendor?.uuidString ?? ""
+  /// Check if Display Zoom is enabled
+  var isDisplayZoomed: Bool {
+    let screen = UIScreen.main
+    return screen.scale < screen.nativeScale
   }
 
-  /**
-   * Get device manufacturer (always "Apple" on iOS)
-   */
-  public var manufacturer: String {
-    return "Apple"
+  /// Check if device is in landscape orientation
+  func getIsLandscape() -> Bool {
+    let orientation = UIDevice.current.orientation
+    return orientation == .landscapeLeft || orientation == .landscapeRight
   }
 
-  // MARK: - Synchronous Properties - System Resources
+  /// Get screen brightness (0.0 to 1.0)
+  func getBrightness() -> Double {
+    return Double(UIScreen.main.brightness)
+  }
 
-  /**
-   * Get total device RAM in bytes
-   */
+  /// Get system font scale
+  func getFontScale() -> Double {
+    let preferredFont = UIFont.preferredFont(forTextStyle: .body)
+    let defaultSize: CGFloat = 17.0
+    return Double(preferredFont.pointSize / defaultSize)
+  }
+
+  /// Check if liquid glass effect is available
+  var isLiquidGlassAvailable: Bool {
+    #if compiler(>=6.2)
+    if #available(iOS 26.0, *) {
+      if let infoPlist = Bundle.main.infoDictionary,
+         let requiresCompatibility = infoPlist["UIDesignRequiresCompatibility"] as? Bool {
+        return !requiresCompatibility
+      }
+      return true
+    }
+    #endif
+    return false
+  }
+
+  // MARK: - System Resources
+
+  /// Get total device RAM in bytes
   public var totalMemory: Double {
     return Double(ProcessInfo.processInfo.physicalMemory)
   }
 
-  /**
-   * Get current app memory usage in bytes
-   */
+  /// Get current app memory usage in bytes
   public func getUsedMemory() -> Double {
     var info = mach_task_basic_info()
     var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
@@ -232,9 +315,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return 0.0
   }
 
-  /**
-   * Get total disk storage capacity in bytes
-   */
+  /// Get maximum memory (not available on iOS in same way as Android)
+  var maxMemory: Double {
+    return -1
+  }
+
+  /// Get total disk storage capacity in bytes
   public var totalDiskCapacity: Double {
     do {
       let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
@@ -246,9 +332,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /**
-   * Get free disk storage in bytes
-   */
+  /// Get free disk storage in bytes
   public func getFreeDiskStorage() -> Double {
     do {
       let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
@@ -260,21 +344,29 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /**
-   * Get current battery level (0.0 to 1.0)
-   */
+  /// Get device uptime since boot in milliseconds
+  func getUptime() -> Double {
+    return ProcessInfo.processInfo.systemUptime * 1000
+  }
+
+  /// Device boot time in milliseconds since epoch
+  var startupTime: Double {
+    let uptime = ProcessInfo.processInfo.systemUptime
+    let bootTime = Date().timeIntervalSince1970 - uptime
+    return bootTime * 1000
+  }
+
+  // MARK: - Battery & Power
+
+  /// Get current battery level (0.0 to 1.0)
   public func getBatteryLevel() -> Double {
-    // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
     let level = UIDevice.current.batteryLevel
     return level >= 0 ? Double(level) : 0.0
   }
 
-  /**
-   * Get comprehensive power state information
-   */
+  /// Get comprehensive power state information
   public func getPowerState() -> PowerState {
-    // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
 
     let batteryLevel = UIDevice.current.batteryLevel >= 0 ? Double(UIDevice.current.batteryLevel) : 0.0
@@ -292,49 +384,46 @@ class DeviceInfo: HybridDeviceInfoSpec {
     )
   }
 
-  /**
-   * Check if battery is currently charging
-   */
+  /// Check if battery is currently charging
   public func getIsBatteryCharging() -> Bool {
-    // Battery monitoring already enabled in initializer
     _ = batteryMonitoringInitializer
     return UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
   }
 
-  // MARK: - Synchronous Properties - Application Metadata
+  /// Check if battery level is below threshold
+  func isLowBatteryLevel(threshold: Double) -> Bool {
+    return getBatteryLevel() < threshold
+  }
 
-  /**
-   * Get application version string
-   */
+  // MARK: - Application Metadata
+
+  /// Get application version string
   public var version: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
   }
 
-  /**
-   * Get application build number
-   */
+  /// Get application build number
   public var buildNumber: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
   }
 
-  /**
-   * Get bundle identifier
-   */
+  /// Get bundle identifier
   public var bundleId: String {
     return Bundle.main.bundleIdentifier ?? ""
   }
 
-  /**
-   * Get application display name
-   */
+  /// Get application display name
   public var applicationName: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ??
            Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
   }
 
-  /**
-   * Get first install timestamp (milliseconds since epoch)
-   */
+  /// Readable version string (version.build)
+  var readableVersion: String {
+    return "\(version).\(buildNumber)"
+  }
+
+  /// Get first install timestamp (milliseconds since epoch)
   public func getFirstInstallTime() throws -> Promise<Double> {
     return Promise.async {
       if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -349,9 +438,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /**
-   * Get last update timestamp (milliseconds since epoch)
-   */
+  /// Get last update timestamp (milliseconds since epoch)
   public func getLastUpdateTime() throws -> Promise<Double> {
     return Promise.async {
       if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -366,13 +453,19 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  // MARK: - Asynchronous Methods - Network & Connectivity
+  /// First install time in milliseconds since epoch
+  var firstInstallTimeSync: Double {
+    return cachedFirstInstallTime
+  }
 
-  /**
-   * Get device IP address
-   * Prioritizes IPv4 addresses over IPv6 for compatibility with most applications.
-   * Returns IPv6 only as a fallback when no IPv4 address is available.
-   */
+  /// Last update time (not available on iOS, returns -1)
+  var lastUpdateTimeSync: Double {
+    return -1
+  }
+
+  // MARK: - Network
+
+  /// Get device IP address
   public func getIpAddress() throws -> Promise<String> {
     return Promise.async {
       var ipv4Address: String?
@@ -386,11 +479,9 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
           guard let interface = ptr?.pointee else { continue }
 
-          // Only process en0 (WiFi) and pdp_ip0 (cellular) interfaces
           let name = String(cString: interface.ifa_name)
           guard name == "en0" || name == "pdp_ip0" else { continue }
 
-          // Safe nil check for ifa_addr
           guard let addr = interface.ifa_addr else { continue }
           let addrFamily = addr.pointee.sa_family
 
@@ -400,12 +491,9 @@ class DeviceInfo: HybridDeviceInfoSpec {
                         nil, socklen_t(0), NI_NUMERICHOST) == 0 {
             let address = String(cString: hostname)
 
-            // Prioritize IPv4 (AF_INET) over IPv6 (AF_INET6)
             if addrFamily == UInt8(AF_INET) {
-              // Found IPv4, store it
               ipv4Address = address
             } else if addrFamily == UInt8(AF_INET6) && ipv6Address == nil {
-              // Store IPv6 as fallback (only first one found)
               ipv6Address = address
             }
           }
@@ -413,99 +501,184 @@ class DeviceInfo: HybridDeviceInfoSpec {
         freeifaddrs(ifaddr)
       }
 
-      // Return IPv4 if available, otherwise IPv6, otherwise "unknown"
       return ipv4Address ?? ipv6Address ?? "unknown"
     }
   }
 
-  /**
-   * Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
-   */
+  /// Get IP address with 5-second cache
+  func getIpAddressSync() -> String {
+    let now = Date().timeIntervalSince1970
+    if now - ipAddressCacheTime > IP_CACHE_DURATION {
+      cachedIpAddress = queryIpAddressInternal()
+      ipAddressCacheTime = now
+    }
+    return cachedIpAddress
+  }
+
+  /// Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
   public func getMacAddress() throws -> Promise<String> {
     return Promise.async {
       return "02:00:00:00:00:00"
     }
   }
 
-  /**
-   * Get cellular carrier name
-   */
+  /// Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
+  func getMacAddressSync() -> String {
+    return "02:00:00:00:00:00"
+  }
+
+  /// Get WebView user agent string (cached after first call)
+  func getUserAgent() throws -> Promise<String> {
+    return Promise.async { [weak self] in
+      if let cached = self?.cachedUserAgent {
+        return cached
+      }
+
+      return await withCheckedContinuation { (continuation: CheckedContinuation<String, Never>) in
+        DispatchQueue.main.async { [weak self] in
+          let webView = WKWebView()
+          webView.evaluateJavaScript("navigator.userAgent") { result, error in
+            if let userAgent = result as? String {
+              self?.cachedUserAgent = userAgent
+              continuation.resume(returning: userAgent)
+            } else {
+              continuation.resume(returning: "unknown")
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /// Check if airplane mode is enabled (not available on iOS - returns false)
+  func getIsAirplaneMode() -> Bool {
+    return false
+  }
+
+  // MARK: - Carrier Information
+
+  /// Get cellular carrier name
   public func getCarrier() throws -> Promise<String> {
     return Promise.async {
       if #available(iOS 12.0, *) {
-        // Carrier info requires CoreTelephony import
-        // For MVP, return empty string
         return ""
       }
       return ""
     }
   }
 
-  /**
-   * Check if location services are enabled
-   */
-  public func isLocationEnabled() throws -> Promise<Bool> {
-    return Promise.async {
-      // Requires CoreLocation import
-      // For MVP, return false
-      return false
+  /// Get carrier name with 5-second cache
+  func getCarrierSync() -> String {
+    let now = Date().timeIntervalSince1970
+    if now - carrierCacheTime > CARRIER_CACHE_DURATION {
+      let networkInfo = CTTelephonyNetworkInfo()
+      if let providers = networkInfo.serviceSubscriberCellularProviders,
+         let carrier = providers.values.first {
+        cachedCarrier = carrier.carrierName ?? "unknown"
+      } else {
+        cachedCarrier = "unknown"
+      }
+      carrierCacheTime = now
     }
+    return cachedCarrier
   }
 
-  /**
-   * Check if headphones are connected
-   */
+  /// Check if carrier allows VoIP calls on its network
+  var carrierAllowsVOIP: Bool {
+    return cachedCarrierObject?.allowsVOIP ?? true
+  }
+
+  /// ISO 3166-1 country code for the carrier
+  var carrierIsoCountryCode: String {
+    return cachedCarrierObject?.isoCountryCode ?? ""
+  }
+
+  /// Mobile Country Code (MCC)
+  var mobileCountryCode: String {
+    return cachedCarrierObject?.mobileCountryCode ?? ""
+  }
+
+  /// Mobile Network Code (MNC)
+  var mobileNetworkCode: String {
+    return cachedCarrierObject?.mobileNetworkCode ?? ""
+  }
+
+  /// Mobile Network Operator (MCC + MNC combined)
+  var mobileNetworkOperator: String {
+    let mcc = mobileCountryCode
+    let mnc = mobileNetworkCode
+    if mcc.isEmpty && mnc.isEmpty {
+      return ""
+    }
+    return mcc + mnc
+  }
+
+  // MARK: - Audio Accessories
+
+  /// Check if headphones are connected
   public func isHeadphonesConnected() throws -> Promise<Bool> {
     return Promise.async {
-      // Requires AVFoundation import
-      // For MVP, return false
       return false
     }
   }
 
-  // MARK: - Synchronous Properties - Device Capabilities (Additional)
-
-  /**
-   * Check if camera is present
-   */
-  public var isCameraPresent: Bool {
-    // Requires AVFoundation import
-    // For MVP, return true (all iPhones have cameras)
-    return true
+  /// Check if any headphones are connected
+  func getIsHeadphonesConnected() -> Bool {
+    return getIsWiredHeadphonesConnected() || getIsBluetoothHeadphonesConnected()
   }
 
-  /**
-   * Check if PIN or biometric authentication is set
-   */
-  public var isPinOrFingerprintSet: Bool {
-    // Requires LocalAuthentication import
-    // For MVP, return false
-    return false
+  /// Check if wired headphones are connected
+  func getIsWiredHeadphonesConnected() -> Bool {
+    let route = AVAudioSession.sharedInstance().currentRoute
+    return route.outputs.contains { output in
+      output.portType == .headphones
+    }
   }
 
-  /**
-   * Check if running in simulator
-   */
-  public var isEmulator: Bool {
-    #if targetEnvironment(simulator)
-      return true
-    #else
+  /// Check if Bluetooth headphones are connected
+  func getIsBluetoothHeadphonesConnected() -> Bool {
+    let route = AVAudioSession.sharedInstance().currentRoute
+    return route.outputs.contains { output in
+      output.portType == .bluetoothA2DP ||
+      output.portType == .bluetoothHFP ||
+      output.portType == .bluetoothLE
+    }
+  }
+
+  // MARK: - Location Services
+
+  /// Check if location services are enabled
+  public func isLocationEnabled() throws -> Promise<Bool> {
+    return Promise.async {
       return false
-    #endif
+    }
   }
 
-  // MARK: - Synchronous Properties - Platform-Specific
-
-  /**
-   * Get Android API level (returns -1 on iOS)
-   */
-  public var apiLevel: Double {
-    return -1.0
+  /// Check if location services are enabled
+  func getIsLocationEnabled() -> Bool {
+    return CLLocationManager.locationServicesEnabled()
   }
 
-  /**
-   * Get supported CPU architectures
-   */
+  /// Get list of enabled location providers
+  func getAvailableLocationProviders() -> [String] {
+    let enabled = CLLocationManager.locationServicesEnabled()
+    if enabled {
+      return ["gps", "network"]
+    } else {
+      return []
+    }
+  }
+
+  // MARK: - Localization
+
+  /// Get device system language in BCP 47 format
+  var systemLanguage: String {
+    return Locale.preferredLanguages.first ?? "en"
+  }
+
+  // MARK: - CPU & Architecture
+
+  /// Get supported CPU architectures
   public var supportedAbis: [String] {
     #if arch(arm64)
       return ["arm64"]
@@ -516,55 +689,64 @@ class DeviceInfo: HybridDeviceInfoSpec {
     #endif
   }
 
-  /**
-   * Check if Google Mobile Services is available (always false on iOS)
-   */
+  /// Get supported 32-bit ABIs (iOS devices are 64-bit only since iPhone 5s)
+  var supported32BitAbis: [String] {
+    return []
+  }
+
+  /// Get supported 64-bit ABIs
+  var supported64BitAbis: [String] {
+    var arch: String = "arm64"
+
+    #if targetEnvironment(simulator)
+      #if arch(x86_64)
+        arch = "x86_64"
+      #elseif arch(arm64)
+        arch = "arm64"
+      #endif
+    #endif
+
+    return [arch]
+  }
+
+  // MARK: - Android Platform (Cross-Platform Defaults for iOS)
+
+  /// Get Android API level (returns -1 on iOS)
+  public var apiLevel: Double {
+    return -1.0
+  }
+
+  /// Get navigation mode (iOS always returns "unknown")
+  var navigationMode: NavigationMode {
+    return .unknown
+  }
+
+  /// Check if Google Mobile Services is available (always false on iOS)
   public func getHasGms() -> Bool {
     return false
   }
 
-  /**
-   * Check if Huawei Mobile Services is available (always false on iOS)
-   */
+  /// Check if Huawei Mobile Services is available (always false on iOS)
   public func getHasHms() -> Bool {
     return false
   }
 
-  // MARK: - Helper Methods
-
-  /**
-   * Get device model identifier using sysctlbyname
-   */
-  private func getDeviceModelIdentifier() -> String {
-    var systemInfo = utsname()
-    uname(&systemInfo)
-    let machineMirror = Mirror(reflecting: systemInfo.machine)
-    let identifier = machineMirror.children.reduce("") { identifier, element in
-      guard let value = element.value as? Int8, value != 0 else { return identifier }
-      return identifier + String(UnicodeScalar(UInt8(value)))
-    }
-    return identifier
+  /// Check if system has a feature (Android-specific, not available on iOS)
+  func hasSystemFeature(feature: String) -> Bool {
+    return false
   }
 
-  /**
-   * Convert UIDevice.BatteryState to BatteryState enum
-   */
-  private func getBatteryStateEnum(_ state: UIDevice.BatteryState) -> BatteryState {
-    switch state {
-    case .unknown:
-      return .unknown
-    case .unplugged:
-      return .unplugged
-    case .charging:
-      return .charging
-    case .full:
-      return .full
-    @unknown default:
-      return .unknown
-    }
+  /// Get system available features (Android-specific, not available on iOS)
+  var systemAvailableFeatures: [String] {
+    return []
   }
 
-  // MARK: - Android Build Information (Cross-Platform Defaults for iOS)
+  /// Get supported media types (Android-specific, returns empty on iOS)
+  var supportedMediaTypeList: [String] {
+    return []
+  }
+
+  // Android Build Information
 
   /// Android device serial number (iOS returns "unknown")
   var serialNumber: String { "unknown" }
@@ -572,14 +754,23 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /// Android ID (iOS returns "unknown")
   var androidId: String { "unknown" }
 
+  /// Preview SDK version (iOS returns 0)
+  var previewSdkInt: Double { 0.0 }
+
   /// Android security patch level (iOS returns "unknown")
   var securityPatch: String { "unknown" }
 
-  /// Device bootloader version (iOS returns "unknown")
-  var bootloader: String { "unknown" }
-
   /// Android OS version codename (iOS returns "unknown")
   var codename: String { "unknown" }
+
+  /// Incremental version (iOS returns "unknown")
+  var incremental: String { "unknown" }
+
+  /// Device board/platform name (iOS returns "unknown")
+  var board: String { "unknown" }
+
+  /// Device bootloader version (iOS returns "unknown")
+  var bootloader: String { "unknown" }
 
   /// Device codename (iOS returns "unknown")
   var device: String { "unknown" }
@@ -608,213 +799,13 @@ class DeviceInfo: HybridDeviceInfoSpec {
   /// Base OS version (iOS returns empty string)
   var baseOs: String { "" }
 
-  /// Preview SDK version (iOS returns 0)
-  var previewSdkInt: Double { 0.0 }
-
-  /// Incremental version (iOS returns "unknown")
-  var incremental: String { "unknown" }
+  /// Radio/baseband version (iOS returns "unknown")
+  var radioVersion: String { "unknown" }
 
   /// Build ID (iOS returns "unknown")
   var buildId: String { "unknown" }
 
-  // MARK: - Application Installation Metadata
-
-  /// Installer package name (App Store, TestFlight, or unknown)
-  var installerPackageName: String {
-    if let receiptURL = Bundle.main.appStoreReceiptURL {
-      let receiptPath = receiptURL.path
-      if receiptPath.contains("sandboxReceipt") {
-        return "com.apple.TestFlight"
-      } else if receiptPath.contains("receipt") {
-        return "com.apple.AppStore"
-      }
-    }
-    return "unknown"
-  }
-
-  /// Get install referrer (Android-specific, returns "unknown" on iOS)
-  func getInstallReferrer() throws -> Promise<String> {
-    return Promise.async {
-      return "unknown"
-    }
-  }
-
-  /// Device boot time in milliseconds since epoch
-  var startupTime: Double {
-    let uptime = ProcessInfo.processInfo.systemUptime
-    let bootTime = Date().timeIntervalSince1970 - uptime
-    return bootTime * 1000
-  }
-
-  /// Readable version string (version.build)
-  var readableVersion: String {
-    return "\(version).\(buildNumber)"
-  }
-
-  /// Cached first install time (computed once)
-  private lazy var cachedFirstInstallTime: Double = {
-    if let documentsURL = FileManager.default.urls(
-      for: .documentDirectory,
-      in: .userDomainMask
-    ).first {
-      do {
-        let attributes = try FileManager.default.attributesOfItem(
-          atPath: documentsURL.path
-        )
-        if let creationDate = attributes[.creationDate] as? Date {
-          return creationDate.timeIntervalSince1970 * 1000
-        }
-      } catch {
-        // Handle error silently
-      }
-    }
-    return 0.0
-  }()
-
-  /// First install time in milliseconds since epoch
-  var firstInstallTimeSync: Double {
-    return cachedFirstInstallTime
-  }
-
-  /// Last update time (not available on iOS, returns -1)
-  var lastUpdateTimeSync: Double {
-    return -1
-  }
-
-  // MARK: - Device Capability Detection
-
-  /// Check if wired headphones are connected
-  func getIsWiredHeadphonesConnected() -> Bool {
-    let route = AVAudioSession.sharedInstance().currentRoute
-    return route.outputs.contains { output in
-      output.portType == .headphones
-    }
-  }
-
-  /// Check if Bluetooth headphones are connected
-  func getIsBluetoothHeadphonesConnected() -> Bool {
-    let route = AVAudioSession.sharedInstance().currentRoute
-    return route.outputs.contains { output in
-      output.portType == .bluetoothA2DP ||
-      output.portType == .bluetoothHFP ||
-      output.portType == .bluetoothLE
-    }
-  }
-
-  /// Check if airplane mode is enabled (not available on iOS - returns false)
-  func getIsAirplaneMode() -> Bool {
-    return false
-  }
-
-  /// Check if device is low RAM device (iOS doesn't have equivalent - returns false)
-  var isLowRamDevice: Bool {
-    return false
-  }
-
-  /// Check if mouse is connected (Windows-specific, returns false on iOS)
-  var isMouseConnected: Bool {
-    return false
-  }
-
-  /// Check if keyboard is connected (Windows-specific, returns false on iOS)
-  var isKeyboardConnected: Bool {
-    return false
-  }
-
-  /// Check if device is in landscape orientation
-  func getIsLandscape() -> Bool {
-    let orientation = UIDevice.current.orientation
-    return orientation == .landscapeLeft || orientation == .landscapeRight
-  }
-
-  // MARK: - Advanced System Information
-
-  /// Get supported 32-bit ABIs (iOS devices are 64-bit only since iPhone 5s)
-  var supported32BitAbis: [String] {
-    return []
-  }
-
-  /// Get supported 64-bit ABIs
-  var supported64BitAbis: [String] {
-    var arch: String = "arm64"
-
-    #if targetEnvironment(simulator)
-      #if arch(x86_64)
-        arch = "x86_64"
-      #elseif arch(arm64)
-        arch = "arm64"  // Apple Silicon Macs
-      #endif
-    #endif
-
-    return [arch]
-  }
-
-  /// Get system font scale
-  func getFontScale() -> Double {
-    let preferredFont = UIFont.preferredFont(forTextStyle: .body)
-    let defaultSize: CGFloat = 17.0  // iOS default body font size
-    return Double(preferredFont.pointSize / defaultSize)
-  }
-
-  /// Check if system has a feature (Android-specific, not available on iOS)
-  func hasSystemFeature(feature: String) -> Bool {
-    return false
-  }
-
-  /// Get system available features (Android-specific, not available on iOS)
-  var systemAvailableFeatures: [String] {
-    return []
-  }
-
-  /// Get list of enabled location providers
-  func getAvailableLocationProviders() -> [String] {
-    let enabled = CLLocationManager.locationServicesEnabled()
-    if enabled {
-      return ["gps", "network"]
-    } else {
-      return []
-    }
-  }
-
-  /// Get host names (Windows-specific, not available on iOS)
-  var hostNames: [String] {
-    return []
-  }
-
-  /// Get maximum memory (not available on iOS in same way as Android)
-  var maxMemory: Double {
-    return -1
-  }
-
-  // MARK: - Network & Display Information
-
-  /// Get WebView user agent string (cached after first call)
-  func getUserAgent() throws -> Promise<String> {
-    return Promise.async { [weak self] in
-      if let cached = self?.cachedUserAgent {
-        return cached
-      }
-
-      return await withCheckedContinuation { (continuation: CheckedContinuation<String, Never>) in
-        DispatchQueue.main.async { [weak self] in
-          let webView = WKWebView()
-          webView.evaluateJavaScript("navigator.userAgent") { result, error in
-            if let userAgent = result as? String {
-              self?.cachedUserAgent = userAgent
-              continuation.resume(returning: userAgent)
-            } else {
-              continuation.resume(returning: "unknown")
-            }
-          }
-        }
-      }
-    }
-  }
-
-  /// Get device name
-  var deviceName: String {
-    return UIDevice.current.name
-  }
+  // MARK: - iOS Platform
 
   /// Get device token from DeviceCheck
   func getDeviceToken() throws -> Promise<String> {
@@ -844,179 +835,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
         )
       }
     }
-  }
-
-  /// Get IP address with 5-second cache
-  func getIpAddressSync() -> String {
-    let now = Date().timeIntervalSince1970
-    if now - ipAddressCacheTime > IP_CACHE_DURATION {
-      cachedIpAddress = queryIpAddressInternal()
-      ipAddressCacheTime = now
-    }
-    return cachedIpAddress
-  }
-
-  /// Query IP address from network interfaces
-  /// Prioritizes IPv4 addresses over IPv6 for compatibility with most applications.
-  /// Returns IPv6 only as a fallback when no IPv4 address is available.
-  private func queryIpAddressInternal() -> String {
-    var ipv4Address: String?
-    var ipv6Address: String?
-    var ifaddr: UnsafeMutablePointer<ifaddrs>?
-
-    guard getifaddrs(&ifaddr) == 0 else { return "unknown" }
-    guard let firstAddr = ifaddr else { return "unknown" }
-
-    defer { freeifaddrs(ifaddr) }
-
-    for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
-      let interface = ptr.pointee
-
-      // Only process en0 (WiFi) and pdp_ip0 (cellular) interfaces
-      let name = String(cString: interface.ifa_name)
-      guard name == "en0" || name == "pdp_ip0" else { continue }
-
-      // Safe nil check for ifa_addr
-      guard let addr = interface.ifa_addr else { continue }
-      let addrFamily = addr.pointee.sa_family
-
-      var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-      if getnameinfo(
-        addr,
-        socklen_t(addr.pointee.sa_len),
-        &hostname,
-        socklen_t(hostname.count),
-        nil,
-        0,
-        NI_NUMERICHOST
-      ) == 0 {
-        let address = String(cString: hostname)
-
-        // Prioritize IPv4 (AF_INET) over IPv6 (AF_INET6)
-        if addrFamily == UInt8(AF_INET) {
-          // Found IPv4, store it
-          ipv4Address = address
-        } else if addrFamily == UInt8(AF_INET6) && ipv6Address == nil {
-          // Store IPv6 as fallback (only first one found)
-          ipv6Address = address
-        }
-      }
-    }
-
-    // Return IPv4 if available, otherwise IPv6, otherwise "unknown"
-    return ipv4Address ?? ipv6Address ?? "unknown"
-  }
-
-  /// Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
-  func getMacAddressSync() -> String {
-    return "02:00:00:00:00:00"
-  }
-
-  /// Get carrier name with 5-second cache
-  func getCarrierSync() -> String {
-    let now = Date().timeIntervalSince1970
-    if now - carrierCacheTime > CARRIER_CACHE_DURATION {
-      let networkInfo = CTTelephonyNetworkInfo()
-      // serviceSubscriberCellularProviders is available on iOS 12.0+
-      if let providers = networkInfo.serviceSubscriberCellularProviders,
-         let carrier = providers.values.first {
-        cachedCarrier = carrier.carrierName ?? "unknown"
-      } else {
-        cachedCarrier = "unknown"
-      }
-      carrierCacheTime = now
-    }
-    return cachedCarrier
-  }
-
-  // MARK: - Carrier Information (react-native-carrier-info parity)
-
-  /// Cached CTCarrier for carrier info APIs
-  private var cachedCarrierObject: CTCarrier? {
-    let networkInfo = CTTelephonyNetworkInfo()
-    if let providers = networkInfo.serviceSubscriberCellularProviders {
-      return providers.values.first
-    }
-    return nil
-  }
-
-  /**
-   * Check if carrier allows VoIP calls on its network
-   *
-   * Uses CTCarrier.allowsVOIP (deprecated but still functional on iOS 16+)
-   * Returns true on Android (no equivalent API)
-   */
-  var carrierAllowsVOIP: Bool {
-    return cachedCarrierObject?.allowsVOIP ?? true
-  }
-
-  /**
-   * ISO 3166-1 country code for the carrier
-   *
-   * Returns the ISO country code (e.g., "US", "KR", "JP")
-   * Returns empty string if unavailable
-   */
-  var carrierIsoCountryCode: String {
-    return cachedCarrierObject?.isoCountryCode ?? ""
-  }
-
-  /**
-   * Mobile Country Code (MCC)
-   *
-   * Returns 3-digit MCC per ITU-T E.212 (e.g., "310" for USA, "450" for Korea)
-   * Returns empty string if unavailable
-   */
-  var mobileCountryCode: String {
-    return cachedCarrierObject?.mobileCountryCode ?? ""
-  }
-
-  /**
-   * Mobile Network Code (MNC)
-   *
-   * Returns 2 or 3-digit MNC (e.g., "260" for T-Mobile US)
-   * Returns empty string if unavailable
-   */
-  var mobileNetworkCode: String {
-    return cachedCarrierObject?.mobileNetworkCode ?? ""
-  }
-
-  /**
-   * Mobile Network Operator (MCC + MNC combined)
-   *
-   * Returns combined MCC+MNC (e.g., "310260" for T-Mobile US)
-   * Equivalent to mobileCountryCode + mobileNetworkCode
-   * Returns empty string if unavailable
-   */
-  var mobileNetworkOperator: String {
-    let mcc = mobileCountryCode
-    let mnc = mobileNetworkCode
-    if mcc.isEmpty && mnc.isEmpty {
-      return ""
-    }
-    return mcc + mnc
-  }
-
-  /// Check if location services are enabled
-  func getIsLocationEnabled() -> Bool {
-    return CLLocationManager.locationServicesEnabled()
-  }
-
-  /// Check if any headphones are connected
-  func getIsHeadphonesConnected() -> Bool {
-    return getIsWiredHeadphonesConnected() || getIsBluetoothHeadphonesConnected()
-  }
-
-  // MARK: - iOS-Specific Features
-
-  /// Check if Display Zoom is enabled
-  var isDisplayZoomed: Bool {
-    let screen = UIScreen.main
-    return screen.scale < screen.nativeScale
-  }
-
-  /// Get screen brightness (0.0 to 1.0)
-  func getBrightness() -> Double {
-    return Double(UIScreen.main.brightness)
   }
 
   /// Get unique ID and sync to Keychain for persistence
@@ -1049,22 +867,34 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  // MARK: - Media & Battery Helpers
+  // MARK: - Installation & Distribution
 
-  /// Get supported media types (Android-specific, returns empty on iOS)
-  var supportedMediaTypeList: [String] {
-    return []
+  /// Installer package name (App Store, TestFlight, or unknown)
+  var installerPackageName: String {
+    if let receiptURL = Bundle.main.appStoreReceiptURL {
+      let receiptPath = receiptURL.path
+      if receiptPath.contains("sandboxReceipt") {
+        return "com.apple.TestFlight"
+      } else if receiptPath.contains("receipt") {
+        return "com.apple.AppStore"
+      }
+    }
+    return "unknown"
   }
 
-  /// Check if battery level is below threshold
-  func isLowBatteryLevel(threshold: Double) -> Bool {
-    return getBatteryLevel() < threshold
+  /// Get install referrer (Android-specific, returns "unknown" on iOS)
+  func getInstallReferrer() throws -> Promise<String> {
+    return Promise.async {
+      return "unknown"
+    }
   }
 
-  /// Check if device is in tablet mode (Windows-specific, returns false on iOS)
-  var isTabletMode: Bool {
+  /// Check if sideloading is enabled (always false on iOS)
+  func isSideLoadingEnabled() -> Bool {
     return false
   }
+
+  // MARK: - Legacy Compatibility
 
   /// Get total disk capacity using old API (alias to main method on iOS)
   var totalDiskCapacityOld: Double {
@@ -1076,126 +906,13 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return getFreeDiskStorage()
   }
 
-  /// Check if liquid glass effect is available
-  /// Requires iOS 26.0+, Xcode 16+ (Swift 6.2+), and UIDesignRequiresCompatibility must be false/absent
-  var isLiquidGlassAvailable: Bool {
-    #if compiler(>=6.2)  // Xcode 16+ with Swift 6.2+
-    if #available(iOS 26.0, *) {
-      // Check if the app has explicitly disabled liquid glass via compatibility flag
-      if let infoPlist = Bundle.main.infoDictionary,
-         let requiresCompatibility = infoPlist["UIDesignRequiresCompatibility"] as? Bool {
-        // If UIDesignRequiresCompatibility is true, liquid glass is disabled
-        return !requiresCompatibility
-      }
-      // If the flag is not set or is false, liquid glass is available
-      return true
-    }
-    #endif
-    // Liquid glass requires iOS 26.0+ and Swift 6.2+ compiler
-    return false
-  }
-
-  /// Check if hardware-backed key storage (Secure Enclave) is available
-  var isHardwareKeyStoreAvailable: Bool {
-    #if targetEnvironment(simulator)
-      // iOS Simulator does not have Secure Enclave
-      return false
-    #else
-      // SecureEnclave.isAvailable checks for A7+ chip (iPhone 5s+)
-      return SecureEnclave.isAvailable
-    #endif
-  }
-
-  // MARK: - Localization & Navigation
-
-  /// Get device system language in BCP 47 format
-  /// Returns the user's preferred language, reflects per-app language settings on iOS 13.1+
-  var systemLanguage: String {
-    return Locale.preferredLanguages.first ?? "en"
-  }
-
-  /// Get navigation mode (iOS always returns "unknown" - no configurable navigation modes)
-  var navigationMode: NavigationMode {
-    return .unknown
-  }
-
-  // MARK: - Expo Device Parity APIs
-
-  /**
-   * Get device uptime since boot in milliseconds
-   *
-   * Uses `systemUptime` which excludes deep sleep time on iOS.
-   * Note: Android uses `uptimeMillis()` which excludes deep sleep, matching iOS behavior.
-   *
-   * @returns Uptime in milliseconds
-   */
-  func getUptime() -> Double {
-    return ProcessInfo.processInfo.systemUptime * 1000
-  }
-
-  /**
-   * Cached device year class based on RAM
-   *
-   * Uses RAM-based classification updated for 2025 devices.
-   * iOS devices have consistent RAM per generation so RAM is reliable.
-   */
-  private lazy var cachedDeviceYearClass: Double = {
-    let totalRam = Double(ProcessInfo.processInfo.physicalMemory)
-    let MB: Double = 1024 * 1024
-
-    // iOS RAM-based year class (updated for 2025)
-    // iOS devices have consistent RAM per generation
-    if totalRam <= 512 * MB {
-      return 2010 // iPhone 4 and earlier
-    } else if totalRam <= 1024 * MB {
-      return 2012 // iPhone 5, 5c
-    } else if totalRam <= 2048 * MB {
-      return 2014 // iPhone 6, 6s
-    } else if totalRam <= 3072 * MB {
-      return 2016 // iPhone 7, 8
-    } else if totalRam <= 4096 * MB {
-      return 2018 // iPhone XS, 11
-    } else if totalRam <= 6144 * MB {
-      return 2020 // iPhone 12, 13
-    } else if totalRam <= 8192 * MB {
-      return 2022 // iPhone 14 Pro, 15 Pro
-    } else {
-      return 2024 // 8GB+ (iPhone 16 Pro, future devices)
-    }
-  }()
-
-  /// Get estimated device year class based on hardware specifications
-  var deviceYearClass: Double {
-    return cachedDeviceYearClass
-  }
-
-  /**
-   * Check if sideloading is enabled
-   *
-   * iOS does not support sideloading without jailbreak.
-   * Enterprise apps and TestFlight are NOT considered sideloading.
-   *
-   * @returns Always false on iOS
-   */
-  func isSideLoadingEnabled() -> Bool {
-    return false
-  }
-
   // MARK: - Device Integrity / Security
 
-  /**
-   * Synchronously checks for jailbreak status
-   *
-   * Always returns false on simulator for development convenience.
-   * Uses fast detection methods only (file system checks, no network/socket operations).
-   * For comprehensive checks including SSH port scanning, use `verifyDeviceIntegrity()`.
-   */
+  /// Synchronously checks for jailbreak status
   func isDeviceCompromised() -> Bool {
-    // Simulator exception - for development convenience
     #if targetEnvironment(simulator)
       return false
     #else
-      // Fast checks only (no socket operations to avoid blocking)
       return checkJailbreakFiles() ||
              checkJailbreakUrlSchemes() ||
              checkSystemFileWritable() ||
@@ -1204,18 +921,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
     #endif
   }
 
-  /**
-   * Asynchronous integrity verification
-   *
-   * Performs all local checks including SSH port scanning which may take up to 200ms.
-   * Currently local checks only (App Attest may be added in future).
-   */
+  /// Asynchronous integrity verification
   func verifyDeviceIntegrity() throws -> Promise<Bool> {
     return Promise.async {
       #if targetEnvironment(simulator)
         return false
       #else
-        // Include SSH port check in async method (can take up to 200ms)
         return self.checkJailbreakFiles() ||
                self.checkJailbreakUrlSchemes() ||
                self.checkSystemFileWritable() ||
@@ -1226,14 +937,106 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
+  // MARK: - Windows Platform (Unsupported)
+
+  /// Check if mouse is connected (Windows-specific, returns false on iOS)
+  var isMouseConnected: Bool {
+    return false
+  }
+
+  /// Check if keyboard is connected (Windows-specific, returns false on iOS)
+  var isKeyboardConnected: Bool {
+    return false
+  }
+
+  /// Get host names (Windows-specific, not available on iOS)
+  var hostNames: [String] {
+    return []
+  }
+
+  /// Check if device is in tablet mode (Windows-specific, returns false on iOS)
+  var isTabletMode: Bool {
+    return false
+  }
+
+  // MARK: - Helper Methods
+
+  /// Get device model identifier using sysctlbyname
+  private func getDeviceModelIdentifier() -> String {
+    var systemInfo = utsname()
+    uname(&systemInfo)
+    let machineMirror = Mirror(reflecting: systemInfo.machine)
+    let identifier = machineMirror.children.reduce("") { identifier, element in
+      guard let value = element.value as? Int8, value != 0 else { return identifier }
+      return identifier + String(UnicodeScalar(UInt8(value)))
+    }
+    return identifier
+  }
+
+  /// Convert UIDevice.BatteryState to BatteryState enum
+  private func getBatteryStateEnum(_ state: UIDevice.BatteryState) -> BatteryState {
+    switch state {
+    case .unknown:
+      return .unknown
+    case .unplugged:
+      return .unplugged
+    case .charging:
+      return .charging
+    case .full:
+      return .full
+    @unknown default:
+      return .unknown
+    }
+  }
+
+  /// Query IP address from network interfaces
+  private func queryIpAddressInternal() -> String {
+    var ipv4Address: String?
+    var ipv6Address: String?
+    var ifaddr: UnsafeMutablePointer<ifaddrs>?
+
+    guard getifaddrs(&ifaddr) == 0 else { return "unknown" }
+    guard let firstAddr = ifaddr else { return "unknown" }
+
+    defer { freeifaddrs(ifaddr) }
+
+    for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+      let interface = ptr.pointee
+
+      let name = String(cString: interface.ifa_name)
+      guard name == "en0" || name == "pdp_ip0" else { continue }
+
+      guard let addr = interface.ifa_addr else { continue }
+      let addrFamily = addr.pointee.sa_family
+
+      var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+      if getnameinfo(
+        addr,
+        socklen_t(addr.pointee.sa_len),
+        &hostname,
+        socklen_t(hostname.count),
+        nil,
+        0,
+        NI_NUMERICHOST
+      ) == 0 {
+        let address = String(cString: hostname)
+
+        if addrFamily == UInt8(AF_INET) {
+          ipv4Address = address
+        } else if addrFamily == UInt8(AF_INET6) && ipv6Address == nil {
+          ipv6Address = address
+        }
+      }
+    }
+
+    return ipv4Address ?? ipv6Address ?? "unknown"
+  }
+
   // MARK: - Jailbreak Detection Helpers
 
-  /**
-   * Checks for jailbreak-related apps and files
-   */
+  /// Checks for jailbreak-related apps and files
   private func checkJailbreakFiles() -> Bool {
     let jailbreakPaths = [
-      // Package manager apps
       "/Applications/Cydia.app",
       "/Applications/Sileo.app",
       "/Applications/Zebra.app",
@@ -1246,7 +1049,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
       "/Applications/RockApp.app",
       "/Applications/SBSettings.app",
       "/Applications/WinterBoard.app",
-      // System paths
       "/Library/MobileSubstrate/MobileSubstrate.dylib",
       "/Library/MobileSubstrate/DynamicLibraries/",
       "/var/lib/cydia",
@@ -1266,7 +1068,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
       "/private/var/tmp/cydia.log",
       "/System/Library/LaunchDaemons/com.ikey.bbot.plist",
       "/System/Library/LaunchDaemons/com.saurik.Cydia.Startup.plist",
-      // Jailbreak tools
       "/usr/bin/cycript",
       "/usr/local/bin/cycript",
       "/usr/lib/libcycript.dylib",
@@ -1283,16 +1084,14 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /**
-   * Checks for jailbreak-related URL schemes
-   */
+  /// Checks for jailbreak-related URL schemes
   private func checkJailbreakUrlSchemes() -> Bool {
     let jailbreakSchemes = [
       "cydia://",
       "sileo://",
-      "zbra://",       // Zebra
-      "filza://",      // Filza file manager
-      "activator://"   // Activator tweak
+      "zbra://",
+      "filza://",
+      "activator://"
     ]
 
     for scheme in jailbreakSchemes {
@@ -1303,9 +1102,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /**
-   * Checks if system files are writable
-   */
+  /// Checks if system files are writable
   private func checkSystemFileWritable() -> Bool {
     let testPaths = [
       "/private/jailbreak.txt",
@@ -1318,7 +1115,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     for path in testPaths {
       do {
         try testString.write(toFile: path, atomically: true, encoding: .utf8)
-        // Write succeeded - delete file and detect jailbreak
         try? fileManager.removeItem(atPath: path)
         return true
       } catch {
@@ -1328,9 +1124,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /**
-   * Detects suspicious DYLD injections
-   */
+  /// Detects suspicious DYLD injections
   private func checkSuspiciousDylibs() -> Bool {
     let suspiciousDylibs = [
       "MobileSubstrate",
@@ -1369,9 +1163,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /**
-   * Checks for symbolic links (created during jailbreak)
-   */
+  /// Checks for symbolic links (created during jailbreak)
   private func checkSymbolicLinks() -> Bool {
     let symbolicLinkPaths = [
       "/Applications",
@@ -1398,11 +1190,9 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /**
-   * Checks SSH ports (OpenSSH installed during jailbreak)
-   */
+  /// Checks SSH ports (OpenSSH installed during jailbreak)
   private func checkSshPorts() -> Bool {
-    let sshPorts = [22, 44]  // 22: OpenSSH, 44: checkra1n
+    let sshPorts = [22, 44]
 
     for port in sshPorts {
       if canConnectToPort(port: port) {
@@ -1412,9 +1202,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /**
-   * Checks if local port is connectable using poll() for better portability
-   */
+  /// Checks if local port is connectable using poll()
   private func canConnectToPort(port: Int) -> Bool {
     var addr = sockaddr_in()
     addr.sin_family = sa_family_t(AF_INET)
@@ -1425,7 +1213,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     guard sock != -1 else { return false }
     defer { close(sock) }
 
-    // Set non-blocking mode
     let flags = fcntl(sock, F_GETFL, 0)
     _ = fcntl(sock, F_SETFL, flags | O_NONBLOCK)
 
@@ -1439,10 +1226,9 @@ class DeviceInfo: HybridDeviceInfoSpec {
       return true
     }
 
-    // EINPROGRESS means connection in progress - use poll() to wait
     if errno == EINPROGRESS {
       var pollFd = pollfd(fd: sock, events: Int16(POLLOUT), revents: 0)
-      let pollResult = poll(&pollFd, 1, 100)  // 100ms timeout
+      let pollResult = poll(&pollFd, 1, 100)
       return pollResult > 0 && (pollFd.revents & Int16(POLLOUT)) != 0
     }
 

@@ -26,23 +26,26 @@ export type Platform =
   | { type: 'android-only'; minApiLevel?: number };
 
 /**
- * API categories for grouping
+ * API categories for grouping (16-category structure)
  */
 export type ApiCategory =
-  | 'device-info'
-  | 'battery'
-  | 'memory'
-  | 'storage'
+  | 'core-device-info'
+  | 'device-capabilities'
+  | 'display-screen'
+  | 'system-resources'
+  | 'battery-power'
+  | 'application-metadata'
   | 'network'
-  | 'capabilities'
-  | 'application'
-  | 'platform-specific'
-  | 'display'
-  | 'audio'
-  | 'location'
-  | 'identification'
-  | 'security'
-  | 'system';
+  | 'carrier-info'
+  | 'audio-accessories'
+  | 'location-services'
+  | 'localization'
+  | 'cpu-architecture'
+  | 'android-platform'
+  | 'ios-platform'
+  | 'installation-distribution'
+  | 'legacy-compatibility'
+  | 'device-integrity';
 
 /**
  * Represents a single API method or property from the DeviceInfo interface

@@ -8,13 +8,13 @@ Complete API documentation for the DeviceInfo module.
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 ```
 
-## Core Device Information
+---
 
-Synchronous properties providing instant access to basic device information.
+## Core Device Information (9 APIs)
 
-### Properties
+Synchronous properties providing instant access to basic device identity.
 
-#### `deviceId: string`
+### `deviceId: string`
 
 Device model identifier.
 
@@ -24,7 +24,7 @@ const deviceId = DeviceInfoModule.deviceId;
 // Android: "SM-G998B"
 ```
 
-#### `brand: string`
+### `brand: string`
 
 Device brand/manufacturer name.
 
@@ -34,27 +34,7 @@ const brand = DeviceInfoModule.brand;
 // Android: "Samsung", "Google", "OnePlus", etc.
 ```
 
-#### `systemName: string`
-
-Operating system name.
-
-```typescript
-const systemName = DeviceInfoModule.systemName;
-// iOS: "iOS" or "iPadOS"
-// Android: "Android"
-```
-
-#### `systemVersion: string`
-
-Operating system version string.
-
-```typescript
-const systemVersion = DeviceInfoModule.systemVersion;
-// iOS: "15.0", "16.2.1"
-// Android: "12", "13", "14"
-```
-
-#### `model: string`
+### `model: string`
 
 Device model name.
 
@@ -64,7 +44,27 @@ const model = DeviceInfoModule.model;
 // Android: Device-specific model name
 ```
 
-#### `deviceType: DeviceType`
+### `systemName: string`
+
+Operating system name.
+
+```typescript
+const systemName = DeviceInfoModule.systemName;
+// iOS: "iOS" or "iPadOS"
+// Android: "Android"
+```
+
+### `systemVersion: string`
+
+Operating system version string.
+
+```typescript
+const systemVersion = DeviceInfoModule.systemVersion;
+// iOS: "15.0", "16.2.1"
+// Android: "12", "13", "14"
+```
+
+### `deviceType: DeviceType`
 
 Device type category.
 
@@ -73,9 +73,44 @@ const deviceType = DeviceInfoModule.deviceType;
 // "Handset" | "Tablet" | "Tv" | "Desktop" | "GamingConsole" | "unknown"
 ```
 
+### `uniqueId: string`
+
+Get unique device identifier.
+
+```typescript
+const uniqueId = DeviceInfoModule.uniqueId;
+// iOS: IDFV (Identifier for Vendor)
+// Android: ANDROID_ID
+// Example: "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
+```
+
+- **iOS**: Persists across app installs from the same vendor
+- **Android**: Usually persists across app installs
+
+### `manufacturer: string`
+
+Get device manufacturer name.
+
+```typescript
+const manufacturer = DeviceInfoModule.manufacturer;
+// iOS: "Apple"
+// Android: "Samsung", "Google", "Xiaomi", etc.
+```
+
+### `deviceName: string`
+
+Get user-assigned device name.
+
+```typescript
+const deviceName = DeviceInfoModule.deviceName;
+// Example: "John's iPhone", "My Galaxy S21"
+```
+
 ---
 
-## Device Capabilities
+## Device Capabilities (7 APIs)
+
+Boolean checks for device features and hardware availability.
 
 ### `isTablet: boolean`
 
@@ -89,66 +124,6 @@ const isTablet = DeviceInfoModule.isTablet;
 
 - **iOS**: Based on UIDevice.userInterfaceIdiom
 - **Android**: Based on smallest screen width >= 600dp
-
-### `getHasNotch(): boolean`
-
-Check if device has a display notch.
-
-```typescript
-const hasNotch = DeviceInfoModule.getHasNotch();
-// iPhone X, 11, 12, 13 → true
-// iPhone SE, 8 → false
-```
-
-- **iOS only** - Detects iPhone X and later models
-- **Android**: Always returns `false`
-
-### `getHasDynamicIsland(): boolean`
-
-Check if device has Dynamic Island.
-
-```typescript
-const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland();
-// iPhone 14 Pro, 15 Pro → true
-// iPhone 14, 13 → false
-```
-
-- **iOS 16+ only** - iPhone 14 Pro and later
-- **Android**: Always returns `false`
-
-### `isHardwareKeyStoreAvailable: boolean`
-
-Check if hardware-backed cryptographic key storage is available on the device.
-
-```typescript
-const hasHardwareKeyStore = DeviceInfoModule.isHardwareKeyStoreAvailable;
-
-if (hasHardwareKeyStore) {
-  console.log('✅ Hardware-backed key storage available');
-  // Safe to store sensitive cryptographic keys
-} else {
-  console.log('⚠️ No hardware-backed storage');
-  // Use alternative security measures
-}
-```
-
-**Platform**: Android, iOS (except for iOS Emulator)
-
-### `isCameraPresent: boolean`
-
-Check if camera is available.
-
-```typescript
-const hasCamera = DeviceInfoModule.isCameraPresent;
-```
-
-### `isPinOrFingerprintSet: boolean`
-
-Check if PIN, fingerprint, or Face ID is configured.
-
-```typescript
-const isSecure = DeviceInfoModule.isPinOrFingerprintSet;
-```
 
 ### `isEmulator: boolean`
 
@@ -188,43 +163,149 @@ Returns an estimated "year class" representing when this device's hardware would
 | ≤16 GB | 2023 | Flagship 2023-2024 |
 | >16 GB | 2025 | Latest flagships |
 
-**Use cases**:
-- Feature toggling based on device capability
-- Performance budgeting for animations
-- Image quality selection
-- Lazy loading thresholds
+### `isCameraPresent: boolean`
+
+Check if camera is available.
+
+```typescript
+const hasCamera = DeviceInfoModule.isCameraPresent;
+```
+
+### `isPinOrFingerprintSet: boolean`
+
+Check if PIN, fingerprint, or Face ID is configured.
+
+```typescript
+const isSecure = DeviceInfoModule.isPinOrFingerprintSet;
+```
+
+### `isHardwareKeyStoreAvailable: boolean`
+
+Check if hardware-backed cryptographic key storage is available on the device.
+
+```typescript
+const hasHardwareKeyStore = DeviceInfoModule.isHardwareKeyStoreAvailable;
+
+if (hasHardwareKeyStore) {
+  console.log('Hardware-backed key storage available');
+  // Safe to store sensitive cryptographic keys
+} else {
+  console.log('No hardware-backed storage');
+  // Use alternative security measures
+}
+```
+
+**Platform**: Android, iOS (except for iOS Emulator)
+
+### `isLowRamDevice: boolean`
+
+Check if device is classified as low RAM device.
+
+```typescript
+const isLowRam = DeviceInfoModule.isLowRamDevice;
+// Android API 19+: true/false
+// iOS: false
+```
+
+**Platform**: Android API 19+
 
 ---
 
-## Device Identification
+## Display & Screen (7 APIs)
 
-### `uniqueId: string`
+Screen and display-related properties.
 
-Get unique device identifier.
+### `getHasNotch(): boolean`
 
-```typescript
-const uniqueId = DeviceInfoModule.uniqueId;
-// iOS: IDFV (Identifier for Vendor)
-// Android: ANDROID_ID
-// Example: "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
-```
-
-- **iOS**: Persists across app installs from the same vendor
-- **Android**: Usually persists across app installs
-
-### `manufacturer: string`
-
-Get device manufacturer name.
+Check if device has a display notch.
 
 ```typescript
-const manufacturer = DeviceInfoModule.manufacturer;
-// iOS: "Apple"
-// Android: "Samsung", "Google", "Xiaomi", etc.
+const hasNotch = DeviceInfoModule.getHasNotch();
+// iPhone X, 11, 12, 13 → true
+// iPhone SE, 8 → false
 ```
+
+- **iOS only** - Detects iPhone X and later models
+- **Android**: Always returns `false`
+
+### `getHasDynamicIsland(): boolean`
+
+Check if device has Dynamic Island.
+
+```typescript
+const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland();
+// iPhone 14 Pro, 15 Pro → true
+// iPhone 14, 13 → false
+```
+
+- **iOS 16+ only** - iPhone 14 Pro and later
+- **Android**: Always returns `false`
+
+### `isDisplayZoomed: boolean`
+
+Check if iOS Display Zoom is enabled.
+
+```typescript
+const isZoomed = DeviceInfoModule.isDisplayZoomed;
+// iOS: true/false based on display zoom setting
+// Android: false
+```
+
+**Platform**: iOS only
+
+### `getIsLandscape(): boolean`
+
+Check if device is in landscape orientation.
+
+```typescript
+const isLandscape = DeviceInfoModule.getIsLandscape();
+```
+
+### `getBrightness(): number`
+
+Get current screen brightness level (0.0 to 1.0).
+
+```typescript
+const brightness = DeviceInfoModule.getBrightness();
+console.log(`Brightness: ${(brightness * 100).toFixed(0)}%`);
+// iOS: 0.0 to 1.0
+// Android: -1
+```
+
+**Platform**: iOS only
+
+### `getFontScale(): number`
+
+Get current font scale multiplier.
+
+```typescript
+const fontScale = DeviceInfoModule.getFontScale();
+// Example: 1.0 (normal), 1.2 (large), 0.85 (small)
+```
+
+### `isLiquidGlassAvailable: boolean`
+
+Check if the liquid glass effect is available on the device.
+
+```typescript
+const hasLiquidGlass = DeviceInfoModule.isLiquidGlassAvailable;
+
+if (hasLiquidGlass) {
+  console.log('Liquid glass effect available');
+  // Can use new iOS 26+ design features
+} else {
+  console.log('Liquid glass not available');
+  // Fallback to standard UI
+}
+```
+
+**Platform**: iOS 26.0+
 
 ---
 
-## System Resources
+## System Resources (7 APIs)
+
+Memory, storage, and uptime information.
 
 ### `totalMemory: number`
 
@@ -245,6 +326,18 @@ const usedMemory = DeviceInfoModule.getUsedMemory();
 // Example: 134217728 (128 MB)
 console.log(`Used Memory: ${(usedMemory / 1024 / 1024).toFixed(0)}MB`);
 ```
+
+### `maxMemory: number`
+
+Get maximum memory available to app (in bytes).
+
+```typescript
+const maxMemory = DeviceInfoModule.maxMemory;
+// Android: max heap size
+// iOS: -1
+```
+
+**Platform**: Android only
 
 ### `totalDiskCapacity: number`
 
@@ -283,9 +376,23 @@ console.log(`Device running for ${hours}h ${minutes}m`);
 
 Both platforms return consistent "active time" since boot, matching the behavior of `expo-device.getUptimeAsync()`.
 
+### `startupTime: number`
+
+Get device boot time (milliseconds since epoch).
+
+```typescript
+const bootTime = DeviceInfoModule.startupTime;
+const bootDate = new Date(bootTime);
+console.log(`Device booted: ${bootDate.toLocaleString()}`);
+```
+
+**Note**: Returns boot time, NOT app startup time
+
 ---
 
-## Battery Information
+## Battery & Power (4 APIs)
+
+Battery and power state information.
 
 ### `getBatteryLevel(): number`
 
@@ -339,11 +446,11 @@ if (isLowBattery) {
 
 ---
 
-## Application Metadata
+## Application Metadata (9 APIs)
 
-### Synchronous Properties
+App bundle and version information.
 
-#### `version: string`
+### `version: string`
 
 Get application version string.
 
@@ -352,7 +459,7 @@ const version = DeviceInfoModule.version;
 // Example: "1.2.3"
 ```
 
-#### `buildNumber: string`
+### `buildNumber: string`
 
 Get application build number.
 
@@ -361,7 +468,7 @@ const buildNumber = DeviceInfoModule.buildNumber;
 // Example: "42" or "20231025"
 ```
 
-#### `bundleId: string`
+### `bundleId: string`
 
 Get bundle ID (iOS) or package name (Android).
 
@@ -370,7 +477,7 @@ const bundleId = DeviceInfoModule.bundleId;
 // Example: "com.company.app"
 ```
 
-#### `applicationName: string`
+### `applicationName: string`
 
 Get application display name.
 
@@ -379,7 +486,7 @@ const appName = DeviceInfoModule.applicationName;
 // Example: "My Awesome App"
 ```
 
-#### `readableVersion: string`
+### `readableVersion: string`
 
 Get human-readable version string (version.buildNumber).
 
@@ -388,9 +495,7 @@ const readableVersion = DeviceInfoModule.readableVersion;
 // Example: "1.2.3.42"
 ```
 
-### Asynchronous Methods
-
-#### `getFirstInstallTime(): Promise<number>`
+### `getFirstInstallTime(): Promise<number>`
 
 Get timestamp when app was first installed (ms since epoch).
 
@@ -402,7 +507,7 @@ console.log(`Installed: ${installDate.toLocaleDateString()}`);
 
 **Performance**: ~10-30ms
 
-#### `getLastUpdateTime(): Promise<number>`
+### `getLastUpdateTime(): Promise<number>`
 
 Get timestamp of most recent app update (ms since epoch).
 
@@ -415,20 +520,27 @@ console.log(`Last Updated: ${updateDate.toLocaleDateString()}`);
 **Performance**: ~10-30ms
 **Note**: Returns -1 on iOS
 
-### Synchronous Variants
+### `firstInstallTimeSync: number`
 
-For better performance when you don't need async:
+Synchronous variant (uses cached value from module initialization).
 
 ```typescript
 const firstInstallTimeSync = DeviceInfoModule.firstInstallTimeSync;
-const lastUpdateTimeSync = DeviceInfoModule.lastUpdateTimeSync; // -1 on iOS
+```
+
+### `lastUpdateTimeSync: number`
+
+Synchronous variant (returns -1 on iOS).
+
+```typescript
+const lastUpdateTimeSync = DeviceInfoModule.lastUpdateTimeSync;
 ```
 
 ---
 
-## Network & Connectivity
+## Network (6 APIs)
 
-All network methods are asynchronous due to system I/O requirements.
+Network connectivity APIs (excluding carrier).
 
 ### `getIpAddress(): Promise<string>`
 
@@ -441,7 +553,9 @@ const ipAddress = await DeviceInfoModule.getIpAddress();
 
 **Performance**: ~20-50ms
 
-**Synchronous variant** (with 5-second cache):
+### `getIpAddressSync(): string`
+
+Synchronous variant (with 5-second cache).
 
 ```typescript
 const ipAddressSync = DeviceInfoModule.getIpAddressSync();
@@ -459,140 +573,12 @@ const macAddress = await DeviceInfoModule.getMacAddress();
 
 **Performance**: ~20-50ms
 
-**Synchronous variant**:
+### `getMacAddressSync(): string`
+
+Synchronous variant.
 
 ```typescript
 const macAddressSync = DeviceInfoModule.getMacAddressSync();
-```
-
-### `getCarrier(): Promise<string>`
-
-Get cellular carrier name.
-
-```typescript
-const carrier = await DeviceInfoModule.getCarrier();
-// Example: "Verizon", "AT&T", "T-Mobile"
-```
-
-**Performance**: ~20-50ms
-
-**Synchronous variant** (with 5-second cache):
-
-```typescript
-const carrierSync = DeviceInfoModule.getCarrierSync();
-```
-
-### Carrier Information Properties
-
-Detailed carrier information for telecom apps, analytics, and geo-detection.
-
-#### `carrierAllowsVOIP: boolean`
-
-Check if carrier allows VoIP calls on its network.
-
-```typescript
-const allowsVOIP = DeviceInfoModule.carrierAllowsVOIP;
-// iOS: true/false based on carrier policy
-// Android: always true (no equivalent API)
-```
-
-**Platform**: iOS only (always returns `true` on Android)
-
-#### `carrierIsoCountryCode: string`
-
-Get ISO 3166-1 alpha-2 country code for the carrier.
-
-```typescript
-const countryCode = DeviceInfoModule.carrierIsoCountryCode;
-// Example: "US", "KR", "JP", "DE"
-// Returns "" if no SIM card
-```
-
-**Platform**: iOS, Android
-
-#### `mobileCountryCode: string`
-
-Get Mobile Country Code (MCC) per ITU-T Recommendation E.212.
-
-```typescript
-const mcc = DeviceInfoModule.mobileCountryCode;
-// Example: "310" (USA), "450" (Korea), "440" (Japan)
-// Returns "" if no carrier
-```
-
-**Platform**: iOS, Android
-
-**Common MCC values**:
-
-| Country | MCC |
-|---------|-----|
-| USA | 310-316 |
-| Korea | 450 |
-| Japan | 440-441 |
-| China | 460 |
-| Germany | 262 |
-
-#### `mobileNetworkCode: string`
-
-Get Mobile Network Code (MNC) that identifies the carrier within a country.
-
-```typescript
-const mnc = DeviceInfoModule.mobileNetworkCode;
-// Example: "260" (T-Mobile US), "05" (SKT Korea)
-// Returns "" if no carrier
-```
-
-**Platform**: iOS, Android
-
-#### `mobileNetworkOperator: string`
-
-Get combined MCC + MNC string.
-
-```typescript
-const operator = DeviceInfoModule.mobileNetworkOperator;
-// Example: "310260" (T-Mobile US), "45005" (SKT Korea)
-// Equivalent to: mobileCountryCode + mobileNetworkCode
-// Returns "" if no carrier
-```
-
-**Platform**: iOS, Android
-
-**Use cases**:
-- Carrier-specific feature toggling
-- Regional content delivery
-- Telecom analytics
-- Fraud detection (geo-location verification)
-
-### `isLocationEnabled(): Promise<boolean>`
-
-Check if location services are enabled.
-
-```typescript
-const isLocationEnabled = await DeviceInfoModule.isLocationEnabled();
-```
-
-**Performance**: ~10-30ms
-
-**Synchronous variant**:
-
-```typescript
-const isLocationEnabled = DeviceInfoModule.getIsLocationEnabled();
-```
-
-### `isHeadphonesConnected(): Promise<boolean>`
-
-Check if headphones are connected (wired or Bluetooth).
-
-```typescript
-const hasHeadphones = await DeviceInfoModule.isHeadphonesConnected();
-```
-
-**Performance**: ~10-30ms
-
-**Synchronous variant**:
-
-```typescript
-const isHeadphonesConnected = DeviceInfoModule.getIsHeadphonesConnected();
 ```
 
 ### `getUserAgent(): Promise<string>`
@@ -605,22 +591,193 @@ const userAgent = await DeviceInfoModule.getUserAgent();
 ```
 
 **Performance**:
-
 - iOS: 100-500ms (requires WebView initialization, cached after first call)
 - Android: sync capable
 
-### `deviceName: string`
+### `getIsAirplaneMode(): boolean`
 
-Get user-assigned device name.
+Check if airplane mode is enabled.
 
 ```typescript
-const deviceName = DeviceInfoModule.deviceName;
-// Example: "John's iPhone", "My Galaxy S21"
+const isAirplaneMode = DeviceInfoModule.getIsAirplaneMode();
+// Android: true/false
+// iOS: false (not available)
+```
+
+**Platform**: Android only
+
+---
+
+## Carrier Information (7 APIs)
+
+Cellular carrier data for telecom apps, analytics, and geo-detection.
+
+### `getCarrier(): Promise<string>`
+
+Get cellular carrier name.
+
+```typescript
+const carrier = await DeviceInfoModule.getCarrier();
+// Example: "Verizon", "AT&T", "T-Mobile"
+```
+
+**Performance**: ~20-50ms
+
+### `getCarrierSync(): string`
+
+Synchronous variant (with 5-second cache).
+
+```typescript
+const carrierSync = DeviceInfoModule.getCarrierSync();
+```
+
+### `carrierAllowsVOIP: boolean`
+
+Check if carrier allows VoIP calls on its network.
+
+```typescript
+const allowsVOIP = DeviceInfoModule.carrierAllowsVOIP;
+// iOS: true/false based on carrier policy
+// Android: always true (no equivalent API)
+```
+
+**Platform**: iOS only (always returns `true` on Android)
+
+### `carrierIsoCountryCode: string`
+
+Get ISO 3166-1 alpha-2 country code for the carrier.
+
+```typescript
+const countryCode = DeviceInfoModule.carrierIsoCountryCode;
+// Example: "US", "KR", "JP", "DE"
+// Returns "" if no SIM card
+```
+
+### `mobileCountryCode: string`
+
+Get Mobile Country Code (MCC) per ITU-T Recommendation E.212.
+
+```typescript
+const mcc = DeviceInfoModule.mobileCountryCode;
+// Example: "310" (USA), "450" (Korea), "440" (Japan)
+// Returns "" if no carrier
+```
+
+**Common MCC values**:
+
+| Country | MCC |
+|---------|-----|
+| USA | 310-316 |
+| Korea | 450 |
+| Japan | 440-441 |
+| China | 460 |
+| Germany | 262 |
+
+### `mobileNetworkCode: string`
+
+Get Mobile Network Code (MNC) that identifies the carrier within a country.
+
+```typescript
+const mnc = DeviceInfoModule.mobileNetworkCode;
+// Example: "260" (T-Mobile US), "05" (SKT Korea)
+// Returns "" if no carrier
+```
+
+### `mobileNetworkOperator: string`
+
+Get combined MCC + MNC string.
+
+```typescript
+const operator = DeviceInfoModule.mobileNetworkOperator;
+// Example: "310260" (T-Mobile US), "45005" (SKT Korea)
+// Equivalent to: mobileCountryCode + mobileNetworkCode
+// Returns "" if no carrier
+```
+
+**Use cases**:
+- Carrier-specific feature toggling
+- Regional content delivery
+- Telecom analytics
+- Fraud detection (geo-location verification)
+
+---
+
+## Audio Accessories (4 APIs)
+
+Audio device detection.
+
+### `isHeadphonesConnected(): Promise<boolean>`
+
+Check if headphones are connected (wired or Bluetooth).
+
+```typescript
+const hasHeadphones = await DeviceInfoModule.isHeadphonesConnected();
+```
+
+**Performance**: ~10-30ms
+
+### `getIsHeadphonesConnected(): boolean`
+
+Synchronous variant.
+
+```typescript
+const isHeadphonesConnected = DeviceInfoModule.getIsHeadphonesConnected();
+```
+
+### `getIsWiredHeadphonesConnected(): boolean`
+
+Check if wired headphones are connected.
+
+```typescript
+const hasWiredHeadphones = DeviceInfoModule.getIsWiredHeadphonesConnected();
+```
+
+### `getIsBluetoothHeadphonesConnected(): boolean`
+
+Check if Bluetooth headphones are connected.
+
+```typescript
+const hasBluetoothHeadphones = DeviceInfoModule.getIsBluetoothHeadphonesConnected();
 ```
 
 ---
 
-## Localization & Navigation
+## Location Services (3 APIs)
+
+Location provider information.
+
+### `isLocationEnabled(): Promise<boolean>`
+
+Check if location services are enabled.
+
+```typescript
+const isLocationEnabled = await DeviceInfoModule.isLocationEnabled();
+```
+
+**Performance**: ~10-30ms
+
+### `getIsLocationEnabled(): boolean`
+
+Synchronous variant.
+
+```typescript
+const isLocationEnabled = DeviceInfoModule.getIsLocationEnabled();
+```
+
+### `getAvailableLocationProviders(): string[]`
+
+Get list of enabled location providers.
+
+```typescript
+const providers = DeviceInfoModule.getAvailableLocationProviders();
+// ["gps", "network"]
+```
+
+---
+
+## Localization (1 API)
+
+Language and regional settings.
 
 ### `systemLanguage: string`
 
@@ -631,8 +788,6 @@ const language = DeviceInfoModule.systemLanguage;
 // iOS: "en-US", "ko-KR", "ja-JP", "zh-Hans-CN"
 // Android: "en-US", "ko-KR", "ja-JP", "zh-Hans-CN"
 ```
-
-**Platform**: iOS, Android
 
 **Examples**:
 
@@ -656,6 +811,63 @@ if (language.startsWith('ko')) {
   console.log('Japanese device detected');
 }
 ```
+
+---
+
+## CPU & Architecture (3 APIs)
+
+Processor and ABI information.
+
+### `supportedAbis: string[]`
+
+Get supported CPU architectures.
+
+```typescript
+const abis = DeviceInfoModule.supportedAbis;
+// iOS: ["arm64"]
+// Android: ["arm64-v8a", "armeabi-v7a"]
+```
+
+### `supported32BitAbis: string[]`
+
+Get list of supported 32-bit ABIs.
+
+```typescript
+const abis32 = DeviceInfoModule.supported32BitAbis;
+// iOS: []
+// Android API 21+: ["armeabi-v7a", "x86"]
+```
+
+**Platform**: Android API 21+, returns `[]` on iOS
+
+### `supported64BitAbis: string[]`
+
+Get list of supported 64-bit ABIs.
+
+```typescript
+const abis64 = DeviceInfoModule.supported64BitAbis;
+// iOS: ["arm64"]
+// Android API 21+: ["arm64-v8a", "x86_64"]
+```
+
+---
+
+## Android Platform (20+ APIs)
+
+Android-specific APIs and build information.
+
+### `apiLevel: number`
+
+Get Android API level.
+
+```typescript
+const apiLevel = DeviceInfoModule.apiLevel;
+// Android 12 → 31
+// Android 13 → 33
+// iOS → -1
+```
+
+**Platform**: Android only
 
 ### `navigationMode: NavigationMode`
 
@@ -699,55 +911,6 @@ if (navMode === 'gesture') {
 
 **Note**: Navigation mode detection requires Android 10 (API 29) or later. On older Android versions, returns `"buttons"` since gesture navigation was not available.
 
----
-
-## Platform-Specific Properties
-
-### `apiLevel: number`
-
-Get Android API level.
-
-```typescript
-const apiLevel = DeviceInfoModule.apiLevel;
-// Android 12 → 31
-// Android 13 → 33
-// iOS → -1
-```
-
-**Platform**: Android only
-
-### `supportedAbis: string[]`
-
-Get supported CPU architectures.
-
-```typescript
-const abis = DeviceInfoModule.supportedAbis;
-// iOS: ["arm64"]
-// Android: ["arm64-v8a", "armeabi-v7a"]
-```
-
-### `supported32BitAbis: string[]`
-
-Get list of supported 32-bit ABIs.
-
-```typescript
-const abis32 = DeviceInfoModule.supported32BitAbis;
-// iOS: []
-// Android API 21+: ["armeabi-v7a", "x86"]
-```
-
-**Platform**: Android API 21+, returns `[]` on iOS
-
-### `supported64BitAbis: string[]`
-
-Get list of supported 64-bit ABIs.
-
-```typescript
-const abis64 = DeviceInfoModule.supported64BitAbis;
-// iOS: ["arm64"]
-// Android API 21+: ["arm64-v8a", "x86_64"]
-```
-
 ### `getHasGms(): boolean`
 
 Check if Google Mobile Services is available.
@@ -772,41 +935,6 @@ const hasHms = DeviceInfoModule.getHasHms();
 ```
 
 **Platform**: Android (Huawei devices) only
-
-### `isSideLoadingEnabled(): boolean`
-
-Check if sideloading (installing from unknown sources) is enabled.
-
-```typescript
-const canSideload = DeviceInfoModule.isSideLoadingEnabled();
-
-if (canSideload) {
-  console.warn('Device allows sideloading - potential security risk');
-}
-```
-
-**Platform behavior difference**:
-- **Android 7 and below**: Returns whether the device allows unknown sources globally (checks `Settings.Global.INSTALL_NON_MARKET_APPS`)
-- **Android 8.0+**: Returns whether THIS APP has permission to install other apps (per-app permission via `canRequestPackageInstalls()`)
-- **iOS**: Always returns `false` (sideloading not possible without jailbreak)
-
-**Important**: On Android 8.0+, even if the user has enabled "Install unknown apps" for other apps, this will return `false` unless they specifically granted permission to this app.
-
-**Use cases**:
-- Security policy enforcement
-- Distribution channel detection
-- Enterprise deployment verification
-
-**Platform**: Android (returns `false` on iOS)
-
-### `getFontScale(): number`
-
-Get current font scale multiplier.
-
-```typescript
-const fontScale = DeviceInfoModule.getFontScale();
-// Example: 1.0 (normal), 1.2 (large), 0.85 (small)
-```
 
 ### `hasSystemFeature(feature: string): boolean`
 
@@ -839,27 +967,6 @@ const features = DeviceInfoModule.systemAvailableFeatures;
 
 **Platform**: Android only
 
-### `getAvailableLocationProviders(): string[]`
-
-Get list of enabled location providers.
-
-```typescript
-const providers = DeviceInfoModule.getAvailableLocationProviders();
-// ["gps", "network"]
-```
-
-### `maxMemory: number`
-
-Get maximum memory available to app (in bytes).
-
-```typescript
-const maxMemory = DeviceInfoModule.maxMemory;
-// Android: max heap size
-// iOS: -1
-```
-
-**Platform**: Android only
-
 ### `supportedMediaTypeList: string[]`
 
 Get list of supported media/codec types.
@@ -872,22 +979,21 @@ const mediaTypes = DeviceInfoModule.supportedMediaTypeList;
 
 **Platform**: Android only
 
----
-
-## Android Build Information
+### Android Build Information
 
 Synchronous properties providing Android system build information.
 
 **Platform**: Android only (all return "unknown" or default values on iOS)
 
-### Properties
-
 ```typescript
 const serialNumber = DeviceInfoModule.serialNumber; // Requires READ_PHONE_STATE on Android 8.0+
 const androidId = DeviceInfoModule.androidId;
+const previewSdkInt = DeviceInfoModule.previewSdkInt; // Android API 23+, 0 for release
 const securityPatch = DeviceInfoModule.securityPatch; // Android API 23+, "YYYY-MM-DD"
-const bootloader = DeviceInfoModule.bootloader;
 const codename = DeviceInfoModule.codename; // "REL" for release
+const incremental = DeviceInfoModule.incremental;
+const board = DeviceInfoModule.board;
+const bootloader = DeviceInfoModule.bootloader;
 const device = DeviceInfoModule.device; // Board/platform name
 const display = DeviceInfoModule.display; // Build display ID
 const fingerprint = DeviceInfoModule.fingerprint; // Unique build identifier
@@ -897,156 +1003,15 @@ const product = DeviceInfoModule.product;
 const tags = DeviceInfoModule.tags; // Comma-separated
 const type = DeviceInfoModule.type; // "user", "userdebug", "eng"
 const baseOs = DeviceInfoModule.baseOs; // Android API 23+
-const previewSdkInt = DeviceInfoModule.previewSdkInt; // Android API 23+, 0 for release
-const incremental = DeviceInfoModule.incremental;
+const radioVersion = DeviceInfoModule.radioVersion;
 const buildId = DeviceInfoModule.buildId;
 ```
 
 ---
 
-## Installation Metadata
+## iOS Platform (2 APIs)
 
-### Properties
-
-#### `installerPackageName: string`
-
-Get package name of the app store that installed this app.
-
-```typescript
-const installer = DeviceInfoModule.installerPackageName;
-// iOS: "com.apple.AppStore", "com.apple.TestFlight"
-// Android: "com.android.vending" (Play Store)
-```
-
-#### `startupTime: number`
-
-Get device boot time (milliseconds since epoch).
-
-```typescript
-const bootTime = DeviceInfoModule.startupTime;
-const bootDate = new Date(bootTime);
-console.log(`Device booted: ${bootDate.toLocaleString()}`);
-```
-
-**Note**: Returns boot time, NOT app startup time
-
-### Methods
-
-#### `getInstallReferrer(): Promise<string>`
-
-Get install referrer information (Android Play Store).
-
-```typescript
-const referrer = await DeviceInfoModule.getInstallReferrer();
-// Android with Play Services: referrer data
-// iOS: "unknown"
-```
-
-**Performance**: ~50-200ms (Play Services API call)
-**Platform**: Android only (requires Google Play Services)
-
----
-
-## Advanced Capabilities
-
-### Headphone Detection
-
-#### `getIsWiredHeadphonesConnected(): boolean`
-
-Check if wired headphones are connected.
-
-```typescript
-const hasWiredHeadphones = DeviceInfoModule.getIsWiredHeadphonesConnected();
-```
-
-#### `getIsBluetoothHeadphonesConnected(): boolean`
-
-Check if Bluetooth headphones are connected.
-
-```typescript
-const hasBluetoothHeadphones = DeviceInfoModule.getIsBluetoothHeadphonesConnected();
-```
-
-### Device State
-
-#### `getIsAirplaneMode(): boolean`
-
-Check if airplane mode is enabled.
-
-```typescript
-const isAirplaneMode = DeviceInfoModule.getIsAirplaneMode();
-// Android: true/false
-// iOS: false (not available)
-```
-
-**Platform**: Android only
-
-#### `isLowRamDevice: boolean`
-
-Check if device is classified as low RAM device.
-
-```typescript
-const isLowRam = DeviceInfoModule.isLowRamDevice;
-// Android API 19+: true/false
-// iOS: false
-```
-
-**Platform**: Android API 19+
-
-#### `getIsLandscape(): boolean`
-
-Check if device is in landscape orientation.
-
-```typescript
-const isLandscape = DeviceInfoModule.getIsLandscape();
-```
-
----
-
-## iOS-Specific Features
-
-### `isDisplayZoomed: boolean`
-
-Check if iOS Display Zoom is enabled.
-
-```typescript
-const isZoomed = DeviceInfoModule.isDisplayZoomed;
-// iOS: true/false based on display zoom setting
-// Android: false
-```
-
-**Platform**: iOS only
-
-### `getBrightness(): number`
-
-Get current screen brightness level (0.0 to 1.0).
-
-```typescript
-const brightness = DeviceInfoModule.getBrightness();
-console.log(`Brightness: ${(brightness * 100).toFixed(0)}%`);
-// iOS: 0.0 to 1.0
-// Android: -1
-```
-
-**Platform**: iOS only
-
-### `isLiquidGlassAvailable: boolean`
-
-Check if the liquid glass effect is available on the device.
-
-```typescript
-const hasLiquidGlass = DeviceInfoModule.isLiquidGlassAvailable;
-
-if (hasLiquidGlass) {
-  console.log('✅ Liquid glass effect available');
-  // Can use new iOS 26+ design features
-} else {
-  console.log('⚠️ Liquid glass not available');
-  // Fallback to standard UI
-}
-```
-
-**Platform**: iOS 26.0+
+iOS-specific APIs.
 
 ### `getDeviceToken(): Promise<string>`
 
@@ -1079,7 +1044,64 @@ const uniqueId = await DeviceInfoModule.syncUniqueId();
 
 ---
 
-## Legacy Compatibility
+## Installation & Distribution (3 APIs)
+
+App installation and distribution metadata.
+
+### `installerPackageName: string`
+
+Get package name of the app store that installed this app.
+
+```typescript
+const installer = DeviceInfoModule.installerPackageName;
+// iOS: "com.apple.AppStore", "com.apple.TestFlight"
+// Android: "com.android.vending" (Play Store)
+```
+
+### `getInstallReferrer(): Promise<string>`
+
+Get install referrer information (Android Play Store).
+
+```typescript
+const referrer = await DeviceInfoModule.getInstallReferrer();
+// Android with Play Services: referrer data
+// iOS: "unknown"
+```
+
+**Performance**: ~50-200ms (Play Services API call)
+**Platform**: Android only (requires Google Play Services)
+
+### `isSideLoadingEnabled(): boolean`
+
+Check if sideloading (installing from unknown sources) is enabled.
+
+```typescript
+const canSideload = DeviceInfoModule.isSideLoadingEnabled();
+
+if (canSideload) {
+  console.warn('Device allows sideloading - potential security risk');
+}
+```
+
+**Platform behavior difference**:
+- **Android 7 and below**: Returns whether the device allows unknown sources globally (checks `Settings.Global.INSTALL_NON_MARKET_APPS`)
+- **Android 8.0+**: Returns whether THIS APP has permission to install other apps (per-app permission via `canRequestPackageInstalls()`)
+- **iOS**: Always returns `false` (sideloading not possible without jailbreak)
+
+**Important**: On Android 8.0+, even if the user has enabled "Install unknown apps" for other apps, this will return `false` unless they specifically granted permission to this app.
+
+**Use cases**:
+- Security policy enforcement
+- Distribution channel detection
+- Enterprise deployment verification
+
+**Platform**: Android (returns `false` on iOS)
+
+---
+
+## Legacy Compatibility (2 APIs)
+
+Deprecated APIs for backward compatibility.
 
 ### `totalDiskCapacityOld: number`
 
@@ -1110,10 +1132,12 @@ const freeDiskOld = DeviceInfoModule.getFreeDiskStorageOld();
 All synchronous methods use cached values and return instantly:
 
 - Core device properties
-- Device identification
+- Device capabilities
+- Display & screen
 - System resources (memory, disk)
 - Battery information
 - Application metadata
+- CPU & architecture
 
 ### Asynchronous Methods
 
@@ -1128,9 +1152,9 @@ Performance varies by operation type:
 
 Network-related synchronous properties use 5-second caches:
 
-- `ipAddressSync`
-- `macAddressSync`
-- `carrierSync`
+- `getIpAddressSync()`
+- `getMacAddressSync()`
+- `getCarrierSync()`
 
 This provides fast access while keeping data reasonably fresh.
 
@@ -1141,17 +1165,26 @@ This provides fast access while keeping data reasonably fresh.
 | Feature                 | iOS | Android | Notes                               |
 | ----------------------- | --- | ------- | ----------------------------------- |
 | Core device info        | ✅  | ✅      | All platforms                       |
-| Battery info            | ✅  | ✅      | Low power mode iOS only             |
+| Device capabilities     | ✅  | ✅      | All platforms                       |
+| Display & screen        | ✅  | ✅      | Notch/Dynamic Island iOS only       |
 | System resources        | ✅  | ✅      | All platforms                       |
+| Battery info            | ✅  | ✅      | Low power mode iOS only             |
+| Application metadata    | ✅  | ✅      | All platforms                       |
+| Network                 | ✅  | ✅      | MAC hardcoded on iOS 7+             |
+| Carrier info (MCC/MNC)  | ✅  | ✅      | Empty string if no SIM              |
+| carrierAllowsVOIP       | ✅  | ⚠️      | Android always returns true         |
+| Audio accessories       | ✅  | ✅      | All platforms                       |
+| Location services       | ✅  | ✅      | All platforms                       |
+| Localization            | ✅  | ✅      | BCP 47 format                       |
+| CPU & architecture      | ✅  | ✅      | All platforms                       |
+| Android platform        | ❌  | ✅      | Android only                        |
+| iOS platform            | ✅  | ❌      | iOS only                            |
+| Installation metadata   | ✅  | ✅      | All platforms                       |
+| Legacy compatibility    | ✅  | ✅      | All platforms                       |
 | getUptime               | ✅  | ✅      | Both exclude deep sleep             |
 | deviceYearClass         | ✅  | ✅      | Extended 2025 algorithm             |
 | isSideLoadingEnabled    | ❌  | ✅      | Android only (per-app on 8.0+)      |
-| Network info            | ✅  | ✅      | MAC hardcoded on iOS 7+             |
-| Carrier info (MCC/MNC)  | ✅  | ✅      | Empty string if no SIM              |
-| carrierAllowsVOIP       | ✅  | ⚠️      | Android always returns true         |
-| System language         | ✅  | ✅      | BCP 47 format                       |
 | Navigation mode         | ❌  | ✅      | Android only (API 29+)              |
-| Android Build info      | ❌  | ✅      | Android only                        |
 | getHasNotch/Dynamic Island | ✅  | ❌      | iOS only                            |
 | Hardware KeyStore       | ✅  | ✅      | All platforms                       |
 | GMS/HMS detection       | ❌  | ✅      | Android only                        |

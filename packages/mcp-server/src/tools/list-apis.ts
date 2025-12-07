@@ -14,18 +14,23 @@ export const listApisInputSchema = z.object({
   category: z
     .enum([
       'all',
-      'device-info',
-      'battery',
-      'memory',
-      'storage',
+      'core-device-info',
+      'device-capabilities',
+      'display-screen',
+      'system-resources',
+      'battery-power',
+      'application-metadata',
       'network',
-      'capabilities',
-      'application',
-      'platform-specific',
-      'display',
-      'audio',
-      'location',
-      'identification',
+      'carrier-info',
+      'audio-accessories',
+      'location-services',
+      'localization',
+      'cpu-architecture',
+      'android-platform',
+      'ios-platform',
+      'installation-distribution',
+      'legacy-compatibility',
+      'device-integrity',
     ])
     .default('all')
     .describe('Filter by API category'),
@@ -42,23 +47,26 @@ export const listApisInputSchema = z.object({
 export type ListApisInput = z.infer<typeof listApisInputSchema>;
 
 /**
- * Category display names
+ * Category display names (16-category structure)
  */
 const CATEGORY_NAMES: Record<ApiCategory, string> = {
-  'device-info': 'Device Info',
-  'battery': 'Battery & Power',
-  'memory': 'Memory',
-  'storage': 'Storage',
+  'core-device-info': 'Core Device Information',
+  'device-capabilities': 'Device Capabilities',
+  'display-screen': 'Display & Screen',
+  'system-resources': 'System Resources',
+  'battery-power': 'Battery & Power',
+  'application-metadata': 'Application Metadata',
   'network': 'Network',
-  'capabilities': 'Capabilities',
-  'application': 'Application',
-  'platform-specific': 'Platform-Specific',
-  'display': 'Display',
-  'audio': 'Audio',
-  'location': 'Location',
-  'identification': 'Identification',
-  'security': 'Security',
-  'system': 'System',
+  'carrier-info': 'Carrier Information',
+  'audio-accessories': 'Audio Accessories',
+  'location-services': 'Location Services',
+  'localization': 'Localization',
+  'cpu-architecture': 'CPU & Architecture',
+  'android-platform': 'Android Platform',
+  'ios-platform': 'iOS Platform',
+  'installation-distribution': 'Installation & Distribution',
+  'legacy-compatibility': 'Legacy Compatibility',
+  'device-integrity': 'Device Integrity',
 };
 
 /**
@@ -201,20 +209,25 @@ export function executeListApis(
     lines.push(`**Total**: ${filteredApis.length} APIs`);
     lines.push('');
 
-    // Define category order
+    // Define category order (16-category structure)
     const categoryOrder: ApiCategory[] = [
-      'device-info',
-      'battery',
-      'memory',
-      'storage',
+      'core-device-info',
+      'device-capabilities',
+      'display-screen',
+      'system-resources',
+      'battery-power',
+      'application-metadata',
       'network',
-      'capabilities',
-      'application',
-      'platform-specific',
-      'display',
-      'audio',
-      'location',
-      'identification',
+      'carrier-info',
+      'audio-accessories',
+      'location-services',
+      'localization',
+      'cpu-architecture',
+      'android-platform',
+      'ios-platform',
+      'installation-distribution',
+      'legacy-compatibility',
+      'device-integrity',
     ];
 
     // Output categories in order

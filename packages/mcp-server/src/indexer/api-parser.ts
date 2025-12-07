@@ -10,90 +10,127 @@ import * as path from 'path';
 import type { ApiDefinition, ApiCategory, Platform, Parameter } from '../types/index.js';
 
 /**
- * Category keywords mapping for automatic categorization
+ * Category keywords mapping for automatic categorization (16-category structure)
  */
 const CATEGORY_KEYWORDS: Record<string, ApiCategory> = {
+  // Core Device Information
+  deviceid: 'core-device-info',
+  brand: 'core-device-info',
+  model: 'core-device-info',
+  systemname: 'core-device-info',
+  systemversion: 'core-device-info',
+  devicetype: 'core-device-info',
+  manufacturer: 'core-device-info',
+  devicename: 'core-device-info',
+
+  // Device Capabilities
+  tablet: 'device-capabilities',
+  emulator: 'device-capabilities',
+  simulator: 'device-capabilities',
+  yearclass: 'device-capabilities',
+  camera: 'device-capabilities',
+  fingerprint: 'device-capabilities',
+  pinorfingerprint: 'device-capabilities',
+  hardwarekeystore: 'device-capabilities',
+  lowram: 'device-capabilities',
+
+  // Display & Screen
+  notch: 'display-screen',
+  dynamicisland: 'display-screen',
+  displayzoom: 'display-screen',
+  landscape: 'display-screen',
+  brightness: 'display-screen',
+  fontscale: 'display-screen',
+  liquidglass: 'display-screen',
+
+  // System Resources
+  memory: 'system-resources',
+  ram: 'system-resources',
+  disk: 'system-resources',
+  storage: 'system-resources',
+  uptime: 'system-resources',
+  startup: 'system-resources',
+
   // Battery & Power
-  battery: 'battery',
-  power: 'battery',
-  charging: 'battery',
-  lowpower: 'battery',
+  battery: 'battery-power',
+  power: 'battery-power',
+  charging: 'battery-power',
+  lowpower: 'battery-power',
 
-  // Memory
-  memory: 'memory',
-  ram: 'memory',
-
-  // Storage
-  disk: 'storage',
-  storage: 'storage',
+  // Application Metadata
+  version: 'application-metadata',
+  buildnumber: 'application-metadata',
+  bundleid: 'application-metadata',
+  applicationname: 'application-metadata',
+  readableversion: 'application-metadata',
+  firstinstall: 'application-metadata',
+  lastupdate: 'application-metadata',
 
   // Network
-  ip: 'network',
-  mac: 'network',
-  carrier: 'network',
-  network: 'network',
+  ipaddress: 'network',
+  macaddress: 'network',
+  useragent: 'network',
+  airplane: 'network',
 
-  // Capabilities
-  notch: 'capabilities',
-  dynamicisland: 'capabilities',
-  emulator: 'capabilities',
-  simulator: 'capabilities',
-  tablet: 'capabilities',
-  camera: 'capabilities',
-  fingerprint: 'capabilities',
-  gms: 'capabilities',
-  hms: 'capabilities',
-  feature: 'capabilities',
-  landscape: 'capabilities',
+  // Carrier Information
+  carrier: 'carrier-info',
+  voip: 'carrier-info',
+  carrierisocode: 'carrier-info',
+  mobilecountrycode: 'carrier-info',
+  mobilenetworkcode: 'carrier-info',
+  mobilenetworkoperator: 'carrier-info',
 
-  // Application
-  version: 'application',
-  build: 'application',
-  bundle: 'application',
-  application: 'application',
-  install: 'application',
-  referrer: 'application',
-  useragent: 'application',
+  // Audio Accessories
+  headphone: 'audio-accessories',
+  wiredheadphone: 'audio-accessories',
+  bluetoothheadphone: 'audio-accessories',
 
-  // Platform-specific
-  android: 'platform-specific',
-  serial: 'platform-specific',
-  security: 'platform-specific',
-  bootloader: 'platform-specific',
-  codename: 'platform-specific',
-  hardware: 'platform-specific',
-  incremental: 'platform-specific',
-  navigation: 'platform-specific',
+  // Location Services
+  location: 'location-services',
+  locationprovider: 'location-services',
 
-  // Display
-  brightness: 'display',
-  fontscale: 'display',
-  display: 'display',
-  zoom: 'display',
+  // Localization
+  systemlanguage: 'localization',
 
-  // Audio
-  headphone: 'audio',
-  bluetooth: 'audio',
-  audio: 'audio',
+  // CPU & Architecture
+  supportedabi: 'cpu-architecture',
+  supported32bit: 'cpu-architecture',
+  supported64bit: 'cpu-architecture',
 
-  // Location
-  location: 'location',
-  airplane: 'location',
+  // Android Platform
+  apilevel: 'android-platform',
+  navigationmode: 'android-platform',
+  gms: 'android-platform',
+  hms: 'android-platform',
+  hasfeature: 'android-platform',
+  systemfeature: 'android-platform',
+  mediatype: 'android-platform',
+  bootloader: 'android-platform',
+  codename: 'android-platform',
+  hardware: 'android-platform',
+  incremental: 'android-platform',
+  serial: 'android-platform',
+  securitypatch: 'android-platform',
+  buildfingerprint: 'android-platform',
 
-  // Identification
-  unique: 'identification',
-  devicetoken: 'identification',
-  idfv: 'identification',
+  // iOS Platform
+  devicetoken: 'ios-platform',
+  syncuniqueid: 'ios-platform',
 
-  // Security
-  sideload: 'security',
-  integrity: 'security',
-  jailbreak: 'security',
-  root: 'security',
+  // Installation & Distribution
+  installerpackage: 'installation-distribution',
+  installreferrer: 'installation-distribution',
+  sideload: 'installation-distribution',
 
-  // System
-  uptime: 'system',
-  yearclass: 'system',
+  // Legacy Compatibility
+  totaldiskcapacityold: 'legacy-compatibility',
+  freediskstorageold: 'legacy-compatibility',
+
+  // Device Integrity
+  integrity: 'device-integrity',
+  jailbreak: 'device-integrity',
+  root: 'device-integrity',
+  rooted: 'device-integrity',
 };
 
 /**
@@ -226,7 +263,7 @@ function determineCategory(name: string, description: string): ApiCategory {
     }
   }
 
-  return 'device-info'; // Default category
+  return 'core-device-info'; // Default category
 }
 
 /**
