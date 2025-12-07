@@ -21,7 +21,7 @@ describe('list_apis tool', () => {
     });
 
     it('should accept valid category', () => {
-      const result = listApisInputSchema.safeParse({ category: 'battery' });
+      const result = listApisInputSchema.safeParse({ category: 'battery-power' });
       expect(result.success).toBe(true);
     });
 
@@ -55,7 +55,7 @@ describe('list_apis tool', () => {
 
     it('should filter by battery category', () => {
       const result = executeListApis(index, {
-        category: 'battery',
+        category: 'battery-power',
         platform: 'all',
         kind: 'all',
       });
@@ -69,12 +69,12 @@ describe('list_apis tool', () => {
     it('should return empty results message for non-matching category', () => {
       // Create a smaller index that won't have all categories
       const smallIndex = buildSearchIndex(
-        apis.filter(a => a.category === 'battery'),
+        apis.filter(a => a.category === 'battery-power'),
         []
       );
 
       const result = executeListApis(smallIndex, {
-        category: 'audio',
+        category: 'audio-accessories',
         platform: 'all',
         kind: 'all',
       });
@@ -149,7 +149,7 @@ describe('list_apis tool', () => {
   describe('combined filters', () => {
     it('should apply multiple filters together', () => {
       const result = executeListApis(index, {
-        category: 'battery',
+        category: 'battery-power',
         platform: 'all',
         kind: 'method',
       });
@@ -173,8 +173,8 @@ describe('list_apis tool', () => {
 
     it('should include filter summary', () => {
       const result = executeListApis(index, {
-        category: 'battery',
-        platform: 'ios',
+        category: 'battery-power',
+        platform: 'all',
         kind: 'method',
       });
 
@@ -223,7 +223,7 @@ describe('list_apis tool', () => {
     it('should suggest broadening filters when no results', () => {
       const emptyIndex = buildSearchIndex([], []);
       const result = executeListApis(emptyIndex, {
-        category: 'battery',
+        category: 'battery-power',
         platform: 'ios',
         kind: 'method',
       });

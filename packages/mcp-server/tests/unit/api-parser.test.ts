@@ -99,19 +99,19 @@ describe('API Parser', () => {
     it('should categorize battery-related APIs', () => {
       const api = apis.find(a => a.name === 'getBatteryLevel');
       expect(api).toBeDefined();
-      expect(api!.category).toBe('battery');
+      expect(api!.category).toBe('battery-power');
     });
 
     it('should categorize memory-related APIs', () => {
       const api = apis.find(a => a.name === 'totalMemory');
       expect(api).toBeDefined();
-      expect(api!.category).toBe('memory');
+      expect(api!.category).toBe('system-resources');
     });
 
     it('should categorize device-info APIs', () => {
       const api = apis.find(a => a.name === 'deviceId');
       expect(api).toBeDefined();
-      expect(api!.category).toBe('device-info');
+      expect(api!.category).toBe('core-device-info');
     });
   });
 
