@@ -553,6 +553,72 @@ Both libraries use the same Facebook algorithm for calculating device year class
   - Android: Checks su binaries, root apps, system properties, test-keys
   - iOS: Checks Cydia, jailbreak files, sandbox escape, suspicious paths
 
+---
+
+## Migrating from react-native-carrier-info
+
+If you're using `react-native-carrier-info` for carrier information, you can consolidate into `react-native-nitro-device-info`.
+
+### API Migration Reference
+
+| react-native-carrier-info | react-native-nitro-device-info | Notes |
+|---------------------------|-------------------------------|-------|
+| `await CarrierInfo.allowsVOIP()` | `DeviceInfoModule.carrierAllowsVOIP` | Now sync property |
+| `await CarrierInfo.carrierName()` | `DeviceInfoModule.getCarrierSync()` | Now sync method |
+| `await CarrierInfo.isoCountryCode()` | `DeviceInfoModule.carrierIsoCountryCode` | Now sync property |
+| `await CarrierInfo.mobileCountryCode()` | `DeviceInfoModule.mobileCountryCode` | Now sync property |
+| `await CarrierInfo.mobileNetworkCode()` | `DeviceInfoModule.mobileNetworkCode` | Now sync property |
+| `await CarrierInfo.mobileNetworkOperator()` | `DeviceInfoModule.mobileNetworkOperator` | Now sync property |
+
+### Migration Example
+
+**Before** (`react-native-carrier-info`):
+```typescript
+import CarrierInfo from 'react-native-carrier-info';
+
+async function getCarrierDetails() {
+  const carrierName = await CarrierInfo.carrierName();
+  const allowsVOIP = await CarrierInfo.allowsVOIP();
+  const isoCountryCode = await CarrierInfo.isoCountryCode();
+  const mcc = await CarrierInfo.mobileCountryCode();
+  const mnc = await CarrierInfo.mobileNetworkCode();
+  const operator = await CarrierInfo.mobileNetworkOperator();
+
+  return { carrierName, allowsVOIP, isoCountryCode, mcc, mnc, operator };
+}
+```
+
+**After** (`react-native-nitro-device-info`):
+```typescript
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+
+function getCarrierDetails() {
+  // All synchronous - no async/await needed!
+  return {
+    carrierName: DeviceInfoModule.getCarrierSync(),
+    allowsVOIP: DeviceInfoModule.carrierAllowsVOIP,
+    isoCountryCode: DeviceInfoModule.carrierIsoCountryCode,
+    mcc: DeviceInfoModule.mobileCountryCode,
+    mnc: DeviceInfoModule.mobileNetworkCode,
+    operator: DeviceInfoModule.mobileNetworkOperator,
+  };
+}
+```
+
+### Key Benefits
+
+1. **No async/await**: All carrier properties are synchronous
+2. **Single dependency**: No need to install separate carrier-info package
+3. **JSI performance**: Zero-overhead native access via Nitro Modules
+4. **Unified API**: Carrier info alongside 80+ other device properties
+
+### Platform Notes
+
+- **iOS**: Uses `CTTelephonyNetworkInfo` and `CTCarrier` APIs
+- **Android**: Uses `TelephonyManager` APIs
+- **carrierAllowsVOIP**: Returns actual value on iOS, always `true` on Android (no equivalent API)
+- **Empty strings**: All properties return `""` when no SIM card is present
+
 ## Need Help?
 
 - [Complete API Reference](/api/device-info)

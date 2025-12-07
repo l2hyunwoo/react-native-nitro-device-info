@@ -1301,4 +1301,83 @@ export interface DeviceInfo
    * @platform Android (returns false on iOS)
    */
   isSideLoadingEnabled(): boolean;
+
+  // CARRIER INFORMATION (react-native-carrier-info parity)
+
+  /**
+   * Check if carrier allows VoIP calls on its network
+   *
+   * Indicates whether the carrier allows making Voice over IP (VoIP) calls
+   * on its network. This is determined by the carrier's network policy.
+   *
+   * @example
+   * ```typescript
+   * if (DeviceInfoModule.carrierAllowsVOIP) {
+   *   // Enable VoIP calling features
+   * }
+   * ```
+   *
+   * @platform iOS (returns true on Android - no equivalent API)
+   */
+  readonly carrierAllowsVOIP: boolean;
+
+  /**
+   * ISO country code for the carrier
+   *
+   * The ISO 3166-1 alpha-2 country code for the user's
+   * cellular service provider.
+   *
+   * @example
+   * ```typescript
+   * console.log(DeviceInfoModule.carrierIsoCountryCode); // "US"
+   * ```
+   *
+   * @platform iOS, Android
+   */
+  readonly carrierIsoCountryCode: string;
+
+  /**
+   * Mobile Country Code (MCC)
+   *
+   * The Mobile Country Code per ITU-T Recommendation E.212.
+   * The MCC is a 3-digit code that identifies the country of the carrier.
+   *
+   * @example
+   * ```typescript
+   * console.log(DeviceInfoModule.mobileCountryCode); // "310" (USA)
+   * ```
+   *
+   * @platform iOS, Android
+   */
+  readonly mobileCountryCode: string;
+
+  /**
+   * Mobile Network Code (MNC)
+   *
+   * The Mobile Network Code that identifies the carrier
+   * within a country. The MNC is typically 2-3 digits.
+   *
+   * @example
+   * ```typescript
+   * console.log(DeviceInfoModule.mobileNetworkCode); // "260" (T-Mobile US)
+   * ```
+   *
+   * @platform iOS, Android
+   */
+  readonly mobileNetworkCode: string;
+
+  /**
+   * Mobile Network Operator (MCC + MNC combined)
+   *
+   * The combined Mobile Country Code and Mobile Network Code
+   * as a single string. Equivalent to `mobileCountryCode + mobileNetworkCode`.
+   *
+   * @example
+   * ```typescript
+   * console.log(DeviceInfoModule.mobileNetworkOperator); // "310260" (T-Mobile US)
+   * ```
+   *
+   * @platform iOS, Android
+   */
+  readonly mobileNetworkOperator: string;
 }
