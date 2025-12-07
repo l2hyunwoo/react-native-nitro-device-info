@@ -77,7 +77,6 @@ private data class BuildInfoCache(
 @SuppressLint("HardwareIds")
 @DoNotStrip
 class DeviceInfo : HybridDeviceInfoSpec() {
-
     // MARK: - Private Properties & Caches
 
     /** Get the React Application Context */
