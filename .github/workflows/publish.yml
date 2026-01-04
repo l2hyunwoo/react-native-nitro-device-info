@@ -71,7 +71,7 @@ jobs:
           if [ "$CURRENT_VERSION" = "$VERSION" ]; then
             echo "✓ packages/react-native-nitro-device-info/package.json already at version $VERSION"
           else
-            npm version $VERSION --no-git-tag-version
+            node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8')); pkg.version = '$VERSION'; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');"
             echo "✓ packages/react-native-nitro-device-info/package.json updated to version $VERSION"
           fi
 
@@ -123,7 +123,7 @@ jobs:
           VERSION="${{ github.event.inputs.version }}"
           echo "Updating package.json to version $VERSION (dry run)"
           cd packages/react-native-nitro-device-info
-          npm version $VERSION --no-git-tag-version
+          node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8')); pkg.version = '$VERSION'; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');"
           echo "✓ package.json updated to version $VERSION"
 
       - name: Create and push tag
@@ -169,7 +169,7 @@ jobs:
           VERSION="${{ github.event.inputs.version }}"
           echo "Updating package.json to version $VERSION (dry run)"
           cd packages/react-native-nitro-device-info
-          npm version $VERSION --no-git-tag-version
+          node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8')); pkg.version = '$VERSION'; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');"
           echo "✓ package.json updated to version $VERSION"
 
       - name: Build library
