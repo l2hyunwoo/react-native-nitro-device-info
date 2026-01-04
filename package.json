@@ -12,10 +12,7 @@
     "lint:eslint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli packages/react-native-nitro-device-info/lib packages/react-native-nitro-device-info/nitrogen/generated packages/react-native-nitro-device-info/android/build example/showcase/android/build example/showcase/android/app/build example/showcase/ios/build example/benchmark/android/build example/benchmark/android/app/build example/benchmark/ios/build",
     "prepare": "yarn workspace react-native-nitro-device-info prepare",
-    "nitrogen": "yarn workspace react-native-nitro-device-info nitrogen",
-    "changeset": "changeset",
-    "version": "changeset version",
-    "release": "changeset publish"
+    "nitrogen": "yarn workspace react-native-nitro-device-info nitrogen"
   },
   "repository": {
     "type": "git",
@@ -28,8 +25,6 @@
   },
   "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info#readme",
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.2",
-    "@changesets/cli": "^2.29.8",
     "@commitlint/config-conventional": "20.0.0",
     "@eslint/compat": "2.0.0",
     "@eslint/eslintrc": "3.3.1",
