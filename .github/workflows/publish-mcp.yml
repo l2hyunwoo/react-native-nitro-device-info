@@ -1,0 +1,253 @@
+name: Publish MCP Server
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g., 1.0.3)"
+        required: true
+        type: string
+      dry_run:
+        description: "Dry run (skip actual publishing)"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: Validate and build
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error title=Invalid Version Format::Version must be in X.Y.Z format (e.g., 1.0.0). Got: $VERSION"
+            exit 1
+          fi
+          echo "✓ Version format valid: $VERSION"
+
+      - name: Check for existing tag
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if git rev-parse "mcp-server-v$VERSION" >/dev/null 2>&1; then
+            echo "::error title=Tag Already Exists::Tag mcp-server-v$VERSION already exists. Please use a different version number."
+            exit 1
+          fi
+          echo "✓ Tag mcp-server-v$VERSION does not exist"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build MCP server
+        run: yarn workspace @react-native-nitro-device-info/mcp-server build
+
+      - name: Run MCP server tests
+        run: yarn workspace @react-native-nitro-device-info/mcp-server test
+
+      - name: Verify build outputs
+        run: |
+          echo "Verifying build outputs..."
+          test -d packages/mcp-server/dist || (echo "::error::packages/mcp-server/dist directory not found" && exit 1)
+          test -f packages/mcp-server/dist/index.js || (echo "::error::packages/mcp-server/dist/index.js not found" && exit 1)
+          echo "✓ All build outputs verified"
+
+  # Job 2: Update version and publish
+  publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    needs: validate
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Update MCP server version
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          cd packages/mcp-server
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if [ "$CURRENT_VERSION" = "$VERSION" ]; then
+            echo "✓ packages/mcp-server/package.json already at version $VERSION"
+          else
+            # Update version directly without npm to avoid monorepo workspace resolution
+            node -e "
+              const fs = require('fs');
+              const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+              pkg.version = '$VERSION';
+              fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
+            "
+            echo "✓ packages/mcp-server/package.json updated to version $VERSION"
+          fi
+
+      - name: Build MCP server
+        run: yarn workspace @react-native-nitro-device-info/mcp-server build
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit version change
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git add packages/mcp-server/package.json
+          git commit -m "chore(mcp-server): bump version to $VERSION" || echo "No changes to commit"
+
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Would push version commit to remote"
+          else
+            git push origin HEAD
+            echo "✓ Version commit pushed to remote"
+          fi
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Would create and push tag mcp-server-v$VERSION"
+          else
+            git tag "mcp-server-v$VERSION"
+            git push origin "mcp-server-v$VERSION"
+            echo "✓ Tag mcp-server-v$VERSION created and pushed"
+          fi
+
+      - name: Publish to NPM
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+
+          # Copy mcp-server to temp directory to isolate from monorepo
+          TEMP_DIR=$(mktemp -d)
+          echo "Creating isolated publish directory: $TEMP_DIR"
+
+          cp -r packages/mcp-server/dist "$TEMP_DIR/"
+          cp packages/mcp-server/README.md "$TEMP_DIR/"
+
+          # Copy package.json and remove prepublishOnly script (build already done)
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('packages/mcp-server/package.json', 'utf8'));
+            delete pkg.scripts.prepublishOnly;
+            fs.writeFileSync('$TEMP_DIR/package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+          cd "$TEMP_DIR"
+          echo "Publishing from: $(pwd)"
+          ls -la
+
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🔍 DRY RUN: Testing NPM publish..."
+            npm publish --dry-run --access public
+            echo "✓ Dry run completed successfully"
+          else
+            echo "Publishing to NPM with provenance..."
+            npm publish --provenance --access public
+            echo "✓ Package published to NPM registry as @react-native-nitro-device-info/mcp-server@$VERSION"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # Job 3: Create GitHub Release
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: publish
+    if: github.event.inputs.dry_run != 'true'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+
+          # Find previous mcp-server tag (mcp-server-v* format)
+          PREVIOUS_TAG=$(git tag -l "mcp-server-v*" --sort=-v:refname | grep -v "^mcp-server-v$VERSION$" | head -1 || echo "")
+
+          echo "Generating release notes for mcp-server-v$VERSION..." >&2
+          echo "Previous tag: $PREVIOUS_TAG" >&2
+
+          {
+            echo "## @react-native-nitro-device-info/mcp-server v$VERSION"
+            echo ""
+            echo "MCP (Model Context Protocol) server for react-native-nitro-device-info AI tool integration."
+            echo ""
+            echo "## Installation"
+            echo ""
+            echo '```bash'
+            echo "npx @react-native-nitro-device-info/mcp-server"
+            echo "# or"
+            echo "npm install -g @react-native-nitro-device-info/mcp-server"
+            echo '```'
+            echo ""
+            echo "## Quick Setup"
+            echo ""
+            echo '```bash'
+            echo "cd your-react-native-project"
+            echo "npx @react-native-nitro-device-info/mcp-server init"
+            echo '```'
+            echo ""
+            echo "## Documentation"
+            echo ""
+            echo "- [MCP Server README](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/mcp-server#readme)"
+            echo "- [Changelog](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/mcp-server/CHANGELOG.md)"
+            echo ""
+            if [ -n "$PREVIOUS_TAG" ]; then
+              echo "**Full Changelog**: https://github.com/l2hyunwoo/react-native-nitro-device-info/compare/$PREVIOUS_TAG...mcp-server-v$VERSION"
+            fi
+          } > release_notes.md
+
+          {
+            echo "release_notes<<RELEASE_NOTES_EOF"
+            cat release_notes.md
+            echo "RELEASE_NOTES_EOF"
+          } >> $GITHUB_OUTPUT
+
+          echo "✓ Release notes generated" >&2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: mcp-server-v${{ github.event.inputs.version }}
+          name: "@react-native-nitro-device-info/mcp-server v${{ github.event.inputs.version }}"
+          body: ${{ steps.release_notes.outputs.release_notes }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

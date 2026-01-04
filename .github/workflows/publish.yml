@@ -218,7 +218,8 @@ jobs:
           set -e  # Exit on error
 
           VERSION="${{ github.event.inputs.version }}"
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 --exclude="v$VERSION" 2>/dev/null || echo "")
+          # Find previous library tag (v* format, excluding mcp-server-v* tags)
+          PREVIOUS_TAG=$(git tag -l "v*" --sort=-v:refname | grep -v "^mcp-server-" | grep -v "^v$VERSION$" | head -1 || echo "")
 
           # Send debug output to stderr to avoid polluting release notes
           echo "Generating release notes for v$VERSION..." >&2
