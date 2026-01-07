@@ -1915,6 +1915,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hono/node-server@npm:^1.19.7":
+  version: 1.19.7
+  resolution: "@hono/node-server@npm:1.19.7"
+  peerDependencies:
+    hono: ^4
+  checksum: d2ac297af1ef9e300981876971eea0770f78212f40b15a9be33bf31ebb454629f93c076322399d72da08042899023c3d0b62a0c9a6c61e23ab2bd7343f0a336d
+  languageName: node
+  linkType: hard
+
 "@humanfs/core@npm:^0.19.1":
   version: 0.19.1
   resolution: "@humanfs/core@npm:0.19.1"
@@ -2748,10 +2757,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@modelcontextprotocol/sdk@npm:^1.0.0":
-  version: 1.24.1
-  resolution: "@modelcontextprotocol/sdk@npm:1.24.1"
+"@modelcontextprotocol/sdk@npm:^1.25.2":
+  version: 1.25.2
+  resolution: "@modelcontextprotocol/sdk@npm:1.25.2"
   dependencies:
+    "@hono/node-server": ^1.19.7
     ajv: ^8.17.1
     ajv-formats: ^3.0.1
     content-type: ^1.0.5
@@ -2762,6 +2772,7 @@ __metadata:
     express: ^5.0.1
     express-rate-limit: ^7.5.0
     jose: ^6.1.1
+    json-schema-typed: ^8.0.2
     pkce-challenge: ^5.0.0
     raw-body: ^3.0.0
     zod: ^3.25 || ^4.0
@@ -2774,7 +2785,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: be861489f4e1bba7e3217e87880c853815deaa75d8351a5b89168064905b150c84039d7073532f767c7ae792b18a1bf3881aee92274067f167d0d97bc8a1cace
+  checksum: 24c600de2da3478e5ce8a6ae3a00744a3d8a08e9291e6ebb236ca563d5a8d69bee759223950914ef19329ce26b24946639438cc6a7bf33839180348055be5eb9
   languageName: node
   linkType: hard
 
@@ -3269,7 +3280,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-native-nitro-device-info/mcp-server@workspace:packages/mcp-server"
   dependencies:
-    "@modelcontextprotocol/sdk": ^1.0.0
+    "@modelcontextprotocol/sdk": ^1.25.2
     "@types/jest": ^29.5.14
     "@types/node": ^20.0.0
     jest: ^29.7.0
@@ -9451,6 +9462,13 @@ __metadata:
   version: 1.0.0
   resolution: "json-schema-traverse@npm:1.0.0"
   checksum: 02f2f466cdb0362558b2f1fd5e15cce82ef55d60cd7f8fa828cf35ba74330f8d767fcae5c5c2adb7851fa811766c694b9405810879bc4e1ddd78a7c0e03658ad
+  languageName: node
+  linkType: hard
+
+"json-schema-typed@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "json-schema-typed@npm:8.0.2"
+  checksum: 8ddb3c2b1bad406507ea077d4d8cfe6dae5b920f642efab145e4bd6e0d3984f01034ee4467bbeabd51e129b17d7446ceb357a6b1648857fdfaf61ba8ef621ff6
   languageName: node
   linkType: hard
 
