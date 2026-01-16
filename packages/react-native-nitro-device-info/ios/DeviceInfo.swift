@@ -963,6 +963,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Get device model identifier using sysctlbyname
   private func getDeviceModelIdentifier() -> String {
+    // resolve deviceId on simulators correctly, i.e iPhone17,1 instead of arm64 or any other architecture
+    if(isEmulator){
+      return ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "unknown"
+    }
     var systemInfo = utsname()
     uname(&systemInfo)
     let machineMirror = Mirror(reflecting: systemInfo.machine)
