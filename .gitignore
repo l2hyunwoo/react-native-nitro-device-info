@@ -97,10 +97,9 @@ packages/react-native-nitro-device-info/nitrogen/
 CLAUDE.md
 specs/
 .specify/
+.omc/
 
 # openspec
-AGENTS.md
-**/AGENTS.md
 openspec/
 
 # ios
