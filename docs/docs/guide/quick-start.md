@@ -13,7 +13,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
-console.log(DeviceInfoModule.model); // "iPhone"
+console.log(DeviceInfoModule.model); // "iPhone 13 Pro"
 ```
 
 ### Synchronous Properties
@@ -62,7 +62,7 @@ const deviceId = DeviceInfoModule.deviceId; // "iPhone14,2"
 const manufacturer = DeviceInfoModule.manufacturer; // "Apple"
 const uniqueId = DeviceInfoModule.uniqueId; // "FCDBD8EF-..."
 const brand = DeviceInfoModule.brand; // "Apple"
-const model = DeviceInfoModule.model; // "iPhone"
+const model = DeviceInfoModule.model; // "iPhone 15 Pro"
 ```
 
 ### Device Capabilities

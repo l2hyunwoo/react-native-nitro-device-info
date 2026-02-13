@@ -58,6 +58,22 @@ describe('Core Device Properties', () => {
     expect(model.length).toBeGreaterThan(0);
   });
 
+  // T012b: model returns marketing name on iOS when device identifier is mapped
+  test('model returns marketing name or valid fallback', () => {
+    const model = DeviceInfoModule.model;
+    const deviceId = DeviceInfoModule.deviceId;
+
+    if (Platform.OS === 'ios') {
+      // model should either be a specific marketing name (e.g., "iPhone 15 Pro")
+      // or a valid generic fallback (e.g., "iPhone") for unmapped identifiers
+      if (deviceId.startsWith('iPhone')) {
+        expect(model).toMatch(/^iPhone/);
+      } else if (deviceId.startsWith('iPad')) {
+        expect(model).toMatch(/^iPad/);
+      }
+    }
+  });
+
   // T013: deviceType test
   test('deviceType returns valid enum value', () => {
     const deviceType = DeviceInfoModule.deviceType;
