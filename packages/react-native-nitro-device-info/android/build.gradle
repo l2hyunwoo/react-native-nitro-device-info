@@ -37,6 +37,7 @@ def getExtOrIntegerDefault(name) {
 android {
   namespace "com.margelo.nitro.nitrodeviceinfo"
 
+  ndkVersion getExtOrDefault("ndkVersion")
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
 
   defaultConfig {
