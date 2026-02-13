@@ -118,23 +118,11 @@ jobs:
           node-version: '22'
           cache: 'yarn'
 
-      - name: Cache CocoaPods
+      - name: Cache CocoaPods downloads
         uses: actions/cache@v4
         with:
-          path: |
-            example/showcase/ios/Pods
-            ~/Library/Caches/CocoaPods
-          key: pods-${{ runner.os }}-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            pods-${{ runner.os }}-
-
-      - name: Cache Xcode DerivedData
-        uses: actions/cache@v4
-        with:
-          path: example/showcase/ios/build
-          key: deriveddata-${{ runner.os }}-${{ hashFiles('example/showcase/ios/**/*.xcodeproj/project.pbxproj', 'example/showcase/ios/**/*.xcworkspace/contents.xcworkspacedata') }}
-          restore-keys: |
-            deriveddata-${{ runner.os }}-
+          path: ~/Library/Caches/CocoaPods
+          key: pods-download-${{ runner.os }}-${{ hashFiles('example/showcase/package.json') }}
 
       - name: Install dependencies
         run: yarn install --immutable
