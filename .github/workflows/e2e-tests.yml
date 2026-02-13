@@ -25,7 +25,7 @@ jobs:
   e2e-ios:
     name: E2E Tests (iOS)
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,9 +42,28 @@ jobs:
           path: |
             example/showcase/ios/Pods
             ~/Library/Caches/CocoaPods
-          key: pods-e2e-${{ runner.os }}-${{ hashFiles('**/Podfile.lock') }}
+          key: pods-e2e-${{ runner.os }}-${{ hashFiles('example/showcase/ios/Podfile.lock') }}
           restore-keys: |
             pods-e2e-${{ runner.os }}-
+
+      - name: Cache Xcode DerivedData
+        uses: actions/cache@v4
+        with:
+          path: example/showcase/ios/build
+          key: xcode-deriveddata-e2e-${{ runner.os }}-${{ hashFiles('example/showcase/ios/Podfile.lock', 'src/**/*.swift', 'src/**/*.mm', 'src/**/*.cpp', 'nitrogen/generated/ios/**') }}
+          restore-keys: |
+            xcode-deriveddata-e2e-${{ runner.os }}-
+
+      - name: Boot iOS Simulator
+        run: |
+          # Boot simulator early so it's ready by the time we need it
+          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | head -1 | awk -F '[()]' '{print $2}')
+          if [ -z "$DEVICE_ID" ]; then
+            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
+          fi
+          echo "Booting simulator: $DEVICE_ID"
+          xcrun simctl boot "$DEVICE_ID" || true
+          echo "SIMULATOR_DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -60,17 +79,6 @@ jobs:
         working-directory: example/showcase/ios
         run: pod install
 
-      - name: Boot iOS Simulator
-        run: |
-          # Find iPhone 16 Pro first (available on macos-15), fallback to any iPhone
-          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | head -1 | awk -F '[()]' '{print $2}')
-          if [ -z "$DEVICE_ID" ]; then
-            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
-          fi
-          echo "Booting simulator: $DEVICE_ID"
-          xcrun simctl boot "$DEVICE_ID" || true
-          echo "SIMULATOR_DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
-
       - name: Build iOS App
         working-directory: example/showcase
         run: |
@@ -80,7 +88,20 @@ jobs:
             -sdk iphonesimulator \
             -destination "id=$SIMULATOR_DEVICE_ID" \
             -derivedDataPath ios/build \
-            build
+            -jobs $(sysctl -n hw.ncpu) \
+            CODE_SIGNING_ALLOWED=NO \
+            GCC_WARN_INHIBIT_ALL_WARNINGS=YES \
+            build | tail -20
+
+      - name: Pre-bundle Metro JS
+        working-directory: example/showcase
+        run: |
+          npx react-native bundle \
+            --platform ios \
+            --dev true \
+            --entry-file index.js \
+            --bundle-output ios/build/main.jsbundle \
+            --assets-dest ios/build/assets
 
       - name: Install iOS App
         run: |
@@ -91,6 +112,7 @@ jobs:
       - name: Run E2E tests
         working-directory: example/showcase
         run: yarn react-native-harness --harnessRunner ios
+        timeout-minutes: 10
         env:
           CI: true
 
