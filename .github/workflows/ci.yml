@@ -64,7 +64,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
@@ -88,7 +88,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
@@ -115,26 +115,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
-      - name: Cache CocoaPods
+      - name: Cache CocoaPods downloads
         uses: actions/cache@v4
         with:
-          path: |
-            example/showcase/ios/Pods
-            ~/Library/Caches/CocoaPods
-          key: pods-${{ runner.os }}-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            pods-${{ runner.os }}-
-
-      - name: Cache Xcode DerivedData
-        uses: actions/cache@v4
-        with:
-          path: example/showcase/ios/build
-          key: deriveddata-${{ runner.os }}-${{ hashFiles('example/showcase/ios/**/*.xcodeproj/project.pbxproj', 'example/showcase/ios/**/*.xcworkspace/contents.xcworkspacedata') }}
-          restore-keys: |
-            deriveddata-${{ runner.os }}-
+          path: ~/Library/Caches/CocoaPods
+          key: pods-download-${{ runner.os }}-${{ hashFiles('example/showcase/package.json') }}
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -174,7 +162,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Setup Java
@@ -224,7 +212,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
@@ -259,7 +247,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
