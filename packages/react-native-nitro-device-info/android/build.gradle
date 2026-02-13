@@ -12,7 +12,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle"
+    classpath "com.android.tools.build:gradle:8.13.0"
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
     classpath "org.jlleitschuh.gradle:ktlint-gradle:14.0.1"

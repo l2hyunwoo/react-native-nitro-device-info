@@ -6,6 +6,8 @@
   "scripts": {
     "showcase": "yarn workspace react-native-nitro-device-info-example",
     "benchmark": "yarn workspace react-native-nitro-device-info-benchmark",
+    "pod:showcase": "cd example/showcase/ios && pod install",
+    "pod:benchmark": "cd example/benchmark/ios && pod install",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint .",
