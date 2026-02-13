@@ -10,6 +10,10 @@ import {
 // CI environment detection - GitHub Actions sets CI=true
 const isCI = process.env.CI === 'true';
 
+// iOS simulator: use CI-detected values or fall back to local defaults
+const iosDeviceName = process.env.SIMULATOR_DEVICE_NAME || 'iPhone 16 Pro';
+const iosVersion = process.env.SIMULATOR_IOS_VERSION || '18.4';
+
 /** @type {import('react-native-harness').HarnessConfig} */
 const config = {
   entryPoint: './index.js',
@@ -24,7 +28,7 @@ const config = {
   runners: [
     applePlatform({
       name: 'ios',
-      device: appleSimulator('iPhone 16 Pro', '18.4'),
+      device: appleSimulator(iosDeviceName, iosVersion),
       bundleId: 'nitrodeviceinfo.example',
     }),
     androidPlatform({

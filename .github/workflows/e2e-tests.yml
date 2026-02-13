@@ -57,18 +57,35 @@ jobs:
       - name: Boot iOS Simulator
         run: |
           # Boot simulator early so it's ready by the time we need it
-          DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | head -1 | awk -F '[()]' '{print $2}')
-          if [ -z "$DEVICE_ID" ]; then
-            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
+          # List available devices for debugging
+          echo "Available simulators:"
+          xcrun simctl list devices available | grep "iPhone"
+
+          # Find iPhone 16 Pro simulator and extract both UDID and iOS version
+          DEVICE_LINE=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | head -1)
+          if [ -z "$DEVICE_LINE" ]; then
+            DEVICE_LINE=$(xcrun simctl list devices available | grep "iPhone" | head -1)
           fi
-          if [ -z "$DEVICE_ID" ]; then
+          if [ -z "$DEVICE_LINE" ]; then
             echo "::error::No available iOS simulator found. Check Xcode installation and available runtimes."
             xcrun simctl list devices available
             exit 1
           fi
-          echo "Booting simulator: $DEVICE_ID"
+
+          DEVICE_ID=$(echo "$DEVICE_LINE" | awk -F '[()]' '{print $2}')
+          DEVICE_NAME=$(echo "$DEVICE_LINE" | sed 's/ (.*//;s/^[[:space:]]*//')
+
+          # Detect iOS runtime version from the section header in simctl output
+          IOS_VERSION=$(xcrun simctl list devices available | awk -v id="$DEVICE_ID" '
+            /^-- iOS/ { gsub(/^-- iOS | --$/, ""); ver=$0 }
+            $0 ~ id { print ver; exit }
+          ')
+
+          echo "Device: $DEVICE_NAME (iOS $IOS_VERSION) [$DEVICE_ID]"
           xcrun simctl boot "$DEVICE_ID" || true
           echo "SIMULATOR_DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
+          echo "SIMULATOR_DEVICE_NAME=$DEVICE_NAME" >> $GITHUB_ENV
+          echo "SIMULATOR_IOS_VERSION=$IOS_VERSION" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: yarn install --immutable
