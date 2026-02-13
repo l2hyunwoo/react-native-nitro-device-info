@@ -104,6 +104,7 @@ jobs:
       - name: Build iOS App
         working-directory: example/showcase
         run: |
+          set -o pipefail
           xcodebuild -workspace ios/NitroDeviceInfoExample.xcworkspace \
             -scheme NitroDeviceInfoExample \
             -configuration Debug \
@@ -113,7 +114,7 @@ jobs:
             -jobs $(sysctl -n hw.ncpu) \
             CODE_SIGNING_ALLOWED=NO \
             GCC_WARN_INHIBIT_ALL_WARNINGS=YES \
-            build | tail -20
+            build 2>&1 | tail -40
 
       - name: Pre-bundle Metro JS
         working-directory: example/showcase
