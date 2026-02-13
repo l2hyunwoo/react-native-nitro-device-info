@@ -50,7 +50,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: example/showcase/ios/build
-          key: xcode-deriveddata-e2e-${{ runner.os }}-${{ hashFiles('example/showcase/ios/Podfile.lock', 'src/**/*.swift', 'src/**/*.mm', 'src/**/*.cpp', 'nitrogen/generated/ios/**') }}
+          key: xcode-deriveddata-e2e-${{ runner.os }}-${{ hashFiles('example/showcase/ios/Podfile.lock', 'packages/react-native-nitro-device-info/ios/**', 'packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts') }}
           restore-keys: |
             xcode-deriveddata-e2e-${{ runner.os }}-
 
@@ -60,6 +60,11 @@ jobs:
           DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | head -1 | awk -F '[()]' '{print $2}')
           if [ -z "$DEVICE_ID" ]; then
             DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
+          fi
+          if [ -z "$DEVICE_ID" ]; then
+            echo "::error::No available iOS simulator found. Check Xcode installation and available runtimes."
+            xcrun simctl list devices available
+            exit 1
           fi
           echo "Booting simulator: $DEVICE_ID"
           xcrun simctl boot "$DEVICE_ID" || true
