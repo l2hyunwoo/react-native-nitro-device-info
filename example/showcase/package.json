@@ -14,32 +14,32 @@
     "test:e2e:android": "react-native-harness --harnessRunner android"
   },
   "dependencies": {
-    "react": "19.1.0",
-    "react-native": "0.81.1",
+    "react": "19.2.3",
+    "react-native": "0.84.0",
     "react-native-nitro-device-info": "workspace:*",
-    "react-native-nitro-modules": "^0.31.2",
-    "use-sync-external-store": "^1.4.0"
+    "react-native-nitro-modules": "^0.33.9",
+    "use-sync-external-store": "^1.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "20.0.0",
-    "@react-native-community/cli-platform-android": "20.0.0",
-    "@react-native-community/cli-platform-ios": "20.0.0",
+    "@react-native-community/cli": "20.1.0",
+    "@react-native-community/cli-platform-android": "20.1.0",
+    "@react-native-community/cli-platform-ios": "20.1.0",
     "@react-native-harness/platform-android": "^1.0.0-alpha.18",
     "@react-native-harness/platform-apple": "^1.0.0-alpha.18",
-    "@react-native/babel-preset": "0.81.1",
-    "@react-native/metro-config": "0.81.1",
-    "@react-native/typescript-config": "0.81.1",
+    "@react-native/babel-preset": "0.84.0",
+    "@react-native/metro-config": "0.84.0",
+    "@react-native/typescript-config": "0.84.0",
     "@types/jest": "^29.5.14",
-    "@types/react": "^19.1.0",
+    "@types/react": "^19.2.0",
     "jest-cli": "^29.7.0",
-    "react-native-builder-bob": "^0.40.13",
+    "react-native-builder-bob": "^0.40.18",
     "react-native-harness": "^1.0.0-alpha.18",
     "react-native-monorepo-config": "^0.1.9"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.11.0"
   }
 }

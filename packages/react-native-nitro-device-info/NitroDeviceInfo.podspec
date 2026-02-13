@@ -10,9 +10,9 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => "13.4" }
+  s.platforms    = { :ios => "15.1" }
   s.source       = { :git => "https://github.com/l2hyunwoo/react-native-nitro-device-info.git", :tag => "#{s.version}" }
-
+  s.swift_version = '5.9'
 
   s.source_files = [
     "ios/**/*.{swift}",
