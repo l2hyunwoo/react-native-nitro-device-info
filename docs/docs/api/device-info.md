@@ -36,12 +36,12 @@ const brand = DeviceInfoModule.brand;
 
 ### `model: string`
 
-Device model name.
+Device model marketing name. Maps the hardware identifier to a human-readable name, falling back to a generic name for unknown devices.
 
 ```typescript
 const model = DeviceInfoModule.model;
-// iOS: "iPhone", "iPad"
-// Android: Device-specific model name
+// iOS: "iPhone 15 Pro", "iPad Air", "iPhone SE (3rd generation)"
+// Android: Device-specific model name (e.g., "Pixel 7 Pro", "Galaxy S24")
 ```
 
 ### `systemName: string`

@@ -31,7 +31,7 @@ showDeviceInfo();
 // Output:
 // Device ID: iPhone14,2
 // Brand: Apple
-// Model: iPhone
+// Model: iPhone 13 Pro
 // OS: iOS
 // OS Version: 15.0
 ```
