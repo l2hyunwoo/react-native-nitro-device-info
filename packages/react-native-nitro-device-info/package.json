@@ -60,11 +60,11 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-nitro-modules": "0.33.9"
+    "react-native-nitro-modules": "0.35.0"
   },
   "devDependencies": {
     "del-cli": "7.0.0",
-    "nitrogen": "0.33.9",
+    "nitrogen": "0.35.0",
     "react-native-builder-bob": "0.40.18",
     "typescript": "5.9.3"
   },
