@@ -214,6 +214,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     "iPhone18,2": "iPhone 17 Pro Max",
     "iPhone18,3": "iPhone 17",
     "iPhone18,4": "iPhone Air",
+    "iPhone18,5": "iPhone 17e",
 
     // MARK: iPod
     "iPod1,1": "iPod Touch",
