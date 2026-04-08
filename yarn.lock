@@ -2045,11 +2045,11 @@ __metadata:
   linkType: hard
 
 "@hono/node-server@npm:^1.19.9":
-  version: 1.19.10
-  resolution: "@hono/node-server@npm:1.19.10"
+  version: 1.19.13
+  resolution: "@hono/node-server@npm:1.19.13"
   peerDependencies:
     hono: ^4
-  checksum: 412cda5aae8996b10caffbe5b5d670c003be019ba5b397f164e3e8c91a05cdcb45e4b165e84ded698477f99d212a909d944adefec0a748a69ad5e8e1b17c32fa
+  checksum: 0381b899e30765dfbba6f03333133498dd1111bafcd0be761046e7813a142e1b0e9cd20f2fa377cf3cf9f6c5ce531fc516387aab8f004b9288ad5d5484d331b7
   languageName: node
   linkType: hard
 
@@ -6566,13 +6566,13 @@ __metadata:
   linkType: hard
 
 "fast-xml-parser@npm:^4.4.1":
-  version: 4.5.5
-  resolution: "fast-xml-parser@npm:4.5.5"
+  version: 4.5.6
+  resolution: "fast-xml-parser@npm:4.5.6"
   dependencies:
     strnum: ^1.0.5
   bin:
     fxparser: src/cli/cli.js
-  checksum: bfbe4986fd7e00cd577039cb200cc6d34102f3baf839ba98cad4cc4ff777264d9d0630bc128e78c1a9f0de3ec72a278a479fe1cf4345719e23ea86b49a0192fc
+  checksum: ebb6f050ab89ca13931deda1fbb9f3128a68ba256a9181b6282c29eb7b2fbfb55ed76c80369060af5b49d2d147109fe32d0b58690b818f77c151340353085127
   languageName: node
   linkType: hard
 
