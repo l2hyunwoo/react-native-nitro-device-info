@@ -60,7 +60,7 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-nitro-modules": "0.35.0"
+    "react-native-nitro-modules": ">=0.35.0 <1.0.0"
   },
   "devDependencies": {
     "del-cli": "7.0.0",

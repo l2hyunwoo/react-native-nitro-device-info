@@ -26,7 +26,7 @@ yarn add react-native-nitro-device-info react-native-nitro-modules
 pnpm add react-native-nitro-device-info react-native-nitro-modules
 ```
 
-> **Important**: `react-native-nitro-modules` ^0.31.0 is required as a peer dependency for JSI bindings.
+> **Important**: `react-native-nitro-modules` >=0.35.0 <1.0.0 is required as a peer dependency for JSI bindings.
 
 ## Platform Setup
 
