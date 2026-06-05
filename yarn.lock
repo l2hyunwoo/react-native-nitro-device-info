@@ -7251,9 +7251,9 @@ __metadata:
   linkType: hard
 
 "hono@npm:^4.11.4":
-  version: 4.12.18
-  resolution: "hono@npm:4.12.18"
-  checksum: 8b1d82b9409229542e4ecc50641ce9dc88522a187615db387b114c3e352ff48a12b838b17bdbc8f8d1fd338dfee587b3a3df1955c6a92d62ec0405888ac6e89d
+  version: 4.12.23
+  resolution: "hono@npm:4.12.23"
+  checksum: f36cdd9574bca38548b9866a0d5d11253ab010130e11bf87cc6138a75d8832031e8fcc8867731be49e3fd053dbf6a73ce68f97f602cdb2282ea2c178e8c45667
   languageName: node
   linkType: hard
 
@@ -12747,11 +12747,11 @@ __metadata:
   linkType: hard
 
 "ws@npm:^6.2.3":
-  version: 6.2.3
-  resolution: "ws@npm:6.2.3"
+  version: 6.2.4
+  resolution: "ws@npm:6.2.4"
   dependencies:
     async-limiter: ~1.0.0
-  checksum: bbc96ff5628832d80669a88fd117487bf070492dfaa50df77fa442a2b119792e772f4365521e0a8e025c0d51173c54fa91adab165c11b8e0674685fdd36844a5
+  checksum: f3824313f3ad40a2bbc967e26ab139e052e39c3347ab5138fc7843595917545a749bf0753ddc3fcc29c80a10c979ef7191f243204885d57fada892b93c0cd5eb
   languageName: node
   linkType: hard
 
