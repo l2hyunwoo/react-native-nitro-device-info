@@ -126,11 +126,23 @@ const CATEGORY_KEYWORDS: Record<string, ApiCategory> = {
   totaldiskcapacityold: 'legacy-compatibility',
   freediskstorageold: 'legacy-compatibility',
 
-  // Device Integrity
+  // Device Integrity & Attestation
   integrity: 'device-integrity',
   jailbreak: 'device-integrity',
   root: 'device-integrity',
   rooted: 'device-integrity',
+  attest: 'device-integrity',
+  attestation: 'device-integrity',
+  attestkey: 'device-integrity',
+  assertion: 'device-integrity',
+  generatekey: 'device-integrity',
+  devicecheck: 'device-integrity',
+  devicechecktoken: 'device-integrity',
+  playintegrity: 'device-integrity',
+  integritytoken: 'device-integrity',
+  provider: 'device-integrity',
+  supported: 'device-integrity',
+  providertype: 'device-integrity',
 };
 
 /**
@@ -384,26 +396,36 @@ function findRelatedApis(name: string): string[] {
 }
 
 /**
- * Parse DeviceInfo.nitro.ts file and extract all API definitions
+ * Parse a `.nitro.ts` file and extract all API definitions from the named
+ * HybridObject interface (defaults to `DeviceInfo`).
  */
-export function parseDeviceInfoFile(filePath: string): ApiDefinition[] {
+export function parseDeviceInfoFile(
+  filePath: string,
+  interfaceName: string = 'DeviceInfo'
+): ApiDefinition[] {
   const content = fs.readFileSync(filePath, 'utf-8');
-  return parseDeviceInfoContent(content);
+  return parseDeviceInfoContent(content, interfaceName);
 }
 
 /**
- * Parse DeviceInfo content string and extract all API definitions
+ * Parse a `.nitro.ts` content string and extract all API definitions from the
+ * named HybridObject interface (defaults to `DeviceInfo`).
  */
-export function parseDeviceInfoContent(content: string): ApiDefinition[] {
+export function parseDeviceInfoContent(
+  content: string,
+  interfaceName: string = 'DeviceInfo'
+): ApiDefinition[] {
   const apis: ApiDefinition[] = [];
 
-  // Find the DeviceInfo interface
+  // Find the target interface (e.g. DeviceInfo or DeviceIntegrity)
   const interfaceMatch = content.match(
-    /export\s+interface\s+DeviceInfo[\s\S]*?\{([\s\S]*?)\n\}/
+    new RegExp(
+      `export\\s+interface\\s+${interfaceName}[\\s\\S]*?\\{([\\s\\S]*?)\\n\\}`
+    )
   );
 
   if (!interfaceMatch) {
-    console.warn('Could not find DeviceInfo interface in file');
+    console.warn(`Could not find ${interfaceName} interface in file`);
     return apis;
   }
 
@@ -437,23 +459,28 @@ export function parseDeviceInfoContent(content: string): ApiDefinition[] {
 }
 
 /**
- * Get the path to DeviceInfo.nitro.ts relative to package
+ * Resolve a `.nitro.ts` spec path within the monorepo.
  *
- * When running from dist (packages/mcp-server/dist), we need to go up 3 levels
- * to reach the repository root where src/DeviceInfo.nitro.ts lives.
+ * The server runs from `packages/mcp-server/dist` (built) or
+ * `packages/mcp-server/src` (dev). Specs live under
+ * `packages/<pkg>/src/<File>.nitro.ts`. We search up the tree so both layouts
+ * and the legacy repo-root `src/` layout resolve.
  */
-export function getDeviceInfoPath(packageRoot: string): string {
-  // Try common locations (ordered from most specific to least)
+function resolveNitroPath(
+  packageRoot: string,
+  pkgDir: string,
+  fileName: string
+): string {
   const possiblePaths = [
-    // From packages/mcp-server/dist -> repo root (3 levels up)
-    path.join(packageRoot, '..', '..', '..', 'src', 'DeviceInfo.nitro.ts'),
-    // From packages/mcp-server/src -> repo root (3 levels up, for dev mode)
-    path.join(packageRoot, '..', '..', '..', 'src', 'DeviceInfo.nitro.ts'),
-    // From packages/mcp-server -> repo root (2 levels up)
-    path.join(packageRoot, '..', '..', 'src', 'DeviceInfo.nitro.ts'),
-    // Legacy paths for other configurations
-    path.join(packageRoot, '..', 'src', 'DeviceInfo.nitro.ts'),
-    path.join(packageRoot, 'src', 'DeviceInfo.nitro.ts'),
+    // From packages/mcp-server/{dist,src} -> packages/<pkg>/src/<File>
+    path.join(packageRoot, '..', '..', pkgDir, 'src', fileName),
+    // From packages/mcp-server -> packages/<pkg>/src/<File>
+    path.join(packageRoot, '..', pkgDir, 'src', fileName),
+    // Legacy: repo-root src/ layout
+    path.join(packageRoot, '..', '..', '..', 'src', fileName),
+    path.join(packageRoot, '..', '..', 'src', fileName),
+    path.join(packageRoot, '..', 'src', fileName),
+    path.join(packageRoot, 'src', fileName),
   ];
 
   for (const p of possiblePaths) {
@@ -463,6 +490,28 @@ export function getDeviceInfoPath(packageRoot: string): string {
   }
 
   throw new Error(
-    `Could not find DeviceInfo.nitro.ts. Searched: ${possiblePaths.join(', ')}`
+    `Could not find ${fileName}. Searched: ${possiblePaths.join(', ')}`
+  );
+}
+
+/**
+ * Get the path to the core `DeviceInfo.nitro.ts`.
+ */
+export function getDeviceInfoPath(packageRoot: string): string {
+  return resolveNitroPath(
+    packageRoot,
+    'react-native-nitro-device-info',
+    'DeviceInfo.nitro.ts'
+  );
+}
+
+/**
+ * Get the path to the opt-in `DeviceIntegrity.nitro.ts` (attestation package).
+ */
+export function getDeviceIntegrityPath(packageRoot: string): string {
+  return resolveNitroPath(
+    packageRoot,
+    'react-native-nitro-device-integrity',
+    'DeviceIntegrity.nitro.ts'
   );
 }

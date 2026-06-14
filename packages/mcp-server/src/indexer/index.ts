@@ -5,7 +5,12 @@
  */
 
 import type { SearchIndex, ApiDefinition, DocumentationChunk } from '../types/index.js';
-import { parseDeviceInfoFile, parseDeviceInfoContent, getDeviceInfoPath } from './api-parser.js';
+import {
+  parseDeviceInfoFile,
+  parseDeviceInfoContent,
+  getDeviceInfoPath,
+  getDeviceIntegrityPath,
+} from './api-parser.js';
 import {
   parseDocsDirectory,
   parseReadme,
@@ -15,7 +20,12 @@ import {
 import { buildSearchIndex } from './search.js';
 
 export { buildSearchIndex, search, findSimilarApis, levenshteinDistance } from './search.js';
-export { parseDeviceInfoFile, parseDeviceInfoContent } from './api-parser.js';
+export {
+  parseDeviceInfoFile,
+  parseDeviceInfoContent,
+  getDeviceInfoPath,
+  getDeviceIntegrityPath,
+} from './api-parser.js';
 export { parseMarkdownFile, parseMarkdownContent, parseDocsDirectory } from './doc-parser.js';
 
 /**
@@ -37,6 +47,12 @@ export interface IndexOptions {
   /** DeviceInfo content string (for testing without file access) */
   deviceInfoContent?: string;
 
+  /** Path to DeviceIntegrity.nitro.ts (auto-detected if not provided) */
+  deviceIntegrityPath?: string;
+
+  /** DeviceIntegrity content string (for testing without file access) */
+  deviceIntegrityContent?: string;
+
   /** Documentation chunks (for testing without file access) */
   documentationChunks?: DocumentationChunk[];
 }
@@ -51,7 +67,7 @@ export function buildIndex(
   const apis: ApiDefinition[] = [];
   const chunks: DocumentationChunk[] = [];
 
-  // Parse DeviceInfo.nitro.ts
+  // Parse DeviceInfo.nitro.ts (core)
   if (options.deviceInfoContent) {
     // Use provided content (for testing)
     apis.push(...parseDeviceInfoContent(options.deviceInfoContent));
@@ -63,6 +79,28 @@ export function buildIndex(
       console.error(`Indexed ${apis.length} APIs from DeviceInfo.nitro.ts`);
     } catch (error) {
       console.error(`Warning: Could not parse DeviceInfo.nitro.ts: ${error}`);
+    }
+  }
+
+  // Parse DeviceIntegrity.nitro.ts (opt-in attestation package). Optional —
+  // absence is not an error (the package may not be present).
+  if (options.deviceIntegrityContent) {
+    apis.push(
+      ...parseDeviceInfoContent(options.deviceIntegrityContent, 'DeviceIntegrity')
+    );
+  } else {
+    try {
+      const integrityPath =
+        options.deviceIntegrityPath || getDeviceIntegrityPath(packageRoot);
+      const integrityApis = parseDeviceInfoFile(integrityPath, 'DeviceIntegrity');
+      apis.push(...integrityApis);
+      console.error(
+        `Indexed ${integrityApis.length} APIs from DeviceIntegrity.nitro.ts`
+      );
+    } catch {
+      console.error(
+        'Info: DeviceIntegrity.nitro.ts not found (attestation package not present); skipping.'
+      );
     }
   }
 
