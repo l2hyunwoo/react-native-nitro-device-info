@@ -400,6 +400,53 @@ For complete MCP server documentation, see [packages/mcp-server/README.md](packa
 
 - **iOS**: 13.4+
 - **Android**: API 24+ (Android 7.0 Nougat)
+- **Web**: import-safe fallback (see below)
+
+## Web support
+
+Nitro is a JSI/native technology, so there is no native module in a browser. To
+keep apps that target both native and web (react-native-web, Next.js SSR)
+buildable, this package ships a pure-JS web fallback that is selected
+automatically by your bundler — there is no separate package to install and no
+import path to change.
+
+```ts
+// Same import on every platform.
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+
+// On web this returns a fallback value instead of throwing.
+console.log(DeviceInfoModule.systemLanguage); // e.g. "en-US" from navigator.language
+console.log(DeviceInfoModule.deviceId);       // "unknown" — not available in a browser
+```
+
+The fallback's goal is **"does not crash, and returns honest values"** — not "does
+everything." Where a browser API can answer, it does; everything else returns the
+same neutral constants the native side uses for an unsupported platform
+(`"unknown"` / `-1` / `false` / `[]`). Values are never fabricated to look real.
+
+**Derived from a real browser API (when available, otherwise the fallback):**
+
+| Member | Source |
+| --- | --- |
+| `systemName` | parsed from `navigator.userAgent` (`"Windows"`/`"macOS"`/`"iOS"`/`"Android"`/`"Linux"`, else `"web"`) |
+| `systemLanguage` | `navigator.language` |
+| `brand`, `manufacturer` | `navigator.vendor` |
+| `totalMemory` | `navigator.deviceMemory` × 1024³ (coarse, spec-bucketed; `-1` if unsupported) |
+| `getIsLandscape()` | `screen.width > screen.height` |
+| `getUserAgent()` | `navigator.userAgent` |
+| `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API (`navigator.getBattery()`), read once and cached; `-1`/`unknown` if the API is absent or denied |
+| `getIsAirplaneMode()` | inferred from `navigator.onLine` (best effort) |
+
+**Always a fallback constant on web:** all Android `Build.*` fields, carrier/MNC/MCC
+info, disk/used-memory figures, headphone/location/notch checks, integrity checks
+(`isDeviceCompromised()` → `false`), app metadata (`version`/`bundleId`/…), and the
+Windows-only fields. Promise-returning methods keep their signature and **resolve**
+the fallback (they do not reject), except `getDeviceToken()` which rejects on web —
+it is Apple DeviceCheck, with no web equivalent, mirroring its behavior on Android.
+
+**SSR:** every browser global is accessed defensively, so importing the package and
+reading any member on a server (where `navigator`/`screen`/`window` may be absent)
+never throws.
 
 ## Contributing
 
