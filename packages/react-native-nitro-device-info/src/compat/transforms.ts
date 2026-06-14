@@ -50,10 +50,12 @@ export interface AppSetIdInfo {
  * Wrap a synchronous core accessor as an RNDI async getter.
  *
  * RNDI exposes most values as `Promise<T>`; the core returns them synchronously,
- * so we resolve immediately. The caller's `await` usage is preserved.
+ * so we resolve immediately. The caller's `await` usage is preserved. `read` is
+ * invoked inside the Promise chain so a thrown error becomes a rejected Promise
+ * rather than a synchronous throw, honoring the async contract.
  */
 export function asyncProp<T>(read: () => T): () => Promise<T> {
-  return () => Promise.resolve(read());
+  return () => Promise.resolve().then(read);
 }
 
 /**

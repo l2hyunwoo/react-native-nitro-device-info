@@ -45,6 +45,9 @@ function resolveTransformPath() {
 
 const SOURCE_MODULE = 'react-native-device-info';
 const IGNORED_DIRS = new Set(['node_modules', '.git', 'lib', 'build', 'dist']);
+// jscodeshift ignore globs derived from IGNORED_DIRS so the pre-count and the
+// actual rewrite skip exactly the same directories.
+const IGNORE_PATTERNS = [...IGNORED_DIRS].map(dir => `**/${dir}/**`);
 
 /** Count `'react-native-device-info'` / `"react-native-device-info"` module references. */
 function countSpecifiers(target, extensions) {
@@ -131,7 +134,7 @@ async function main() {
     parser: 'tsx',
     babel: true,
     verbose: 0,
-    ignorePattern: ['**/node_modules/**', '**/lib/**', '**/build/**'],
+    ignorePattern: IGNORE_PATTERNS,
   });
 
   console.log('');

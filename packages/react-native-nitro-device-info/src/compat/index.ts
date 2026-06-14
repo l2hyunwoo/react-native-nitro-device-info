@@ -514,11 +514,17 @@ export function useFirstInstallTime(): AsyncHookResult<number> {
 
   useEffect(() => {
     let mounted = true;
-    DeviceInfoModule.getFirstInstallTime().then(result => {
-      if (mounted) {
-        setState({ loading: false, result });
-      }
-    });
+    DeviceInfoModule.getFirstInstallTime()
+      .then(result => {
+        if (mounted) {
+          setState({ loading: false, result });
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setState({ loading: false, result: -1 });
+        }
+      });
     return () => {
       mounted = false;
     };
