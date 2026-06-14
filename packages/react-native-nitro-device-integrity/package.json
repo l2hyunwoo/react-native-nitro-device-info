@@ -1,0 +1,106 @@
+{
+  "name": "react-native-nitro-device-integrity",
+  "version": "0.1.0",
+  "description": "Opt-in hardware-backed device attestation (Play Integrity + App Attest) for react-native-nitro-device-info",
+  "main": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "nitrogen",
+    "nitro.json",
+    "*.podspec",
+    "react-native.config.js",
+    "!ios/build",
+    "!android/build",
+    "!android/gradle",
+    "!android/gradlew",
+    "!android/gradlew.bat",
+    "!android/local.properties",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "scripts": {
+    "prepare": "bob build",
+    "nitrogen": "nitrogen",
+    "typecheck": "tsc --noEmit",
+    "clean": "del-cli lib nitrogen/generated android/build ios/build"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "play-integrity",
+    "app-attest",
+    "devicecheck",
+    "attestation",
+    "device-integrity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/l2hyunwoo/react-native-nitro-device-info.git"
+  },
+  "author": "HyunWoo Lee <l2hyunwoo@gmail.com> (https://github.com/l2hyunwoo)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/l2hyunwoo/react-native-nitro-device-info/issues"
+  },
+  "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-nitro-modules": ">=0.35.0 <1.0.0"
+  },
+  "devDependencies": {
+    "del-cli": "7.0.0",
+    "nitrogen": "0.35.0",
+    "react-native-builder-bob": "0.40.18",
+    "typescript": "5.9.3"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      [
+        "custom",
+        {
+          "script": "nitrogen",
+          "clean": "nitrogen/"
+        }
+      ],
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "create-react-native-library": {
+    "languages": "kotlin-swift",
+    "type": "nitro-module",
+    "version": "0.54.7"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "cxxNamespace": ["nitrodeviceintegrity"],
+  "ios": {
+    "iosModuleName": "NitroDeviceIntegrity"
+  },
+  "android": {
+    "androidNamespace": ["nitrodeviceintegrity"],
+    "androidCxxLibName": "nitrodeviceintegrity"
+  },
+  "autolinking": {
+    "DeviceIntegrity": {
+      "swift": "DeviceIntegrity",
+      "kotlin": "DeviceIntegrity"
+    }
+  },
+  "ignorePaths": ["node_modules"]
+}
