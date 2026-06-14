@@ -30,6 +30,8 @@
     "nitro.json",
     "*.podspec",
     "react-native.config.js",
+    "app.plugin.js",
+    "plugin/build",
     "!ios/build",
     "!android/build",
     "!android/gradle",
@@ -42,11 +44,12 @@
     "!**/.*"
   ],
   "scripts": {
-    "prepare": "bob build",
+    "prepare": "bob build && yarn build:plugin",
+    "build:plugin": "tsc --project plugin/tsconfig.json",
     "nitrogen": "nitrogen",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "clean": "del-cli lib nitrogen/generated android/build ios/build"
+    "clean": "del-cli lib nitrogen/generated android/build ios/build plugin/build"
   },
   "keywords": [
     "react-native",
@@ -72,6 +75,7 @@
     "react-native-nitro-modules": ">=0.35.0 <1.0.0"
   },
   "devDependencies": {
+    "@expo/config-plugins": "^10.0.0",
     "@types/jscodeshift": "17.3.0",
     "del-cli": "7.0.0",
     "jest": "30.2.0",
