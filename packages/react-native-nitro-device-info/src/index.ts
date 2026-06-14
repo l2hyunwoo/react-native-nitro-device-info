@@ -42,6 +42,26 @@ export function createDeviceInfo(): DeviceInfo {
 }
 
 /**
+ * Lazily-created native singleton. The real HybridObject is instantiated on
+ * first property access, not at module load.
+ *
+ * Why lazy: `createHybridObject` throws in any runtime without Nitro's native
+ * bindings (browser, Node/SSR). On web targets a bundler usually selects
+ * `index.web.ts` instead — but bare server-side rendering (e.g. Next.js SSR,
+ * which ignores the `browser` export condition on the server) can still load
+ * this native module. Deferring instantiation means merely importing the
+ * package never throws; the native binding is only touched when a value is
+ * actually read, which during SSR never happens (effects don't run on the
+ * server). Native runtimes are unaffected: Nitro caches the constructor, so the
+ * singleton is still created exactly once on first use.
+ */
+let nativeInstance: DeviceInfo | undefined;
+
+function getNativeInstance(): DeviceInfo {
+  return (nativeInstance ??= createDeviceInfo());
+}
+
+/**
  * Pre-created singleton instance for convenience
  *
  * Use this if you don't need to create multiple instances.
@@ -54,7 +74,14 @@ export function createDeviceInfo(): DeviceInfo {
  * const uniqueId = await DeviceInfo.getUniqueId()
  * ```
  */
-export const DeviceInfoModule: DeviceInfo = createDeviceInfo();
+export const DeviceInfoModule: DeviceInfo = new Proxy({} as DeviceInfo, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getNativeInstance(), prop, receiver);
+  },
+  has(_target, prop) {
+    return Reflect.has(getNativeInstance(), prop);
+  },
+});
 
 // Re-export types for convenience
 export type { DeviceInfo, PowerState, DeviceType, BatteryState, NavigationMode };
