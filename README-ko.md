@@ -386,6 +386,50 @@ npx @react-native-nitro-device-info/mcp-server init
 
 - **iOS**: 13.4+
 - **Android**: API 24+ (Android 7.0 Nougat)
+- **Web**: import-safe 폴백 (아래 참고)
+
+## Web 지원
+
+Nitro는 JSI/네이티브 기술이라 브라우저에는 네이티브 모듈이 없습니다. 네이티브와 웹을
+함께 타깃하는 앱(react-native-web, Next.js SSR)이 빌드 가능하도록, 이 패키지는 번들러가
+자동으로 선택하는 순수 JS 웹 폴백을 함께 제공합니다 — 별도 패키지 설치도, import 경로
+변경도 필요 없습니다.
+
+```ts
+// 모든 플랫폼에서 동일한 import.
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+
+// 웹에서는 throw 대신 폴백 값을 반환합니다.
+console.log(DeviceInfoModule.systemLanguage); // 예: navigator.language 기반 "ko-KR"
+console.log(DeviceInfoModule.deviceId);       // "unknown" — 브라우저에서는 제공 불가
+```
+
+폴백의 목표는 **"안 깨지고, 정직한 값을 반환한다"**이지 "전부 동작한다"가 아닙니다.
+브라우저 API로 답할 수 있으면 그 값을, 아니면 네이티브가 미지원 플랫폼에 쓰는 동일한
+중립 상수(`"unknown"` / `-1` / `false` / `[]`)를 반환합니다. 값을 그럴듯하게 지어내지
+않습니다.
+
+**실제 브라우저 API에서 파생(가능할 때, 아니면 폴백):**
+
+| 멤버 | 출처 |
+| --- | --- |
+| `systemName` | `navigator.userAgent` 파싱 (`"Windows"`/`"macOS"`/`"iOS"`/`"Android"`/`"Linux"`, 아니면 `"web"`) |
+| `systemLanguage` | `navigator.language` |
+| `brand`, `manufacturer` | `navigator.vendor` |
+| `totalMemory` | `navigator.deviceMemory` × 1024³ (스펙상 거칠게 버킷팅; 미지원 시 `-1`) |
+| `getIsLandscape()` | `screen.width > screen.height` |
+| `getUserAgent()` | `navigator.userAgent` |
+| `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API(`navigator.getBattery()`)를 한 번 읽어 캐시; API 부재/거부 시 `-1`/`unknown` |
+| `getIsAirplaneMode()` | `navigator.onLine` 기반 추정(best effort) |
+
+**웹에서는 항상 폴백 상수:** 모든 Android `Build.*` 필드, 캐리어/MNC/MCC 정보, 디스크/사용
+메모리 수치, 헤드폰/위치/노치 검사, 무결성 검사(`isDeviceCompromised()` → `false`), 앱
+메타데이터(`version`/`bundleId`/…), Windows 전용 필드. Promise 반환 메서드는 시그니처를
+유지하고 폴백을 **resolve**합니다(reject 안 함). 단 `getDeviceToken()`은 웹에서 reject —
+Apple DeviceCheck로 웹 대응이 없으며, Android에서의 동작과 동일합니다.
+
+**SSR:** 모든 브라우저 글로벌을 방어적으로 접근하므로, 서버(`navigator`/`screen`/`window`가
+없을 수 있는 환경)에서 패키지를 import하고 멤버를 읽어도 throw하지 않습니다.
 
 ## 기여하기
 

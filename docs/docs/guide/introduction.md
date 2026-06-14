@@ -30,6 +30,7 @@ Full type definitions included out of the box. All APIs are fully typed with com
 Works seamlessly on:
 - **iOS**: 13.4+
 - **Android**: API 24+ (Android 7.0 Nougat)
+- **Web**: import-safe fallback for react-native-web / Next.js SSR (see [Web Support](/guide/web-support))
 
 ### 🔄 Easy Migration
 
