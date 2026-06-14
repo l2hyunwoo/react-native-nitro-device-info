@@ -22,12 +22,12 @@ const config = {
     }),
     androidPlatform({
       name: 'android',
-      device: { type: 'physical', manufacturer: 'samsung', model: 'SM-S926N' },
+      device: { type: 'physical', manufacturer: 'samsung', model: 'SM-S948N' },
       bundleId: 'nitrodeviceintegrity.demo',
     }),
   ],
 
-  defaultRunner: 'ios',
+  defaultRunner: 'android',
 };
 
 export default config;
