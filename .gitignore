@@ -95,12 +95,6 @@ packages/react-native-nitro-device-info/nitrogen/
 # Claude Code
 .claude/
 CLAUDE.md
-specs/
-.specify/
-.omc/
-
-# openspec
-openspec/
 
 # ios
 Pods/
