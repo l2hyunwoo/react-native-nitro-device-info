@@ -39,6 +39,8 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/api/' },
           { text: 'DeviceInfo Module', link: '/api/device-info' },
+          { text: 'Device Integrity (local)', link: '/api/device-integrity' },
+          { text: 'Device Attestation', link: '/api/device-attestation' },
           { text: 'React Hooks', link: '/api/hooks' },
           { text: 'Type Definitions', link: '/api/types' },
           { text: 'Migration Guide', link: '/api/migration' },
@@ -83,6 +85,8 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/api/' },
             { text: 'DeviceInfo Module', link: '/api/device-info' },
+            { text: 'Device Integrity (local)', link: '/api/device-integrity' },
+            { text: 'Device Attestation', link: '/api/device-attestation' },
             { text: 'React Hooks', link: '/api/hooks' },
             { text: 'Type Definitions', link: '/api/types' },
             { text: 'Migration Guide', link: '/api/migration' },

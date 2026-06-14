@@ -94,6 +94,15 @@ iOS-exclusive functionality:
 - `getDeviceToken()` - DeviceCheck token
 - `syncUniqueId()` - iCloud Keychain sync
 
+### [Device Integrity & Attestation](/api/device-integrity)
+
+Two complementary layers:
+- [**Device Integrity (local)**](/api/device-integrity) — `isDeviceCompromised()`,
+  `verifyDeviceIntegrity()`. Instant, offline root/jailbreak heuristics. Bypassable.
+- [**Device Attestation**](/api/device-attestation) — opt-in
+  `react-native-nitro-device-integrity` package. Hardware-backed, server-verified
+  Play Integrity (Android) and App Attest / DeviceCheck (iOS).
+
 ## API Characteristics
 
 ### Synchronous vs Asynchronous

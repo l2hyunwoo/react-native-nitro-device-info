@@ -153,6 +153,13 @@ const isCompromised = DeviceInfoModule.isDeviceCompromised(); // 동기, <50ms
 const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // 비동기
 ```
 
+> **서버 검증이 가능한 attestation이 필요하신가요?** 위 로컬 검사는 우회 가능합니다.
+> 하드웨어 기반·서버 검증 attestation(Android의 Play Integrity, iOS의 App Attest /
+> DeviceCheck)이 필요하면 opt-in
+> [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity)
+> 패키지를 사용하세요. 클라는 토큰만 발급하고 검증은 여러분의 서버가 수행합니다 —
+> 자세한 내용은 [README](packages/react-native-nitro-device-integrity/README.md) 참고.
+
 ## API 레퍼런스
 
 100개 이상의 모든 메서드와 속성에 대한 완전한 API 문서는 **[API-REFERENCE-ko.md](API-REFERENCE-ko.md)**를 참고하세요.
@@ -245,7 +252,7 @@ placeholder 값을 반환합니다. 최고 성능을 원한다면 네이티브 A
 
 ## 예제 앱
 
-이 저장소에는 라이브러리를 쉽게 테스트할 수 있는 두 가지 예제 앱이 포함되어 있습니다.
+이 저장소에는 라이브러리를 쉽게 테스트할 수 있는 세 가지 예제 앱이 포함되어 있습니다.
 
 ### 쇼케이스 앱 (`example/showcase/`)
 
@@ -287,10 +294,26 @@ yarn ios
 yarn android
 ```
 
+### 무결성 데모 앱 (`example/integrity-demo/`)
+
+opt-in [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity)
+패키지의 데모 앱입니다. attestation 토큰(Play Integrity / App Attest / DeviceCheck)을
+**발급**해 화면에 표시합니다 — 검증은 설계상 여러분의 서버 책임입니다.
+
+**실행 방법:**
+
+```bash
+# 저장소 루트에서
+yarn integrity-demo start
+yarn integrity-demo ios     # iOS (App Attest는 실기기 필요)
+yarn integrity-demo android # Android (Google Play Services 필요)
+```
+
 자세한 내용은 아래 문서를 참고하세요.
 
 - [쇼케이스 앱 README](example/showcase/README-ko.md)
 - [벤치마크 앱 README](example/benchmark/README-ko.md)
+- [무결성 데모 앱 README](example/integrity-demo/README.md)
 
 ## AI 통합을 위한 MCP 서버
 
