@@ -140,9 +140,12 @@ const CATEGORY_KEYWORDS: Record<string, ApiCategory> = {
   devicechecktoken: 'device-integrity',
   playintegrity: 'device-integrity',
   integritytoken: 'device-integrity',
-  provider: 'device-integrity',
-  supported: 'device-integrity',
+  // Specific attestation API names — avoid broad terms like "provider"/"supported"
+  // which would mislabel unrelated core APIs (determineCategory is substring-based).
+  standardprovider: 'device-integrity',
+  prepareintegrity: 'device-integrity',
   providertype: 'device-integrity',
+  issupported: 'device-integrity',
 };
 
 /**
@@ -264,11 +267,22 @@ function parseJsDoc(comment: string): {
 }
 
 /**
- * Determine API category based on name and description
+ * Determine API category based on name and description.
+ *
+ * The API **name** is the stronger signal, so it is matched first; only if no
+ * keyword matches the name do we fall back to scanning the description. This
+ * avoids a description that merely mentions, say, "supported" or "provider"
+ * from dragging an unrelated API into the wrong category.
  */
 function determineCategory(name: string, description: string): ApiCategory {
-  const searchText = (name + ' ' + description).toLowerCase();
+  const nameText = name.toLowerCase();
+  for (const [keyword, category] of Object.entries(CATEGORY_KEYWORDS)) {
+    if (nameText.includes(keyword)) {
+      return category;
+    }
+  }
 
+  const searchText = (name + ' ' + description).toLowerCase();
   for (const [keyword, category] of Object.entries(CATEGORY_KEYWORDS)) {
     if (searchText.includes(keyword)) {
       return category;

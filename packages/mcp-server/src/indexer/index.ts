@@ -97,10 +97,20 @@ export function buildIndex(
       console.error(
         `Indexed ${integrityApis.length} APIs from DeviceIntegrity.nitro.ts`
       );
-    } catch {
-      console.error(
-        'Info: DeviceIntegrity.nitro.ts not found (attestation package not present); skipping.'
-      );
+    } catch (error) {
+      // A missing spec is expected (the attestation package is optional) and is
+      // reported as info. Any other failure (unreadable file, parser error) is
+      // surfaced as a warning so it isn't silently dropped.
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.startsWith('Could not find DeviceIntegrity.nitro.ts')) {
+        console.error(
+          'Info: DeviceIntegrity.nitro.ts not found (attestation package not present); skipping.'
+        );
+      } else {
+        console.error(
+          `Warning: Could not parse DeviceIntegrity.nitro.ts: ${message}`
+        );
+      }
     }
   }
 
