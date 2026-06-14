@@ -10,11 +10,18 @@
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
+    "./compat": {
+      "source": "./src/compat/index.ts",
+      "types": "./lib/typescript/src/compat/index.d.ts",
+      "default": "./lib/module/compat/index.js"
+    },
     "./package.json": "./package.json"
   },
+  "bin": "./bin/migrate.js",
   "files": [
     "src",
     "lib",
+    "bin",
     "android",
     "ios",
     "cpp",
@@ -37,6 +44,7 @@
     "prepare": "bob build",
     "nitrogen": "nitrogen",
     "typecheck": "tsc --noEmit",
+    "test": "jest",
     "clean": "del-cli lib nitrogen/generated android/build ios/build"
   },
   "keywords": [
@@ -63,7 +71,10 @@
     "react-native-nitro-modules": ">=0.35.0 <1.0.0"
   },
   "devDependencies": {
+    "@types/jscodeshift": "17.3.0",
     "del-cli": "7.0.0",
+    "jest": "30.2.0",
+    "jscodeshift": "17.3.0",
     "nitrogen": "0.35.0",
     "react-native-builder-bob": "0.40.18",
     "typescript": "5.9.3"

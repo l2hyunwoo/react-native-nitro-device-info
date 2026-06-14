@@ -43,8 +43,6 @@ node_modules/
 .git/
 .github/
 
-# Claude Code & Specs
+# Claude Code
 .claude/
 CLAUDE.md
-specs/
-.specify/

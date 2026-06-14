@@ -1,22 +1,3 @@
-<!-- OPENSPEC:START -->
-# OpenSpec Instructions
-
-These instructions are for AI assistants working in this project.
-
-Always open `@/openspec/AGENTS.md` when the request:
-- Mentions planning or proposals (words like proposal, spec, change, plan)
-- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
-- Sounds ambiguous and you need the authoritative spec before coding
-
-Use `@/openspec/AGENTS.md` to learn:
-- How to create and apply change proposals
-- Spec format and conventions
-- Project structure and guidelines
-
-Keep this managed block so 'openspec update' can refresh the instructions.
-
-<!-- OPENSPEC:END -->
-
 ## 코드 작성 규칙
 
 ### Comments
@@ -72,8 +53,6 @@ Monorepo for `react-native-nitro-device-info` (v1.5.1), a high-performance React
 | `example/showcase/` | Demo app displaying all properties (see `example/showcase/AGENTS.md`) |
 | `example/benchmark/` | Performance benchmark app (see `example/benchmark/AGENTS.md`) |
 | `docs/` | Rspress documentation site (see `docs/AGENTS.md`) |
-| `specs/` | Archived feature specifications (see `specs/AGENTS.md`) |
-| `openspec/` | OpenSpec change management system (see `openspec/AGENTS.md`) |
 | `.github/` | CI/CD workflows (see `.github/AGENTS.md`) |
 
 ## For AI Agents
@@ -97,7 +76,6 @@ Monorepo for `react-native-nitro-device-info` (v1.5.1), a high-performance React
 
 **File Rules**:
 - **Never** edit files in `nitrogen/generated/` or `lib/` (auto-generated)
-- For significant changes, create an OpenSpec proposal first (`openspec/AGENTS.md`)
 
 ### Testing Requirements
 
@@ -168,6 +146,5 @@ yarn clean            # Clean build artifacts
 2. **Documentation is Mandatory**: All features must update API-REFERENCE.md, docs/, README.md, and showcase app
 3. **Platform Support**: iOS 13.4+, Android API 24+
 4. **Commit Conventions**: Conventional commits with empty body (enforced by commitlint)
-5. **OpenSpec Proposals**: Required for new capabilities, breaking changes, architecture shifts
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->

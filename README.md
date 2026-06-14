@@ -16,7 +16,7 @@ A high-performance device information library for React Native, built on [Nitro 
 - 🚀 **Zero-overhead JSI bindings** - Direct JavaScript-to-native communication
 - 📱 **100+ device properties** - Comprehensive device information
 - 📦 **TypeScript-first** - Full type definitions included
-- 🔄 **Familiar APIs** - Compatible with `react-native-device-info` and `expo-device` APIs
+- 🔄 **Drop-in compatible** - Bundled compat layer + codemod for `react-native-device-info`; familiar `expo-device` APIs too
 
 ## Installation
 
@@ -207,47 +207,41 @@ import type {
 
 ## Migration from react-native-device-info
 
-If you're migrating from `react-native-device-info`, the API is 80% compatible:
+`react-native-nitro-device-info` is a **drop-in replacement** for `react-native-device-info` (RNDI).
+A bundled compatibility layer exposes RNDI's exact API surface — same function names, signatures,
+default `DeviceInfo` object, and hooks — so you migrate by rewriting imports only. **Your call sites
+stay unchanged.**
 
-### Before (react-native-device-info)
+```bash
+# 1. Install
+npm install react-native-nitro-device-info react-native-nitro-modules
+cd ios && pod install && cd ..
+
+# 2. Rewrite imports automatically (call sites untouched)
+npx react-native-nitro-device-info migrate
+
+# 3. Remove the old dependency
+npm uninstall react-native-device-info
+```
+
+The codemod rewrites every `react-native-device-info` import to
+`react-native-nitro-device-info/compat`:
 
 ```typescript
+// Before
 import DeviceInfo from 'react-native-device-info';
+import { getModel, useBatteryLevel } from 'react-native-device-info';
 
-// Everything was async or method-based
-const deviceId = DeviceInfo.getDeviceId();
-const brand = DeviceInfo.getBrand();
-const uniqueId = await DeviceInfo.getUniqueId();
-const totalMemory = await DeviceInfo.getTotalMemory();
-const batteryLevel = await DeviceInfo.getBatteryLevel();
-const isTablet = DeviceInfo.isTablet();
+// After (rewritten for you — usage is identical)
+import DeviceInfo from 'react-native-nitro-device-info/compat';
+import { getModel, useBatteryLevel } from 'react-native-nitro-device-info/compat';
 ```
 
-### After (react-native-nitro-device-info)
-
-```typescript
-import { DeviceInfoModule } from 'react-native-nitro-device-info';
-
-// Properties are now direct getters
-const deviceId = DeviceInfoModule.deviceId; // Property, not method
-const brand = DeviceInfoModule.brand; // Property, not method
-
-// Most values are now synchronous properties or methods
-const uniqueId = DeviceInfoModule.uniqueId; // Property, sync!
-const totalMemory = DeviceInfoModule.totalMemory; // Property, sync!
-const batteryLevel = DeviceInfoModule.getBatteryLevel(); // Method, sync!
-const isTablet = DeviceInfoModule.isTablet; // Property, sync!
-
-// Only network/connectivity remain async methods
-const ipAddress = await DeviceInfoModule.getIpAddress();
-```
-
-**Key Differences**:
-
-- Uses Nitro HybridObject (JSI) instead of TurboModule for zero-overhead calls
-- Core device properties are now direct property accessors (not methods)
-- Most methods are synchronous for instant access (<1ms)
-- Only I/O-bound operations (network, install times) remain async
+The compat layer covers the entire RNDI surface; a handful of deprecated/unavailable APIs return
+documented placeholder values. Want maximum performance? The native API (`DeviceInfoModule`) offers
+direct property access and synchronous getters. See the
+[Migration Guide](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/migration) for the
+full mapping, caveats, and the optional native-API path.
 
 ## Acknowledgement
 

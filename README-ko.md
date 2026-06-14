@@ -16,7 +16,7 @@
 - 🚀 **제로 오버헤드 JSI 바인딩** — JavaScript에서 네이티브 코드로 직접 접근
 - 📱 **100개 이상의 속성 제공** — 포괄적인 디바이스 정보 조회
 - 📦 **TypeScript 우선 설계** — 완전한 타입 정의 포함
-- 🔄 **익숙한 API** — `react-native-device-info` 및 `expo-device` API와 호환
+- 🔄 **드롭인 호환** — `react-native-device-info`용 호환 레이어 + codemod 내장, `expo-device` API도 친숙하게 지원
 
 ## 설치 방법
 
@@ -208,47 +208,40 @@ import type {
 
 ## react-native-device-info에서 마이그레이션
 
-`react-native-device-info`에서 옮겨오는 경우, 약 80%의 API가 그대로 호환됩니다.
+`react-native-nitro-device-info`는 `react-native-device-info`(RNDI)의 **드롭인 대체재**입니다.
+번들로 제공되는 호환 레이어가 RNDI의 정확한 API 표면(동일한 함수명·시그니처·기본 `DeviceInfo`
+객체·훅)을 그대로 노출하므로, **import만 바꾸면 호출부는 그대로 둔 채** 마이그레이션할 수 있습니다.
 
-### 이전 (react-native-device-info)
+```bash
+# 1. 설치
+npm install react-native-nitro-device-info react-native-nitro-modules
+cd ios && pod install && cd ..
+
+# 2. import 자동 치환 (호출부는 건드리지 않음)
+npx react-native-nitro-device-info migrate
+
+# 3. 기존 의존성 제거
+npm uninstall react-native-device-info
+```
+
+codemod는 모든 `react-native-device-info` import를 `react-native-nitro-device-info/compat`로
+치환합니다:
 
 ```typescript
+// 이전
 import DeviceInfo from 'react-native-device-info';
+import { getModel, useBatteryLevel } from 'react-native-device-info';
 
-// 모든 것이 비동기이거나 메서드 기반
-const deviceId = DeviceInfo.getDeviceId();
-const brand = DeviceInfo.getBrand();
-const uniqueId = await DeviceInfo.getUniqueId();
-const totalMemory = await DeviceInfo.getTotalMemory();
-const batteryLevel = await DeviceInfo.getBatteryLevel();
-const isTablet = DeviceInfo.isTablet();
+// 이후 (자동 치환됨 — 사용 방식은 동일)
+import DeviceInfo from 'react-native-nitro-device-info/compat';
+import { getModel, useBatteryLevel } from 'react-native-nitro-device-info/compat';
 ```
 
-### 이후 (react-native-nitro-device-info)
-
-```typescript
-import { DeviceInfoModule } from 'react-native-nitro-device-info';
-
-// 속성은 이제 직접 접근 가능한 getter
-const deviceId = DeviceInfoModule.deviceId; // 메서드가 아닌 속성
-const brand = DeviceInfoModule.brand; // 메서드가 아닌 속성
-
-// 대부분의 값이 이제 동기 속성 또는 메서드
-const uniqueId = DeviceInfoModule.uniqueId; // 속성, 동기!
-const totalMemory = DeviceInfoModule.totalMemory; // 속성, 동기!
-const batteryLevel = DeviceInfoModule.getBatteryLevel(); // 메서드, 동기!
-const isTablet = DeviceInfoModule.isTablet; // 속성, 동기!
-
-// 네트워크/연결만 비동기 메서드로 유지
-const ipAddress = await DeviceInfoModule.getIpAddress();
-```
-
-**주요 변경점**
-
-- TurboModule 대신 Nitro HybridObject(JSI) 사용으로 제로 오버헤드 호출
-- 핵심 디바이스 속성은 이제 직접 속성 접근 (메서드 아님)
-- 대부분의 메서드가 동기 방식으로 즉시 접근 가능 (<1ms)
-- I/O 기반 작업(네트워크, 설치 시각)만 비동기로 유지
+호환 레이어는 RNDI 표면 전체를 커버하며, deprecated되었거나 대응 API가 없는 소수의 API만 문서화된
+placeholder 값을 반환합니다. 최고 성능을 원한다면 네이티브 API(`DeviceInfoModule`)가 직접 속성
+접근과 동기 getter를 제공합니다. 전체 매핑·주의사항·선택적 네이티브 경로는
+[마이그레이션 가이드](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/migration)를
+참고하세요.
 
 ## 예제 앱
 

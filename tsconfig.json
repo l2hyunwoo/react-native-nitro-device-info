@@ -28,5 +28,5 @@
     "verbatimModuleSyntax": true
   },
   "include": ["packages/react-native-nitro-device-info/src"],
-  "exclude": ["node_modules", "lib", "docs", "specs"]
+  "exclude": ["node_modules", "lib", "docs", "**/__tests__"]
 }
