@@ -11404,6 +11404,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"react-native-nitro-device-integrity@workspace:packages/react-native-nitro-device-integrity":
+  version: 0.0.0-use.local
+  resolution: "react-native-nitro-device-integrity@workspace:packages/react-native-nitro-device-integrity"
+  dependencies:
+    del-cli: 7.0.0
+    nitrogen: 0.35.0
+    react-native-builder-bob: 0.40.18
+    typescript: 5.9.3
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-nitro-modules: ">=0.35.0 <1.0.0"
+  languageName: unknown
+  linkType: soft
+
 "react-native-nitro-modules@npm:0.35.0, react-native-nitro-modules@npm:^0.35.0":
   version: 0.35.0
   resolution: "react-native-nitro-modules@npm:0.35.0"
