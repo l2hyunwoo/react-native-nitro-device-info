@@ -4,89 +4,130 @@ Migrating from `react-native-device-info` to `react-native-nitro-device-info`.
 
 ## Overview
 
-React Native Nitro Device Info maintains **80% API compatibility** with `react-native-device-info` while delivering superior performance through JSI. Most code can be migrated with minimal changes.
+`react-native-nitro-device-info` ships a **drop-in compatibility layer** that exposes the exact
+`react-native-device-info` (RNDI) API surface — same function names, same signatures, same default
+`DeviceInfo` object, same hooks. You import from `react-native-nitro-device-info/compat` instead of
+`react-native-device-info`, and **your call sites stay unchanged**.
 
-## Key Differences
+There are two ways to migrate. Pick based on how much you want to change:
 
-### 1. Import Changes
+| Path | Effort | What you get |
+|------|--------|--------------|
+| **Drop-in (recommended)** | One command — rewrite imports only | Zero code changes. RNDI's exact API, backed by Nitro/JSI. |
+| **Native (optional)** | Manual rewrite of call sites | Direct property access + synchronous getters for maximum performance. |
 
-**Before** (`react-native-device-info`):
-```typescript
-import DeviceInfo from 'react-native-device-info';
+Start with the drop-in path. Move individual call sites to the native API later if you want the
+last bit of performance — the two can coexist.
+
+## Drop-in Migration (recommended)
+
+### 1. Install
+
+```bash
+# Install the new library + its peer dependency
+npm install react-native-nitro-device-info react-native-nitro-modules
+# (or: yarn add react-native-nitro-device-info react-native-nitro-modules)
+
+# iOS
+cd ios && pod install && cd ..
 ```
 
-**After** (`react-native-nitro-device-info`):
-```typescript
-import { DeviceInfoModule } from 'react-native-nitro-device-info';
+### 2. Run the codemod
+
+The library bundles a codemod that rewrites every `react-native-device-info` import to
+`react-native-nitro-device-info/compat`. It **only rewrites import specifiers** — it never touches
+your call sites.
+
+```bash
+npx react-native-nitro-device-info migrate
+# or target a specific directory:
+npx react-native-nitro-device-info migrate src
 ```
 
-### 2. Module Name
-
-The module is now called `DeviceInfoModule` instead of `DeviceInfo`:
+It rewrites ES imports (default, named, namespace), re-exports, and CommonJS `require()`:
 
 ```typescript
 // Before
-DeviceInfo.getBrand();
+import DeviceInfo from 'react-native-device-info';
+import { getModel, useBatteryLevel } from 'react-native-device-info';
 
-// After
-DeviceInfoModule.getBrand();
+// After (rewritten automatically — call sites unchanged)
+import DeviceInfo from 'react-native-nitro-device-info/compat';
+import { getModel, useBatteryLevel } from 'react-native-nitro-device-info/compat';
 ```
 
-### 3. Properties vs Methods
+Prefer to do it by hand? A project-wide find-and-replace of the import string
+`'react-native-device-info'` → `'react-native-nitro-device-info/compat'` achieves the same result.
 
-Most methods are now **direct property accessors** for instant synchronous access:
+### 3. Remove the old dependency
 
-**Before**:
-```typescript
-const deviceId = DeviceInfo.getDeviceId(); // Method call
-const brand = DeviceInfo.getBrand();       // Method call
-const model = DeviceInfo.getModel();       // Method call
+```bash
+npm uninstall react-native-device-info
 ```
 
-**After**:
+### 4. Review the documented caveats
+
+The compat layer covers **the entire RNDI API surface**. A small number of APIs return placeholder
+values because they have no native equivalent in this library — see
+[Compat Layer Caveats](#compat-layer-caveats) below. If your app doesn't use those APIs, you're done.
+
+That's it — no call sites to change, no `await` to add or remove.
+
+## Compat Layer Caveats
+
+The compat layer is signature-compatible across the whole RNDI surface, with these documented
+exceptions:
+
+| API | Compat behavior | Why |
+|-----|-----------------|-----|
+| `getInstanceId()` / `getInstanceIdSync()` | Returns `'unknown'` | RNDI deprecated these (Firebase/GMS Instance ID is slated for removal). No native equivalent. |
+| `getAppSetId()` | Returns `{ id: 'unknown', scope: -1 }` | Identical to RNDI's own value when the optional Play Services App Set dependency is absent. |
+| `getUserAgentSync()` | Returns `''` | This library computes the user agent asynchronously (iOS WebView). Use the async `getUserAgent()` for a real value. |
+| `getInstallReferrerSync()` | Returns `'unknown'` | The install referrer is only available asynchronously. Use the async `getInstallReferrer()`. |
+
+Everything else maps to a real value. A few APIs differ in *shape* but are transparently converted
+for you (e.g. `getAvailableLocationProviders()` returns RNDI's `{ gps: true, network: true }` map,
+`getFreeDiskStorage(storageType?)` accepts and ignores the iOS storage-type argument, and the async
+accessory hooks return RNDI's `{ loading, result }` shape).
+
+## Native Migration (optional, for maximum performance)
+
+If you want direct property access and synchronous getters instead of the compat shims, import
+`DeviceInfoModule` from the package root and rewrite call sites using the tables below.
+
+### Key Differences
+
+**Architecture**
+
+- **react-native-device-info**: TurboModule / Bridge (JSON serialization)
+- **react-native-nitro-device-info**: Nitro HybridObject (JSI, zero overhead)
+
+**Properties vs methods** — most RNDI methods become direct property accessors:
+
 ```typescript
-const deviceId = DeviceInfoModule.deviceId;  // Property access
-const brand = DeviceInfoModule.brand;        // Property access
-const model = DeviceInfoModule.model;        // Property access
+// react-native-device-info        // native API
+const deviceId = DeviceInfo.getDeviceId();   const deviceId = DeviceInfoModule.deviceId;
+const brand = DeviceInfo.getBrand();         const brand = DeviceInfoModule.brand;
 ```
 
-### 4. Synchronous by Default
+**Synchronous by default** — values that were async in RNDI are now sync:
 
-Most properties are now **synchronous** for instant access (<1ms):
-
-**Before** (everything async or method-based):
 ```typescript
-const uniqueId = await DeviceInfo.getUniqueId();      // Async
-const totalMemory = await DeviceInfo.getTotalMemory(); // Async
-const batteryLevel = await DeviceInfo.getBatteryLevel(); // Async
-const isTablet = DeviceInfo.isTablet();               // Sync method
+const uniqueId = DeviceInfoModule.uniqueId;            // sync property
+const totalMemory = DeviceInfoModule.totalMemory;       // sync property
+const batteryLevel = DeviceInfoModule.getBatteryLevel(); // sync method
+const isTablet = DeviceInfoModule.isTablet;             // sync property
 ```
 
-**After** (most properties synchronous):
-```typescript
-const uniqueId = DeviceInfoModule.uniqueId;      // Sync property now!
-const totalMemory = DeviceInfoModule.totalMemory; // Sync property now!
-const batteryLevel = DeviceInfoModule.getBatteryLevel(); // Sync method now!
-const isTablet = DeviceInfoModule.isTablet;      // Sync property
-```
-
-### 5. Only I/O Operations Are Async
-
-Network and file I/O operations remain asynchronous:
+**Only I/O operations stay async**:
 
 ```typescript
-// Still async - requires I/O
 const ipAddress = await DeviceInfoModule.getIpAddress();
 const carrier = await DeviceInfoModule.getCarrier();
 const installTime = await DeviceInfoModule.getFirstInstallTime();
 ```
 
-### 6. Architecture Difference
-
-- **react-native-device-info**: Uses TurboModule/Bridge (JSON serialization)
-- **`react-native-nitro-device-info`**: Uses Nitro HybridObject (JSI, zero overhead)
-
-## Quick Migration Reference
+### Quick Migration Reference
 
 ### Device Information
 
@@ -137,9 +178,12 @@ const installTime = await DeviceInfoModule.getFirstInstallTime();
 | `await DeviceInfo.getCarrier()` | `await DeviceInfoModule.getCarrier()` | Still async (I/O) |
 | `await DeviceInfo.isLocationEnabled()` | `await DeviceInfoModule.isLocationEnabled()` | Still async (I/O) |
 
-## Step-by-Step Migration
+### Step-by-Step (native path)
 
-### 1. Install the New Library
+> These steps assume you want the native API. For the zero-change path, use
+> [Drop-in Migration](#drop-in-migration-recommended) instead.
+
+#### 1. Install the New Library
 
 ```bash
 # Remove old library
@@ -152,7 +196,7 @@ npm install react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
-### 2. Update Imports
+#### 2. Update Imports
 
 Find and replace imports across your codebase:
 
@@ -164,7 +208,7 @@ import DeviceInfo from 'react-native-device-info';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 ```
 
-### 3. Update Module Name
+#### 3. Update Module Name
 
 Replace all `DeviceInfo` references with `DeviceInfoModule`:
 
@@ -176,7 +220,7 @@ const brand = DeviceInfo.getBrand();
 const brand = DeviceInfoModule.brand; // Also changed to property
 ```
 
-### 4. Convert Method Calls to Properties
+#### 4. Convert Method Calls to Properties
 
 Update method calls that are now properties:
 
@@ -198,7 +242,7 @@ const systemVersion = DeviceInfoModule.systemVersion;
 const readableVersion = DeviceInfoModule.readableVersion;
 ```
 
-### 5. Remove Unnecessary `await` Keywords
+#### 5. Remove Unnecessary `await` Keywords
 
 Remove `await` from methods that are now synchronous:
 
@@ -214,7 +258,7 @@ const totalMemory = DeviceInfoModule.totalMemory;
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 ```
 
-### 6. Test Your Changes
+#### 6. Test Your Changes
 
 Run your app and verify:
 - All device info calls work correctly
@@ -354,59 +398,54 @@ Built on React Native's New Architecture (Fabric + JSI) for long-term support.
 
 ## React Hooks Migration
 
-React hooks work as drop-in replacements with identical APIs:
-
-### Hook Migration Table
-
-| react-native-device-info | react-native-nitro-device-info | Notes |
-|--------------------------|-------------------------------|-------|
-| `useBatteryLevel()` | `useBatteryLevel()` | Identical |
-| `useBatteryLevelIsLow()` | `useBatteryLevelIsLow()` | Identical |
-| `usePowerState()` | `usePowerState()` | Identical |
-| `useIsHeadphonesConnected()` | `useIsHeadphonesConnected()` | Identical |
-| `useIsWiredHeadphonesConnected()` | `useIsWiredHeadphonesConnected()` | Identical |
-| `useIsBluetoothHeadphonesConnected()` | `useIsBluetoothHeadphonesConnected()` | Identical |
-| `useBrightness()` | `useBrightness()` | Identical |
-
-### Hook Migration Example
+**Drop-in path:** every RNDI hook is re-exported from the compat layer with RNDI's exact signature
+(including the `{ loading, result }` shape for the async hooks). The codemod rewrites the import for
+you; usage is unchanged:
 
 ```tsx
-// Before (react-native-device-info)
-import { useBatteryLevel, usePowerState } from 'react-native-device-info';
+// Before
+import { useBatteryLevel, useDeviceName } from 'react-native-device-info';
 
-// After (react-native-nitro-device-info)
-import { useBatteryLevel, usePowerState } from 'react-native-nitro-device-info';
+// After (rewritten to the compat subpath — usage identical)
+import { useBatteryLevel, useDeviceName } from 'react-native-nitro-device-info/compat';
 
-// Usage remains exactly the same
 function BatteryWidget() {
-  const batteryLevel = useBatteryLevel();
-  const powerState = usePowerState();
-
-  return (
-    <View>
-      <Text>Battery: {batteryLevel !== null ? `${Math.round(batteryLevel * 100)}%` : 'Loading...'}</Text>
-      <Text>State: {powerState.batteryState}</Text>
-    </View>
-  );
+  const batteryLevel = useBatteryLevel();        // number | null
+  const { result: name } = useDeviceName();       // AsyncHookResult<string>
+  return <Text>{name}: {batteryLevel}</Text>;
 }
 ```
 
+**Native path:** the package root exports 7 hooks directly, returning bare values (no
+`AsyncHookResult` wrapper). Use these if you migrate call sites to the native API.
+
+| react-native-device-info | Native root export | Notes |
+|--------------------------|-------------------------------|-------|
+| `useBatteryLevel()` | `useBatteryLevel()` | Identical (`number \| null`) |
+| `useBatteryLevelIsLow()` | `useBatteryLevelIsLow()` | Identical |
+| `usePowerState()` | `usePowerState()` | Identical |
+| `useIsHeadphonesConnected()` | `useIsHeadphonesConnected()` | Returns `boolean` (compat wraps to `{ loading, result }`) |
+| `useIsWiredHeadphonesConnected()` | `useIsWiredHeadphonesConnected()` | Returns `boolean` (compat wraps) |
+| `useIsBluetoothHeadphonesConnected()` | `useIsBluetoothHeadphonesConnected()` | Returns `boolean` (compat wraps) |
+| `useBrightness()` | `useBrightness()` | Identical (`number \| null`) |
+
+RNDI's remaining hooks (`useFirstInstallTime`, `useDeviceName`, `useHasSystemFeature`,
+`useIsEmulator`, `useManufacturer`) are available on the **compat path only**, where they return
+RNDI's `AsyncHookResult<T>` shape.
+
 See the [React Hooks Guide](/guide/react-hooks) for detailed hook documentation.
 
-## Breaking Changes
+### Behavioral Changes (native path only)
 
-### Removed Methods
-
-These methods from `react-native-device-info` are not available:
-
-- Some niche Android-only methods may have different names
-- Event listeners for battery/network state changes are not available. Use the provided React hooks (e.g., `useBatteryLevel`, `usePowerState`) for reactive state monitoring instead.
-
-### Behavioral Changes
+These differences apply when you adopt the **native API** (`DeviceInfoModule`). The drop-in compat
+layer preserves the original RNDI behavior, so none of these affect you on the drop-in path.
 
 1. **Synchronous by default**: Most methods no longer return Promises
 2. **Property accessors**: Some getters are now properties
-3. **Module name**: Must use `DeviceInfoModule` instead of `DeviceInfo`
+3. **Module name**: Uses `DeviceInfoModule` instead of `DeviceInfo`
+4. **Event listeners**: Raw battery/network state listeners are not exposed; use the provided React
+   hooks (e.g. `useBatteryLevel`, `usePowerState`) for reactive monitoring instead. The compat layer
+   re-exposes RNDI's hooks unchanged.
 
 ## Troubleshooting
 
