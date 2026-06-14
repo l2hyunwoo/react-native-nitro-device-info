@@ -43,6 +43,26 @@ cd ios && pod install && cd ..
 
 No additional configuration needed! Gradle auto-linking handles everything.
 
+### Expo (prebuild / dev client)
+
+```sh
+npx expo install react-native-nitro-device-info react-native-nitro-modules
+```
+
+Autolinking is enough for most APIs. A few APIs that need a permission or entitlement are opt-in via a config plugin in `app.json`:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      ["react-native-nitro-device-info", { "enableSerialNumber": true }]
+    ]
+  }
+}
+```
+
+Then run `npx expo prebuild --clean`. See the [Expo Setup guide](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/expo-setup) for all options, the device-integrity plugin, and the `isSideLoadingEnabled()` caveat.
+
 ## Quick Start
 
 ### Basic Usage
