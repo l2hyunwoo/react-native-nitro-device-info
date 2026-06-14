@@ -44,6 +44,26 @@ cd ios && pod install && cd ..
 별도의 설정이 필요 없습니다.
 Gradle 자동 링크가 모든 작업을 처리합니다.
 
+### Expo (prebuild / dev client)
+
+```sh
+npx expo install react-native-nitro-device-info react-native-nitro-modules
+```
+
+대부분의 API는 자동 링크만으로 충분합니다. 권한이나 entitlement가 필요한 일부 API는 `app.json`의 config plugin으로 opt-in 합니다:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      ["react-native-nitro-device-info", { "enableSerialNumber": true }]
+    ]
+  }
+}
+```
+
+이후 `npx expo prebuild --clean`을 실행하세요. 전체 옵션, device-integrity 플러그인, `isSideLoadingEnabled()` 주의사항은 [Expo Setup 가이드](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/expo-setup)를 참고하세요.
+
 ## 빠른 시작
 
 ### 기본 사용법
