@@ -4,7 +4,7 @@
 # Integrity Demo Example App
 
 ## Purpose
-Demonstration app for `react-native-nitro-device-integrity` (hardware-backed device attestation: Play Integrity + App Attest). Cloned from the showcase app; the demo UI in `src/` is implemented separately.
+Demonstration app for `react-native-nitro-device-integrity` (hardware-backed device attestation: Play Integrity + App Attest). It issues attestation tokens and shows them on screen; token verification is intentionally left to the developer's server.
 
 ## Key Files
 
@@ -20,7 +20,7 @@ Demonstration app for `react-native-nitro-device-integrity` (hardware-backed dev
 
 | Directory | Purpose |
 |-----------|---------|
-| `src/` | TypeScript source (currently a placeholder `App.tsx`) |
+| `src/` | TypeScript source: `App.tsx` (attestation flow UI), `components/ResultCard.tsx`, `utils/hash.ts` (self-contained SHA-256), `__tests__/` (e2e harness tests) |
 | `android/` | Android native project (namespace `nitrodeviceintegrity.demo`) |
 | `ios/` | iOS native project (`NitroDeviceIntegrityDemo`) |
 

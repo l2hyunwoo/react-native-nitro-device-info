@@ -91,7 +91,7 @@ This library stops at issuing the token. Your backend must verify it.
 
 Send the token to your server, then call Google's decode endpoint (recommended):
 
-```
+```http
 POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 ```
 
