@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  App Attest environment. Required for DCAppAttestService to work on a real
+	  device. Use "development" for debug/TestFlight-internal builds; the App
+	  Store / TestFlight runtime always uses production regardless of this value.
+	  You must also add the "App Attest" capability to this target with your own
+	  Apple Developer team and a provisioned bundle identifier.
+	-->
+	<key>com.apple.developer.devicecheck.appattest-environment</key>
+	<string>development</string>
+</dict>
+</plist>

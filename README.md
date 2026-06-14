@@ -152,6 +152,13 @@ const isCompromised = DeviceInfoModule.isDeviceCompromised(); // Sync, <50ms
 const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // Async
 ```
 
+> **Need server-verifiable attestation?** The local checks above are bypassable.
+> For hardware-backed, server-verified attestation (Play Integrity on Android,
+> App Attest / DeviceCheck on iOS), use the opt-in
+> [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity)
+> package. It issues tokens your backend verifies — see its
+> [README](packages/react-native-nitro-device-integrity/README.md).
+
 ## API Reference
 
 For complete API documentation with all 100+ methods and properties, see **[API-REFERENCE.md](API-REFERENCE.md)**.
@@ -254,7 +261,7 @@ full mapping, caveats, and the optional native-API path.
 
 ## Example Apps
 
-This repository includes two example applications to help you get started and test the library:
+This repository includes three example applications to help you get started and test the library:
 
 ### Showcase App (`example/showcase/`)
 
@@ -298,10 +305,28 @@ yarn ios              # Run on iOS
 yarn android          # Run on Android
 ```
 
+### Integrity Demo App (`example/integrity-demo/`)
+
+A demo for the opt-in
+[`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity)
+package. It **issues** attestation tokens (Play Integrity / App Attest /
+DeviceCheck) and shows them on screen — verification is left to your server, by
+design.
+
+**Running the integrity demo app**:
+
+```bash
+# From repository root
+yarn integrity-demo start   # Start Metro bundler
+yarn integrity-demo ios     # Run on iOS (real device required for App Attest)
+yarn integrity-demo android # Run on Android (needs Google Play Services)
+```
+
 For more details, see:
 
 - [Showcase App README](example/showcase/README.md)
 - [Benchmark App README](example/benchmark/README.md)
+- [Integrity Demo App README](example/integrity-demo/README.md)
 
 ## MCP Server for AI Integration
 

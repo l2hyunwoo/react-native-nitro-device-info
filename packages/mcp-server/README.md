@@ -156,6 +156,18 @@ console.log(`Battery: ${Math.round(batteryLevel * 100)}%`);
 
 > "What APIs are available for network information?"
 
+### Device Attestation
+
+The server also indexes the opt-in
+[`react-native-nitro-device-integrity`](https://www.npmjs.com/package/react-native-nitro-device-integrity)
+package (Play Integrity + App Attest / DeviceCheck), so you can ask:
+
+> "How do I request a Play Integrity token?"
+>
+> "What's the difference between attestKey and generateAssertion?"
+>
+> "List all device-integrity APIs"
+
 ### Troubleshooting Questions
 
 > "Why does getIpAddress return empty on iOS simulator?"

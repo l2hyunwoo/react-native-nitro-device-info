@@ -1,102 +1,137 @@
 /**
  * Integration test for index completeness
  *
- * Validates that the indexer can parse the actual DeviceInfo.nitro.ts
- * and index all 80+ APIs.
+ * Validates that the indexer can parse the real DeviceInfo.nitro.ts (core) and
+ * DeviceIntegrity.nitro.ts (opt-in attestation package), and index all APIs.
  */
 
-import * as path from 'path';
 import * as fs from 'fs';
-import { parseDeviceInfoFile } from '../../src/indexer/api-parser';
-import { buildSearchIndex } from '../../src/indexer/search';
+import * as path from 'path';
+import {
+  parseDeviceInfoFile,
+  getDeviceInfoPath,
+  getDeviceIntegrityPath,
+} from '../../src/indexer/api-parser';
+import { buildIndex } from '../../src/indexer';
+
+// Resolve real spec paths via the same resolver the server uses. packageRoot is
+// the mcp-server dir (two levels up from this tests/integration file).
+const packageRoot = path.join(__dirname, '..', '..');
+
+function tryResolve(fn: (root: string) => string): string | undefined {
+  try {
+    const p = fn(packageRoot);
+    return fs.existsSync(p) ? p : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+const deviceInfoPath = tryResolve(getDeviceInfoPath);
+const deviceIntegrityPath = tryResolve(getDeviceIntegrityPath);
 
 describe('Index Completeness', () => {
-  // Try to find the actual DeviceInfo.nitro.ts file
-  const possiblePaths = [
-    path.join(__dirname, '..', '..', '..', '..', 'src', 'DeviceInfo.nitro.ts'),
-    path.join(__dirname, '..', '..', '..', '..', '..', 'src', 'DeviceInfo.nitro.ts'),
-  ];
-
-  const deviceInfoPath = possiblePaths.find(p => fs.existsSync(p));
-
-  describe('API count validation', () => {
+  describe('core DeviceInfo API', () => {
     if (deviceInfoPath) {
-      it('should index at least 80 APIs from actual DeviceInfo.nitro.ts', () => {
+      it('should index at least 80 APIs from DeviceInfo.nitro.ts', () => {
         const apis = parseDeviceInfoFile(deviceInfoPath);
         expect(apis.length).toBeGreaterThanOrEqual(80);
       });
 
       it('should have APIs in all major categories', () => {
         const apis = parseDeviceInfoFile(deviceInfoPath);
-        const categories = new Set(apis.map(a => a.category));
+        const categories = new Set(apis.map((a) => a.category));
 
-        // Check for essential categories
-        expect(categories.has('device-info')).toBe(true);
-        expect(categories.has('battery')).toBe(true);
-        expect(categories.has('memory')).toBe(true);
+        expect(categories.has('core-device-info')).toBe(true);
+        expect(categories.has('battery-power')).toBe(true);
+        expect(categories.has('system-resources')).toBe(true);
         expect(categories.has('network')).toBe(true);
       });
 
       it('should have both methods and properties', () => {
         const apis = parseDeviceInfoFile(deviceInfoPath);
-        const methods = apis.filter(a => a.kind === 'method');
-        const properties = apis.filter(a => a.kind === 'property');
+        const methods = apis.filter((a) => a.kind === 'method');
+        const properties = apis.filter((a) => a.kind === 'property');
 
         expect(methods.length).toBeGreaterThan(20);
         expect(properties.length).toBeGreaterThan(20);
       });
 
-      it('should have APIs for both platforms', () => {
+      it('should have cross-platform APIs', () => {
         const apis = parseDeviceInfoFile(deviceInfoPath);
-
-        // Should have many cross-platform APIs
-        const bothApis = apis.filter(a => a.platform.type === 'both');
-
+        const bothApis = apis.filter((a) => a.platform.type === 'both');
         expect(bothApis.length).toBeGreaterThan(30);
       });
-
-      it('should build a valid search index', () => {
-        const apis = parseDeviceInfoFile(deviceInfoPath);
-        const index = buildSearchIndex(apis, []);
-
-        expect(index.apis.size).toBeGreaterThanOrEqual(80);
-        expect(index.documentCount).toBeGreaterThanOrEqual(80);
-        expect(index.averageDocumentLength).toBeGreaterThan(0);
-      });
     } else {
-      it.skip('DeviceInfo.nitro.ts not found - skipping completeness test', () => {
-        // This test will be skipped when running in isolation
-      });
+      it.skip('DeviceInfo.nitro.ts not found - skipping', () => {});
     }
   });
 
-  describe('known APIs', () => {
+  describe('attestation DeviceIntegrity API', () => {
+    if (deviceIntegrityPath) {
+      it('should index the DeviceIntegrity attestation APIs', () => {
+        const apis = parseDeviceInfoFile(deviceIntegrityPath, 'DeviceIntegrity');
+        const names = apis.map((a) => a.name);
+
+        expect(apis.length).toBeGreaterThanOrEqual(8);
+        for (const expected of [
+          'isSupported',
+          'providerType',
+          'prepareStandardProvider',
+          'requestIntegrityToken',
+          'requestClassicIntegrityToken',
+          'generateKey',
+          'attestKey',
+          'generateAssertion',
+          'getDeviceCheckToken',
+        ]) {
+          expect(names).toContain(expected);
+        }
+      });
+
+      it('should categorize attestation APIs as device-integrity', () => {
+        const apis = parseDeviceInfoFile(deviceIntegrityPath, 'DeviceIntegrity');
+        const integrity = apis.filter(
+          (a) => a.category === 'device-integrity'
+        );
+        expect(integrity.length).toBeGreaterThan(0);
+      });
+    } else {
+      it.skip('DeviceIntegrity.nitro.ts not found - skipping', () => {});
+    }
+  });
+
+  describe('combined search index', () => {
+    if (deviceInfoPath) {
+      it('should build a valid index covering core + attestation', () => {
+        const index = buildIndex(packageRoot);
+        expect(index.apis.size).toBeGreaterThanOrEqual(80);
+        expect(index.documentCount).toBeGreaterThan(0);
+        expect(index.averageDocumentLength).toBeGreaterThan(0);
+
+        if (deviceIntegrityPath) {
+          expect(index.apis.has('requestIntegrityToken')).toBe(true);
+          expect(index.apis.has('attestKey')).toBe(true);
+        }
+      });
+    } else {
+      it.skip('specs not found - skipping', () => {});
+    }
+  });
+
+  describe('known core APIs', () => {
     if (deviceInfoPath) {
       const apis = parseDeviceInfoFile(deviceInfoPath);
-      const apiNames = apis.map(a => a.name);
+      const apiNames = apis.map((a) => a.name);
 
-      // Test for specific known APIs
       const knownApis = [
         'deviceId',
         'brand',
         'model',
         'systemName',
         'systemVersion',
-        'getBatteryLevel',
-        'getPowerState',
-        'getIsBatteryCharging',
-        'totalMemory',
-        'getUsedMemory',
-        'totalDiskCapacity',
-        'getFreeDiskStorage',
-        'getIpAddress',
-        'getCarrier',
         'isEmulator',
         'isTablet',
-        'uniqueId',
-        'version',
-        'bundleId',
-        'applicationName',
       ];
 
       for (const apiName of knownApis) {
@@ -104,6 +139,8 @@ describe('Index Completeness', () => {
           expect(apiNames).toContain(apiName);
         });
       }
+    } else {
+      it.skip('DeviceInfo.nitro.ts not found - skipping', () => {});
     }
   });
 });

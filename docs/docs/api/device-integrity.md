@@ -2,6 +2,14 @@
 
 **Local-only** device integrity detection APIs for detecting rooted (Android) or jailbroken (iOS) devices.
 
+:::tip Need server-verifiable attestation?
+These checks are local and bypassable. For hardware-backed, server-verified
+attestation (Play Integrity / App Attest), see the
+[Device Attestation API](./device-attestation) — an opt-in package that
+complements these checks: use local detection as a fast offline pre-filter and
+attestation as the gate your server trusts.
+:::
+
 ## Overview
 
 These APIs perform **local detection only** (file system checks, package detection, etc.) without any server-side verification. They're commonly used as one layer of defense in:
