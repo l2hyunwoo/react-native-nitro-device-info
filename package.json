@@ -58,6 +58,16 @@
     "example/showcase",
     "example/benchmark"
   ],
+  "resolutions": {
+    "ws@^8.18.2": "8.20.1",
+    "qs": "6.15.2",
+    "ip-address": "10.1.1",
+    "minimatch@^9.0.4": "9.0.7",
+    "minimatch@^10.0.1": "10.2.3",
+    "minimatch@^10.1.1": "10.2.3",
+    "picomatch@^4.0.2": "4.0.4",
+    "picomatch@^4.0.3": "4.0.4"
+  },
   "packageManager": "yarn@3.6.1",
   "jest": {
     "preset": "react-native",
