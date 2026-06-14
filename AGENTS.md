@@ -37,7 +37,7 @@ Monorepo for `react-native-nitro-device-info` (v1.5.1), a high-performance React
 | `package.json` | Monorepo root with workspace definitions and shared scripts |
 | `turbo.json` | Turborepo configuration for build caching and task orchestration |
 | `.nvmrc` | Node.js version (20) |
-| `.yarnrc.yml` | Yarn 3.6.1 configuration with PnP mode |
+| `.yarnrc.yml` | Yarn 3.6.1 configuration (`nodeLinker: node-modules`, not PnP) |
 | `tsconfig.json` | Root TypeScript configuration |
 | `README.md` | Main project documentation |
 | `CONTRIBUTING.md` | Development workflow and guidelines |
@@ -56,6 +56,27 @@ Monorepo for `react-native-nitro-device-info` (v1.5.1), a high-performance React
 | `.github/` | CI/CD workflows (see `.github/AGENTS.md`) |
 
 ## For AI Agents
+
+### Agent Safety & Tooling Pitfalls (read first)
+
+These are non-obvious traps that have bitten automated runs. Follow them before touching the repo.
+
+**Package manager — Yarn 3.6.1 (Berry), `nodeLinker: node-modules`.** Not PnP. Deps are hoisted into `node_modules`, but `ts-jest` (mcp-server) and `react-native-harness` (showcase/integrity-demo) live in their *workspace* `node_modules`, not the root. Lockfile-only refresh: `yarn install --mode update-lockfile`.
+
+**Worktree isolation when the main checkout is dirty.** If the working tree has unrelated in-progress work (e.g. a feature branch with uncommitted changes), do NOT stash-juggle it to do an independent task. Cut a worktree off the base branch instead so the dirty checkout is never disturbed:
+```bash
+git worktree add ../<repo>-wt-<topic> <base-branch>   # e.g. main
+# worktrees have NO node_modules — run `yarn install` inside if you need to lint/test/build there
+git -C ../<repo>-wt-<topic> ... ; git push
+git worktree remove ../<repo>-wt-<topic>              # clean up when done
+```
+A fresh worktree needs its own `yarn install` (node-modules linker) before `yarn lint`/`test`/`typecheck` run there.
+
+**Linting: `yarn lint` (oxlint) is the gate — `yarn lint:eslint` is pre-existing broken.** The real lint script is `oxlint .`. The auxiliary `yarn lint:eslint` uses `@react-native` eslint config (a Babel parser) which throws `No Babel config file detected` on every root-level `.js` file because there is **no root `babel.config.js`** (each workspace has its own). It already fails with thousands of errors on `main` — a new root-level `.js` file (e.g. a config) adds more of the same parse errors but does NOT indicate a real defect. Validate with `yarn lint` (oxlint), not `lint:eslint`. CodeRabbit's "ESLint install failed" warning stems from the same root-eslint fragility and is not a blocker.
+
+**Commit hooks fail headless.** lefthook `commit-msg` runs commitlint which needs a TTY; in a non-interactive shell it errors. Validate the message with `echo "msg" | yarn commitlint`, then commit with `git commit --no-verify`.
+
+**Commits & pushes.** Subject-only messages, empty body unless explicitly asked (enforced by commitlint config-conventional). No AI-authorship trailers (`Co-Authored-By`, `🤖`, etc.). Split changes into feature-sized commits. **Never `git push` or open a PR unless explicitly asked.** Big changes go on a feature branch → PR, never committed straight to `main`.
 
 ### Working In This Directory
 
