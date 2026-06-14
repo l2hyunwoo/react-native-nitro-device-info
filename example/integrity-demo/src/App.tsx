@@ -54,7 +54,7 @@ export default function App() {
           </View>
         )}
 
-        {providerType === 'playIntegrity' ? (
+        {Platform.OS === 'android' ? (
           <PlayIntegritySection integrity={integrity} />
         ) : (
           <AppAttestSection integrity={integrity} />

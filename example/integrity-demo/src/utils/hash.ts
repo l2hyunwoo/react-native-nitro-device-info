@@ -104,14 +104,24 @@ function utf8Bytes(str: string): number[] {
     } else if (code < 0x800) {
       bytes.push(0xc0 | (code >> 6), 0x80 | (code & 0x3f));
     } else if (code >= 0xd800 && code <= 0xdbff) {
-      const next = str.charCodeAt(++i);
-      code = 0x10000 + ((code & 0x3ff) << 10) + (next & 0x3ff);
-      bytes.push(
-        0xf0 | (code >> 18),
-        0x80 | ((code >> 12) & 0x3f),
-        0x80 | ((code >> 6) & 0x3f),
-        0x80 | (code & 0x3f)
-      );
+      const next = str.charCodeAt(i + 1);
+      if (next >= 0xdc00 && next <= 0xdfff) {
+        // Valid surrogate pair → 4-byte UTF-8.
+        i++;
+        code = 0x10000 + ((code & 0x3ff) << 10) + (next & 0x3ff);
+        bytes.push(
+          0xf0 | (code >> 18),
+          0x80 | ((code >> 12) & 0x3f),
+          0x80 | ((code >> 6) & 0x3f),
+          0x80 | (code & 0x3f)
+        );
+      } else {
+        // Lone high surrogate → U+FFFD replacement character.
+        bytes.push(0xef, 0xbf, 0xbd);
+      }
+    } else if (code >= 0xdc00 && code <= 0xdfff) {
+      // Lone low surrogate → U+FFFD replacement character.
+      bytes.push(0xef, 0xbf, 0xbd);
     } else {
       bytes.push(
         0xe0 | (code >> 12),
