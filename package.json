@@ -73,7 +73,12 @@
     "picomatch@^4.0.2": "4.0.4",
     "picomatch@^4.0.3": "4.0.4"
   },
-  "packageManager": "yarn@3.6.1",
+  "dependenciesMeta": {
+    "@evilmartians/lefthook": {
+      "built": true
+    }
+  },
+  "packageManager": "yarn@4.17.0",
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
