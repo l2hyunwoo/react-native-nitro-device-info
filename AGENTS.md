@@ -36,7 +36,7 @@ Monorepo for `react-native-nitro-device-info` (v1.5.1), a high-performance React
 |------|-------------|
 | `package.json` | Monorepo root with workspace definitions and shared scripts |
 | `turbo.json` | Turborepo configuration for build caching and task orchestration |
-| `.nvmrc` | Node.js version (20) |
+| `.nvmrc` | Node.js version (22) |
 | `.yarnrc.yml` | Yarn 3.6.1 configuration (`nodeLinker: node-modules`, not PnP) |
 | `tsconfig.json` | Root TypeScript configuration |
 | `README.md` | Main project documentation |
@@ -140,9 +140,9 @@ override fun getNewInfo(): Promise<String> = Promise.async { "value" }
 
 ### Dependencies
 
-**Runtime**: `react-native-nitro-modules@0.31.2` (peer dependency)
+**Runtime**: `react-native-nitro-modules >=0.35.0 <1.0.0` (peer dependency)
 
-**Development**: `yarn@3.6.1`, `node@20`, `typescript@5.9.2`, `nitrogen@0.31.2`, `turbo@2.6.2`, `oxlint@1.24.0`, `jest@30.0.0`, `commitlint@20.1.0`
+**Development**: `yarn@3.6.1`, `node@22`, `typescript@5.9.3`, `nitrogen@0.35.9`, `turbo@2.9.18`, `oxlint@1.57.0`, `jest@29.7.0`, `commitlint@21.0.2`
 
 **Native**: iOS Swift 5.9+ (UIKit, Foundation, Combine), Android Kotlin 1.9+ (kotlinx-coroutines 1.7.3)
 

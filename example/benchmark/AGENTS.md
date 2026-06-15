@@ -46,7 +46,7 @@ Performance benchmark application measuring and comparing react-native-nitro-dev
 - `react-native-nitro-device-info` (workspace:*)
 
 ### External
-- react 19.1.0, react-native 0.82.1, react-native-nitro-modules ^0.31.2
-- react-native-device-info ^11.1.0 (comparison library)
+- react 19.2.3, react-native 0.85.3, react-native-nitro-modules ^0.35.9
+- react-native-device-info ^15.0.2 (comparison library)
 
 <!-- MANUAL: -->

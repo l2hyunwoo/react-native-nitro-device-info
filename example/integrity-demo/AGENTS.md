@@ -37,7 +37,7 @@ Demonstration app for `react-native-nitro-device-integrity` (hardware-backed dev
 - `react-native-nitro-device-integrity` (workspace:*)
 
 ### External
-- react 19.2.3, react-native 0.84.0, react-native-nitro-modules ^0.35.0
+- react 19.2.3, react-native 0.85.3, react-native-nitro-modules ^0.35.9
 - react-native-harness (e2e testing)
 
 <!-- MANUAL: -->

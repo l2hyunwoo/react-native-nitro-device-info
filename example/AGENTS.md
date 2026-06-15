@@ -31,6 +31,6 @@ Container directory for React Native example applications demonstrating react-na
 - All apps depend on `react-native-nitro-device-info` (workspace:*)
 
 ### External
-- react 19.1.0, react-native 0.82.1, react-native-nitro-modules ^0.31.2
+- react 19.2.3, react-native 0.85.3, react-native-nitro-modules ^0.35.9
 
 <!-- MANUAL: -->
