@@ -75,8 +75,18 @@ function getNativeInstance(): DeviceInfo {
  * ```
  */
 export const DeviceInfoModule: DeviceInfo = new Proxy({} as DeviceInfo, {
-  get(_target, prop, receiver) {
-    return Reflect.get(getNativeInstance(), prop, receiver);
+  get(_target, prop) {
+    // Read from the native HybridObject WITHOUT forwarding `receiver`. Passing
+    // the Proxy as `receiver` (e.g. `Reflect.get(instance, prop, receiver)`)
+    // would run Nitro's native getters/methods with `this` bound to the Proxy,
+    // whose target is an empty object with no NativeState — every access then
+    // throws "`this` does not have a NativeState". Reading directly off the
+    // instance keeps `this` bound to the real HybridObject. Methods are bound to
+    // the instance for the same reason: an unbound function called later would
+    // lose its `this`.
+    const instance = getNativeInstance();
+    const value = instance[prop as keyof DeviceInfo];
+    return typeof value === 'function' ? value.bind(instance) : value;
   },
   has(_target, prop) {
     return Reflect.has(getNativeInstance(), prop);
