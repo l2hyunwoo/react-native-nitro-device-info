@@ -711,9 +711,9 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
   public func getMacAddress() throws -> Promise<String> {
-    return Promise.async {
-      return "02:00:00:00:00:00"
-    }
+    // Immediate value: resolved avoids the Promise.async Task-schedule delay
+    // that can race a pending C++ Promise to destruction.
+    return Promise.resolved(withResult: getMacAddressSync())
   }
 
   /// Get MAC address (hardcoded on iOS 7+ due to privacy restrictions)
@@ -753,12 +753,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Get cellular carrier name
   public func getCarrier() throws -> Promise<String> {
-    return Promise.async {
-      if #available(iOS 12.0, *) {
-        return ""
-      }
-      return ""
-    }
+    // Delegate to the sync query (5s cache) so async matches sync and Android's
+    // real carrier name; resolved avoids the Promise.async Task-schedule delay
+    // that can race a pending C++ Promise to destruction.
+    return Promise.resolved(withResult: getCarrierSync())
   }
 
   /// Get carrier name with 5-second cache
@@ -811,9 +809,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if headphones are connected
   public func isHeadphonesConnected() throws -> Promise<Bool> {
-    return Promise.async {
-      return false
-    }
+    // Delegate to the sync AVAudioSession query so async matches sync (was
+    // hardcoded false); resolved avoids the Promise.async Task-schedule delay
+    // that can race a pending C++ Promise to destruction.
+    return Promise.resolved(withResult: getIsHeadphonesConnected())
   }
 
   /// Check if any headphones are connected
@@ -843,8 +842,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if location services are enabled
   public func isLocationEnabled() throws -> Promise<Bool> {
-    return Promise.async {
-      return false
+    // Stays on Promise.async (not resolved): CLLocationManager
+    // .locationServicesEnabled() can block and warns when called on the main
+    // thread, so it runs in the Task rather than synchronously on the caller.
+    // The sync logic is reused (was hardcoded false) so async matches sync.
+    return Promise.async { [weak self] in
+      self?.getIsLocationEnabled() ?? false
     }
   }
 
