@@ -49,7 +49,7 @@ Primary demonstration app displaying all 80+ device information properties. Used
 - `react-native-nitro-device-info` (workspace:*)
 
 ### External
-- react 19.1.0, react-native 0.82.1, react-native-nitro-modules ^0.31.2
+- react 19.2.3, react-native 0.85.3, react-native-nitro-modules ^0.35.9
 - react-native-harness (e2e testing)
 
 <!-- MANUAL: -->

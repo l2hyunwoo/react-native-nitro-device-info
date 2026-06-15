@@ -13,7 +13,7 @@ Core library package published as `react-native-nitro-device-info@1.5.1`. Provid
 | `src/DeviceInfo.nitro.ts` | **SINGLE SOURCE OF TRUTH** - TypeScript interface defining all 80+ properties/methods |
 | `src/index.ts` | Public API exports: `createDeviceInfo`, `DeviceInfoModule` singleton, types, hooks |
 | `nitro.json` | Nitrogen codegen configuration (namespace: `nitrodeviceinfo`, autolinking) |
-| `package.json` | Package metadata, peer deps (`react-native-nitro-modules@0.31.2`) |
+| `package.json` | Package metadata, peer deps (`react-native-nitro-modules >=0.35.0 <1.0.0`) |
 | `react-native.config.js` | React Native autolinking configuration |
 
 ## Subdirectories
@@ -52,8 +52,8 @@ Core library package published as `react-native-nitro-device-info@1.5.1`. Provid
 - `nitrogen/generated/` - Auto-generated bindings (from DeviceInfo.nitro.ts)
 
 ### External
-- `react-native-nitro-modules@0.31.2` - Nitro runtime framework (peer dependency)
-- `nitrogen@0.31.2` - Code generator (devDependency)
-- `react-native-builder-bob@0.40.13` - Build tooling
+- `react-native-nitro-modules >=0.35.0 <1.0.0` - Nitro runtime framework (peer dependency)
+- `nitrogen@0.35.9` - Code generator (devDependency)
+- `react-native-builder-bob@0.41.0` - Build tooling
 
 <!-- MANUAL: -->

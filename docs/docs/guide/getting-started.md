@@ -9,7 +9,7 @@ Before installing, ensure your project meets these requirements:
 - **React Native**: 0.68 or higher (New Architecture support)
 - **iOS**: Deployment target 13.4 or higher
 - **Android**: minSdkVersion 24 or higher (Android 7.0 Nougat)
-- **Node.js**: 16 or higher
+- **Node.js**: 22.11.0 or higher
 
 ## Installation
 

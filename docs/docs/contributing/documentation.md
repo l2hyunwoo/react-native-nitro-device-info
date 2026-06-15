@@ -6,7 +6,7 @@ This guide covers how to contribute to the `react-native-nitro-device-info` docu
 
 ### Prerequisites
 
-- Node.js 20 or higher
+- Node.js 22 or higher
 - Yarn package manager
 
 ### Running Locally

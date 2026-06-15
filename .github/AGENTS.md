@@ -23,7 +23,7 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
 
 ### Working In This Directory
 - CI uses `dorny/paths-filter@v3` for change detection with 4 filters: `library`, `mcp-server`, `docs`, `deps`
-- All workflows use Node.js 20 and `yarn install --immutable`
+- All workflows use Node.js 22 and `yarn install --immutable`
 - CI jobs (triggered on push to main/develop and PRs):
   - **lint**: oxlint + TypeScript typecheck (runs when library, mcp-server, or deps change)
   - **build**: TypeScript build via `yarn prepare`, verifies `lib/module`, `lib/typescript`, `nitrogen/generated` outputs

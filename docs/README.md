@@ -6,7 +6,7 @@ This directory contains the RSPress documentation site for react-native-nitro-de
 
 ### Prerequisites
 
-- Node.js 20 or higher
+- Node.js 22 or higher
 - Yarn package manager
 
 ### Installation
