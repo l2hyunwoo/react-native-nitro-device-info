@@ -71,10 +71,10 @@
     "react-native-nitro-modules": ">=0.35.0 <1.0.0"
   },
   "devDependencies": {
-    "@expo/config-plugins": "^10.0.0",
+    "@expo/config-plugins": "~56.0.9",
     "del-cli": "7.0.0",
-    "nitrogen": "0.35.0",
-    "react-native-builder-bob": "0.40.18",
+    "nitrogen": "0.35.9",
+    "react-native-builder-bob": "0.41.0",
     "typescript": "5.9.3"
   },
   "react-native-builder-bob": {
