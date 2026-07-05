@@ -418,9 +418,13 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if device has a display notch
   public func getHasNotch() -> Bool {
+    guard UIDevice.current.userInterfaceIdiom == .phone else {
+      return false
+    }
+
     if #available(iOS 11.0, *) {
       guard let window = keyWindow else { return false }
-      return window.safeAreaInsets.bottom > 0
+      return window.safeAreaInsets.top > 20
     }
     return false
   }
