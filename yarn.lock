@@ -161,9 +161,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "@babel/core@npm:8.0.0"
+"@babel/core@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "@babel/core@npm:8.0.1"
   dependencies:
     "@babel/code-frame": "npm:^8.0.0"
     "@babel/generator": "npm:^8.0.0"
@@ -181,7 +181,7 @@ __metadata:
     json5: "npm:^2.2.3"
     obug: "npm:^2.1.1"
     semver: "npm:^7.7.3"
-  checksum: 10c0/55c131fb9d1413a3963e748edd56274168e8bea5dd4fcff1c0483ee6e0df4077818dd229011d014b3fe0218a2b563066476ce815f512327ff59c106d8be79b77
+  checksum: 10c0/e7fd9266d22906132fb052383a624358f54268dade31d50264416afeab6e5648cd23c7e845a89a501d270b80601d6e89abc67de0a9f1f55133f4abd8ac745be7
   languageName: node
   linkType: hard
 
@@ -9695,14 +9695,14 @@ __metadata:
   linkType: hard
 
 "js-yaml@npm:^3.13.1":
-  version: 3.14.2
-  resolution: "js-yaml@npm:3.14.2"
+  version: 3.15.0
+  resolution: "js-yaml@npm:3.15.0"
   dependencies:
     argparse: "npm:^1.0.7"
     esprima: "npm:^4.0.0"
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: 10c0/3261f25912f5dd76605e5993d0a126c2b6c346311885d3c483706cd722efe34f697ea0331f654ce27c00a42b426e524518ec89d65ed02ea47df8ad26dcc8ce69
+  checksum: 10c0/ca966bd354ac5b1b7a4694ebdba46526796aa3a6a99529fa540af2abf85918bd155a50ccc0166b413130a00622999973754458ec01e7095bc902177bfdbd5b64
   languageName: node
   linkType: hard
 
@@ -11598,7 +11598,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-native-nitro-device-info-benchmark@workspace:example/benchmark"
   dependencies:
-    "@babel/core": "npm:^8.0.0"
+    "@babel/core": "npm:^8.0.1"
     "@babel/preset-env": "npm:^7.29.7"
     "@babel/runtime": "npm:^7.29.7"
     "@react-native-community/cli": "npm:20.1.0"
@@ -11622,7 +11622,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-native-nitro-device-info-example@workspace:example/showcase"
   dependencies:
-    "@babel/core": "npm:^8.0.0"
+    "@babel/core": "npm:^8.0.1"
     "@babel/preset-env": "npm:^7.29.7"
     "@babel/runtime": "npm:^7.29.7"
     "@react-native-community/cli": "npm:20.1.0"
@@ -11707,7 +11707,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-native-nitro-device-integrity-demo@workspace:example/integrity-demo"
   dependencies:
-    "@babel/core": "npm:^8.0.0"
+    "@babel/core": "npm:^8.0.1"
     "@babel/preset-env": "npm:^7.29.7"
     "@babel/runtime": "npm:^7.29.7"
     "@react-native-community/cli": "npm:20.1.0"
