@@ -416,11 +416,15 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Display & Screen
 
-  /// Check if device has a display notch
+  /// Check if device has a display notch (mutually exclusive with Dynamic Island)
   public func getHasNotch() -> Bool {
+    guard UIDevice.current.userInterfaceIdiom == .phone else {
+      return false
+    }
+
     if #available(iOS 11.0, *) {
       guard let window = keyWindow else { return false }
-      return window.safeAreaInsets.bottom > 0
+      return window.safeAreaInsets.top > 20 && !getHasDynamicIsland()
     }
     return false
   }
