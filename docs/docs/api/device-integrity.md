@@ -165,6 +165,6 @@ function BiometricLogin() {
 
 ## See Also
 
-- [Security Features](/guide/security)
+- [Device Attestation](/api/device-attestation)
 - [isEmulator](/api/device-info#isemulator)
 - [isPinOrFingerprintSet](/api/device-info#ispinorfingerprintset)
