@@ -17,7 +17,8 @@
     "clean": "del-cli packages/react-native-nitro-device-info/lib packages/react-native-nitro-device-info/nitrogen/generated packages/react-native-nitro-device-info/android/build example/showcase/android/build example/showcase/android/app/build example/showcase/ios/build example/benchmark/android/build example/benchmark/android/app/build example/benchmark/ios/build",
     "prepare": "yarn workspace react-native-nitro-device-info prepare",
     "nitrogen": "yarn workspace react-native-nitro-device-info nitrogen",
-    "nitrogen:integrity": "yarn workspace react-native-nitro-device-integrity nitrogen"
+    "nitrogen:integrity": "yarn workspace react-native-nitro-device-integrity nitrogen",
+    "test:security": "node --test scripts/security-regressions.cjs"
   },
   "repository": {
     "type": "git",
@@ -64,14 +65,19 @@
     "example/integrity-demo"
   ],
   "resolutions": {
-    "ws@^8.18.2": "8.20.1",
-    "qs": "6.15.2",
-    "ip-address": "10.1.1",
+    "qs": "6.16.0",
+    "ip-address": "10.7.3",
     "minimatch@^9.0.4": "9.0.7",
     "minimatch@^10.0.1": "10.2.3",
     "minimatch@^10.1.1": "10.2.3",
     "picomatch@^4.0.2": "4.0.4",
-    "picomatch@^4.0.3": "4.0.4"
+    "picomatch@^4.0.3": "4.0.4",
+    "ws@^8.18.2": "8.22.0",
+    "uuid": "11.1.1",
+    "esbuild": "0.28.2",
+    "fast-xml-parser": "5.7.0",
+    "braces@npm:^3.0.3": "patch:braces@npm%3A3.0.3#~/.yarn/patches/braces-npm-3.0.3-582c14023c.patch",
+    "http-cache-semantics@npm:^4.1.1": "patch:http-cache-semantics@npm%3A4.2.0#~/.yarn/patches/http-cache-semantics-npm-4.2.0-fadacfb3ad.patch"
   },
   "dependenciesMeta": {
     "@evilmartians/lefthook": {

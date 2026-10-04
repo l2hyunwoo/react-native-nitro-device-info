@@ -44,6 +44,8 @@ jobs:
             deps:
               - 'package.json'
               - 'yarn.lock'
+              - '.yarn/patches/**'
+              - 'scripts/security-regressions.cjs'
 
       - name: Debug outputs
         run: |
@@ -69,6 +71,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --immutable
+
+      - name: Verify security patches
+        run: yarn test:security
 
       - name: Run oxlint
         run: yarn lint
