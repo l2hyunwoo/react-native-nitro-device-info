@@ -24,6 +24,13 @@ export default defineConfig([
     },
   },
   {
+    files: ['scripts/**/*.cjs'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'commonjs',
+    },
+  },
+  {
     // jest.config.js files are plain config, not source — the @react-native
     // preset's Babel parser fails on them because there is no root babel.config.js.
     ignores: ['node_modules/', 'lib/', 'docs/', '**/jest.config.js'],
