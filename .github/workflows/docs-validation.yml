@@ -6,6 +6,9 @@ on:
       - 'docs/**'
       - '.github/workflows/docs-validation.yml'
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
