@@ -13,6 +13,9 @@ on:
         default: false
         type: boolean
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -21,6 +24,8 @@ concurrency:
 jobs:
   create-version-commit:
     name: Create Version Commit
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     outputs:
       commit_sha: ${{ steps.commit.outputs.sha }}
@@ -100,6 +105,8 @@ jobs:
   # Job 2: Create and push version tag
   create-version-tag:
     name: Create Version Tag
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     needs: create-version-commit
     steps:
@@ -144,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [create-version-commit, create-version-tag]
     permissions:
-      contents: write
+      contents: read
       id-token: write
     steps:
       - name: Checkout
@@ -205,6 +212,7 @@ jobs:
     needs: [create-version-commit, publish-npm]
     permissions:
       contents: write
+      pull-requests: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
