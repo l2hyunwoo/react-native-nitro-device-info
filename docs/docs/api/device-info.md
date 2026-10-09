@@ -40,9 +40,13 @@ Device model marketing name. Maps the hardware identifier to a human-readable na
 
 ```typescript
 const model = DeviceInfoModule.model;
-// iOS: "iPhone 15 Pro", "iPad Air", "iPhone SE (3rd generation)"
+// iOS: "iPhone 18 Pro", "iPhone Duo", "iPad Pro 11-inch (M5)"
 // Android: Device-specific model name (e.g., "Pixel 7 Pro", "Galaxy S24")
 ```
+
+iOS mappings include iPhone 18 Pro/Pro Max (including the regional `iPhone19,7` variant), iPhone Duo (`iPhone19,4`), iPad (A16), iPad mini (A17 Pro), iPad Air (M3/M4), and iPad Pro (M5). iPad Air M2 models return `iPad Air 11-inch (M2)` or `iPad Air 13-inch (M2)` to distinguish their sizes. Apple TV 4K (2nd/3rd generation) and Apple Vision Pro (M5) are also mapped.
+
+The recent iPhone and iPad identifiers were checked against Xcode 27 and [DeviceKit 5.9.0](https://github.com/devicekit/DeviceKit/blob/19528aa07e1426626ea9fb2c4a161edf43c4f9e8/Source/Device.swift.gyb). The iPhone Duo identifier comes from [AppleDB's device inventory](https://github.com/littlebyteorg/appledb/blob/fbce77f07882c7f188dbe9dc28345b8702b93aa8/deviceFiles/iPhone/iPhone19,4.json); physical-device validation is pending its October 23, 2026 release.
 
 ### `systemName: string`
 

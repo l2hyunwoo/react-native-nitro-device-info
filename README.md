@@ -74,7 +74,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
-console.log(DeviceInfoModule.model); // "iPhone"
+console.log(DeviceInfoModule.model); // "iPhone 13 Pro"
 
 // Synchronous properties (immediate - <1ms)
 const uniqueId = DeviceInfoModule.uniqueId;
@@ -191,8 +191,10 @@ For complete API documentation with all 100+ methods and properties, see **[API-
 DeviceInfoModule.deviceId; // "iPhone14,2"
 DeviceInfoModule.brand; // "Apple"
 DeviceInfoModule.systemVersion; // "15.0"
-DeviceInfoModule.model; // "iPhone"
+DeviceInfoModule.model; // "iPhone 13 Pro"
 ```
+
+On iOS, `model` also recognizes iPhone 18 Pro/Pro Max, iPhone Duo, and recent iPad models. See the [model reference](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/device-info#model-string) for mapping details and sources.
 
 #### Common Properties
 
