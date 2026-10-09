@@ -46,7 +46,7 @@
     "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.6",
-    "http-cache-semantics": "^4.1.1",
+    "http-cache-semantics": "^4.3.0",
     "jest": "29.7.0",
     "nitrogen": "0.35.9",
     "oxlint": "1.57.0",
