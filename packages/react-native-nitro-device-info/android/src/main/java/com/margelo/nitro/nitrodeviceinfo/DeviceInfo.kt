@@ -629,8 +629,10 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             audioDevices.any { device ->
                 device.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
                     device.type == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
-                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-                        device.type == AudioDeviceInfo.TYPE_USB_HEADSET)
+                    (
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                            device.type == AudioDeviceInfo.TYPE_USB_HEADSET
+                    )
             }
         } catch (e: Exception) {
             false
