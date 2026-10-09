@@ -37,6 +37,7 @@ jobs:
             library:
               - 'packages/react-native-nitro-device-info/src/**'
               - 'packages/react-native-nitro-device-info/ios/**'
+              - 'packages/react-native-nitro-device-info/*.podspec'
               - 'packages/react-native-nitro-device-info/android/**'
               - 'packages/react-native-nitro-device-info/nitrogen/**'
               - 'packages/react-native-nitro-device-info/package.json'
@@ -160,6 +161,13 @@ jobs:
             -derivedDataPath ios/build \
             -quiet \
             CODE_SIGNING_ALLOWED=NO
+
+      - name: Verify bundled privacy manifest
+        working-directory: example/showcase
+        run: |
+          privacy_manifest_path=ios/build/Build/Products/Release-iphonesimulator/NitroDeviceInfoExample.app/NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy
+          test -f "$privacy_manifest_path"
+          plutil -lint "$privacy_manifest_path"
 
   build-android:
     name: Build Android
