@@ -84,8 +84,10 @@ const uniqueId = DeviceInfoModule.uniqueId;
 // Example: "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 ```
 
-- **iOS**: Persists across app installs from the same vendor
-- **Android**: Usually persists across app installs
+- **iOS**: Reads the current IDFV, or `""` when unavailable. Do not assume that it survives removal of all apps from the vendor.
+- **Android**: Reads ANDROID_ID, or `""` when unavailable. Its scope and reset behavior depend on Android.
+
+Do not use this value as a permanent device identity or account identifier. See [Apple IDFV](https://developer.apple.com/documentation/uikit/uidevice/identifierforvendor) and [Android ANDROID_ID](https://developer.android.com/reference/android/provider/Settings.Secure#ANDROID_ID).
 
 ### `manufacturer: string`
 
@@ -515,7 +517,6 @@ const installDate = new Date(installTime);
 console.log(`Installed: ${installDate.toLocaleDateString()}`);
 ```
 
-**Performance**: ~10-30ms
 
 ### `getLastUpdateTime(): Promise<number>`
 
@@ -527,7 +528,6 @@ const updateDate = new Date(updateTime);
 console.log(`Last Updated: ${updateDate.toLocaleDateString()}`);
 ```
 
-**Performance**: ~10-30ms
 **Note**: Returns -1 on iOS
 
 ### `firstInstallTimeSync: number`
@@ -561,7 +561,6 @@ const ipAddress = await DeviceInfoModule.getIpAddress();
 // Example: "192.168.1.100", "10.0.0.5"
 ```
 
-**Performance**: ~20-50ms
 
 ### `getIpAddressSync(): string`
 
@@ -581,7 +580,6 @@ const macAddress = await DeviceInfoModule.getMacAddress();
 // Android: "unknown" when restricted, otherwise the available wlan0 MAC
 ```
 
-**Performance**: ~20-50ms
 
 ### `getMacAddressSync(): string`
 
@@ -600,9 +598,7 @@ const userAgent = await DeviceInfoModule.getUserAgent();
 // Example: "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) ..."
 ```
 
-**Performance**:
-- iOS: 100-500ms (requires WebView initialization, cached after first call)
-- Android: sync capable
+iOS initializes a WebView and caches the first successful result. Android queries `WebSettings` asynchronously. Both platforms return a `Promise<string>`.
 
 ### `getIsAirplaneMode(): boolean`
 
@@ -634,7 +630,6 @@ const carrier = await DeviceInfoModule.getCarrier();
 // Example: "Verizon", "AT&T", "T-Mobile"
 ```
 
-**Performance**: ~20-50ms
 
 ### `getCarrierSync(): string`
 
@@ -727,7 +722,6 @@ Check if headphones are connected (wired or Bluetooth). On Android, this uses th
 const hasHeadphones = await DeviceInfoModule.isHeadphonesConnected();
 ```
 
-**Performance**: ~10-30ms
 
 ### `getIsHeadphonesConnected(): boolean`
 
@@ -767,7 +761,6 @@ Check if location services are enabled.
 const isLocationEnabled = await DeviceInfoModule.isLocationEnabled();
 ```
 
-**Performance**: ~10-30ms
 
 ### `getIsLocationEnabled(): boolean`
 
@@ -1039,20 +1032,18 @@ try {
 }
 ```
 
-**Performance**: ~500-2000ms (network request to Apple servers)
 **Platform**: iOS 11+ only (throws error on Android)
 
 ### `syncUniqueId(): Promise<string>`
 
-Synchronize unique ID to iCloud Keychain.
+Write the current IDFV to an app-specific Keychain item on iOS. This method does not enable iCloud Keychain synchronization or restore an earlier IDFV.
 
 ```typescript
 const uniqueId = await DeviceInfoModule.syncUniqueId();
-// iOS: Saves IDFV to Keychain (persists across reinstalls)
-// Android: Returns getUniqueId() without Keychain sync
+// iOS: Writes and returns the current IDFV.
+// Android: Returns uniqueId without a Keychain operation.
 ```
 
-**Performance**: ~10-50ms (Keychain I/O)
 **Platform**: iOS (no-op on Android)
 
 ---
@@ -1081,7 +1072,6 @@ const referrer = await DeviceInfoModule.getInstallReferrer();
 // iOS: "unknown"
 ```
 
-**Performance**: ~50-200ms (Play Services API call)
 **Platform**: Android only (requires Google Play Services)
 
 ### `isSideLoadingEnabled(): boolean`
@@ -1140,36 +1130,21 @@ const freeDiskOld = DeviceInfoModule.getFreeDiskStorageOld();
 
 ## Performance Notes
 
-### Synchronous Methods (<1ms)
+Synchronous properties and methods run on the calling thread. Some query the OS or initialize a cache, so synchronous does not mean instantaneous.
 
-All synchronous methods use cached values and return instantly:
-
-- Core device properties
-- Device capabilities
-- Display & screen
-- System resources (memory, disk)
-- Battery information
-- Application metadata
-- CPU & architecture
-
-### Asynchronous Methods
-
-Performance varies by operation type:
-
-- **Fast (10-30ms)**: Install times, location status, headphone detection
-- **Medium (20-50ms)**: Network queries (IP, MAC, carrier)
-- **Slow (100-500ms)**: UserAgent (iOS WebView init, cached after first call)
-- **Very Slow (500-2000ms)**: DeviceCheck token (network request)
+Promise-based methods do not have a guaranteed completion time. On iOS, `getUserAgent()` initializes a WebView on its first successful call and caches that result. Avoid repeated calls to expensive APIs during rendering.
 
 ### Caching
 
-Network-related synchronous properties use 5-second caches:
+These synchronous methods use a five-second cache:
 
 - `getIpAddressSync()`
 - `getMacAddressSync()`
 - `getCarrierSync()`
 
-This provides fast access while keeping data reasonably fresh.
+A cache refresh queries the OS. Values can remain stale until the next call after expiry. For continuously changing battery or audio state, use [React hooks](/api/hooks).
+
+Measure latency in your app with its actual device, OS, build mode, and cache state.
 
 ---
 

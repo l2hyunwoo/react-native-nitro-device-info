@@ -1,163 +1,70 @@
 # API Reference Overview
 
-Complete API documentation for `react-native-nitro-device-info`.
+Choose the API entry point before copying an example. The root API and `/compat` API have different names and return types.
 
-## Module Import
+## Entry points
+
+| Import | Purpose | Example |
+| --- | --- | --- |
+| `{ DeviceInfoModule }` from `react-native-nitro-device-info` | Native properties and methods | `DeviceInfoModule.model` |
+| `DeviceInfo` from `react-native-nitro-device-info/compat` | `react-native-device-info` 15.x-style functions | `DeviceInfo.getModel()` |
+| `{ useBatteryLevel }` from `react-native-nitro-device-info` | React hook returning a value | `number \| null` |
+| `{ useIsHeadphonesConnected }` from `react-native-nitro-device-info/compat` | Compatibility hook result | `{ loading, result }` |
+| `{ DeviceIntegrityModule }` from `react-native-nitro-device-integrity` | Optional attestation package | See [Device Attestation](/api/device-attestation) |
+
+`DeviceInfo` from the root is a TypeScript type. It is not a default runtime object. See [Migration](/api/migration) for compatibility caveats.
+
+## Native API by task
+
+These members belong to `DeviceInfoModule`. Parentheses identify methods; entries without parentheses are properties.
+
+| Task | Example members | Reference |
+| --- | --- | --- |
+| Identify the model and OS | `deviceId`, `model`, `systemVersion`, `deviceType` | [Core Device Information](/api/device-info#core-device-information-9-apis) |
+| Read identifiers | `uniqueId`, `manufacturer`, `deviceName` | [Core Device Information](/api/device-info#core-device-information-9-apis) |
+| Check hardware | `isTablet`, `isEmulator`, `isCameraPresent`, `isPinOrFingerprintSet` | [Device Capabilities](/api/device-info#device-capabilities-7-apis) |
+| Read display information | `getHasNotch()`, `getHasDynamicIsland()`, `getIsLandscape()`, `getBrightness()` | [Display & Screen](/api/device-info#display--screen-7-apis) |
+| Read memory and storage | `totalMemory`, `getUsedMemory()`, `totalDiskCapacity`, `getFreeDiskStorage()` | [System Resources](/api/device-info#system-resources-7-apis) |
+| Read battery state | `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | [Battery & Power](/api/device-info#battery--power-4-apis) |
+| Read app metadata | `version`, `buildNumber`, `bundleId`, `getFirstInstallTime()` | [Application Metadata](/api/device-info#application-metadata-9-apis) |
+| Read network information | `getIpAddress()`, `getIpAddressSync()`, `getMacAddress()` | [Network](/api/device-info#network-6-apis) |
+| Read carrier information | `getCarrier()`, `getCarrierSync()`, `mobileCountryCode` | [Carrier Information](/api/device-info#carrier-information-7-apis) |
+| Check audio outputs | `isHeadphonesConnected()`, `getIsWiredHeadphonesConnected()` | [Audio Accessories](/api/device-info#audio-accessories-4-apis) |
+| Check location services | `isLocationEnabled()`, `getIsLocationEnabled()`, `getAvailableLocationProviders()` | [Location Services](/api/device-info#location-services-3-apis) |
+| Check Android features | `apiLevel`, `getHasGms()`, `getHasHms()`, `hasSystemFeature(feature)` | [Android Platform](/api/device-info#android-platform-20-apis) |
+| Request Apple DeviceCheck or write an ID to Keychain | `getDeviceToken()`, `syncUniqueId()` | [iOS Platform](/api/device-info#ios-platform-2-apis) |
+| Read installation information | `installerPackageName`, `getInstallReferrer()`, `isSideLoadingEnabled()` | [Installation & Distribution](/api/device-info#installation--distribution-3-apis) |
+
+For the remaining members, see the [complete DeviceInfo reference](/api/device-info).
+
+## Call and return contracts
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
-import type { PowerState, BatteryState, DeviceType } from 'react-native-nitro-device-info';
+
+const model: string = DeviceInfoModule.model;
+const battery: number = DeviceInfoModule.getBatteryLevel();
+
+async function readIpAddress(): Promise<string> {
+  return await DeviceInfoModule.getIpAddress();
+}
 ```
 
-## API Organization
+- **Property**: Read without parentheses. A property can query the OS; `readonly` does not mean that the value is constant.
+- **Synchronous method**: Call directly. Synchronous execution does not guarantee a fixed latency.
+- **Promise-based method**: Await inside an async function and handle rejection where the API can fail.
+- **React hook**: Call inside a React component or custom hook. See [Hooks API](/api/hooks) for loading values and polling intervals.
 
-The API is organized into the following categories:
+Memory and storage use bytes. Battery and brightness use fractions from `0` to `1` when available. For example, `getBatteryLevel()` returns `-1` when unavailable, while `useBatteryLevel()` returns `null`.
 
-### [Core Device Information](/api/device-info#core-device-information)
+## Platform and security limits
 
-Synchronous properties providing instant access to basic device information:
-- `deviceId`, `brand`, `model` - Device identification
-- `systemName`, `systemVersion` - OS information
-- `deviceType` - Device category (Handset, Tablet, etc.)
+An unsupported API may return a placeholder or reject. A `false` result can mean that a platform has no implementation. Check the individual API and the [Web Support guide](/guide/web-support).
 
-### [Device Capabilities](/api/device-info#device-capabilities)
+[Local device integrity](/api/device-integrity) checks in this package are bypassable heuristics. [Device attestation](/api/device-attestation) requires the separate `react-native-nitro-device-integrity` package and backend verification.
 
-Methods to check device features and hardware:
-- `isTablet()` - Tablet detection
-- `hasNotch()`, `hasDynamicIsland()` - Display features
-- `isCameraPresent()`, `isPinOrFingerprintSet()` - Hardware checks
-- `isEmulator()` - Simulator/emulator detection
+## Types and source
 
-### [Device Identification](/api/device-info#device-identification)
+Import `DeviceInfo`, `PowerState`, `BatteryState`, `DeviceType`, and `NavigationMode` with `import type`. See [Type Definitions](/api/types).
 
-Unique identifiers and manufacturer information:
-- `getUniqueId()` - Platform-specific unique ID
-- `getManufacturer()` - Device manufacturer
-
-### [System Resources](/api/device-info#system-resources)
-
-Memory and storage monitoring:
-- `getTotalMemory()`, `getUsedMemory()` - RAM information
-- `getTotalDiskCapacity()`, `getFreeDiskStorage()` - Storage information
-
-### [Battery Information](/api/device-info#battery-information)
-
-Battery status and power state:
-- `getBatteryLevel()` - Current battery level (0.0-1.0)
-- `getPowerState()` - Comprehensive power state
-- `isBatteryCharging()` - Charging status
-- `isLowBatteryLevel(threshold)` - Low battery check
-
-### [Application Metadata](/api/device-info#application-metadata)
-
-Information about your application:
-- `getVersion()`, `getBuildNumber()` - App version info
-- `getBundleId()`, `getApplicationName()` - App identity
-- `getFirstInstallTime()`, `getLastUpdateTime()` - Installation timestamps
-
-### [Network & Connectivity](/api/device-info#network--connectivity)
-
-Network and connectivity information (mostly async):
-- `getIpAddress()` - Local IP address
-- `getCarrier()` - Cellular carrier name
-- `isLocationEnabled()` - Location services status
-- `isHeadphonesConnected()` - Audio output detection
-
-### [Platform-Specific Methods](/api/device-info#platform-specific-methods)
-
-Platform-specific functionality:
-- `getApiLevel()` - Android API level
-- `getSupportedAbis()` - CPU architectures
-- `hasGms()`, `hasHms()` - Mobile services detection
-- `hasSystemFeature(feature)` - Android feature detection
-
-### [Android Build Information](/api/device-info#android-build-information)
-
-Android system build details:
-- `serialNumber`, `androidId`, `securityPatch`
-- `fingerprint`, `bootloader`, `hardware`
-- And many more build properties
-
-### [Advanced Capabilities](/api/device-info#advanced-capabilities)
-
-Advanced device state and features:
-- `isAirplaneMode()` - Airplane mode status
-- `isLowRamDevice()` - Low RAM device detection
-- `isLandscape()` - Orientation detection
-- Headphone type detection
-
-### [iOS-Specific Features](/api/device-info#ios-specific-features)
-
-iOS-exclusive functionality:
-- `isDisplayZoomed()` - Display Zoom setting
-- `getBrightness()` - Screen brightness
-- `getDeviceToken()` - DeviceCheck token
-- `syncUniqueId()` - iCloud Keychain sync
-
-### [Device Integrity & Attestation](/api/device-integrity)
-
-Two complementary layers:
-- [**Device Integrity (local)**](/api/device-integrity) — `isDeviceCompromised()`,
-  `verifyDeviceIntegrity()`. Instant, offline root/jailbreak heuristics. Bypassable.
-- [**Device Attestation**](/api/device-attestation) — opt-in
-  `react-native-nitro-device-integrity` package. Hardware-backed, server-verified
-  Play Integrity (Android) and App Attest / DeviceCheck (iOS).
-
-## API Characteristics
-
-### Synchronous vs Asynchronous
-
-**Synchronous (<1ms)**:
-- Core device properties
-- Device identification
-- System resources (memory, disk)
-- Battery information
-- Application metadata
-
-**Asynchronous (10-100ms)**:
-- Network information (IP, MAC, carrier)
-- Location services status
-- Installation timestamps
-- Some connectivity checks
-
-**Very Slow (500-2000ms)**:
-- `getUserAgent()` on iOS (first call)
-- `getDeviceToken()` on iOS
-
-### Performance Tips
-
-1. **Use synchronous methods** when available - they return instantly
-2. **Cache async results** for values that don't change frequently
-3. **Batch async calls** using `Promise.all()` for parallel execution
-4. **Use sync variants** for cached network values (`ipAddressSync`, `carrierSync`)
-
-## Type Definitions
-
-The library includes full TypeScript definitions. See [Type Definitions](/api/types) for detailed information about:
-- `PowerState` - Battery and power state
-- `BatteryState` - Battery charging status
-- `DeviceType` - Device category types
-
-## Migration Guide
-
-If you're migrating from `react-native-device-info`, check out the [Migration Guide](/api/migration) for:
-- API compatibility overview
-- Key differences
-- Migration examples
-- Breaking changes
-
-## Platform Compatibility
-
-Most APIs work on both iOS and Android, with some platform-specific features:
-
-- **iOS-only**: `hasNotch()`, `hasDynamicIsland()`, `getBrightness()`, `getDeviceToken()`
-- **Android-only**: `getApiLevel()`, Android Build info, `hasGms()`, `hasSystemFeature()`
-
-See the [DeviceInfo Module](/api/device-info) page for detailed platform compatibility information.
-
-## Next Steps
-
-- Explore the [Complete API Reference](/api/device-info)
-- Check out [Type Definitions](/api/types)
-- Read the [Migration Guide](/api/migration)
-- View [Examples](/examples/basic-usage)
+The current website follows the repository's `main` branch. For an older installed release, check that release's declarations. The signature source is [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts); native implementations define platform behavior.

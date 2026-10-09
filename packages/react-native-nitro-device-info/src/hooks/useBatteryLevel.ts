@@ -1,7 +1,7 @@
 /**
  * useBatteryLevel Hook
  *
- * Monitor battery level changes in real-time.
+ * Monitor battery level changes by polling every five seconds.
  *
  * @module react-native-nitro-device-info/hooks
  */
@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { DeviceInfoModule } from '../index';
 
 /**
- * Monitor battery level changes in real-time.
+ * Monitor battery level changes by polling every five seconds.
  *
  * Returns the current battery level as a number between 0.0 and 1.0.
  * The value updates automatically when the battery level changes.

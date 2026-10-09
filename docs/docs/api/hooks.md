@@ -1,6 +1,8 @@
 # React Hooks
 
-React hooks for monitoring runtime device properties. These hooks provide reactive access to device state, automatically re-rendering your components when values change.
+React hooks for monitoring runtime device properties. They poll native getters and re-render when a sampled value changes. See [update intervals and initial values](/guide/react-hooks#update-intervals-and-initial-values).
+
+This page documents root exports. Headphone hooks from `/compat` return `{ loading, result }` instead of `boolean`.
 
 ## Import
 
@@ -22,7 +24,7 @@ import {
 
 ### `useBatteryLevel()`
 
-Monitor battery level changes in real-time.
+Read battery level after mount and poll every five seconds.
 
 ```typescript
 function useBatteryLevel(): number | null
@@ -122,10 +124,13 @@ import { usePowerState } from 'react-native-nitro-device-info';
 
 function PowerStatus() {
   const powerState = usePowerState();
+  const level = powerState.batteryLevel;
 
   return (
     <View>
-      <Text>Level: {Math.round((powerState.batteryLevel ?? 0) * 100)}%</Text>
+      <Text>Level: {level === undefined || level < 0
+        ? 'Loading or unavailable'
+        : Math.round(level * 100) + '%'}</Text>
       <Text>Status: {powerState.batteryState ?? 'unknown'}</Text>
       <Text>Low Power: {powerState.lowPowerMode ? 'Yes' : 'No'}</Text>
     </View>
@@ -343,14 +348,14 @@ function BrightnessControl() {
 
 ## Migration from react-native-device-info
 
-These hooks are designed to be drop-in replacements:
+For migration that preserves `react-native-device-info` hook result shapes, use `/compat`:
 
 ```tsx
 // Before (react-native-device-info)
 import { useBatteryLevel } from 'react-native-device-info';
 
-// After (react-native-nitro-device-info)
-import { useBatteryLevel } from 'react-native-nitro-device-info';
+// After (compatibility entry point)
+import { useBatteryLevel } from 'react-native-nitro-device-info/compat';
 
 // Usage remains identical
 const batteryLevel = useBatteryLevel();

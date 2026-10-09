@@ -46,8 +46,7 @@ yarn add react-native-nitro-device-integrity react-native-nitro-modules
 cd ios && pod install
 ```
 
-Requirements: iOS 14.0+ (App Attest) / 11.0+ (DeviceCheck), Android API 23+ with
-Google Play Services.
+The package sets iOS 14.0+ and Android API 24+ as native minimums. Its Nitro and React Native dependencies can raise these minimums. Play Integrity requires Google Play Services. DeviceCheck exists from iOS 11, but this package does not support installing on iOS 11.
 
 ## API Reference
 

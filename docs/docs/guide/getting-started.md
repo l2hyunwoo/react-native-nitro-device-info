@@ -6,10 +6,12 @@ This guide will help you install and configure `react-native-nitro-device-info` 
 
 Before installing, ensure your project meets these requirements:
 
-- **React Native**: 0.68 or higher (New Architecture support)
-- **iOS**: Deployment target 13.4 or higher
+- **React Native**: Use a version supported by your installed Nitro runtime. The repository examples use React Native 0.85.3; this does not establish a minimum supported version.
+- **iOS**: Deployment target 15.1 or higher
 - **Android**: minSdkVersion 24 or higher (Android 7.0 Nougat)
-- **Node.js**: 22.11.0 or higher
+- **Node.js**: Follow your React Native toolchain requirements. Repository development uses Node.js 22.
+
+The iOS and Android values above are this library’s native build settings. React Native or Nitro can require a higher minimum.
 
 ## Installation
 
@@ -38,7 +40,7 @@ After installation, install the CocoaPods dependencies:
 cd ios && pod install && cd ..
 ```
 
-That's it! The iOS setup is complete.
+Rebuild the iOS app after installing the pods. Restarting Metro alone does not install native code.
 
 ### iOS Privacy Manifest
 
@@ -62,9 +64,11 @@ After building or archiving the iOS app, verify that the app contains `NitroDevi
 
 ### Android Configuration
 
-No additional configuration needed! Gradle auto-linking handles everything automatically.
+Gradle autolinking registers the library when you rebuild your Android app. Permission-dependent APIs can still require configuration; see [Expo Setup](/guide/expo-setup).
 
-The library will be automatically linked when you build your Android app.
+### Expo apps
+
+Use a development build or EAS Build. Expo Go does not include this native module. Follow [Expo Setup](/guide/expo-setup) for installation, native configuration, and rebuilding.
 
 ## Verify Installation
 

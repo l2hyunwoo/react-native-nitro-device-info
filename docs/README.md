@@ -1,156 +1,70 @@
 # Documentation Development
 
-This directory contains the RSPress documentation site for react-native-nitro-device-info.
+The site uses `@rspress/core` 2.x. `docs/yarn.lock` pins the version used by CI.
 
-## Quick Start
+## Run locally
 
-### Prerequisites
-
-- Node.js 22 or higher
-- Yarn package manager
-
-### Installation
+From the repository root:
 
 ```bash
-# Install dependencies
-yarn install
-```
-
-### Development
-
-```bash
-# Start development server (with hot reload)
+cd docs
+yarn install --immutable
 yarn dev
 ```
 
-The site will be available at http://localhost:5173/
-
-### Build
+Use the URL printed by Rspress. The site base path is `/react-native-nitro-device-info/`.
 
 ```bash
-# Build for production
+# From docs/
 yarn build
-```
-
-Build output will be in `.rspress/dist/`
-
-### Preview
-
-```bash
-# Preview production build locally
 yarn preview
 ```
 
-## Project Structure
+Production output is `docs/doc_build/`, relative to the repository root. Do not edit build output or remove the lockfile to resolve build errors.
 
-```
+## Source layout
+
+```text
 docs/
-├── index.md                    # Homepage
-├── guide/                      # Guide sections
-│   ├── introduction.md
-│   ├── why-nitro-module.md
-│   ├── getting-started.md
-│   └── quick-start.md
-├── api/                        # API Reference
-│   ├── index.md
-│   ├── device-info.md
-│   ├── types.md
-│   └── migration.md
-├── examples/                   # Usage examples
-│   ├── basic-usage.md
-│   └── advanced-usage.md
-├── contributing/               # Contributing guides
-│   └── documentation.md
-├── i18n/ko/                    # Korean translations
-│   └── [mirrors structure above]
-├── .rspress/
-│   └── config.ts               # Site configuration
-├── public/                     # Static assets
-└── package.json
+├── rspress.config.ts         # Site settings, navigation, sidebar, llms output
+├── package.json
+├── yarn.lock                 # Docs have their own dependency installation
+└── docs/                     # Content root
+    ├── index.md              # Homepage
+    ├── guide/
+    ├── api/
+    ├── examples/
+    ├── contributing/
+    └── public/               # Shared static assets
 ```
 
-## Writing Documentation
+There is currently no Korean site locale. See [the Korean documentation plan](I18N_PLAN.ko.md) for the proposed layout and rollout.
 
-### Creating a New Page
+## Edit and verify
 
-1. Create a markdown file in the appropriate directory
-2. Add frontmatter with title and description
-3. Write content using markdown
-4. Update navigation in `.rspress/config.ts` if needed
+1. Edit the relevant Markdown page in `docs/docs/`.
+2. For a new page, update both navigation and sidebar in `rspress.config.ts`.
+3. Match API examples against the source interface and platform implementations. Update the English and Korean READMEs when relevant.
+4. Run `yarn build`, then `yarn preview`.
+5. Check changed routes, heading links, search results, and examples.
 
-### Adding Code Examples
+The website follows `main`; installed releases can differ. Keep property access, synchronous methods, Promise methods, and `/compat` imports distinct. Do not maintain a second copy of the full TypeScript interface in Markdown.
 
-Use fenced code blocks with language tags:
+`llms: true` enables Rspress's built-in page Markdown, `llms.txt`, and `llms-full.txt` output. Verify these files under `doc_build/` after building.
 
-````markdown
-```typescript
-import { DeviceInfoModule } from 'react-native-nitro-device-info';
+## MCP corpus
 
-const deviceId = DeviceInfoModule.deviceId;
-console.log(deviceId); // "iPhone14,2"
-```
-````
-
-### Adding Images
-
-Place images in `public/` directory and reference them:
-
-```markdown
-![Description](/image-name.png)
-```
-
-## Troubleshooting
-
-### Port Already in Use
-
-If port 5173 is already in use:
+The MCP package bundles the API specs, site Markdown, and root README at build time. After changing source documentation, rebuild it from the repository root:
 
 ```bash
-# Kill the process
-lsof -ti:5173 | xargs kill -9
-
-# Or use a different port
-yarn dev --port 5174
+yarn workspace @react-native-nitro-device-info/mcp-server build
+yarn workspace @react-native-nitro-device-info/mcp-server test --runInBand
 ```
 
-### Build Fails
-
-1. Delete node_modules and reinstall:
-   ```bash
-   rm -rf node_modules yarn.lock
-   yarn install
-   ```
-
-2. Clear RSPress cache:
-   ```bash
-   rm -rf .rspress/dist .rspress/.cache
-   yarn build
-   ```
+Its documentation is a release snapshot, not a live fetch from this website. A documentation deployment does not update an already published MCP package.
 
 ## Deployment
 
-Documentation is automatically deployed to GitHub Pages when changes are merged to the main branch.
+The workflows are `.github/workflows/docs-validation.yml` and `.github/workflows/docs-deploy.yml`. They install with `yarn install --immutable`, build the site, and use `docs/doc_build/`.
 
-### Automated Workflows
-
-Two GitHub Actions workflows handle documentation deployment:
-
-1. **PR Validation** (`.github/workflows/docs-validation.yml`)
-   - Triggers on PRs that modify `docs/**`
-   - Builds documentation to verify no errors
-   - Uploads build artifacts for review
-
-2. **Production Deploy** (`.github/workflows/docs-deploy.yml`)
-   - Triggers on push to `main` branch with `docs/**` changes
-   - Builds documentation
-   - Deploys to GitHub Pages at: https://l2hyunwoo.github.io/react-native-nitro-device-info/
-
-### Manual Deployment
-
-To manually trigger a deployment, push changes to the main branch:
-
-```bash
-git push origin main
-```
-
-For detailed deployment documentation, see [Contributing > Documentation](docs/contributing/documentation.md).
+Merging documentation changes to `main` triggers deployment. For a failed deployment, inspect the GitHub Actions logs before changing dependencies or rebuilding locally.

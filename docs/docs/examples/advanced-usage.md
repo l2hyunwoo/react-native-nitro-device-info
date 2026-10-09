@@ -95,7 +95,7 @@ async function getIOSDetails() {
     // DeviceCheck Token (async, requires network)
     deviceToken: await DeviceInfoModule.getDeviceToken().catch(() => null),
 
-    // Unique ID with iCloud Keychain Sync
+    // Write the current IDFV to the local app-specific Keychain item
     syncedUniqueId: await DeviceInfoModule.syncUniqueId(),
   };
 }

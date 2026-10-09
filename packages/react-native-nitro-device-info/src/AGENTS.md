@@ -37,7 +37,7 @@ TypeScript source code for the library. Contains the Nitro interface contract (s
 - Sync property: `readonly propertyName: string`
 - Async method: `methodName(): Promise<string>`
 - Platform-specific: annotated with `@platform ios` or `@platform android` JSDoc
-- Enums: `export enum BatteryState { UNKNOWN, UNPLUGGED, CHARGING, FULL }`
+- Union types: `export type BatteryState = 'unknown' | 'unplugged' | 'charging' | 'full'`
 - Objects: `export interface PowerState { batteryLevel: number; ... }`
 
 ## Dependencies

@@ -2,7 +2,7 @@
 
 If you use Expo with [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/) (`expo prebuild` / dev client), `react-native-nitro-device-info` ships **config plugins** so you can adopt it without editing `ios/` or `android/` by hand.
 
-The library is a Nitro module, so it requires the **New Architecture**. New Architecture is enabled by default on Expo SDK 52 and later, so no extra step is needed there.
+Use an [Expo development build](https://docs.expo.dev/develop/development-builds/introduction/) or EAS Build. Expo Go does not include this native module. Choose React Native and Nitro versions compatible with your Expo SDK.
 
 ## Install
 
@@ -31,19 +31,21 @@ A few APIs read native capabilities that require a permission or an entitlement.
 }
 ```
 
-Then regenerate the native projects:
+If Expo manages your native directories, regenerate them after changing plugin options. `--clean` deletes and recreates `ios/` and `android/`; preserve manual native changes first:
 
 ```bash
 npx expo prebuild --clean
 ```
 
+Rebuild and install the native app after prebuild, using `npx expo run:ios`, `npx expo run:android`, or EAS Build. Restarting the JavaScript server alone does not apply native changes.
+
 ### Plugin options
 
 | Option | Default | Effect |
 | --- | --- | --- |
-| `enableSerialNumber` | `false` | Adds the Android `READ_PHONE_STATE` permission so `serialNumber` returns the real serial on Android 8.0+. Without it, `serialNumber` returns `"unknown"`. |
+| `enableSerialNumber` | `false` | Declares Android `READ_PHONE_STATE`. Your app must request runtime permission separately. Android 10+ restricts serial access further, so ordinary apps generally receive `"unknown"` even after granting it. |
 
-`READ_PHONE_STATE` is a sensitive permission. Enable it only if you read `serialNumber`, and declare it in your Play Console Data Safety form.
+The plugin only declares the permission; it does not request it at runtime or bypass [Android serial-number restrictions](https://developer.android.com/reference/android/os/Build#getSerial()). The library caches `serialNumber` on first access, so request any required permission before reading it.
 
 ### What is NOT injected (by design)
 

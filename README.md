@@ -47,6 +47,8 @@ No additional configuration needed! Gradle auto-linking handles everything.
 
 ### Expo (prebuild / dev client)
 
+Use an Expo development build; Expo Go does not include this native module. Rebuild the app after installation or native configuration changes.
+
 ```sh
 npx expo install react-native-nitro-device-info react-native-nitro-modules
 ```
@@ -67,18 +69,23 @@ Then run `npx expo prebuild --clean`. See the [Expo Setup guide](https://l2hyunw
 
 ## Quick Start
 
+The root export uses native properties and methods. To keep `react-native-device-info` 15.x-style function calls, use `react-native-nitro-device-info/compat`. Review the [migration caveats](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/migration#compat-layer-caveats).
+
+Synchronous calls do not guarantee a particular latency. Battery getters return `-1` when unavailable; battery hooks return `null`. Use [React hooks](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/react-hooks) for changing values.
+
+
 ### Basic Usage
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-// Synchronous properties (immediate - <1ms)
+// Synchronous properties
 console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
 console.log(DeviceInfoModule.model); // "iPhone 13 Pro"
 
-// Synchronous properties (immediate - <1ms)
+// Synchronous properties
 const uniqueId = DeviceInfoModule.uniqueId;
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
@@ -92,7 +99,7 @@ console.log(isTablet); // false
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 console.log(`Battery: ${batteryLevel >= 0 ? `${(batteryLevel * 100).toFixed(0)}%` : 'unavailable'}`); // "Battery: 85%"
 
-// Asynchronous methods (Promise-based - <100ms)
+// Asynchronous methods (use inside an async function)
 const ipAddress = await DeviceInfoModule.getIpAddress();
 console.log(ipAddress); // "192.168.1.100"
 
@@ -190,11 +197,11 @@ Android headphone detection distinguishes wired/USB headsets (USB on API 26+) fr
 
 ## API Reference
 
-For complete API documentation with all 100+ methods and properties, see **[API-REFERENCE.md](API-REFERENCE.md)**.
+For complete API documentation with all 100+ methods and properties, see **[API Reference (English)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/)**.
 
 ### Quick Reference
 
-#### Core Properties (Synchronous - <1ms)
+#### Core Properties (Synchronous)
 
 ```typescript
 DeviceInfoModule.deviceId; // "iPhone14,2"
@@ -222,15 +229,15 @@ DeviceInfoModule.bundleId; // Sync
 DeviceInfoModule.isSideLoadingEnabled(); // Sync - check sideloading permission
 
 // Network (Async methods)
-await DeviceInfoModule.getIpAddress(); // ~20-50ms
-await DeviceInfoModule.getCarrier(); // ~20-50ms
+await DeviceInfoModule.getIpAddress(); // Promise<string>
+await DeviceInfoModule.getCarrier(); // Promise<string>
 ```
 
-For the complete list of all methods, properties, and detailed documentation, see **[API-REFERENCE.md](API-REFERENCE.md)**.
+For the complete list of all methods, properties, and detailed documentation, see **[API Reference (English)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/)**.
 
 ## Type Definitions
 
-The library includes full TypeScript definitions. For complete type documentation, see [API-REFERENCE.md](API-REFERENCE.md#type-definitions).
+The library includes full TypeScript definitions. For complete type documentation, see [Type Definitions (English)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/types).
 
 ```typescript
 import type {
@@ -243,10 +250,7 @@ import type {
 
 ## Migration from react-native-device-info
 
-`react-native-nitro-device-info` is a **drop-in replacement** for `react-native-device-info` (RNDI).
-A bundled compatibility layer exposes RNDI's exact API surface — same function names, signatures,
-default `DeviceInfo` object, and hooks — so you migrate by rewriting imports only. **Your call sites
-stay unchanged.**
+Use the bundled `/compat` entry point to migrate `react-native-device-info` (RNDI) 15.x imports. It adapts function signatures and hook result shapes so call sites can stay unchanged. Platform behavior can differ, and some APIs return placeholders. Review the [compatibility caveats](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/migration#compat-layer-caveats) and test the APIs your app uses.
 
 ```bash
 # 1. Install
@@ -273,7 +277,7 @@ import DeviceInfo from 'react-native-nitro-device-info/compat';
 import { getModel, useBatteryLevel } from 'react-native-nitro-device-info/compat';
 ```
 
-The compat layer covers the entire RNDI surface; a handful of deprecated/unavailable APIs return
+The compat layer targets RNDI 15.x; a handful of deprecated/unavailable APIs return
 documented placeholder values. Want maximum performance? The native API (`DeviceInfoModule`) offers
 direct property access and synchronous getters. See the
 [Migration Guide](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/migration) for the
@@ -427,7 +431,7 @@ For complete MCP server documentation, see [packages/mcp-server/README.md](packa
 
 ## Platform Support
 
-- **iOS**: 13.4+
+- **iOS**: 15.1+
 - **Android**: API 24+ (Android 7.0 Nougat)
 - **Web**: import-safe fallback (see below)
 

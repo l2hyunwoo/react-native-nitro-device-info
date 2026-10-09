@@ -4,7 +4,7 @@ This guide shows how to use React hooks for monitoring runtime device properties
 
 ## Overview
 
-React hooks provide a declarative way to subscribe to device state changes. Instead of manually managing event listeners and cleanup, hooks handle all the complexity for you.
+React hooks read device getters after mount and poll for updates. They clear their timers when the component unmounts. These hooks do not subscribe to native events or guarantee immediate notifications.
 
 **Benefits**:
 - Automatic cleanup on component unmount
@@ -18,14 +18,28 @@ The hooks are included with `react-native-nitro-device-info`:
 
 ```bash
 # npm
-npm install react-native-nitro-device-info
+npm install react-native-nitro-device-info react-native-nitro-modules
 
 # yarn
-yarn add react-native-nitro-device-info
+yarn add react-native-nitro-device-info react-native-nitro-modules
 
 # Don't forget pod install for iOS
 cd ios && pod install
 ```
+
+## Update intervals and initial values
+
+| Root hook | Poll interval | Initial or unavailable value |
+| --- | --- | --- |
+| `useBatteryLevel()` | 5 seconds | `null` |
+| `useBatteryLevelIsLow()` | 2 seconds | `null`; also returned when the battery is not low |
+| `usePowerState()` | 5 seconds | Initially `{}`; `batteryLevel` can be `-1` |
+| Headphone hooks | 1 second | Initially `false` |
+| `useBrightness()` | 500 milliseconds | Initially `null`; `-1` on Android |
+
+Timers depend on JavaScript scheduling and can be delayed in the background. A hook does not report a change at the exact moment it occurs.
+
+The examples use root imports. Headphone hooks from `/compat` instead return `{ loading, result }`; see the [Migration Guide](/api/migration).
 
 ## Quick Examples
 
@@ -46,7 +60,7 @@ function BatteryWidget() {
       <Text style={styles.value}>
         {batteryLevel !== null
           ? `${Math.round(batteryLevel * 100)}%`
-          : 'Loading...'}
+          : 'Loading or unavailable'}
       </Text>
       <Text style={styles.status}>
         {powerState.batteryState === 'charging' ? '⚡ Charging' : '🔋 On Battery'}

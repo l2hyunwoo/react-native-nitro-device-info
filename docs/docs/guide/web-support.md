@@ -30,10 +30,7 @@ common web toolchains:
   `"browser"` condition that points at the web build, which webpack honors for
   `target: 'web'`.
 
-On the server during SSR, the native entry is also import-safe: the native
-HybridObject is created **lazily** (on first property access, not at module
-load), so merely importing the package never throws — and during server render no
-property is read, so the native binding is never touched.
+If a server bundler selects the native entry, its HybridObject is created lazily on first property access. Importing that entry does not create a HybridObject. Reading `DeviceInfoModule.model`, calling a method, or calling `createDeviceInfo()` still requires native bindings and can throw on the server.
 
 ## What is real vs. fallback
 
@@ -86,8 +83,8 @@ Android.
 
 ## SSR notes
 
-Every browser global is read through a `typeof` guard, and the native singleton
-is lazy, so importing the package and reading any member on a server never
-throws. Browser-derived values (battery, screen, `navigator`) naturally fall back
-to constants on the server, then reflect real values once the app runs in the
-browser.
+The web implementation guards browser globals and can return fallback values during server rendering. This applies only when your server bundle selects the web implementation.
+
+If the server selects the native entry, keep device reads in client-only code, such as a `useEffect`. React renders component bodies on the server; a property read in the component body can therefore trigger native initialization. Check your framework’s server resolver before reading device values during SSR.
+
+Server and browser values can differ. Render a stable loading state first if browser-derived values would otherwise cause a hydration mismatch.

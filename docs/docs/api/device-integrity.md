@@ -166,5 +166,5 @@ function DeviceAuthenticationLogin() {
 ## See Also
 
 - [Device Attestation](/api/device-attestation)
-- [isEmulator](/api/device-info#isemulator)
-- [isPinOrFingerprintSet](/api/device-info#ispinorfingerprintset)
+- [isEmulator](/api/device-info#isemulator-boolean)
+- [isPinOrFingerprintSet](/api/device-info#ispinorfingerprintset-boolean)

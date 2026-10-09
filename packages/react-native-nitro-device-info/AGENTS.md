@@ -4,7 +4,7 @@
 # react-native-nitro-device-info (Main Library)
 
 ## Purpose
-Core library package published as `react-native-nitro-device-info@1.5.1`. Provides 80+ device information properties via Nitro's zero-overhead JSI bindings with native implementations in Swift (iOS) and Kotlin (Android).
+Core library package published as `react-native-nitro-device-info` (version in package.json). Provides 80+ device information properties via Nitro's zero-overhead JSI bindings with native implementations in Swift (iOS) and Kotlin (Android).
 
 ## Key Files
 
@@ -39,7 +39,7 @@ Core library package published as `react-native-nitro-device-info@1.5.1`. Provid
 ### Testing Requirements
 - `yarn typecheck` must pass
 - Test on both iOS and Android platforms
-- Verify sync properties return in <1ms, async methods in <100ms
+- Verify return values and platform fallbacks. Measure latency for performance claims; sync and Promise types do not define timing guarantees.
 
 ### Common Patterns
 - Sync properties: `readonly prop: string` in .nitro.ts

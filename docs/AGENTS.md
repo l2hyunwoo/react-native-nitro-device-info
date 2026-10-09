@@ -11,7 +11,7 @@ Rspress-based documentation website for react-native-nitro-device-info. Deployed
 | File | Description |
 |------|-------------|
 | `rspress.config.ts` | Rspress configuration (nav, sidebar, search, theme, plugins) |
-| `package.json` | Dependencies (rspress ^1.40.2), scripts (dev, build, preview) |
+| `package.json` | Dependencies (@rspress/core ^2.0.23), scripts (dev, build, preview) |
 | `tsconfig.json` | TypeScript configuration for docs build |
 
 ## Subdirectories
@@ -37,7 +37,7 @@ Rspress-based documentation website for react-native-nitro-device-info. Deployed
 ### Common Patterns
 - Code blocks: ```typescript, ```bash, ```kotlin, ```swift
 - Cross-references using relative paths
-- Container syntax plugin for callouts, warnings, tips
+- Built-in container syntax for callouts, warnings, tips
 
 ## Dependencies
 
@@ -45,7 +45,6 @@ Rspress-based documentation website for react-native-nitro-device-info. Deployed
 - Documents API from `packages/react-native-nitro-device-info/`
 
 ### External
-- `rspress@^1.40.2` - Static site generator
-- `@rspress/plugin-container-syntax@^1.45.8` - Markdown container plugin
+- `@rspress/core@^2.0.23` - Static site generator
 
 <!-- MANUAL: -->
