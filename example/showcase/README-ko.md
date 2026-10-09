@@ -63,7 +63,7 @@ yarn android  # Android
 
 iOS의 `pod install`은 빌드한 앱에 `NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy`를 포함합니다. Showcase의 앱 수준 매니페스트는 별도로 유지합니다. 선언한 사유와 사용 제한은 [iOS 개인정보 보호 매니페스트](../../docs/docs/ko/guide/getting-started.md#ios-privacy-manifest)를 참고하세요.
 
-라이브러리는 iOS 가동 시간을 앱 이벤트와 타이머에만 지원하므로 iOS 속성 목록에서 원시 가동 시간을 제외합니다. [경과 시간 예제](../../docs/docs/ko/api/device-info.md#getuptime-number)를 참고하세요.
+라이브러리는 앱 이벤트의 시간 측정과 타이머에만 iOS 가동 시간 조회를 지원합니다. 그래서 iOS 속성 목록에서 원시 가동 시간을 제외합니다. [경과 시간 예제](../../docs/docs/ko/api/device-info.md#getuptime-number)를 참고하세요.
 
 ## 사용법
 
@@ -82,8 +82,8 @@ iOS의 `pod install`은 빌드한 앱에 `NitroDeviceInfo_privacy.bundle/Privacy
 - **타입 검사**: 전체 컴포넌트에 TypeScript 사용
 - **오류 격리**: 개별 속성 오류가 앱을 종료하지 않도록 처리
 
-웹 배터리 getter는 첫 요청 이행 후 BatteryManager의 현재 값을 읽습니다. 잔량이나 충전 상태가 바뀌면 표시한 속성을 새로고침하세요. 미지원·접근 거부 시 대체 값을 유지합니다.
+웹 배터리 getter는 첫 요청이 resolve된 뒤 받아 둔 BatteryManager 객체에서 현재 값을 읽습니다. 잔량이나 충전 상태가 바뀌면 표시한 속성을 새로고침하세요. 미지원·접근 거부 시 fallback 값을 유지합니다.
 
-읽을 수 없는 배터리 잔량은 `-1`, `useBatteryLevel()`은 `null`입니다. 조회 불가 값을 배터리 부족으로 판단하지 않습니다.
+배터리 잔량을 읽을 수 없으면 getter는 `-1`, `useBatteryLevel()`은 `null`을 반환합니다. 조회 불가 값을 배터리 부족으로 판단하지 않습니다.
 
 브라우저는 오프라인에서도 비행기 모드를 판단할 수 없으므로 웹의 `getIsAirplaneMode()`는 항상 `false`입니다.

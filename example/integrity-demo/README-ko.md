@@ -2,16 +2,16 @@
 
 [English](README.md) | **한국어**
 
-선택적 하드웨어 기반 기기 증명 패키지 [`react-native-nitro-device-integrity`](../../packages/react-native-nitro-device-integrity/README-ko.md)의 예제입니다. Android는 Play Integrity, iOS는 App Attest + DeviceCheck를 사용합니다.
+선택적으로 설치하는 하드웨어 기반 device attestation 패키지 [`react-native-nitro-device-integrity`](../../packages/react-native-nitro-device-integrity/README-ko.md)의 예제입니다. Android는 Play Integrity, iOS는 App Attest + DeviceCheck를 사용합니다.
 
-앱은 기기 증명 토큰을 **발급**하고 일부를 화면에 표시합니다. 검증은 서버의 책임입니다. [패키지 README](../../packages/react-native-nitro-device-integrity/README-ko.md)의 서버 검증 안내를 참고하세요.
+앱은 device attestation 토큰을 **발급**하고 일부를 화면에 표시합니다. 발급한 토큰은 서버에서 검증해야 합니다. [패키지 README](../../packages/react-native-nitro-device-integrity/README-ko.md)의 서버 검증 안내를 참고하세요.
 
 ## 표시하는 기능
 
 - 현재 기기의 `providerType` / `isSupported`
 - **Android**: Cloud 프로젝트 번호 입력 → *Prepare provider* → *Request integrity token*(Play Integrity Standard)
 - **iOS**: *Generate key* → *Attest key* → *Generate assertion*(App Attest), 별도 *DeviceCheck token* 버튼
-- iOS 시뮬레이터처럼 기기나 설정을 지원하지 않을 때의 오류
+- 기기나 설정이 지원 조건을 충족하지 않을 때의 오류(iOS 시뮬레이터 등)
 
 `clientDataHash` / `requestHash`는 자체 SHA-256 구현(`src/utils/hash.ts`)으로 앱 안에서 계산합니다. 네이티브 암호화 의존성은 없습니다.
 
@@ -36,7 +36,7 @@ yarn android
 
 ## 실제 토큰에 필요한 설정
 
-제공자를 설정해야 실제 토큰을 반환합니다. 설정하지 않으면 버튼이 설명이 있는 오류로 거부됩니다.
+provider를 설정해야 실제 토큰을 받을 수 있습니다. 설정하지 않은 채 버튼을 누르면 요청이 실패하고 원인을 설명하는 오류가 표시됩니다.
 
 ### iOS(App Attest)
 

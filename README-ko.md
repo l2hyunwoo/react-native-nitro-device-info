@@ -18,7 +18,7 @@
 - 🚀 **JSI 바인딩**: JavaScript와 네이티브 코드의 직접 통신
 - 📱 **100개 이상의 기기 속성**: 기기 정보와 시스템 상태 조회
 - 📦 **TypeScript 지원**: 전체 타입 정의 포함
-- 🔄 **호환 계층**: `react-native-device-info`용 `/compat`과 codemod, `expo-device`에 익숙한 API 제공
+- 🔄 **호환 계층**: `react-native-device-info`용 `/compat`과 codemod, `expo-device` 사용자가 익숙하게 쓸 수 있는 API 제공
 
 ## 설치
 
@@ -41,7 +41,7 @@ pnpm add react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
-Pod는 `PrivacyInfo.xcprivacy`를 `NitroDeviceInfo_privacy.bundle`에 포함합니다. Expo prebuild / EAS Build에서도 같습니다. 개인정보 보호 전용 config plugin 옵션은 필요하지 않습니다. 선언한 API 사유와 사용 제한은 [iOS 개인정보 보호 매니페스트](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/getting-started#ios-privacy-manifest)를 참고하세요.
+Pod는 `PrivacyInfo.xcprivacy`를 `NitroDeviceInfo_privacy.bundle`에 포함합니다. Expo prebuild / EAS Build에도 같은 번들이 포함됩니다. 개인정보 보호 전용 config plugin 옵션은 필요하지 않습니다. 선언한 API 사유와 사용 제한은 [iOS 개인정보 보호 매니페스트](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/getting-started#ios-privacy-manifest)를 참고하세요.
 
 ### Android 설정
 
@@ -67,11 +67,11 @@ npx expo install react-native-nitro-device-info react-native-nitro-modules
 }
 ```
 
-수동으로 바꾼 네이티브 코드를 먼저 보존한 뒤 `npx expo prebuild --clean`을 실행하세요. 이 명령은 `ios/`와 `android/`를 삭제하고 다시 만듭니다. 전체 옵션, 기기 증명 plugin, `isSideLoadingEnabled()` 주의 사항은 [Expo 설정](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/expo-setup)을 참고하세요.
+수동으로 바꾼 네이티브 코드를 먼저 보존한 뒤 `npx expo prebuild --clean`을 실행하세요. 이 명령은 `ios/`와 `android/`를 삭제하고 다시 만듭니다. 전체 옵션, 서버 검증용 device attestation plugin, `isSideLoadingEnabled()` 주의 사항은 [Expo 설정](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/expo-setup)을 참고하세요.
 
 ## 빠른 시작
 
-루트 내보내기는 네이티브 속성과 메서드를 사용합니다. `react-native-device-info` 15.x 형식의 함수 호출을 유지하려면 `react-native-nitro-device-info/compat`을 사용하세요. [마이그레이션 주의 사항](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/migration#compat-layer-caveats)을 확인하세요.
+패키지 루트에서 export하는 네이티브 API를 사용할 때는 속성을 직접 읽거나 메서드를 호출합니다. `react-native-device-info` 15.x 형식의 함수 호출을 유지하려면 `react-native-nitro-device-info/compat`을 사용하세요. [마이그레이션 주의 사항](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/migration#compat-layer-caveats)을 확인하세요.
 
 동기 호출은 특정 지연 시간을 보장하지 않습니다. 배터리 값을 읽을 수 없으면 getter는 `-1`, 훅은 `null`을 반환합니다. 바뀌는 값에는 [React 훅](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/react-hooks)을 사용하세요.
 
@@ -189,13 +189,13 @@ Android MAC 주소 getter는 5초 캐시를 공유하며 접근이 제한되거�
 
 Android 헤드폰 감지는 유선·USB 헤드셋(API 26 이상 USB 지원)과 Bluetooth를 구별합니다. 비동기·동기 getter가 같은 감지를 사용합니다.
 
-> **서버에서 검증하는 기기 증명이 필요한가요?** 위 로컬 검사는 우회할 수 있습니다. 하드웨어 기반의 서버 검증(Play Integrity / App Attest / DeviceCheck)에는 선택 패키지 [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity/README-ko.md)를 사용하세요. 패키지가 발급한 토큰은 백엔드에서 검증해야 합니다. 이 패키지는 2026-10-10 기준 미배포 상태이며 npm 설치는 배포 후에 가능합니다.
+> **서버에서 검증하는 device attestation이 필요한가요?** 위 로컬 검사는 우회할 수 있습니다. 하드웨어 기반의 서버 검증(Play Integrity / App Attest / DeviceCheck)에는 선택 패키지 [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity/README-ko.md)를 사용하세요. 패키지가 발급한 토큰은 백엔드에서 검증해야 합니다. 이 패키지는 2026-10-10 기준 미배포 상태이며 npm 설치는 배포 후에 가능합니다.
 
 ## API 레퍼런스
 
 100개 이상의 메서드와 속성은 **[한국어 API 레퍼런스](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/)**에서 확인하세요.
 
-각 API 절은 도입 버전과 플랫폼 배지를 표시합니다. OS 최소 버전, 제한적 지원, 대체 값, 미배포 구현의 구별은 [배지 정의](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/#availability-badges)를 참고하세요.
+각 API 항목에는 도입 버전과 플랫폼 배지가 표시됩니다. OS 최소 버전, 제한적 지원, fallback 값, 미배포 구현을 구별하는 방법은 [배지 정의](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/#availability-badges)를 참고하세요.
 
 ### 빠른 참조
 
@@ -248,7 +248,7 @@ import type {
 
 ## react-native-device-info에서 마이그레이션
 
-포함된 `/compat` 진입점으로 `react-native-device-info`(RNDI) 15.x 가져오기를 바꿀 수 있습니다. 함수 시그니처와 훅 결과 형태를 맞춰 호출 코드를 유지합니다. 플랫폼 동작은 다를 수 있고 일부 API는 대체 값을 반환합니다. [호환성 주의 사항](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/migration#compat-layer-caveats)을 읽고 앱에서 쓰는 API를 테스트하세요.
+패키지에 포함된 `/compat`으로 `react-native-device-info`(RNDI) 15.x의 import 경로를 바꿀 수 있습니다. 함수 시그니처와 훅 결과 형태를 맞춰 기존 호출 코드를 유지할 수 있습니다. 플랫폼 동작은 다를 수 있고 일부 API는 fallback 값을 반환합니다. [호환성 주의 사항](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/migration#compat-layer-caveats)을 읽고 앱에서 쓰는 API를 테스트하세요.
 
 ```bash
 # 1. Install
@@ -262,7 +262,7 @@ npx react-native-nitro-device-info migrate
 npm uninstall react-native-device-info
 ```
 
-codemod가 모든 `react-native-device-info` 가져오기를 `react-native-nitro-device-info/compat`으로 바꿉니다.
+codemod가 모든 `react-native-device-info` import 경로를 `react-native-nitro-device-info/compat`으로 바꿉니다.
 
 ```typescript
 // Before
@@ -274,7 +274,7 @@ import DeviceInfo from 'react-native-nitro-device-info/compat';
 import { getModel, useBatteryLevel } from 'react-native-nitro-device-info/compat';
 ```
 
-호환 계층은 RNDI 15.x를 대상으로 합니다. 일부 사용 중단 예정·미지원 API는 문서에 명시한 대체 값을 반환합니다. 네이티브 API(`DeviceInfoModule`)는 직접 속성 접근과 동기 getter를 제공합니다. 전체 대응표, 주의 사항, 선택 가능한 네이티브 경로는 [마이그레이션 가이드](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/migration)를 참고하세요.
+호환 계층은 RNDI 15.x를 대상으로 합니다. 일부 사용 중단 예정·미지원 API는 문서에 명시한 fallback 값을 반환합니다. 네이티브 API(`DeviceInfoModule`)에서는 속성을 직접 읽거나 동기 getter를 호출할 수 있습니다. 전체 대응표, 주의 사항, 네이티브 API를 직접 사용하는 방법은 [마이그레이션 가이드](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/api/migration)를 참고하세요.
 
 ## 소개된 매체
 
@@ -329,7 +329,7 @@ yarn android          # Run on Android
 
 ### Integrity Demo 앱(`example/integrity-demo/`)
 
-선택 패키지 [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity/README-ko.md)의 예제입니다. 기기 증명 토큰(Play Integrity / App Attest / DeviceCheck)을 **발급**하고 화면에 표시합니다. 검증은 서버에서 담당합니다.
+선택 패키지 [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity/README-ko.md)의 예제입니다. device attestation 토큰(Play Integrity / App Attest / DeviceCheck)을 **발급**하고 화면에 표시합니다. 검증은 서버에서 담당합니다.
 
 **실행**:
 
@@ -418,13 +418,13 @@ MCP 패키지는 빌드 시점의 한국어·영어 문서 스냅샷을 포함�
 
 - **iOS**: 15.1 이상
 - **Android**: API 24 이상(Android 7.0 Nougat)
-- **웹**: 안전하게 가져올 수 있는 대체 구현(아래 참고)
+- **웹**: 안전하게 import할 수 있는 fallback 구현(아래 참고)
 
 React Native와 Nitro 의존성은 더 높은 최소 플랫폼 버전을 요구할 수 있습니다.
 
 ## 웹 지원
 
-Nitro는 JSI/네이티브 기술이므로 브라우저에는 네이티브 모듈이 없습니다. 이 패키지는 네이티브와 웹(react-native-web, Next.js SSR)을 함께 대상으로 하는 앱을 빌드할 수 있도록 순수 JavaScript 웹 대체 구현을 제공합니다. 번들러가 자동 선택하며 별도 설치나 가져오기 경로 변경은 필요하지 않습니다.
+Nitro는 JSI/네이티브 기술이므로 브라우저에는 네이티브 모듈이 없습니다. 이 패키지는 네이티브와 웹(react-native-web, Next.js SSR)을 함께 대상으로 하는 앱을 빌드할 수 있도록 순수 JavaScript 웹 fallback 구현을 제공합니다. 번들러가 자동으로 선택하며 별도 설치나 import 경로 변경은 필요하지 않습니다.
 
 ```ts
 // Same import on every platform.
@@ -437,7 +437,7 @@ console.log(DeviceInfoModule.deviceId);       // "unknown" — not available in 
 
 브라우저 API로 읽을 수 있으면 실제 값을 반환하고 나머지는 미지원 플랫폼용 상수(`"unknown"` / `-1` / `false` / `[]`)를 반환합니다. 실제 값처럼 보이는 데이터를 만들어 반환하지 않습니다.
 
-**브라우저 API에서 얻는 값(미지원 시 대체 값)**:
+**브라우저 API에서 얻는 값(미지원 시 fallback 값)**:
 
 | 멤버 | 출처 |
 | --- | --- |
@@ -447,12 +447,12 @@ console.log(DeviceInfoModule.deviceId);       // "unknown" — not available in 
 | `totalMemory` | `navigator.deviceMemory` × 1024³. 명세 구간에 따른 대략적인 값. 미지원 시 `-1` |
 | `getIsLandscape()` | `screen.width > screen.height` |
 | `getUserAgent()` | `navigator.userAgent` |
-| `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API(`navigator.getBattery()`)를 한 번 요청하고 getter는 살아 있는 BatteryManager를 읽음. API가 없거나 거부되면 `-1`/`unknown` |
+| `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API(`navigator.getBattery()`)를 한 번 요청해 얻은 BatteryManager 객체의 현재 값을 getter에서 읽음. API가 없거나 접근이 거부되면 `-1`/`unknown` |
 | `getIsAirplaneMode()` | `false`(브라우저에서 비행기 모드를 판단할 수 없음) |
 
-**웹에서 항상 대체 상수를 반환하는 항목**: Android `Build.*` 필드, 통신사/MNC/MCC, 디스크·사용 메모리, 헤드폰·위치·노치 검사, 무결성 검사(`isDeviceCompromised()` → `false`), 앱 메타데이터(`version`/`bundleId`/…), Windows 전용 필드입니다. Promise 메서드는 시그니처를 유지하고 대체 값으로 이행하며 거부하지 않습니다. 예외인 `getDeviceToken()`은 Android와 마찬가지로 웹에서도 거부합니다. 웹에 대응 기능이 없는 Apple DeviceCheck API입니다.
+**웹에서 항상 fallback 상수를 반환하는 항목**: Android `Build.*` 필드, 통신사/MNC/MCC, 디스크·사용 메모리, 헤드폰·위치·노치 검사, 무결성 검사(`isDeviceCompromised()` → `false`), 앱 메타데이터(`version`/`bundleId`/…), Windows 전용 필드입니다. Promise 메서드는 시그니처를 유지하고 fallback 값으로 resolve되며 reject되지 않습니다. 예외인 `getDeviceToken()`은 Android와 마찬가지로 웹에서도 reject됩니다. 웹에 대응 기능이 없는 Apple DeviceCheck API입니다.
 
-**SSR**: 웹 구현은 브라우저 전역 객체를 확인하므로 `navigator`/`screen`/`window`가 없는 서버에서도 대체 값을 읽을 수 있습니다. 서버 번들이 웹 구현을 선택했을 때만 적용됩니다. 네이티브 진입점을 선택한 서버에서 속성 읽기, 메서드 호출, `createDeviceInfo()`는 네이티브 바인딩이 필요하므로 예외가 발생할 수 있습니다. [웹 지원](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/web-support)을 확인하세요.
+**SSR**: 웹 구현은 브라우저 전역 객체를 확인하므로 `navigator`/`screen`/`window`가 없는 서버에서도 fallback 값을 읽을 수 있습니다. 서버 번들이 웹 구현을 선택했을 때만 적용됩니다. 네이티브 entry point를 선택한 서버에서 속성을 읽거나 메서드 또는 `createDeviceInfo()`를 호출하려면 네이티브 바인딩이 필요하므로 예외가 발생할 수 있습니다. [웹 지원](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/web-support)을 확인하세요.
 
 ## 기여
 

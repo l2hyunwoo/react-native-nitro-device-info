@@ -161,23 +161,23 @@ console.log(`Battery: ${Math.round(batteryLevel * 100)}%`);
 
 > "네트워크 정보를 읽는 API에는 무엇이 있나요?"
 
-### 기기 증명
+### device attestation
 
-선택 패키지 [`react-native-nitro-device-integrity`](../react-native-nitro-device-integrity/README-ko.md)(Play Integrity + App Attest / DeviceCheck)의 API도 색인합니다. 이 패키지는 2026-10-10 기준 npm 미배포 상태입니다.
+기기에서 발급한 토큰을 서버에서 검증하는 device attestation API도 색인합니다. 선택 패키지 [`react-native-nitro-device-integrity`](../react-native-nitro-device-integrity/README-ko.md)(Play Integrity + App Attest / DeviceCheck)가 대상입니다. 이 패키지는 2026-10-10 기준 npm 미배포 상태입니다.
 
 > "Play Integrity 토큰을 어떻게 요청하나요?"
 >
 > "attestKey와 generateAssertion의 차이는 무엇인가요?"
 >
-> "기기 증명 API를 모두 보여 주세요"
+> "device attestation API를 모두 보여 주세요"
 
 ### 문서 스냅샷
 
-배포 패키지는 핵심·기기 증명 API 명세, 영어·한국어 사이트 Markdown, 라이브러리 README를 `data/`에 포함합니다. 서버는 웹사이트를 가져오거나 옆에 소스 저장소를 두지 않아도 이 스냅샷을 색인합니다.
+배포 패키지는 핵심 API와 device attestation API 명세, 영어·한국어 사이트 Markdown, 라이브러리 README를 `data/`에 포함합니다. 서버는 패키지에 포함된 이 스냅샷을 색인하므로 웹사이트를 가져오거나 소스 저장소를 별도로 둘 필요가 없습니다.
 
-원문을 바꾸면 MCP 패키지를 다시 빌드하세요. 설치한 클라이언트에 변경을 전달하려면 새 MCP 릴리스를 배포해야 합니다. 사이트 배포만으로 갱신되지 않습니다. 스냅샷과 다르면 설치한 라이브러리의 선언을 확인하세요.
+원문을 바꾸면 MCP 패키지를 다시 빌드하세요. 설치한 클라이언트에 변경을 전달하려면 새 MCP 릴리스를 배포해야 합니다. 사이트 배포만으로 기존 MCP 패키지가 갱신되지는 않습니다. 설치한 라이브러리와 스냅샷의 내용이 다르면 라이브러리의 선언을 확인하세요.
 
-루트 API와 `/compat` API는 다릅니다. API 조회는 네이티브 루트 시그니처를 반환합니다. 호환 대응표는 마이그레이션 가이드를 사용하세요. 한국어 검색어는 유지하지만 대응하는 한국어 내용이 있어야 검색됩니다. 서버는 질의를 번역하거나 조사·띄어쓰기를 형태소 단위로 분석하지 않습니다.
+패키지 루트의 API와 `/compat` API는 다릅니다. API 조회 결과에는 패키지 루트에서 export하는 네이티브 API의 시그니처가 담깁니다. 호환 대응표는 마이그레이션 가이드를 참고하세요. 한국어 검색어는 유지하지만 대응하는 한국어 내용이 문서에 있어야 검색됩니다. 서버는 질의를 번역하지 않습니다. 조사·띄어쓰기를 형태소 단위로 분석하는 기능도 없습니다.
 
 ## 문제 해결 질문
 

@@ -22,7 +22,7 @@ yarn build
 yarn preview
 ```
 
-저장소 루트 기준 프로덕션 출력은 `docs/doc_build/`입니다. 빌드 오류 해결을 위해 출력 파일을 편집하거나 lockfile을 삭제하지 마세요.
+프로덕션 빌드 결과는 저장소 루트 기준 `docs/doc_build/`에 생성됩니다. 빌드 오류를 해결하려고 출력 파일을 편집하거나 lockfile을 삭제하지 마세요.
 
 ## 소스 구조
 
@@ -51,7 +51,7 @@ docs/
 4. `yarn build`, `yarn preview`를 실행하세요.
 5. 경로, 제목 링크, 언어 전환, 검색 결과, 예제를 확인하세요.
 
-웹사이트는 `main`을 따르며 설치한 릴리스와 다를 수 있습니다. 속성 접근, 동기 메서드, Promise 메서드, `/compat` 가져오기를 구별하세요. 전체 TypeScript 인터페이스를 Markdown에 중복 관리하지 마세요.
+웹사이트는 `main`을 따르며 설치한 릴리스와 다를 수 있습니다. 네이티브 속성·동기 메서드·Promise 메서드와 `/compat`에서 import하는 API를 구별하세요. 전체 TypeScript 인터페이스를 Markdown에 중복 관리하지 마세요.
 
 `llms: true`는 Rspress의 페이지 Markdown, `llms.txt`, `llms-full.txt` 출력을 켭니다. 빌드 후 `doc_build/`와 `doc_build/ko/`에서 언어별 파일을 확인하세요.
 

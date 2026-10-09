@@ -2,27 +2,27 @@
 
 [English](README.md) | **한국어**
 
-[Nitro Modules](https://nitro.margelo.com/)로 구현한 React Native의 선택적 하드웨어 기반 **기기 증명** 패키지입니다. [`react-native-nitro-device-info`](https://github.com/l2hyunwoo/react-native-nitro-device-info)를 보완합니다.
+React Native에서 하드웨어 기반 **device attestation**을 사용할 때 설치하는 선택 패키지입니다. 기기에서 발급한 토큰을 서버에서 검증하는 방식입니다. [Nitro Modules](https://nitro.margelo.com/)로 구현했으며 [`react-native-nitro-device-info`](https://github.com/l2hyunwoo/react-native-nitro-device-info)를 보완합니다.
 
 **미배포**: 2026-10-10 기준 소스 저장소에만 있으며 npm 배포 이력이 없습니다. 매니페스트 `0.1.0`은 배포 버전이 아닙니다. 아래 npm 설치 명령은 배포 후에 적용됩니다.
 
 - **Android** → [Play Integrity API](https://developer.android.com/google/play/integrity)
 - **iOS** → [App Attest(`DCAppAttestService`)](https://developer.apple.com/documentation/devicecheck/dcappattestservice) + [DeviceCheck(`DCDevice`)](https://developer.apple.com/documentation/devicecheck/dcdevice)
 
-> **기기 증명 토큰을 발급하며 검증하지 않습니다.** 모든 메서드는 불투명한 토큰을 반환합니다. **자체 백엔드에 보내 검증해야 합니다.** 기기가 안전한지 라이브러리가 결정하지 않습니다. [책임 범위](#책임-범위)를 참고하세요.
+> **device attestation 토큰을 발급할 뿐 검증은 하지 않습니다.** 모든 메서드는 불투명한 토큰을 반환합니다. **자체 백엔드에 보내 검증해야 합니다.** 기기가 안전한지 라이브러리가 결정하지 않습니다. [책임 범위](#책임-범위)를 참고하세요.
 
 ## 별도 패키지로 제공하는 이유
 
-핵심 패키지의 `isDeviceCompromised()`는 로컬 검사이며 Magisk + Shamiko, RootHide 등으로 우회할 수 있습니다. 서버에서 검증할 기기 증명에는 추가 네이티브 의존성(`com.google.android.play:integrity`), 플랫폼 기능(App Attest entitlement), Google/Apple 콘솔 설정이 필요합니다. 별도 선택 패키지로 분리해 필요한 앱에만 의존성과 설정을 추가합니다.
+핵심 패키지의 `isDeviceCompromised()`는 로컬 검사이며 Magisk + Shamiko, RootHide 등으로 우회할 수 있습니다. 서버에서 검증할 device attestation에는 추가 네이티브 의존성(`com.google.android.play:integrity`), 플랫폼 기능(App Attest entitlement), Google/Apple 콘솔 설정이 필요합니다. 별도 선택 패키지로 분리해 필요한 앱에만 의존성과 설정을 추가합니다.
 
 | 항목 | 핵심 `isDeviceCompromised()` | 이 패키지 |
 | --- | --- | --- |
-| 방식 | 로컬 경험적 검사 | 하드웨어 기반 OS 공급업체 증명 |
+| 방식 | 로컬에서 징후를 확인하는 검사 | OS 공급업체의 하드웨어 기반 attestation |
 | 네트워크 | 오프라인 | 필요 |
 | 신뢰 | 첫 단계 검사. 쉽게 우회 가능 | 서버 검증. 강한 신호 |
 | 용도 | 빠른 사전 검사 | 서버에서 검증한 최종 판단 근거 |
 
-두 방식은 **상호 보완적**입니다. 핵심 검사를 빠른 오프라인 사전 필터로, 이 패키지의 토큰을 서버에서 검증할 판단 근거로 사용하세요.
+두 방식은 **상호 보완적**입니다. 핵심 검사는 빠른 오프라인 사전 필터로 사용하고 이 패키지의 토큰은 서버에서 검증한 뒤 판단 근거로 사용하세요.
 
 ## 설치
 
@@ -37,7 +37,7 @@ cd ios && pod install
 
 | 작업 | 담당 |
 | --- | --- |
-| 기기에서 토큰 / 증명 / assertion 발급 | **라이브러리** |
+| 기기에서 토큰 / attestation / assertion 발급 | **라이브러리** |
 | `clientDataHash`(SHA-256) 계산과 클라이언트 데이터 구성 | **앱** |
 | 토큰을 백엔드로 전송 | **앱** |
 | 복호화 / 서명 검증 / 판정 해석 | **서버** |
@@ -83,11 +83,11 @@ App Attest에는 **이미 해시한** 32바이트 값이 필요합니다. `SHA-2
 POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 ```
 
-`deviceIntegrity.deviceRecognitionVerdict`의 `MEETS_DEVICE_INTEGRITY` 포함 여부, `appIntegrity.appRecognitionVerdict === PLAY_RECOGNIZED` 등을 해석하세요. **빈** `deviceRecognitionVerdict`는 손상된 기기·에뮬레이터의 신호입니다. [Play Integrity 판정](https://developer.android.com/google/play/integrity/verdicts)을 참고하세요.
+`deviceIntegrity.deviceRecognitionVerdict`의 `MEETS_DEVICE_INTEGRITY` 포함 여부, `appIntegrity.appRecognitionVerdict === PLAY_RECOGNIZED` 등을 해석하세요. **빈** `deviceRecognitionVerdict`는 보안이 침해된 기기나 에뮬레이터를 시사하는 신호입니다. [Play Integrity 판정](https://developer.android.com/google/play/integrity/verdicts)을 참고하세요.
 
 ### App Attest(iOS)
 
-키마다 **한 번** Apple App Attest Root CA를 기준으로 증명을 검증합니다(인증서 체인, nonce, app-ID 해시, counter = 0). 공개 키와 카운터를 저장하고 이후 각 **assertion**의 서명과 단조 증가 카운터를 검증하세요. [서버에 연결하는 앱 검증](https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server)을 참고하세요.
+키마다 **한 번** Apple App Attest Root CA를 기준으로 attestation을 검증합니다(인증서 체인, nonce, app-ID 해시, counter = 0). 공개 키와 카운터를 저장하고 이후 각 **assertion**의 서명과 단조 증가 카운터를 검증하세요. [서버에 연결하는 앱 검증](https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server)을 참고하세요.
 
 ## 필요한 설정
 
@@ -111,7 +111,7 @@ POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 - **시뮬레이터 / 에뮬레이터**: iOS 시뮬레이터의 `isSupported`는 `false`입니다. Play Integrity는 에뮬레이터에서 약하거나 빈 판정을 반환합니다.
 - **루팅 기기**: Play Integrity는 토큰을 반환하지만 `deviceRecognitionVerdict`가 비어 있습니다. 서버에서 실패로 처리해야 합니다.
 - **우회 방법이 존재합니다**(PlayIntegrityFix 등). 더 넓은 부정 사용 방지 전략의 한 신호로 사용하세요.
-- **네트워크가 필요합니다.** Google Cloud / Apple 설정이 없으면 발급이 실패합니다. 거부를 처리하고 안전한 상태로 간주하지 마세요.
+- **네트워크가 필요합니다.** Google Cloud / Apple 설정이 없으면 발급이 실패합니다. 발급 요청의 reject를 처리하고 이를 기기가 안전하다는 뜻으로 받아들이지 마세요.
 - **App Attest 호출 제한**: Apple은 `attestKey` 호출 빈도를 제한합니다. 앱에서 빈도를 제어하세요. 상태를 보관하지 않는 라이브러리는 재시도나 타이머를 추가하지 않습니다.
 
 ## 라이선스

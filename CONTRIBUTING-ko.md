@@ -8,7 +8,7 @@
 
 이 프로젝트는 [Yarn workspaces](https://yarnpkg.com/features/workspaces)로 관리하는 모노레포입니다.
 
-- `packages/`: 핵심 라이브러리, 선택 기기 증명 라이브러리, MCP 서버
+- `packages/`: 핵심 라이브러리, 선택적으로 설치하는 device attestation 라이브러리(서버 검증용 토큰 발급), MCP 서버
 - `example/`: Showcase, Benchmark, Integrity Demo 앱
 - `docs/`: 의존성을 별도로 설치하는 문서 사이트
 
@@ -33,9 +33,9 @@ yarn
 yarn nitrogen
 ```
 
-기기 증명 패키지를 바꿨다면 `yarn nitrogen:integrity`를 사용하세요.
+device attestation 패키지를 바꿨다면 `yarn nitrogen:integrity`를 사용하세요.
 
-[Showcase](example/showcase/README-ko.md)와 [Benchmark](example/benchmark/README-ko.md) 앱에서 라이브러리 변경을 테스트하세요. 두 앱은 로컬 라이브러리를 사용합니다. JavaScript 변경은 다시 빌드하지 않아도 반영되지만 네이티브 변경은 재빌드가 필요합니다. 기기 증명은 [Integrity Demo](example/integrity-demo/README-ko.md)에서 확인하세요.
+[Showcase](example/showcase/README-ko.md)와 [Benchmark](example/benchmark/README-ko.md) 앱에서 라이브러리 변경을 테스트하세요. 두 앱은 로컬 라이브러리를 사용합니다. JavaScript 변경은 다시 빌드하지 않아도 반영되지만 네이티브 변경은 재빌드가 필요합니다. device attestation은 [Integrity Demo](example/integrity-demo/README-ko.md)에서 확인하세요.
 
 네이티브 코드를 편집하려면 다음 프로젝트를 여세요.
 
@@ -103,7 +103,7 @@ yarn test
 
 라이브러리, 의존성, CI/Jest 설정 변경 시 CI가 핵심 라이브러리 Jest를 실행합니다. 단독 실행은 `yarn workspace react-native-nitro-device-info test --runInBand`입니다. 루트 `yarn test`는 MCP 테스트도 실행합니다. 기기 하네스 테스트에는 전용 실행기가 필요합니다.
 
-기기 증명 패키지나 예제 변경은 린트, `yarn workspace react-native-nitro-device-integrity typecheck`, `yarn workspace react-native-nitro-device-integrity prepare` 후 iOS·Android 예제 빌드를 실행합니다. 루트 `yarn prepare`는 핵심 라이브러리만 빌드합니다. 의존성과 CI 워크플로 변경은 두 라이브러리를 모두 검사합니다. `actionlint .github/workflows/ci.yml`로 문법을 검사하고 경로 필터가 바꾼 패키지와 설정을 포함하는지 확인하세요.
+device attestation 패키지나 예제를 바꿨다면 린트, `yarn workspace react-native-nitro-device-integrity typecheck`, `yarn workspace react-native-nitro-device-integrity prepare`를 실행한 뒤 iOS·Android 예제를 빌드합니다. 루트 `yarn prepare`는 핵심 라이브러리만 빌드합니다. 의존성이나 CI 워크플로를 바꿨다면 두 라이브러리를 모두 검사합니다. `actionlint .github/workflows/ci.yml`로 문법을 검사하고 경로 필터가 바꾼 패키지와 설정을 포함하는지 확인하세요.
 
 ### 커밋 메시지 규칙
 
@@ -137,8 +137,8 @@ pre-commit 훅은 stage한 JavaScript·TypeScript를 린트하고 commit-msg 훅
 - `yarn test`: Jest 단위 테스트
 - `yarn nitrogen`: 핵심 `.nitro.ts` 네이티브 바인딩 생성
 - `yarn prepare`: 핵심 라이브러리 빌드
-- `yarn workspace react-native-nitro-device-integrity prepare`: 기기 증명 라이브러리 빌드
-- `yarn integrity-demo <command>`: 기기 증명 예제 실행(start/ios/android)
+- `yarn workspace react-native-nitro-device-integrity prepare`: device attestation 라이브러리 빌드
+- `yarn integrity-demo <command>`: device attestation 예제 실행(start/ios/android)
 - `yarn showcase <command>`: Showcase 실행(start/ios/android)
 - `yarn benchmark <command>`: Benchmark 실행(start/ios/android)
 
