@@ -9,6 +9,10 @@ import { Layout as DefaultLayout } from '@rspress/core/theme-original';
 
 export * from '@rspress/core/theme-original';
 
+/**
+ * Adds a keyboard-focusable language link because Rspress 2.0.23's language menu
+ * cannot receive keyboard focus.
+ */
 export function Layout() {
   const { page } = usePage();
   const { pathname } = useLocation();
@@ -22,7 +26,6 @@ export function Layout() {
   return (
     <DefaultLayout
       afterNavMenu={
-        // The default language menu cannot receive keyboard focus in Rspress 2.0.23.
         <a
           href={withBase(normalizeHrefInRuntime(target))}
           hrefLang={lang}
