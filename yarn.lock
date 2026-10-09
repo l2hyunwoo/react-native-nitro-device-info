@@ -8385,24 +8385,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-cache-semantics@npm:4.2.0":
-  version: 4.2.0
-  resolution: "http-cache-semantics@npm:4.2.0"
-  checksum: 10c0/45b66a945cf13ec2d1f29432277201313babf4a01d9e52f44b31ca923434083afeca03f18417f599c9ab3d0e7b618ceb21257542338b57c54b710463b4a53e37
-  languageName: node
-  linkType: hard
-
-"http-cache-semantics@npm:^4.3.0":
+"http-cache-semantics@npm:4.3.0":
   version: 4.3.0
   resolution: "http-cache-semantics@npm:4.3.0"
   checksum: 10c0/b9668e271b4a99cba067bfa6f286b12eff1408a24e090ca16f0f5fa826ac07f67b4b8c7aa6e7458596d890683f3c172f647a00ca516a8f0158c80d7e4ebe0316
   languageName: node
   linkType: hard
 
-"http-cache-semantics@patch:http-cache-semantics@npm%3A4.2.0#~/.yarn/patches/http-cache-semantics-npm-4.2.0-fadacfb3ad.patch":
-  version: 4.2.0
-  resolution: "http-cache-semantics@patch:http-cache-semantics@npm%3A4.2.0#~/.yarn/patches/http-cache-semantics-npm-4.2.0-fadacfb3ad.patch::version=4.2.0&hash=4c327a"
-  checksum: 10c0/56a7805a5d75392f29efa381bcdbce2f0a6da644c6799a9104a96f63c0ada6e2a4b89fc6409c47f4558a8c4726e6fd2015809725dbae78f489c1d96552849d29
+"http-cache-semantics@patch:http-cache-semantics@npm%3A4.3.0#~/.yarn/patches/http-cache-semantics-npm-4.3.0-ee45f76976.patch":
+  version: 4.3.0
+  resolution: "http-cache-semantics@patch:http-cache-semantics@npm%3A4.3.0#~/.yarn/patches/http-cache-semantics-npm-4.3.0-ee45f76976.patch::version=4.3.0&hash=e9facf"
+  checksum: 10c0/3baae2f2e66339637ac5826a4254dcdceb8b83d0adf268af35ea01692120cad96ff86f5b2b6796662c4ad9e722cb271d675eb7d34dc45f44e001c1cebf93cfbe
   languageName: node
   linkType: hard
 

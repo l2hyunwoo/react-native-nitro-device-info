@@ -1,8 +1,8 @@
 diff --git a/index.js b/index.js
-index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..3d7aa1b2874e79ac79d984f1a76f8c908bd3603a 100644
+index 56c26025074cbcf218e3ec4d810662da93f8024e..e63ec855b6e73bcdb98615b1f15cc2cb5b5012de 100644
 --- a/index.js
 +++ b/index.js
-@@ -395,7 +395,7 @@ module.exports = class CachePolicy {
+@@ -396,7 +396,7 @@ module.exports = class CachePolicy {
          this._assertRequestHasHeaders(req);
  
          // In all circumstances, a cache MUST NOT ignore the must-revalidate directive
