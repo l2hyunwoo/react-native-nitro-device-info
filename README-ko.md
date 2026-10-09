@@ -89,8 +89,9 @@ console.log(manufacturer); // "Apple"
 const isTablet = DeviceInfoModule.isTablet;
 console.log(isTablet); // false
 
+// 확인할 수 없으면 -1을 반환하며, useBatteryLevel()은 null을 반환합니다.
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
-console.log(`배터리: ${(batteryLevel * 100).toFixed(0)}%`); // "배터리: 85%"
+console.log(`배터리: ${batteryLevel >= 0 ? `${(batteryLevel * 100).toFixed(0)}%` : '확인 불가'}`); // "배터리: 85%"
 
 // 비동기 메서드 (Promise 기반 - <100ms)
 const ipAddress = await DeviceInfoModule.getIpAddress();
@@ -138,12 +139,13 @@ console.log(
 );
 
 // 배터리 정보
+// 확인할 수 없으면 -1을 반환하며, useBatteryLevel()은 null을 반환합니다.
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 const isCharging = DeviceInfoModule.getIsBatteryCharging();
 const powerState: PowerState = DeviceInfoModule.getPowerState();
 
 console.log(
-  `배터리: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(충전 중)' : ''}`
+  `배터리: ${batteryLevel >= 0 ? `${(batteryLevel * 100).toFixed(0)}%` : '확인 불가'} ${isCharging ? '(충전 중)' : ''}`
 );
 console.log(`저전력 모드: ${powerState.lowPowerMode}`);
 

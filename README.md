@@ -88,8 +88,9 @@ console.log(manufacturer); // "Apple"
 const isTablet = DeviceInfoModule.isTablet;
 console.log(isTablet); // false
 
+// Returns -1 when unavailable; useBatteryLevel() returns null.
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
-console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`); // "Battery: 85%"
+console.log(`Battery: ${batteryLevel >= 0 ? `${(batteryLevel * 100).toFixed(0)}%` : 'unavailable'}`); // "Battery: 85%"
 
 // Asynchronous methods (Promise-based - <100ms)
 const ipAddress = await DeviceInfoModule.getIpAddress();
@@ -137,12 +138,13 @@ console.log(
 );
 
 // Battery Information
+// Returns -1 when unavailable; useBatteryLevel() returns null.
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 const isCharging = DeviceInfoModule.getIsBatteryCharging();
 const powerState: PowerState = DeviceInfoModule.getPowerState();
 
 console.log(
-  `Battery: ${(batteryLevel * 100).toFixed(0)}% ${isCharging ? '(charging)' : ''}`
+  `Battery: ${batteryLevel >= 0 ? `${(batteryLevel * 100).toFixed(0)}%` : 'unavailable'} ${isCharging ? '(charging)' : ''}`
 );
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`);
 

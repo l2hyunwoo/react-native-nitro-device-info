@@ -12,7 +12,7 @@ import { type HybridObject } from 'react-native-nitro-modules';
  */
 export interface PowerState {
   /**
-   * Battery charge level (0.0 to 1.0)
+   * Battery charge level (0.0 to 1.0), or -1 if unavailable
    * @example 0.75 represents 75% battery
    */
   batteryLevel: number;
@@ -483,7 +483,7 @@ export interface DeviceInfo
    * Returns battery charge level as a float between 0.0 and 1.0.
    * This value changes as battery drains/charges.
    *
-   * @returns Battery level (0.0 to 1.0), 0.0 if unavailable
+   * @returns Battery level (0.0 to 1.0), or -1 if unavailable
    * @example 0.75 represents 75% battery
    */
   getBatteryLevel(): number;
@@ -515,7 +515,7 @@ export interface DeviceInfo
 
   /**
    * Check if battery level is below threshold.
-   * Userland helper using getBatteryLevel().
+   * Returns false when the battery level is unavailable.
    *
    * @param threshold Battery level threshold (0.0 to 1.0)
    * @platform All

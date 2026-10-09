@@ -397,12 +397,12 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     /** Get current battery level (0.0 to 1.0) */
     override fun getBatteryLevel(): Double {
         val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        return (level / 100.0)
+        return if (level in 0..100) level / 100.0 else -1.0
     }
 
     /** Get comprehensive power state information */
     override fun getPowerState(): PowerState {
-        val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        val level = getBatteryLevel()
         val isCharging = batteryManager.isCharging
 
         val batteryState =
@@ -414,7 +414,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
 
         return PowerState(
-            batteryLevel = level / 100.0,
+            batteryLevel = level,
             batteryState = batteryState,
             lowPowerMode = false,
         )
@@ -427,7 +427,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Check if battery level is below threshold */
     override fun isLowBatteryLevel(threshold: Double): Boolean {
-        return getBatteryLevel() < threshold
+        val level = getBatteryLevel()
+        return level >= 0 && level <= 1 && level < threshold
     }
 
     // MARK: - Application Metadata

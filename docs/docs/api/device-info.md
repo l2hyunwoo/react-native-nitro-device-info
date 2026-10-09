@@ -401,7 +401,7 @@ Battery and power state information.
 
 ### `getBatteryLevel(): number`
 
-Get current battery level (0.0 to 1.0).
+Get current battery level (0.0 to 1.0), or `-1` if unavailable. A known empty battery returns `0`.
 
 On web, battery getters read the live BatteryManager after the initial async
 request resolves. Before resolution, or if the API is unavailable or denied,
@@ -429,7 +429,7 @@ console.log(`Low Power Mode: ${powerState.lowPowerMode}`); // iOS only
 
 ```typescript
 interface PowerState {
-  batteryLevel: number; // 0.0 to 1.0
+  batteryLevel: number; // 0.0 to 1.0, or -1 if unavailable
   batteryState: BatteryState; // 'unknown' | 'unplugged' | 'charging' | 'full'
   lowPowerMode: boolean; // iOS only
 }
@@ -445,7 +445,7 @@ const isCharging = DeviceInfoModule.getIsBatteryCharging();
 
 ### `isLowBatteryLevel(threshold: number): boolean`
 
-Check if battery level is below threshold.
+Check if a valid battery level is below threshold. Returns `false` for an unavailable reading; a known `0%` reading still counts as low.
 
 ```typescript
 const isLowBattery = DeviceInfoModule.isLowBatteryLevel(0.2); // 20%

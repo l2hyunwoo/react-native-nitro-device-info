@@ -17,9 +17,9 @@ import { isLowBatteryLevel } from './utils';
  * - iOS: 20% (matches iOS low power mode trigger)
  * - Android: 15% (matches Android low battery warning)
  *
- * When the battery is above the threshold, returns null.
+ * When the battery is above the threshold or unavailable, returns null.
  *
- * @returns Battery level when low (0.0 to threshold), or null if battery is not low
+ * @returns Battery level when low, or null if not low or unavailable
  *
  * @example
  * ```tsx

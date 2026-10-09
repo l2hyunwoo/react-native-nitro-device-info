@@ -28,7 +28,7 @@ Monitor battery level changes in real-time.
 function useBatteryLevel(): number | null
 ```
 
-**Returns**: Battery level (0.0 to 1.0), or `null` during initial load.
+**Returns**: Battery level (0.0 to 1.0), or `null` during initial load or when unavailable.
 
 **Platform Support**:
 | Platform | Supported |
@@ -62,7 +62,7 @@ Monitor for low battery conditions with platform-specific thresholds.
 function useBatteryLevelIsLow(): number | null
 ```
 
-**Returns**: Battery level when below threshold, or `null` if battery is not low.
+**Returns**: Battery level when below threshold, or `null` if battery is not low or unavailable. An unavailable reading does not trigger a low-battery warning.
 
 **Thresholds**:
 - **iOS**: 20% (matches iOS low power mode trigger)
@@ -105,7 +105,7 @@ function usePowerState(): Partial<PowerState>
 ```
 
 **Returns**: A `Partial<PowerState>` object. All properties are optional and may be `undefined` during initial load or if unavailable on the platform:
-- `batteryLevel?: number` - Battery charge level (0.0 to 1.0)
+- `batteryLevel?: number` - Battery charge level (0.0 to 1.0), or `-1` when unavailable
 - `batteryState?: BatteryState` - Charging status ('unknown', 'unplugged', 'charging', 'full')
 - `lowPowerMode?: boolean` - Whether low power mode is enabled (iOS only)
 

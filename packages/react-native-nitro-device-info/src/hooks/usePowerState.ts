@@ -14,7 +14,7 @@ import type { PowerState } from '../DeviceInfo.nitro';
  * Monitor comprehensive power state including battery level, charging status, and low power mode.
  *
  * Returns a Partial<PowerState> object containing:
- * - batteryLevel?: Battery charge level (0.0 to 1.0)
+ * - batteryLevel?: Battery charge level (0.0 to 1.0, or -1 when unavailable)
  * - batteryState?: Current charging state ('unknown', 'unplugged', 'charging', 'full')
  * - lowPowerMode?: Whether low power mode is enabled (iOS only)
  *
@@ -29,7 +29,9 @@ import type { PowerState } from '../DeviceInfo.nitro';
  *
  *   return (
  *     <View>
- *       <Text>Level: {Math.round((powerState.batteryLevel ?? 0) * 100)}%</Text>
+ *       <Text>Level: {(powerState.batteryLevel ?? -1) >= 0
+ *         ? `${Math.round(powerState.batteryLevel! * 100)}%`
+ *         : 'unavailable'}</Text>
  *       <Text>Status: {powerState.batteryState ?? 'unknown'}</Text>
  *       <Text>Low Power: {powerState.lowPowerMode ? 'Yes' : 'No'}</Text>
  *     </View>

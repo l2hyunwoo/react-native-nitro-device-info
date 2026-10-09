@@ -15,7 +15,7 @@ import { DeviceInfoModule } from '../index';
  * Returns the current battery level as a number between 0.0 and 1.0.
  * The value updates automatically when the battery level changes.
  *
- * @returns Battery level (0.0 to 1.0), or null during initial load
+ * @returns Battery level (0.0 to 1.0), or null during initial load or when unavailable
  *
  * @example
  * ```tsx
@@ -40,7 +40,9 @@ export function useBatteryLevel(): number | null {
   useEffect(() => {
     const updateBatteryLevel = () => {
       const currentLevel = DeviceInfoModule.getBatteryLevel();
-      setBatteryLevel(prev => prev === currentLevel ? prev : currentLevel);
+      const nextLevel =
+        currentLevel >= 0 && currentLevel <= 1 ? currentLevel : null;
+      setBatteryLevel(prev => prev === nextLevel ? prev : nextLevel);
     };
 
     // Set initial value

@@ -23,7 +23,7 @@ Complete power and battery state information.
 ```typescript
 interface PowerState {
   /**
-   * Battery charge level (0.0 to 1.0)
+   * Battery charge level (0.0 to 1.0, or -1 when unavailable)
    * @example 0.75 represents 75% battery
    */
   batteryLevel: number;
@@ -46,14 +46,16 @@ interface PowerState {
 ```typescript
 const powerState: PowerState = DeviceInfoModule.getPowerState();
 
-console.log(`Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
+console.log(powerState.batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
 console.log(`Status: ${powerState.batteryState}`);
 console.log(`Low Power Mode: ${powerState.lowPowerMode ? 'Yes' : 'No'}`);
 ```
 
 **Fields**:
 
-- **batteryLevel**: Number from 0.0 (0%) to 1.0 (100%)
+- **batteryLevel**: Number from 0.0 (0%) to 1.0 (100%), or `-1` when unavailable
 - **batteryState**: Current charging state (see BatteryState below)
 - **lowPowerMode**: iOS only - indicates if Low Power Mode is enabled
 
@@ -321,6 +323,7 @@ import type { PowerState, BatteryState } from 'react-native-nitro-device-info';
 function getBatteryStatus(): string {
   const powerState: PowerState = DeviceInfoModule.getPowerState();
 
+  if (powerState.batteryLevel < 0) return 'Battery: unavailable';
   const percentage = (powerState.batteryLevel * 100).toFixed(0);
   const state: BatteryState = powerState.batteryState;
 

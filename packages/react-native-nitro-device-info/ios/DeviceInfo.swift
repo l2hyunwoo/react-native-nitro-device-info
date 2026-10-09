@@ -584,14 +584,14 @@ class DeviceInfo: HybridDeviceInfoSpec {
   public func getBatteryLevel() -> Double {
     _ = batteryMonitoringInitializer
     let level = UIDevice.current.batteryLevel
-    return level >= 0 ? Double(level) : 0.0
+    return level >= 0 && level <= 1 ? Double(level) : -1
   }
 
   /// Get comprehensive power state information
   public func getPowerState() -> PowerState {
     _ = batteryMonitoringInitializer
 
-    let batteryLevel = UIDevice.current.batteryLevel >= 0 ? Double(UIDevice.current.batteryLevel) : 0.0
+    let batteryLevel = getBatteryLevel()
     let batteryState = self.getBatteryStateEnum(UIDevice.current.batteryState)
 
     var lowPowerMode = false
@@ -614,7 +614,8 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if battery level is below threshold
   func isLowBatteryLevel(threshold: Double) -> Bool {
-    return getBatteryLevel() < threshold
+    let level = getBatteryLevel()
+    return level >= 0 && level <= 1 && level < threshold
   }
 
   // MARK: - Application Metadata

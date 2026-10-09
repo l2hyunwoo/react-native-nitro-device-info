@@ -24,3 +24,5 @@ iOS에서는 `pod install` 후 빌드한 앱에 라이브러리의 `NitroDeviceI
 iOS 속성 목록에서는 기기 가동 시간을 표시하지 않습니다. 이 값은 앱 이벤트의 시간 계산 용도로만 지원합니다. [경과 시간 예제](../../docs/docs/api/device-info.md#getuptime-number)를 참고하세요.
 
 웹 fallback에서는 최초 요청이 완료된 뒤 배터리 getter가 현재 BatteryManager 값을 읽습니다. 배터리 잔량이나 충전 상태가 바뀌면 표시된 속성을 새로고침하세요. API 미지원 또는 접근 거부 시 기본값을 유지합니다.
+
+배터리 잔량을 확인할 수 없으면 `-1`, `useBatteryLevel()`은 `null`을 반환하며 낮은 배터리로 판정하지 않습니다.

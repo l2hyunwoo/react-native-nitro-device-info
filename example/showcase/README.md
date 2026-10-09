@@ -85,3 +85,5 @@ The showcase app serves as both a demonstration and testing tool for the library
 - **Error Boundaries**: Individual property errors don't crash the app
 
 Web fallback: battery getters read current BatteryManager values after the initial request resolves. Refresh the displayed properties after a level or charging change; unsupported or denied access keeps the fallback values.
+
+Battery readings use `-1` when unavailable; `useBatteryLevel()` returns `null`, and unavailable readings never count as low battery.
