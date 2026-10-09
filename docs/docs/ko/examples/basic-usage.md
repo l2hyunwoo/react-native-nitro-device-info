@@ -9,7 +9,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 ## 시작하기 {#getting-started}
 
-컴포넌트에서 모듈을 가져오세요.
+컴포넌트에서 모듈을 import하세요.
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';

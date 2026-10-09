@@ -5,11 +5,11 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 # React 훅 가이드 {#react-hooks-guide}
 
-React Native 앱에서 React 훅으로 실행 중인 기기 속성을 관찰하는 방법을 설명합니다.
+React Native 앱에서 React 훅으로 기기 속성의 변화를 확인하고 화면을 갱신하는 방법을 설명합니다.
 
 ## 개요 {#overview}
 
-React 훅은 마운트 후 기기 getter를 읽고 갱신을 위해 폴링합니다. 컴포넌트를 마운트 해제하면 타이머를 정리합니다. 네이티브 이벤트를 구독하거나 즉시 알림을 보장하지는 않습니다.
+React 훅은 마운트 후 기기 getter를 읽고 값을 갱신하려고 일정 간격으로 폴링합니다. 컴포넌트를 마운트 해제하면 타이머를 정리합니다. 네이티브 이벤트를 구독하거나 즉시 알림을 보장하지는 않습니다.
 
 **제공하는 기능**:
 
@@ -35,7 +35,7 @@ cd ios && pod install
 
 ## 갱신 간격과 초기값 {#update-intervals-and-initial-values}
 
-| 루트 훅 | 폴링 간격 | 초기값 또는 조회 불가 값 |
+| 패키지 루트의 훅 | 폴링 간격 | 초기값 또는 조회 불가 값 |
 | --- | --- | --- |
 | `useBatteryLevel()` | 5초 | `null` |
 | `useBatteryLevelIsLow()` | 2초 | `null`. 배터리가 부족하지 않을 때도 반환합니다. |
@@ -43,9 +43,9 @@ cd ios && pod install
 | 헤드폰 훅 | 1초 | 처음에는 `false` |
 | `useBrightness()` | 500밀리초 | 처음에는 `null`. Android에서는 `-1` |
 
-타이머는 JavaScript 스케줄링에 의존하며 백그라운드에서 지연될 수 있습니다. 훅이 상태가 바뀌는 정확한 순간에 변화를 보고하지는 않습니다.
+타이머는 JavaScript 스케줄링에 의존하며 백그라운드에서 지연될 수 있습니다. 상태가 바뀐 순간에 훅의 반환값이 바뀌는 것은 아닙니다.
 
-예제는 루트 가져오기를 사용합니다. `/compat`의 헤드폰 훅은 `{ loading, result }`를 반환합니다. [마이그레이션 가이드](/api/migration)를 참고하세요.
+예제에서는 패키지 루트에서 훅을 import합니다. `/compat`의 헤드폰 훅은 `{ loading, result }`를 반환합니다. [마이그레이션 가이드](/api/migration)를 참고하세요.
 
 ## 간단한 예제 {#quick-examples}
 
@@ -311,13 +311,13 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 console.log('DeviceInfoModule:', DeviceInfoModule);
 ```
 
-### 갱신이 전달되지 않는 경우 {#updates-not-received}
+### 기기 상태가 바뀌어도 화면이 갱신되지 않는 경우 {#updates-not-received}
 
-훅의 갱신을 받으려면 앱이 포그라운드에 있는지 확인하세요.
+훅의 값이 갱신되지 않으면 앱이 포그라운드에 있는지 확인하세요.
 
 ### 밝기가 -1인 경우 {#brightness-returns--1}
 
-Android에서 예상되는 동작입니다. 밝기 관찰은 iOS만 지원합니다.
+Android에서 예상되는 동작입니다. 밝기를 확인하는 훅은 iOS만 지원합니다.
 
 ## 관련 문서 {#see-also}
 

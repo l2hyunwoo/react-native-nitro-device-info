@@ -5,13 +5,13 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 # React 훅 {#react-hooks}
 
-실행 중인 기기 속성을 관찰하는 React 훅입니다. 네이티브 getter를 폴링하고 읽은 값이 바뀌면 다시 렌더링합니다. [갱신 간격과 초기값](/guide/react-hooks#update-intervals-and-initial-values)을 참고하세요.
+앱 실행 중 기기 속성의 변화를 관찰하는 React 훅입니다. 네이티브 getter를 폴링하고 읽은 값이 바뀌면 다시 렌더링합니다. [갱신 간격과 초기값](/guide/react-hooks#update-intervals-and-initial-values)을 참고하세요.
 
 7개 훅 모두 v1.4.0에 도입했습니다. 네이티브 최소 버전은 iOS 15.1과 Android API 24입니다. 웹은 v1.8.0 이상이 필요합니다. [지원 여부 배지](/api/#availability-badges)를 참고하세요.
 
-이 페이지는 루트 내보내기를 설명합니다. `/compat`의 헤드폰 훅은 `boolean` 대신 `{ loading, result }`를 반환합니다.
+이 페이지는 패키지 루트에서 export하는 훅을 설명합니다. `/compat`의 헤드폰 훅은 `boolean` 대신 `{ loading, result }`를 반환합니다.
 
-## 가져오기 {#import}
+## import {#import}
 
 ```typescript
 import {
@@ -69,7 +69,7 @@ function BatteryIndicator() {
 function useBatteryLevelIsLow(): number | null
 ```
 
-**반환값**: 임계값보다 낮으면 배터리 잔량을 반환합니다. 부족하지 않거나 조회할 수 없으면 `null`입니다. 읽을 수 없는 값으로 배터리 부족 경고를 발생시키지 않습니다.
+**반환값**: 임계값보다 낮으면 배터리 잔량을 반환합니다. 부족하지 않거나 조회할 수 없으면 `null`입니다. 배터리 잔량을 읽을 수 없을 때는 배터리 부족 경고를 발생시키지 않습니다.
 
 **임계값**:
 
@@ -102,7 +102,7 @@ function LowBatteryWarning() {
 
 <span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android API 24+: 제한적 지원</span> <span class="rp-badge rp-badge--warning">웹: 제한적 지원</span>
 
-배터리 잔량, 충전 상태, 저전력 모드를 포함한 전체 전원 상태를 관찰합니다.
+배터리 잔량, 충전 상태, 저전력 모드 등 전체 전원 상태를 관찰합니다.
 
 ```typescript
 function usePowerState(): Partial<PowerState>
@@ -143,7 +143,7 @@ function PowerStatus() {
 
 ### `useIsHeadphonesConnected()` {#useisheadphonesconnected}
 
-<span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 헤드폰 연결 상태를 관찰합니다(유선 또는 Bluetooth).
 
@@ -173,7 +173,7 @@ function AudioOutput() {
 
 ### `useIsWiredHeadphonesConnected()` {#useiswiredheadphonesconnected}
 
-<span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 유선 헤드폰 연결 상태를 관찰합니다.
 
@@ -204,7 +204,7 @@ function WiredAudioStatus() {
 
 ### `useIsBluetoothHeadphonesConnected()` {#useisbluetoothheadphonesconnected}
 
-<span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 Bluetooth 헤드폰·오디오 기기의 연결 상태를 관찰합니다.
 
@@ -237,7 +237,7 @@ function BluetoothAudioStatus() {
 
 ### `useBrightness()` {#usebrightness}
 
-<span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 화면 밝기 변화를 관찰합니다(iOS 전용).
 
@@ -299,7 +299,7 @@ if (batteryLevel === null) {
 }
 ```
 
-### 의존하는 컴포넌트 메모화 {#memoize-dependent-components}
+### 훅 값을 사용하는 컴포넌트에 React.memo 적용 {#memoize-dependent-components}
 
 ```tsx
 const BatteryIcon = React.memo(({ level }: { level: number }) => {

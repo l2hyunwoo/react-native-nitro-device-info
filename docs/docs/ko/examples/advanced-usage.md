@@ -108,7 +108,7 @@ async function getIOSDetails() {
 
 ## 성능 최적화 {#performance-optimization}
 
-### 비용이 큰 작업 캐시 {#caching-expensive-operations}
+### 비용이 큰 작업의 결과 캐시 {#caching-expensive-operations}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -178,7 +178,7 @@ async function fetchAllNetworkInfo() {
 }
 ```
 
-### 동기 변형 사용 {#use-synchronous-variants}
+### 동기 API 사용 {#use-synchronous-variants}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -206,7 +206,7 @@ function getNetworkInfoFast() {
 
 ### 내장 훅(권장) {#built-in-hooks-recommended}
 
-자주 사용하는 상태 관찰에는 내장 React 훅을 권장합니다.
+일반적인 상태 관찰에는 내장 React 훅을 권장합니다.
 
 ```typescript
 import {
@@ -246,11 +246,11 @@ function DeviceMonitor() {
 
 전체 문서는 [React 훅 가이드](/guide/react-hooks)를 참고하세요.
 
-### 기능을 확장하는 사용자 정의 훅 {#custom-hooks-for-extended-functionality}
+### 커스텀 훅으로 기능 확장 {#custom-hooks-for-extended-functionality}
 
-내장 훅이 다루지 않는 경우 사용자 정의 훅을 만들 수 있습니다.
+내장 훅에 없는 기능이 필요하면 커스텀 훅을 만들 수 있습니다.
 
-#### 사용자 정의 기기 정보 훅 {#custom-device-info-hook}
+#### 커스텀 기기 정보 훅 {#custom-device-info-hook}
 
 ```typescript
 import { useEffect, useState } from 'react';
@@ -305,7 +305,7 @@ function MyComponent() {
 }
 ```
 
-#### 사용자 정의 배터리 관찰 훅 {#custom-battery-monitoring-hook}
+#### 커스텀 배터리 관찰 훅 {#custom-battery-monitoring-hook}
 
 다른 폴링 간격이나 추가 로직이 필요하면 내장 훅을 확장할 수 있습니다.
 
@@ -567,7 +567,7 @@ function getAndroidCapabilities() {
 }
 ```
 
-### 위치 제공자 {#location-providers}
+### 위치 정보 provider 확인 {#location-providers}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';

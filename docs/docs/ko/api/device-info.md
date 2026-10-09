@@ -5,11 +5,11 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 # DeviceInfo 모듈 {#deviceinfo-module}
 
-DeviceInfo 모듈의 전체 API 문서입니다. API를 선택하기 전에 [지원 여부 배지의 정의](/api/#availability-badges)를 읽으세요.
+DeviceInfo 모듈의 전체 API 문서입니다. API를 선택하기 전에 [지원 여부 배지 설명](/api/#availability-badges)을 읽으세요.
 
-네이티브 빌드의 최소 버전은 iOS 15.1과 Android API 24입니다. 의존성은 더 높은 최소 버전을 요구할 수 있습니다. 웹 진입점과 대체 값은 v1.8.0에서 추가했습니다.
+네이티브 빌드의 최소 버전은 iOS 15.1과 Android API 24입니다. 의존성은 더 높은 최소 버전을 요구할 수 있습니다. 웹용 entry point와 fallback 값은 v1.8.0에서 추가했습니다.
 
-## 가져오기 {#import}
+## import {#import}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -23,7 +23,7 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 ### `deviceId: string` {#deviceid-string}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 기기 모델 식별자입니다.
 
@@ -47,9 +47,9 @@ const brand = DeviceInfoModule.brand;
 
 ### `model: string` {#model-string}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-기기 모델의 판매 이름입니다. 하드웨어 식별자를 읽기 쉬운 이름으로 변환하며, 알 수 없는 기기는 일반 이름으로 표시합니다.
+소비자에게 표시하는 기기 모델명입니다. 하드웨어 식별자를 읽기 쉬운 이름으로 변환하고 알 수 없는 기기는 일반 이름으로 표시합니다.
 
 ```typescript
 const model = DeviceInfoModule.model;
@@ -71,7 +71,7 @@ const systemName = DeviceInfoModule.systemName;
 
 ### `systemVersion: string` {#systemversion-string}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 운영체제 버전 문자열입니다.
 
@@ -83,7 +83,7 @@ const systemVersion = DeviceInfoModule.systemVersion;
 
 ### `deviceType: DeviceType` {#devicetype-devicetype}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 기기 유형입니다.
 
@@ -94,7 +94,7 @@ const deviceType = DeviceInfoModule.deviceType;
 
 ### `uniqueId: string` {#uniqueid-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 기기 식별자를 읽습니다.
 
@@ -124,7 +124,7 @@ const manufacturer = DeviceInfoModule.manufacturer;
 
 ### `deviceName: string` {#devicename-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 사용자가 지정한 기기 이름을 읽습니다.
 
@@ -141,7 +141,7 @@ const deviceName = DeviceInfoModule.deviceName;
 
 ### `isTablet: boolean` {#istablet-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 태블릿인지 확인합니다.
 
@@ -156,7 +156,7 @@ const isTablet = DeviceInfoModule.isTablet;
 
 ### `isEmulator: boolean` {#isemulator-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 시뮬레이터 또는 에뮬레이터에서 실행 중인지 확인합니다.
 
@@ -166,9 +166,9 @@ const isEmulator = DeviceInfoModule.isEmulator;
 
 ### `deviceYearClass: number` {#deviceyearclass-number}
 
-<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-하드웨어 사양으로 추정한 기기 연도 등급을 읽습니다.
+하드웨어 사양으로 추정한 year class를 읽습니다.
 
 ```typescript
 const yearClass = DeviceInfoModule.deviceYearClass;
@@ -184,9 +184,9 @@ if (yearClass >= 2020) {
 
 기기의 하드웨어가 플래그십·고급 사양에 해당했을 것으로 추정하는 연도를 반환합니다. 2025년에 맞춰 확장한 Facebook device-year-class 알고리즘을 사용합니다.
 
-**RAM → 연도 등급 대응**:
+**RAM → year class 대응**:
 
-| RAM | 연도 등급 | 기기 예시 |
+| RAM | year class | 기기 예시 |
 |-----|------------|-----------------|
 | ≤2 GB | 2013 | 보급형 |
 | ≤4 GB | 2015 | 2015-2016년 중급형 |
@@ -198,7 +198,7 @@ if (yearClass >= 2020) {
 
 ### `isCameraPresent: boolean` {#iscamerapresent-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 미배포</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 미배포</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 iOS 구현은 아직 배포하지 않았습니다. v1.8.3까지의 배포 버전은 항상 `true`를 반환합니다. [구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/be976f0)을 참고하세요.
 
@@ -210,11 +210,11 @@ const hasCamera = DeviceInfoModule.isCameraPresent;
 
 ### `isPinOrFingerprintSet: boolean` {#ispinorfingerprintset-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 미배포</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 미배포</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 iOS 구현은 아직 배포하지 않았습니다. v1.8.3까지의 배포 버전은 항상 `false`를 반환합니다. [구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/801903e)을 참고하세요.
 
-PIN, 지문 또는 Face ID를 설정했는지 확인합니다. iOS에서는 생체 인증을 사용할 수 없거나 잠겼을 때 기기 암호로 인증하는 경우를 포함해 기기 소유자 인증 가능 여부를 확인합니다. 암호를 설정하지 않았으면 `false`를 반환합니다. 사용자를 인증하거나 인증 창을 표시하지 않으며, 읽을 때마다 다시 검사합니다.
+PIN, 지문 또는 Face ID를 설정했는지 확인합니다. iOS에서는 기기 소유자를 인증할 수 있는지 확인합니다. 생체 인증을 사용할 수 없거나 잠겨 있어 기기 암호로 인증하는 경우도 포함합니다. 암호를 설정하지 않았으면 `false`를 반환합니다. 사용자를 인증하거나 인증 창을 표시하지 않으며, 읽을 때마다 다시 검사합니다.
 
 ```typescript
 const isSecure = DeviceInfoModule.isPinOrFingerprintSet;
@@ -222,9 +222,9 @@ const isSecure = DeviceInfoModule.isPinOrFingerprintSet;
 
 ### `isHardwareKeyStoreAvailable: boolean` {#ishardwarekeystoreavailable-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.1부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android API 24+: 제한적 지원</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.1부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android API 24+: 제한적 지원</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-플랫폼 키 저장소 사용 가능 여부를 확인합니다. Android에서는 하드웨어 보호 여부를 검증하지 않습니다.
+플랫폼 키 저장소를 사용할 수 있는지 확인합니다. Android에서는 키를 하드웨어로 보호하는지 검증하지 않습니다.
 
 ```typescript
 const hasHardwareKeyStore = DeviceInfoModule.isHardwareKeyStoreAvailable;
@@ -242,7 +242,7 @@ if (hasHardwareKeyStore) {
 
 ### `isLowRamDevice: boolean` {#islowramdevice-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 RAM이 적은 기기로 분류되는지 확인합니다.
 
@@ -262,7 +262,7 @@ const isLowRam = DeviceInfoModule.isLowRamDevice;
 
 ### `getHasNotch(): boolean` {#gethasnotch-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 화면에 노치가 있는지 확인합니다.
 
@@ -277,7 +277,7 @@ const hasNotch = DeviceInfoModule.getHasNotch();
 
 ### `getHasDynamicIsland(): boolean` {#gethasdynamicisland-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 16+</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 16+</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 Dynamic Island가 있는지 확인합니다.
 
@@ -292,7 +292,7 @@ const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland();
 
 ### `isDisplayZoomed: boolean` {#isdisplayzoomed-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 iOS 디스플레이 확대가 켜져 있는지 확인합니다.
 
@@ -316,7 +316,7 @@ const isLandscape = DeviceInfoModule.getIsLandscape();
 
 ### `getBrightness(): number` {#getbrightness-number}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 현재 화면 밝기를 읽습니다(0.0~1.0).
 
@@ -331,7 +331,7 @@ console.log(`Brightness: ${(brightness * 100).toFixed(0)}%`);
 
 ### `getFontScale(): number` {#getfontscale-number}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 현재 글꼴 배율을 읽습니다.
 
@@ -342,7 +342,7 @@ const fontScale = DeviceInfoModule.getFontScale();
 
 ### `isLiquidGlassAvailable: boolean` {#isliquidglassavailable-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.1부터</span> <span class="rp-badge rp-badge--info">iOS 26+</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.1부터</span> <span class="rp-badge rp-badge--info">iOS 26+</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 기기에서 Liquid Glass 효과를 사용할 수 있는지 확인합니다.
 
@@ -382,7 +382,7 @@ console.log(`Total RAM: ${(totalMemory / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 ### `getUsedMemory(): number` {#getusedmemory-number}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 현재 앱의 메모리 사용량을 바이트로 읽습니다.
 
@@ -394,7 +394,7 @@ console.log(`Used Memory: ${(usedMemory / 1024 / 1024).toFixed(0)}MB`);
 
 ### `maxMemory: number` {#maxmemory-number}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 앱이 사용할 수 있는 최대 메모리를 바이트로 읽습니다.
 
@@ -408,7 +408,7 @@ const maxMemory = DeviceInfoModule.maxMemory;
 
 ### `totalDiskCapacity: number` {#totaldiskcapacity-number}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 전체 내부 저장 공간을 바이트로 읽습니다.
 
@@ -420,7 +420,7 @@ console.log(`Total Storage: ${(totalDisk / 1024 / 1024 / 1024).toFixed(0)}GB`);
 
 ### `getFreeDiskStorage(): number` {#getfreediskstorage-number}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 남은 저장 공간을 바이트로 읽습니다.
 
@@ -432,7 +432,7 @@ console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 ### `getUptime(): number` {#getuptime-number}
 
-<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 깊은 절전 시간을 제외한 부팅 후 기기 가동 시간을 밀리초로 읽습니다.
 
@@ -453,7 +453,7 @@ console.log({ usedMemory, elapsedMs });
 
 ### `startupTime: number` {#startuptime-number}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 기기 부팅 시각을 읽습니다(epoch 이후 밀리초).
 
@@ -480,8 +480,8 @@ console.log(`App event at: ${new Date(eventTimestamp).toISOString()}`);
 
 현재 배터리 잔량(0.0~1.0)을 읽으며 조회할 수 없으면 `-1`을 반환합니다. 배터리가 빈 상태임을 확인하면 `0`을 반환합니다.
 
-웹에서는 첫 비동기 요청이 이행된 뒤 배터리 getter가 살아 있는 BatteryManager를 읽습니다.
-요청 이행 전이나 API가 없거나 거부된 경우,
+웹에서는 첫 비동기 요청이 resolve된 뒤 배터리 getter가 같은 BatteryManager 객체에서 현재 값을 읽습니다.
+요청이 resolve되기 전이거나 API가 없거나 요청이 reject된 경우,
 잔량은 `-1`, 충전 여부는 `false`, 배터리 상태는 `"unknown"`이며
 `isLowBatteryLevel()`은 `false`를 반환합니다.
 
@@ -495,7 +495,7 @@ console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
 
 <span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android API 24+: 제한적 지원</span> <span class="rp-badge rp-badge--warning">웹: 제한적 지원</span>
 
-Android에서 `lowPowerMode`는 항상 `false`입니다. 배터리 잔량과 충전 상태는 구현되어 있습니다.
+Android에서 `lowPowerMode`는 항상 `false`입니다. 배터리 잔량과 충전 상태는 실제 값을 읽습니다.
 
 전체 전원 상태를 읽습니다.
 
@@ -547,7 +547,7 @@ if (isLowBattery) {
 
 ### `version: string` {#version-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 앱 버전 문자열을 읽습니다.
 
@@ -558,7 +558,7 @@ const version = DeviceInfoModule.version;
 
 ### `buildNumber: string` {#buildnumber-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 앱 빌드 번호를 읽습니다.
 
@@ -569,7 +569,7 @@ const buildNumber = DeviceInfoModule.buildNumber;
 
 ### `bundleId: string` {#bundleid-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 번들 ID(iOS) 또는 패키지 이름(Android)을 읽습니다.
 
@@ -580,7 +580,7 @@ const bundleId = DeviceInfoModule.bundleId;
 
 ### `applicationName: string` {#applicationname-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 앱 표시 이름을 읽습니다.
 
@@ -591,7 +591,7 @@ const appName = DeviceInfoModule.applicationName;
 
 ### `readableVersion: string` {#readableversion-string}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 읽기 쉬운 버전 문자열(version.buildNumber)을 읽습니다.
 
@@ -602,7 +602,7 @@ const readableVersion = DeviceInfoModule.readableVersion;
 
 ### `getFirstInstallTime(): Promise<number>` {#getfirstinstalltime-promisenumber}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: 제한적 지원</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: 제한적 지원</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 iOS에서는 Documents 디렉터리 생성 시각으로 설치 시각을 추정합니다. 조회할 수 없으면 `0`을 반환합니다.
 
@@ -617,7 +617,7 @@ console.log(`Installed: ${installDate.toLocaleDateString()}`);
 
 ### `getLastUpdateTime(): Promise<number>` {#getlastupdatetime-promisenumber}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: 제한적 지원</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: 제한적 지원</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 가장 최근 앱 갱신 시각을 읽습니다(epoch 이후 밀리초).
 
@@ -631,11 +631,11 @@ console.log(`Last Updated: ${updateDate.toLocaleDateString()}`);
 
 ### `firstInstallTimeSync: number` {#firstinstalltimesync-number}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: 제한적 지원</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: 제한적 지원</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 iOS에서는 처음 접근할 때 Documents 디렉터리 생성 시각을 캐시합니다. 조회할 수 없으면 `0`을 반환합니다.
 
-동기 변형입니다(모듈 초기화 시 캐시한 값 사용).
+`getFirstInstallTime()`의 동기 버전입니다.
 
 ```typescript
 const firstInstallTimeSync = DeviceInfoModule.firstInstallTimeSync;
@@ -643,9 +643,9 @@ const firstInstallTimeSync = DeviceInfoModule.firstInstallTimeSync;
 
 ### `lastUpdateTimeSync: number` {#lastupdatetimesync-number}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-동기 변형입니다(iOS에서는 -1 반환).
+동기 버전입니다(iOS에서는 -1 반환).
 
 ```typescript
 const lastUpdateTimeSync = DeviceInfoModule.lastUpdateTimeSync;
@@ -659,7 +659,7 @@ const lastUpdateTimeSync = DeviceInfoModule.lastUpdateTimeSync;
 
 ### `getIpAddress(): Promise<string>` {#getipaddress-promisestring}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 기기의 로컬 IP 주소를 읽습니다.
 
@@ -671,9 +671,9 @@ const ipAddress = await DeviceInfoModule.getIpAddress();
 
 ### `getIpAddressSync(): string` {#getipaddresssync-string}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-동기 변형입니다(5초 캐시 사용).
+동기 버전입니다(5초 캐시 사용).
 
 ```typescript
 const ipAddressSync = DeviceInfoModule.getIpAddressSync();
@@ -681,7 +681,7 @@ const ipAddressSync = DeviceInfoModule.getIpAddressSync();
 
 ### `getMacAddress(): Promise<string>` {#getmacaddress-promisestring}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 Android에서 접근을 허용하면 Wi-Fi MAC 주소를 읽습니다. `getMacAddressSync()`와 같은 5초 캐시를 사용하며 조회할 수 없으면 `"unknown"`을 반환합니다. 최신 Android에서 [일반 앱은 대개 하드웨어 MAC 주소에 접근할 수 없습니다](https://developer.android.com/reference/java/net/NetworkInterface#getHardwareAddress()). 이 API는 제한을 우회하지 않습니다.
 
@@ -694,9 +694,9 @@ const macAddress = await DeviceInfoModule.getMacAddress();
 
 ### `getMacAddressSync(): string` {#getmacaddresssync-string}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-같은 Android 조회, 5초 캐시, `"unknown"` 대체 값을 사용하는 동기 변형입니다.
+Android에서 같은 방식으로 조회하는 동기 버전입니다. 5초 캐시와 `"unknown"` fallback 값도 공유합니다.
 
 ```typescript
 const macAddressSync = DeviceInfoModule.getMacAddressSync();
@@ -717,7 +717,7 @@ iOS는 WebView를 초기화하고 처음 성공한 결과를 캐시합니다. An
 
 ### `getIsAirplaneMode(): boolean` {#getisairplanemode-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 비행기 모드가 켜져 있는지 확인합니다.
 
@@ -740,9 +740,9 @@ const isAirplaneMode = DeviceInfoModule.getIsAirplaneMode();
 
 ### `getCarrier(): Promise<string>` {#getcarrier-promisestring}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (v1.8.0부터)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (v1.8.0부터)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-iOS 실제 구현은 v1.8.0부터 제공합니다. 이전 비동기 버전은 동기 대응 API가 구현되어 있어도 고정 대체 값을 반환합니다. [iOS 구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026)을 참고하세요.
+iOS에서 실제 값을 반환하는 구현은 v1.8.0부터 제공합니다. 이전 버전에서는 대응하는 동기 API가 구현되어 있어도 이 비동기 API는 고정 fallback 값을 반환합니다. [iOS 구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026)을 참고하세요.
 
 이동통신사 이름을 읽습니다.
 
@@ -754,9 +754,9 @@ const carrier = await DeviceInfoModule.getCarrier();
 
 ### `getCarrierSync(): string` {#getcarriersync-string}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-동기 변형입니다(5초 캐시 사용).
+동기 버전입니다(5초 캐시 사용).
 
 ```typescript
 const carrierSync = DeviceInfoModule.getCarrierSync();
@@ -764,7 +764,7 @@ const carrierSync = DeviceInfoModule.getCarrierSync();
 
 ### `carrierAllowsVOIP: boolean` {#carrierallowsvoip-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 통신사가 네트워크에서 VoIP 통화를 허용하는지 확인합니다.
 
@@ -778,7 +778,7 @@ const allowsVOIP = DeviceInfoModule.carrierAllowsVOIP;
 
 ### `carrierIsoCountryCode: string` {#carrierisocountrycode-string}
 
-<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 통신사의 ISO 3166-1 alpha-2 국가 코드를 읽습니다.
 
@@ -790,7 +790,7 @@ const countryCode = DeviceInfoModule.carrierIsoCountryCode;
 
 ### `mobileCountryCode: string` {#mobilecountrycode-string}
 
-<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 ITU-T 권고 E.212에 따른 이동통신 국가 코드(MCC)를 읽습니다.
 
@@ -812,7 +812,7 @@ const mcc = DeviceInfoModule.mobileCountryCode;
 
 ### `mobileNetworkCode: string` {#mobilenetworkcode-string}
 
-<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 국가 내 통신사를 구별하는 이동통신 네트워크 코드(MNC)를 읽습니다.
 
@@ -824,7 +824,7 @@ const mnc = DeviceInfoModule.mobileNetworkCode;
 
 ### `mobileNetworkOperator: string` {#mobilenetworkoperator-string}
 
-<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 MCC + MNC를 합친 문자열을 읽습니다.
 
@@ -849,11 +849,11 @@ const operator = DeviceInfoModule.mobileNetworkOperator;
 
 ### `isHeadphonesConnected(): Promise<boolean>` {#isheadphonesconnected-promiseboolean}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (v1.8.0부터)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (v1.8.0부터)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-iOS 실제 구현은 v1.8.0부터 제공합니다. 이전 비동기 버전은 동기 대응 API가 구현되어 있어도 고정 대체 값을 반환합니다. [iOS 구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026)을 참고하세요.
+iOS에서 실제 값을 반환하는 구현은 v1.8.0부터 제공합니다. 이전 버전에서는 대응하는 동기 API가 구현되어 있어도 이 비동기 API는 고정 fallback 값을 반환합니다. [iOS 구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026)을 참고하세요.
 
-헤드폰 연결 여부를 확인합니다(유선 또는 Bluetooth). Android에서는 동기 getter와 같은 출력 기기 감지를 사용합니다.
+헤드폰 연결 여부를 확인합니다(유선 또는 Bluetooth). Android에서는 동기 getter와 같은 방식으로 출력 기기를 감지합니다.
 
 ```typescript
 const hasHeadphones = await DeviceInfoModule.isHeadphonesConnected();
@@ -862,9 +862,9 @@ const hasHeadphones = await DeviceInfoModule.isHeadphonesConnected();
 
 ### `getIsHeadphonesConnected(): boolean` {#getisheadphonesconnected-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-동기 변형입니다.
+동기 버전입니다.
 
 ```typescript
 const isHeadphonesConnected = DeviceInfoModule.getIsHeadphonesConnected();
@@ -872,7 +872,7 @@ const isHeadphonesConnected = DeviceInfoModule.getIsHeadphonesConnected();
 
 ### `getIsWiredHeadphonesConnected(): boolean` {#getiswiredheadphonesconnected-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 유선 헤드폰 연결 여부를 확인합니다. Android에서는 유선 헤드폰·헤드셋과 [API 26 이상의 USB 헤드셋](https://developer.android.com/reference/android/media/AudioDeviceInfo#TYPE_USB_HEADSET)을 포함합니다. 내장 스피커와 Bluetooth 기기는 유선 헤드폰에 포함하지 않습니다.
 
@@ -882,7 +882,7 @@ const hasWiredHeadphones = DeviceInfoModule.getIsWiredHeadphonesConnected();
 
 ### `getIsBluetoothHeadphonesConnected(): boolean` {#getisbluetoothheadphonesconnected-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 Bluetooth 헤드폰 연결 여부를 확인합니다.
 
@@ -894,13 +894,13 @@ const hasBluetoothHeadphones = DeviceInfoModule.getIsBluetoothHeadphonesConnecte
 
 ## 위치 서비스(API 3개) {#location-services-3-apis}
 
-위치 제공자 정보입니다.
+위치 provider 정보입니다.
 
 ### `isLocationEnabled(): Promise<boolean>` {#islocationenabled-promiseboolean}
 
-<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (v1.8.0부터)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (v1.8.0부터)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-iOS 실제 구현은 v1.8.0부터 제공합니다. 이전 비동기 버전은 동기 대응 API가 구현되어 있어도 고정 대체 값을 반환합니다. [iOS 구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026)을 참고하세요.
+iOS에서 실제 값을 반환하는 구현은 v1.8.0부터 제공합니다. 이전 버전에서는 대응하는 동기 API가 구현되어 있어도 이 비동기 API는 고정 fallback 값을 반환합니다. [iOS 구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026)을 참고하세요.
 
 위치 서비스가 켜져 있는지 확인합니다.
 
@@ -911,9 +911,9 @@ const isLocationEnabled = await DeviceInfoModule.isLocationEnabled();
 
 ### `getIsLocationEnabled(): boolean` {#getislocationenabled-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-동기 변형입니다.
+동기 버전입니다.
 
 ```typescript
 const isLocationEnabled = DeviceInfoModule.getIsLocationEnabled();
@@ -921,9 +921,9 @@ const isLocationEnabled = DeviceInfoModule.getIsLocationEnabled();
 
 ### `getAvailableLocationProviders(): string[]` {#getavailablelocationproviders-string}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-활성화된 위치 제공자 목록을 읽습니다.
+활성화된 위치 provider 목록을 읽습니다.
 
 ```typescript
 const providers = DeviceInfoModule.getAvailableLocationProviders();
@@ -979,7 +979,7 @@ if (language.startsWith('ko')) {
 
 ### `supportedAbis: string[]` {#supportedabis-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 지원 CPU 아키텍처를 읽습니다.
 
@@ -991,7 +991,7 @@ const abis = DeviceInfoModule.supportedAbis;
 
 ### `supported32BitAbis: string[]` {#supported32bitabis-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 지원하는 32비트 ABI 목록을 읽습니다.
 
@@ -1005,7 +1005,7 @@ const abis32 = DeviceInfoModule.supported32BitAbis;
 
 ### `supported64BitAbis: string[]` {#supported64bitabis-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 지원하는 64비트 ABI 목록을 읽습니다.
 
@@ -1023,7 +1023,7 @@ Android 전용 API와 빌드 정보입니다.
 
 ### `apiLevel: number` {#apilevel-number}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 Android API 수준을 읽습니다.
 
@@ -1038,9 +1038,9 @@ const apiLevel = DeviceInfoModule.apiLevel;
 
 ### `navigationMode: NavigationMode` {#navigationmode-navigationmode}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-Android 탐색 모드를 읽습니다.
+Android 내비게이션 방식을 읽습니다.
 
 ```typescript
 const navMode = DeviceInfoModule.navigationMode;
@@ -1058,9 +1058,9 @@ const navMode = DeviceInfoModule.navigationMode;
 
 | 값 | 설명 |
 |-------|-------------|
-| `gesture` | 전체 제스처 탐색(스와이프 기반) |
-| `buttons` | 기존 3버튼 탐색(뒤로, 홈, 최근 앱) |
-| `twobuttons` | 2버튼 탐색(뒤로, 위로 스와이프하는 홈) |
+| `gesture` | 제스처 내비게이션(스와이프 기반) |
+| `buttons` | 기존 3버튼 내비게이션(뒤로, 홈, 최근 앱) |
+| `twobuttons` | 2버튼 내비게이션(뒤로, 위로 스와이프하는 홈) |
 | `unknown` | 판단 불가(iOS에서는 항상 이 값) |
 
 **활용 예**:
@@ -1078,11 +1078,11 @@ if (navMode === 'gesture') {
 }
 ```
 
-**참고**: 탐색 모드 감지는 Android 10(API 29) 이상이 필요합니다. 이전 Android에서는 제스처 탐색을 지원하지 않았으므로 `"buttons"`를 반환합니다.
+**참고**: 내비게이션 방식 감지는 Android 10(API 29) 이상이 필요합니다. 이전 Android에서는 제스처 내비게이션을 지원하지 않았으므로 `"buttons"`를 반환합니다.
 
 ### `getHasGms(): boolean` {#gethasgms-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 Google Mobile Services 사용 가능 여부를 확인합니다.
 
@@ -1097,7 +1097,7 @@ const hasGms = DeviceInfoModule.getHasGms();
 
 ### `getHasHms(): boolean` {#gethashms-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.3.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 Huawei Mobile Services 사용 가능 여부를 확인합니다.
 
@@ -1111,7 +1111,7 @@ const hasHms = DeviceInfoModule.getHasHms();
 
 ### `hasSystemFeature(feature: string): boolean` {#hassystemfeaturefeature-string-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 특정 시스템 기능의 사용 가능 여부를 확인합니다.
 
@@ -1132,7 +1132,7 @@ const hasNfc = DeviceInfoModule.hasSystemFeature('android.hardware.nfc');
 
 ### `systemAvailableFeatures: string[]` {#systemavailablefeatures-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 사용 가능한 모든 시스템 기능 목록을 읽습니다.
 
@@ -1146,7 +1146,7 @@ const features = DeviceInfoModule.systemAvailableFeatures;
 
 ### `supportedMediaTypeList: string[]` {#supportedmediatypelist-string}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 지원하는 미디어·코덱 타입 목록을 읽습니다.
 
@@ -1188,25 +1188,25 @@ const buildId = DeviceInfoModule.buildId;
 
 | 속성 | 지원 여부 |
 | --- | --- |
-| `serialNumber` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--warning">Android API 24+: 제한적 지원</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `androidId` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `previewSdkInt` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `securityPatch` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `codename` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `incremental` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `board` | <span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `bootloader` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `device` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `display` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `fingerprint` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `hardware` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `host` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `product` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `tags` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `type` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `baseOs` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `radioVersion` | <span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
-| `buildId` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> |
+| `serialNumber` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--warning">Android API 24+: 제한적 지원</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `androidId` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `previewSdkInt` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `securityPatch` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `codename` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `incremental` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `board` | <span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `bootloader` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `device` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `display` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `fingerprint` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `hardware` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `host` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `product` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `tags` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `type` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `baseOs` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `radioVersion` | <span class="rp-badge rp-badge--tip">v1.5.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
+| `buildId` | <span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> |
 
 `serialNumber`는 처음 접근할 때 캐시합니다. Android 8–9에서는 `READ_PHONE_STATE` 권한을 받아야 합니다. Android 10 이상은 권한을 받아도 일반 앱의 접근을 제한합니다.
 
@@ -1218,7 +1218,7 @@ iOS 전용 API입니다.
 
 ### `getDeviceToken(): Promise<string>` {#getdevicetoken-promisestring}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: 거부</span> <span class="rp-badge rp-badge--warning">웹: 거부</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: reject</span>
 
 Apple DeviceCheck 토큰을 읽습니다.
 
@@ -1231,11 +1231,11 @@ try {
 }
 ```
 
-**플랫폼**: iOS. DeviceCheck는 iOS 11부터 있지만 이 패키지는 iOS 15.1 이상이 필요합니다. Android에서는 거부합니다.
+**플랫폼**: iOS. DeviceCheck는 iOS 11부터 있지만 이 패키지는 iOS 15.1 이상이 필요합니다. Android에서는 reject됩니다.
 
 ### `syncUniqueId(): Promise<string>` {#syncuniqueid-promisestring}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: ID만 반환</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: ID만 반환</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 iOS에서 현재 IDFV를 앱 전용 Keychain 항목에 기록합니다. iCloud Keychain 동기화를 켜거나 이전 IDFV를 복원하지는 않습니다.
 
@@ -1255,7 +1255,7 @@ const uniqueId = await DeviceInfoModule.syncUniqueId();
 
 ### `installerPackageName: string` {#installerpackagename-string}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 앱을 설치한 앱 스토어의 패키지 이름을 읽습니다.
 
@@ -1267,7 +1267,7 @@ const installer = DeviceInfoModule.installerPackageName;
 
 ### `getInstallReferrer(): Promise<string>` {#getinstallreferrer-promisestring}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 설치 리퍼러 정보를 읽습니다(Android Play Store).
 
@@ -1281,7 +1281,7 @@ const referrer = await DeviceInfoModule.getInstallReferrer();
 
 ### `isSideLoadingEnabled(): boolean` {#issideloadingenabled-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 사이드로딩(알 수 없는 출처의 설치)이 켜져 있는지 확인합니다.
 
@@ -1295,7 +1295,7 @@ if (canSideload) {
 
 **플랫폼별 동작 차이**:
 - **Android 7 이하**: 기기 전체에서 알 수 없는 출처를 허용하는지 반환합니다(`Settings.Global.INSTALL_NON_MARKET_APPS` 확인).
-- **Android 8.0 이상**: 이 앱이 다른 앱을 설치할 권한을 가졌는지 반환합니다(`canRequestPackageInstalls()`로 앱별 권한 확인).
+- **Android 8.0 이상**: 이 앱에 다른 앱을 설치할 권한이 있는지 반환합니다(`canRequestPackageInstalls()`로 앱별 권한 확인).
 - **iOS**: 이 API는 항상 `false`를 반환하며 사이드로딩을 감지하지 않습니다.
 
 **중요**: Android 8.0 이상에서는 다른 앱에 "알 수 없는 앱 설치"를 허용했더라도 이 앱에 별도로 허용하지 않았다면 `false`를 반환합니다.
@@ -1315,7 +1315,7 @@ if (canSideload) {
 
 ### `totalDiskCapacityOld: number` {#totaldiskcapacityold-number}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 레거시 Android API로 전체 디스크 용량을 읽습니다.
 
@@ -1327,7 +1327,7 @@ const totalDiskOld = DeviceInfoModule.totalDiskCapacityOld;
 
 ### `getFreeDiskStorageOld(): number` {#getfreediskstorageold-number}
 
-<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 레거시 Android API로 남은 디스크 공간을 읽습니다.
 
@@ -1341,20 +1341,20 @@ const freeDiskOld = DeviceInfoModule.getFreeDiskStorageOld();
 
 ### 지원하지 않는 호환 속성 {#unsupported-compatibility-properties}
 
-API 호환을 위해 존재하는 이름입니다. 이 패키지에는 Windows 네이티브 타깃이 없습니다. iOS, Android, 웹에서 고정 기본값을 반환합니다.
+API 호환성을 위해 유지하는 속성입니다. 이 패키지에는 Windows 네이티브 타깃이 없습니다. iOS, Android, 웹에서 고정 기본값을 반환합니다.
 
 | 속성 | 지원 여부 | 기본값 |
 | --- | --- | --- |
-| `isMouseConnected` | <span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> | `false` |
-| `isKeyboardConnected` | <span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> | `false` |
-| `hostNames` | <span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> | `[]` |
-| `isTabletMode` | <span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 대체 값</span> <span class="rp-badge rp-badge--warning">Android: 대체 값</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span> | `false` |
+| `isMouseConnected` | <span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> | `false` |
+| `isKeyboardConnected` | <span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> | `false` |
+| `hostNames` | <span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> | `[]` |
+| `isTabletMode` | <span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--warning">Android: fallback 값</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span> | `false` |
 
 ---
 
 ## 성능 참고 사항 {#performance-notes}
 
-동기 속성과 메서드는 호출한 스레드에서 실행합니다. 일부는 OS를 조회하거나 캐시를 초기화하므로 동기라고 해서 즉시 완료된다는 뜻은 아닙니다.
+동기 속성과 메서드는 호출한 스레드에서 실행합니다. 일부 API는 OS를 조회하거나 캐시를 초기화하므로 동기 호출이 즉시 완료된다는 뜻은 아닙니다.
 
 Promise 메서드는 완료 시간을 보장하지 않습니다. iOS의 `getUserAgent()`는 처음 성공하는 호출에서 WebView를 초기화하고 결과를 캐시합니다. 렌더링 중 비용이 큰 API를 반복 호출하지 마세요.
 
@@ -1374,7 +1374,7 @@ Promise 메서드는 완료 시간을 보장하지 않습니다. iOS의 `getUser
 
 ## 플랫폼 호환성 {#platform-compatibility-matrix}
 
-같은 범주의 멤버도 지원 여부가 다릅니다. 각 API나 묶음 속성 옆의 배지를 확인하세요. [배지 정의](/api/#availability-badges)와 [웹 제한](/guide/web-support)을 참고하세요.
+같은 범주에 있는 속성·메서드도 지원 여부가 다릅니다. 각 API나 속성 묶음 옆의 배지를 확인하세요. [배지 정의](/api/#availability-badges)와 [웹 제한](/guide/web-support)을 참고하세요.
 
 ---
 

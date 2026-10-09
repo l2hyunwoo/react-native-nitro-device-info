@@ -5,18 +5,18 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 # AI 연동용 MCP 서버 {#mcp-server-for-ai-integration}
 
-MCP(Model Context Protocol) 서버를 통해 Claude, Cursor, Copilot 같은 AI 코딩 도우미가 react-native-nitro-device-info 문서를 조회할 수 있습니다.
+MCP(Model Context Protocol) 서버를 사용하면 Claude, Cursor, Copilot 같은 AI 코딩 도우미가 react-native-nitro-device-info 문서를 조회할 수 있습니다.
 
-## 문서 버전과 진입점 확인 {#check-the-documentation-version-and-entry-point}
+## 문서 버전과 import 경로 확인 {#check-the-documentation-version-and-entry-point}
 
-MCP 패키지는 빌드할 때 API 명세와 Markdown을 포함합니다. 실행 중에 최신 웹사이트를 가져오지 않습니다. 설치한 라이브러리 버전의 API를 설명하는 서버 릴리스를 사용하고, 설치된 TypeScript 선언과 대조하세요.
+MCP 패키지에는 빌드 시점의 API 명세와 Markdown이 포함됩니다. 실행 중에 최신 웹사이트를 읽어 오지는 않습니다. 설치한 라이브러리 버전의 API를 설명하는 서버 릴리스를 사용하고, 설치된 TypeScript 선언과 대조하세요.
 
 AI와 함께 코드를 바꿀 때 다음 정보를 지정하세요.
 
 - 설치한 라이브러리 버전과 대상 플랫폼
-- 네이티브 루트 가져오기 또는 `/compat` 가져오기
+- 패키지 루트의 네이티브 API를 import할지, `/compat` API를 import할지
 - Expo 개발 빌드, 일반 React Native, 웹/SSR 중 사용 환경
-- 값을 읽을 수 없는 경우와 Promise 거부 가능성
+- 값을 읽을 수 없는 경우와 Promise가 reject될 가능성
 
 정확한 시그니처는 `get_api`, 설정과 플랫폼 주의 사항은 `search_docs`로 조회하세요. 검색 결과에는 페이지 일부만 포함될 수 있습니다.
 
@@ -26,10 +26,10 @@ AI와 함께 코드를 바꿀 때 다음 정보를 지정하세요.
 
 [MCP(Model Context Protocol)](https://modelcontextprotocol.io/)는 Anthropic의 공개 프로토콜로, AI 도구가 외부 데이터와 도구에 접근할 수 있게 합니다. react-native-nitro-device-info용 MCP 서버는 다음 작업을 지원합니다.
 
-- API 선언과 문서 절 조회
+- API 선언과 문서 섹션 조회
 - 올바른 타입을 사용하는 TypeScript 코드 작성
 - 플랫폼별 질문에 답변(iOS와 Android)
-- 자주 생기는 문제의 해결 지원
+- 자주 생기는 문제 해결
 
 ## 빠른 설정(권장) {#quick-setup-recommended}
 

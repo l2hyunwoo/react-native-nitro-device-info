@@ -630,7 +630,7 @@ console.log(`Last Updated: ${updateDate.toLocaleDateString()}`);
 
 On iOS, this caches the Documents directory creation time on first access. It returns `0` when unavailable.
 
-Synchronous variant (uses cached value from module initialization).
+Synchronous version of `getFirstInstallTime()`.
 
 ```typescript
 const firstInstallTimeSync = DeviceInfoModule.firstInstallTimeSync;

@@ -26,7 +26,7 @@ yarn build
 yarn preview
 ```
 
-빌드 결과는 이 디렉터리의 `doc_build/`입니다.
+빌드 결과는 이 디렉터리의 `doc_build/`에 생성됩니다.
 
 ## 문서 위치 선택 {#choose-the-right-page}
 
@@ -35,31 +35,31 @@ yarn preview
 | 설치와 설정 | `guide/getting-started.md`, `guide/expo-setup.md` | 요구 사항, 명령, 동작 확인 |
 | 첫 사용 예제 | `guide/quick-start.md` | 설치부터 사용까지의 짧은 절차 |
 | 상태 변화에 반응하는 사용법 | `guide/react-hooks.md` | 폴링 간격, 초기값, 컴포넌트 패턴 |
-| 정확한 API 계약 | `api/` | 시그니처, 단위, 플랫폼 동작, 오류 |
-| 마이그레이션 | `api/migration.md` | 진입점, 대응 관계, 호환성 예외 |
+| 정확한 API 동작 | `api/` | 시그니처, 단위, 플랫폼 동작, 오류 |
+| 마이그레이션 | `api/migration.md` | import 경로, 대응 관계, 호환성 예외 |
 | 작업별 코드 | `examples/` | 가이드에 이어 사용할 예제 |
 
 영어 경로는 `docs/docs/` 기준입니다. 한국어 대응 페이지는 `docs/docs/ko/` 아래의 같은 경로에 둡니다. 정적 자산은 공통 `docs/docs/public/`에 둡니다.
 
 ## 독자가 사용할 수 있는 예제 작성 {#write-examples-readers-can-use}
 
-- 가져오기 경로를 명시하세요. 루트와 `/compat` API는 이름과 반환 타입이 다릅니다.
+- import 경로를 명시하세요. 루트와 `/compat` API는 이름과 반환 타입이 다릅니다.
 - JSX를 포함하는 코드에는 `tsx`를 사용하세요.
-- 독립 예제에는 가져오기 문을 포함하세요. 앞선 코드에 의존하는 조각은 표시하세요.
-- 조회 불가 값, 단위, 플랫폼 제한, Promise 거부를 설명하세요.
+- 독립 예제에는 import 문을 포함하세요. 앞선 코드에 의존하는 조각은 표시하세요.
+- 조회 불가 값, 단위, 플랫폼 제한, Promise가 reject되는 경우를 설명하세요.
 - 필요한 설정은 해당 코드보다 먼저 안내하세요.
 - 의도한 타입 오류를 표시하세요. 존재하지 않는 멤버를 자동 완성 예제로 제시하지 마세요.
 - 성능 수치는 측정 조건과 함께 적으세요. 동기 반환 타입은 실행 시간 보장이 아닙니다.
 
-내보낸 TypeScript 타입을 사용하세요. 시그니처 원본은 [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts)이며, 플랫폼 동작은 Swift, Kotlin, 웹 구현이 결정합니다.
+export한 TypeScript 타입을 사용하세요. 시그니처 원본은 [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts)이며, 플랫폼 동작은 Swift, Kotlin, 웹 구현이 결정합니다.
 
 ## 지원 여부 배지 관리 {#maintain-availability-badges}
 
-새 API 절이나 묶음 속성 표의 행마다 도입 버전과 플랫폼 배지를 추가하세요. 기존 Rspress 테마의 `rp-badge` span을 사용하세요. Markdown 출력과 MCP 검색에 텍스트가 남도록 span 안에 문구를 쓰세요.
+새 API 섹션이나 여러 속성을 묶은 표의 행마다 도입 버전과 플랫폼 배지를 추가하세요. 기존 Rspress 테마의 `rp-badge` span을 사용하세요. Markdown으로 출력하거나 MCP로 검색할 때도 문구가 남도록 span 안에 쓰세요.
 
-[배지 정의와 버전 근거](/api/#availability-badges)를 확인하세요. `Unreleased`를 `Since v…`로 바꾸기 전에 실제 npm 배포 버전과 소스를 확인하세요. 매니페스트 버전이나 선언만으로 플랫폼 구현의 배포를 입증할 수는 없습니다.
+[배지 정의와 버전 근거](/api/#availability-badges)를 확인하세요. `Unreleased`를 `Since v…`로 바꾸기 전에 실제 npm 배포 버전과 소스를 확인하세요. 매니페스트의 버전이나 API 선언만으로 플랫폼 구현이 배포됐다고 확인할 수는 없습니다.
 
-플랫폼이 고정 대체 값에서 실제 구현으로 바뀌면 배지를 수정하고 첫 동작 릴리스를 설명하세요. API 자체의 최초 도입 버전은 유지하세요. Swift, Kotlin, 웹 구현을 각각 확인하세요.
+특정 플랫폼에서 고정 fallback 값을 반환하던 API를 실제로 구현했다면 배지를 수정하고 이 구현을 처음 배포한 릴리스를 설명하세요. API 자체의 최초 도입 버전은 유지하세요. Swift, Kotlin, 웹 구현을 각각 확인하세요.
 
 ## 페이지 추가 또는 수정 {#add-or-change-a-page}
 
@@ -78,10 +78,10 @@ Rspress는 사이트 빌드 중 페이지 Markdown, `llms.txt`, `llms-full.txt`�
 
 MCP 서버는 빌드 중 별도의 문서 스냅샷을 포함합니다. 사이트 배포만으로 이미 배포한 MCP 패키지가 갱신되지는 않습니다. 문서 모음을 바꾸면 패키지를 다시 빌드하고 테스트하세요.
 
-각 절에 API 이름, 가져오기 경로, 플랫폼 대체 값, 호환성 주의 사항을 명확하게 적으세요. 검색 결과에는 나머지 페이지 없이 절 하나만 포함될 수 있습니다.
+각 섹션에 API 이름, import 경로, 플랫폼 fallback 값, 호환성 주의 사항을 명확하게 적으세요. 검색 결과에는 페이지 전체가 아니라 섹션 하나만 포함될 수 있습니다.
 
 ## 배포 {#deployment}
 
-`docs/**`를 바꾸는 PR에서는 문서 검증 워크플로가 실행됩니다. 사이트를 빌드하고 검토용 산출물을 업로드합니다.
+`docs/**`를 바꾸는 PR에서는 문서 검증 워크플로가 실행되어 사이트를 빌드하고 검토용 산출물을 업로드합니다.
 
 `main`에 병합하면 배포 워크플로가 실행됩니다. 배포에 실패하면 [Actions 로그](https://github.com/l2hyunwoo/react-native-nitro-device-info/actions)와 GitHub Pages 설정을 확인하세요.

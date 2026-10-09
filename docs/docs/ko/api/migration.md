@@ -9,18 +9,18 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 ## 개요 {#overview}
 
-`react-native-nitro-device-info`는 `react-native-device-info`(RNDI) 15.x와 같은 함수 이름, 시그니처, 기본 `DeviceInfo` 객체, 훅을 제공하는 **호환 계층**을 포함합니다. `react-native-device-info` 대신 `react-native-nitro-device-info/compat`에서 가져오면 **호출 코드는 유지할 수 있습니다**.
+`react-native-nitro-device-info`는 `react-native-device-info`(RNDI) 15.x와 같은 함수 이름, 시그니처, 기본 `DeviceInfo` 객체, 훅을 제공하는 **호환 계층**이 있습니다. `react-native-device-info` 대신 `react-native-nitro-device-info/compat`에서 import하면 **호출 코드는 유지할 수 있습니다**.
 
-바꾸려는 범위에 따라 두 경로 중 하나를 선택하세요.
+어디까지 바꿀지에 따라 호환 API와 네이티브 API 중 하나를 선택하세요.
 
 | 경로 | 작업량 | 결과 |
 | --- | --- | --- |
-| **호환 경로(권장)** | 명령 하나로 가져오기만 변경 | 호출 코드 유지. 대체 값과 플랫폼 차이는 확인해야 합니다. |
-| **네이티브 경로(선택)** | 호출 코드 수동 변경 | 직접 속성 접근과 동기 getter 사용 |
+| **호환 API(권장)** | 명령 하나로 import 경로만 변경 | 호출 코드 유지. fallback 값과 플랫폼 차이는 확인해야 합니다. |
+| **네이티브 API(선택)** | 호출 코드 수동 변경 | 속성을 직접 읽고 동기 getter 사용 |
 
-호환 경로부터 시작하세요. 필요하면 나중에 개별 호출을 네이티브 API로 옮길 수 있습니다. 두 API를 함께 사용할 수 있습니다.
+호환 API부터 사용하세요. 필요하면 나중에 개별 호출을 네이티브 API로 옮길 수 있습니다. 두 API를 함께 사용할 수 있습니다.
 
-## 호환 경로 마이그레이션(권장) {#drop-in-migration-recommended}
+## 호환 API로 마이그레이션하기(권장) {#drop-in-migration-recommended}
 
 ### 1. 설치 {#1-install}
 
@@ -35,7 +35,7 @@ cd ios && pod install && cd ..
 
 ### 2. codemod 실행 {#2-run-the-codemod}
 
-라이브러리에 포함된 codemod는 모든 `react-native-device-info` 가져오기를 `react-native-nitro-device-info/compat`으로 바꿉니다. **가져오기 지정자만 수정**하며 호출 코드는 바꾸지 않습니다.
+라이브러리에 포함된 codemod는 모든 `react-native-device-info` import를 `react-native-nitro-device-info/compat`으로 바꿉니다. **import 경로만 수정**하며 호출 코드는 바꾸지 않습니다.
 
 ```bash
 npx react-native-nitro-device-info migrate
@@ -43,7 +43,7 @@ npx react-native-nitro-device-info migrate
 npx react-native-nitro-device-info migrate src
 ```
 
-ES 가져오기(기본, 이름, 네임스페이스), 다시 내보내기, CommonJS `require()`를 바꿉니다.
+ES import(default, named, namespace), re-export, CommonJS `require()`를 바꿉니다.
 
 ```typescript
 // Before
@@ -55,7 +55,7 @@ import DeviceInfo from 'react-native-nitro-device-info/compat';
 import { getModel, useBatteryLevel } from 'react-native-nitro-device-info/compat';
 ```
 
-수동으로 작업한다면 프로젝트 전체에서 가져오기 문자열 `'react-native-device-info'`를 `'react-native-nitro-device-info/compat'`으로 바꿔도 같은 결과를 얻습니다.
+수동으로 작업한다면 프로젝트 전체에서 import 문자열 `'react-native-device-info'`를 `'react-native-nitro-device-info/compat'`으로 바꿔도 같은 결과를 얻습니다.
 
 ### 3. 이전 의존성 제거 {#3-remove-the-old-dependency}
 
@@ -65,7 +65,7 @@ npm uninstall react-native-device-info
 
 ### 4. 문서의 주의 사항 확인 {#4-review-the-documented-caveats}
 
-호환 계층은 **RNDI 15.x API**를 대상으로 합니다. 이 라이브러리에 네이티브 대응 기능이 없는 일부 API는 대체 값을 반환합니다. 아래 [호환 계층 주의 사항](#compat-layer-caveats)을 확인하세요. 앱에서 이 API를 쓰지 않으면 전환이 완료됩니다.
+호환 계층은 **RNDI 15.x API**를 대상으로 합니다. 이 라이브러리에 네이티브 대응 기능이 없는 일부 API는 fallback 값을 반환합니다. 아래 [호환 계층 주의 사항](#compat-layer-caveats)을 확인하세요. 앱에서 이 API를 쓰지 않으면 전환이 완료됩니다.
 
 호출 코드를 바꾸거나 `await`를 추가·제거할 필요가 없습니다.
 
@@ -80,11 +80,11 @@ npm uninstall react-native-device-info
 | `getUserAgentSync()` | `''` 반환 | 사용자 에이전트를 비동기로 계산합니다(iOS WebView). 실제 값은 비동기 `getUserAgent()`를 사용하세요. |
 | `getInstallReferrerSync()` | `'unknown'` 반환 | 설치 리퍼러는 비동기로만 읽을 수 있습니다. `getInstallReferrer()`를 사용하세요. |
 
-다른 API는 이 라이브러리의 네이티브 구현에 위임합니다. 플랫폼별 대체 값을 반환하거나 RNDI와 다르게 동작할 수 있습니다. 일부 결과 형태는 자동 변환합니다. 예를 들어 `getAvailableLocationProviders()`는 RNDI의 `{ gps: true, network: true }` 맵을 반환합니다. `getFreeDiskStorage(storageType?)`는 iOS 저장 공간 타입 인자를 받지만 무시합니다. 비동기 오디오 기기 훅은 RNDI의 `{ loading, result }` 형태를 반환합니다.
+다른 API는 이 라이브러리의 네이티브 구현에 위임합니다. 플랫폼별 fallback 값을 반환하거나 RNDI와 다르게 동작할 수 있습니다. 일부 결과 형태는 자동 변환합니다. 예를 들어 `getAvailableLocationProviders()`는 RNDI의 `{ gps: true, network: true }` 맵을 반환합니다. `getFreeDiskStorage(storageType?)`는 iOS 저장 공간 타입 인자를 받지만 무시합니다. 비동기 오디오 기기 훅은 RNDI의 `{ loading, result }` 형태를 반환합니다.
 
-## 네이티브 경로 마이그레이션(선택, 직접 접근) {#native-migration-optional-for-maximum-performance}
+## 네이티브 API로 전환하기(선택사항) {#native-migration-optional-for-maximum-performance}
 
-호환 계층 대신 직접 속성 접근과 동기 getter를 사용하려면 패키지 루트에서 `DeviceInfoModule`을 가져오고 아래 표에 따라 호출 코드를 바꾸세요.
+호환 계층 대신 속성을 직접 읽고 동기 getter를 사용하려면 패키지 루트에서 `DeviceInfoModule`을 import하고 아래 표에 따라 호출 코드를 바꾸세요.
 
 ### 주요 차이 {#key-differences}
 
@@ -169,9 +169,9 @@ const installTime = await DeviceInfoModule.getFirstInstallTime();
 | `await DeviceInfo.getCarrier()` | `await DeviceInfoModule.getCarrier()` | 비동기 유지(I/O) |
 | `await DeviceInfo.isLocationEnabled()` | `await DeviceInfoModule.isLocationEnabled()` | 비동기 유지(I/O) |
 
-### 단계별 절차(네이티브 경로) {#step-by-step-native-path}
+### 네이티브 API로 전환하는 순서 {#step-by-step-native-path}
 
-> 네이티브 API로 전환하는 절차입니다. 호출 코드를 유지하려면 [호환 경로 마이그레이션](#drop-in-migration-recommended)을 사용하세요.
+> 네이티브 API로 전환하는 절차입니다. 호출 코드를 유지하려면 [호환 API 마이그레이션](#drop-in-migration-recommended)을 사용하세요.
 
 #### 1. 새 라이브러리 설치 {#1-install-the-new-library}
 
@@ -186,9 +186,9 @@ npm install react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
-#### 2. 가져오기 수정 {#2-update-imports}
+#### 2. import 수정 {#2-update-imports}
 
-코드 전체에서 가져오기를 찾아 바꾸세요.
+코드 전체에서 import를 찾아 바꾸세요.
 
 ```typescript
 // Before
@@ -210,9 +210,9 @@ const brand = DeviceInfo.getBrand();
 const brand = DeviceInfoModule.brand; // Also changed to property
 ```
 
-#### 4. 메서드 호출을 속성으로 변환 {#4-convert-method-calls-to-properties}
+#### 4. 메서드 호출을 속성 접근으로 변경 {#4-convert-method-calls-to-properties}
 
-속성으로 바뀐 메서드 호출을 수정하세요.
+메서드가 속성으로 바뀌었다면 호출 대신 속성을 읽도록 수정하세요.
 
 ```typescript
 // Before
@@ -383,13 +383,13 @@ const powerState: PowerState = DeviceInfoModule.getPowerState();
 // TypeScript knows: powerState.batteryLevel, powerState.batteryState, powerState.lowPowerMode
 ```
 
-### 4. 향후 지원을 위한 구조 {#4-future-proof-architecture}
+### 4. New Architecture 기반 구조 {#4-future-proof-architecture}
 
-장기 지원을 위해 React Native의 New Architecture(Fabric + JSI)를 기반으로 합니다.
+장기 지원을 위해 React Native의 New Architecture(Fabric + JSI)를 사용합니다.
 
 ## React 훅 마이그레이션 {#react-hooks-migration}
 
-**호환 경로:** 모든 RNDI 훅을 같은 시그니처로 다시 내보냅니다. 비동기 훅의 `{ loading, result }` 형태도 포함합니다. codemod가 가져오기를 수정하며 사용법은 같습니다.
+**호환 API:** 모든 RNDI 훅을 같은 시그니처로 re-export합니다. 비동기 훅의 `{ loading, result }` 형태도 포함합니다. codemod가 import를 수정하며 사용법은 같습니다.
 
 ```tsx
 // Before
@@ -405,9 +405,9 @@ function BatteryWidget() {
 }
 ```
 
-**네이티브 경로:** 패키지 루트는 `AsyncHookResult` 래퍼 없이 값 자체를 반환하는 훅 7개를 직접 내보냅니다. 호출 코드를 네이티브 API로 옮길 때 사용하세요.
+**네이티브 API:** 패키지 루트에서는 `AsyncHookResult` 래퍼 없이 값 자체를 반환하는 훅 7개를 직접 export합니다. 호출 코드를 네이티브 API로 옮길 때 사용하세요.
 
-| react-native-device-info | 네이티브 루트 내보내기 | 참고 |
+| react-native-device-info | 패키지 루트의 훅 | 참고 |
 | --- | --- | --- |
 | `useBatteryLevel()` | `useBatteryLevel()` | 동일(`number \| null`) |
 | `useBatteryLevelIsLow()` | `useBatteryLevelIsLow()` | 동일 |
@@ -417,18 +417,18 @@ function BatteryWidget() {
 | `useIsBluetoothHeadphonesConnected()` | `useIsBluetoothHeadphonesConnected()` | `boolean` 반환(호환 계층은 래퍼 사용) |
 | `useBrightness()` | `useBrightness()` | 동일(`number \| null`) |
 
-나머지 RNDI 훅(`useFirstInstallTime`, `useDeviceName`, `useHasSystemFeature`, `useIsEmulator`, `useManufacturer`)은 **호환 경로에서만** 제공하며 RNDI의 `AsyncHookResult<T>` 형태를 반환합니다.
+나머지 RNDI 훅(`useFirstInstallTime`, `useDeviceName`, `useHasSystemFeature`, `useIsEmulator`, `useManufacturer`)은 **호환 API에서만** 제공하며 RNDI의 `AsyncHookResult<T>` 형태를 반환합니다.
 
 전체 훅 설명은 [React 훅 가이드](/guide/react-hooks)를 참고하세요.
 
-### 동작 변경(네이티브 경로 전용) {#behavioral-changes-native-path-only}
+### 네이티브 API로 전환할 때 달라지는 동작 {#behavioral-changes-native-path-only}
 
 다음 차이는 **네이티브 API**(`DeviceInfoModule`)를 사용할 때 적용됩니다. 호환 계층은 함수 시그니처와 훅 결과 형태를 맞추지만 모든 플랫폼 동작을 재현하지는 않습니다. [호환 계층 주의 사항](#compat-layer-caveats)을 확인하세요.
 
 1. **기본 동기 호출**: 대부분의 메서드는 더 이상 Promise를 반환하지 않습니다.
 2. **속성 접근**: 일부 getter는 속성입니다.
 3. **모듈 이름**: `DeviceInfo` 대신 `DeviceInfoModule`을 사용합니다.
-4. **이벤트 리스너**: 원시 배터리·네트워크 상태 리스너를 내보내지 않습니다. 상태 관찰에는 제공하는 React 훅(`useBatteryLevel`, `usePowerState` 등)을 사용하세요. 호환 계층은 RNDI 훅을 같은 형태로 다시 내보냅니다.
+4. **이벤트 리스너**: 원시 배터리·네트워크 상태 리스너를 export하지 않습니다. 상태 관찰에는 제공하는 React 훅(`useBatteryLevel`, `usePowerState` 등)을 사용하세요. 호환 계층은 RNDI 훅을 같은 형태로 re-export합니다.
 
 ## 문제 해결 {#troubleshooting}
 
@@ -563,9 +563,9 @@ iOS의 `getUptime()`은 앱 이벤트 시간 측정에만 지원합니다. 경�
   - Android: `uptimeMillis()` 사용
   - 두 플랫폼 모두 expo-device와 같은 활성 시간 반환
 
-#### 기기 연도 등급 {#device-year-class}
+#### year class {#device-year-class}
 
-두 라이브러리는 RAM과 CPU 사양으로 기기 연도 등급을 계산하는 같은 Facebook 알고리즘을 사용합니다. 연도 등급은 하드웨어가 고급 사양으로 평가됐을 것으로 추정하는 연도입니다.
+두 라이브러리는 RAM과 CPU 사양으로 year class를 계산하는 같은 Facebook 알고리즘을 사용합니다. year class는 하드웨어가 고급 사양으로 평가됐을 것으로 추정하는 연도입니다.
 
 #### 루팅·탈옥 탐지 {#rootjailbreak-detection}
 

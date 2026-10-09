@@ -24,9 +24,9 @@ features:
   - title: 📦 TypeScript 지원
     details: 전체 타입 정의 제공
   - title: 🚀 동기 API
-    details: 속성과 동기 메서드는 직접 읽고 Promise 메서드는 await로 호출
+    details: 속성과 동기 메서드로 값 조회. Promise 메서드는 await로 결과 확인
   - title: 🌐 플랫폼 지원
     details: iOS 15.1+ 및 Android API 24+ (Android 7.0+) 지원
   - title: 🔄 마이그레이션
-    details: /compat으로 react-native-device-info 15.x의 가져오기 경로 변경. 전환 전에 호환성 주의 사항 확인
+    details: react-native-device-info 15.x에서 전환하려면 import 경로를 /compat으로 변경. 전환 전에 호환성 주의 사항 확인
 ---

@@ -7,13 +7,13 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 Android 루팅 또는 iOS 탈옥 기기를 탐지하는 **로컬 전용** 무결성 검사 API입니다.
 
-:::tip 서버에서 검증할 수 있는 기기 증명이 필요한 경우
-이 검사는 로컬에서 수행하며 우회할 수 있습니다. 하드웨어를 기반으로 서버에서 검증하는 증명(Play Integrity / App Attest)은 [기기 증명 API](./device-attestation)를 참고하세요. 별도 선택 패키지로 로컬 검사를 보완합니다. 로컬 검사는 빠른 오프라인 사전 필터로, 증명은 서버가 신뢰 여부를 판단하는 기준으로 사용하세요.
+:::tip 서버에서 검증하는 device attestation이 필요한가요?
+이 로컬 검사는 우회할 수 있습니다. 하드웨어 기반 토큰을 서버에서 검증하는 device attestation(Play Integrity / App Attest)이 필요하면 [device attestation API](./device-attestation)를 참고하세요. 별도 선택 패키지로 로컬 검사를 보완합니다. 로컬 검사는 빠른 오프라인 사전 필터로, attestation은 서버가 신뢰 여부를 판단하는 기준으로 사용하세요.
 :::
 
 ## 개요 {#overview}
 
-이 API는 서버 검증 없이 파일 시스템 검사, 패키지 감지 같은 **로컬 탐지만** 수행합니다. 다음과 같은 앱에서 다층 방어의 한 수단으로 사용합니다.
+이 API는 서버에서 검증하지 않고 파일 시스템 검사, 패키지 감지 같은 **로컬 탐지만** 수행합니다. 다음과 같은 앱에서 다층 방어의 한 수단으로 사용할 수 있습니다.
 
 - 금융·은행 앱
 - 민감한 데이터를 다루는 의료 앱
@@ -28,13 +28,13 @@ Android 루팅 또는 iOS 탈옥 기기를 탐지하는 **로컬 전용** 무결
 - 유일한 보안 수단이 아니라 다층 방어의 한 수단으로 사용하세요.
 :::
 
-[지원 여부 배지의 정의](/api/#availability-badges)를 읽으세요. 두 API는 핵심 패키지에 속하며 웹에서는 대체 값만 반환합니다.
+[지원 여부 배지 설명](/api/#availability-badges)을 읽으세요. 두 API는 핵심 패키지에 속하며 웹에서는 fallback 값만 반환합니다.
 
 ## API 레퍼런스 {#api-reference}
 
 ### `isDeviceCompromised()` {#isdevicecompromised}
 
-<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 루팅(Android) 또는 탈옥(iOS) 여부를 동기로 검사합니다.
 
@@ -42,7 +42,7 @@ Android 루팅 또는 iOS 탈옥 기기를 탐지하는 **로컬 전용** 무결
 isDeviceCompromised(): boolean
 ```
 
-**반환값:** 기기 손상을 탐지하면 `true`, 그 외 `false`
+**반환값:** 루팅·탈옥 등 보안 침해 징후를 탐지하면 `true`, 그 외 `false`
 
 **성능:** <50ms
 
@@ -52,7 +52,7 @@ isDeviceCompromised(): boolean
 
 ### `verifyDeviceIntegrity()` {#verifydeviceintegrity}
 
-<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 대체 값</span>
+<span class="rp-badge rp-badge--tip">v1.4.2부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 기기 무결성 검사의 비동기 래퍼입니다.
 
@@ -60,7 +60,7 @@ isDeviceCompromised(): boolean
 verifyDeviceIntegrity(): Promise<boolean>
 ```
 
-**반환값:** 루팅·탈옥을 탐지하면 `true`로 이행하는 Promise
+**반환값:** 루팅·탈옥을 탐지하면 `true`로 resolve되는 Promise
 
 **성능:**
 
@@ -168,12 +168,12 @@ function DeviceAuthenticationLogin() {
 
 1. **탐지에만 의존하지 마세요.** 다층 방어의 한 수단으로 사용하세요.
 2. **실패를 처리하세요.** 앱을 강제 종료하지 말고 대체 흐름을 제공하세요.
-3. **분석용으로 기록하세요.** 보안 분석을 위해 탐지율을 확인하세요.
+3. **분석할 수 있도록 기록하세요.** 보안 분석에 사용할 탐지율을 확인하세요.
 4. **실제 기기에서 테스트하세요.** 에뮬레이터는 항상 `false`를 반환합니다.
 5. **정기적으로 갱신하세요.** 새로운 루팅 도구가 계속 등장합니다.
 
 ## 관련 문서 {#see-also}
 
-- [기기 증명](/api/device-attestation)
+- [device attestation](/api/device-attestation)
 - [isEmulator](/api/device-info#isemulator-boolean)
 - [isPinOrFingerprintSet](/api/device-info#ispinorfingerprintset-boolean)

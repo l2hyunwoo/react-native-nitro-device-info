@@ -7,7 +7,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 `react-native-nitro-device-info`의 TypeScript 타입 정의입니다.
 
-## 타입 가져오기 {#importing-types}
+## 타입 import하기 {#importing-types}
 
 ```typescript
 import type {
@@ -23,7 +23,7 @@ import type {
 
 ### PowerState {#powerstate}
 
-전체 전원과 배터리 상태 정보입니다.
+전원과 배터리의 전체 상태를 나타냅니다.
 
 ```typescript
 interface PowerState {
@@ -102,7 +102,7 @@ switch (powerState.batteryState) {
 
 ### NavigationMode {#navigationmode}
 
-Android 탐색 모드 타입입니다.
+Android 내비게이션 방식 타입입니다.
 
 ```typescript
 type NavigationMode = 'gesture' | 'buttons' | 'twobuttons' | 'unknown';
@@ -110,9 +110,9 @@ type NavigationMode = 'gesture' | 'buttons' | 'twobuttons' | 'unknown';
 
 **값**:
 
-- **gesture**: 전체 제스처 탐색(스와이프 기반)
-- **buttons**: 기존 3버튼 탐색(뒤로, 홈, 최근 앱)
-- **twobuttons**: 2버튼 탐색(뒤로, 위로 스와이프하는 홈)
+- **gesture**: 제스처 내비게이션(스와이프 기반)
+- **buttons**: 기존 3버튼 내비게이션(뒤로, 홈, 최근 앱)
+- **twobuttons**: 2버튼 내비게이션(뒤로, 위로 스와이프하는 홈)
 - **unknown**: 판단 불가(iOS에서는 항상 이 값)
 
 **사용법**:
@@ -139,8 +139,8 @@ switch (navMode) {
 
 **플랫폼 동작**:
 
-- **Android API 29 이상**: 실제 탐색 모드 반환
-- **Android API < 29**: `"buttons"` 반환(제스처 탐색 미지원)
+- **Android API 29 이상**: 실제 내비게이션 방식 반환
+- **Android API < 29**: `"buttons"` 반환(제스처 내비게이션 미지원)
 - **iOS**: 항상 `"unknown"` 반환
 
 ### DeviceType {#devicetype}
@@ -187,7 +187,7 @@ if (deviceType === 'Tablet') {
 
 ## DeviceInfo 인터페이스 {#deviceinfo-interface}
 
-선언을 앱에 복사하지 말고 배포한 인터페이스를 가져오세요.
+타입 선언을 앱에 복사하지 말고 패키지에서 제공하는 인터페이스를 import하세요.
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -200,11 +200,11 @@ const hasGms: boolean = deviceInfo.getHasGms();
 
 `DeviceInfo`는 타입이며 런타임 싱글턴이 아닙니다. 값을 읽을 때는 `DeviceInfoModule`을 사용하세요.
 
-전체 시그니처 원본은 [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts)입니다. 설치한 릴리스와 현재 웹사이트가 다르면 설치 버전의 선언을 확인하세요. 반환값과 플랫폼 동작은 [DeviceInfo 모듈](/api/device-info)을 참고하세요.
+전체 시그니처 원본은 [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts)입니다. 현재 웹사이트가 설치한 릴리스와 다르면 설치한 버전의 타입 선언을 확인하세요. 반환값과 플랫폼 동작은 [DeviceInfo 모듈](/api/device-info)을 참고하세요.
 
 ## 사용 예제 {#usage-examples}
 
-### 타입을 검사하는 전원 상태 {#type-safe-power-state}
+### 타입을 지정해 전원 상태 다루기 {#type-safe-power-state}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -233,7 +233,7 @@ function getBatteryStatus(): string {
 }
 ```
 
-### 타입을 검사하는 기기 유형 처리 {#type-safe-device-type-handling}
+### 타입을 지정해 기기 유형별로 처리하기 {#type-safe-device-type-handling}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -255,9 +255,9 @@ function getLayoutMode(): 'mobile' | 'tablet' | 'desktop' {
 }
 ```
 
-### 사용자 정의 타입 별칭 {#custom-type-aliases}
+### 커스텀 타입 별칭 {#custom-type-aliases}
 
-필요하면 타입 별칭을 만들 수 있습니다.
+필요에 따라 타입 별칭을 추가할 수 있습니다.
 
 ```typescript
 import type { DeviceInfo } from 'react-native-nitro-device-info';
@@ -285,7 +285,7 @@ function getDeviceCapabilities(): DeviceCapabilities {
 
 ## TypeScript 설정 {#typescript-configuration}
 
-`tsconfig.json` 설정을 확인하세요.
+`tsconfig.json`의 타입 검사 설정을 확인하세요.
 
 ```json
 {
