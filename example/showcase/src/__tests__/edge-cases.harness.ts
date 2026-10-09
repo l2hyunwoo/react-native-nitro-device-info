@@ -129,6 +129,12 @@ describe('Tier 3 - Security APIs (Type Verification Only)', () => {
     expect(typeof present).toBe('boolean');
   });
 
+  test('iOS simulator has no camera hardware', () => {
+    if (Platform.OS === 'ios' && DeviceInfoModule.isEmulator) {
+      expect(DeviceInfoModule.isCameraPresent).toBe(false);
+    }
+  });
+
   test('isPinOrFingerprintSet returns boolean', () => {
     const isSet = DeviceInfoModule.isPinOrFingerprintSet;
     expect(typeof isSet).toBe('boolean');

@@ -101,7 +101,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
   {
     key: 'isCameraPresent',
-    label: 'Has Camera',
+    label: 'Has Camera Hardware',
     category: PropertyCategory.DEVICE_CAPABILITIES,
     type: PropertyType.BOOLEAN,
     platform: PlatformAvailability.ALL,
