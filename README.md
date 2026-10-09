@@ -177,6 +177,8 @@ const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // As
 
 Android MAC address getters share a 5-second cache and return `"unknown"` when access is restricted or the Wi-Fi address is unavailable.
 
+Android headphone detection distinguishes wired/USB headsets (USB on API 26+) from Bluetooth; async and sync getters use the same detection.
+
 > **Need server-verifiable attestation?** The local checks above are bypassable.
 > For hardware-backed, server-verified attestation (Play Integrity on Android,
 > App Attest / DeviceCheck on iOS), use the opt-in

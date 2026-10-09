@@ -616,10 +616,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Check if headphones are connected */
     override fun isHeadphonesConnected(): Promise<Boolean> {
-        return Promise.async {
-            val audioManager = context.getSystemService<AudioManager>()
-            audioManager?.isWiredHeadsetOn == true || audioManager?.isBluetoothA2dpOn == true
-        }
+        return Promise.async { getIsHeadphonesConnected() }
     }
 
     /** Check if any headphones are connected */
@@ -632,11 +629,10 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             audioDevices.any { device ->
                 device.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
                     device.type == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        device.type == AudioDeviceInfo.TYPE_USB_HEADSET
-                    } else {
-                        true
-                    }
+                    (
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                            device.type == AudioDeviceInfo.TYPE_USB_HEADSET
+                    )
             }
         } catch (e: Exception) {
             false
