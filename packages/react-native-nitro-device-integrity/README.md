@@ -78,16 +78,21 @@ if (integrity.providerType === 'playIntegrity') {
   const clientDataHash = '<base64 SHA-256 of your server challenge>';
   const attestation = await integrity.attestKey(keyId, clientDataHash); // once
   // POST { keyId, attestation } to your server for one-time validation
-  const assertion = await integrity.generateAssertion(keyId, clientDataHash); // per request
+  // Each subsequent request needs a fresh one-time challenge.
+  const challenge = await fetchChallengeFromYourServer();
+  const clientData = JSON.stringify({ challenge, payload });
+  const assertion = await integrity.generateAssertion(keyId, base64Sha256(clientData));
+  // POST { keyId, assertion, clientData } to your server
 }
 ```
 
 ### `clientDataHash` (iOS)
 
-App Attest expects an **already-hashed** 32-byte value. You compute
-`SHA-256(challenge ‖ yourClientData)` and pass it base64-encoded. This library
-deliberately does **not** hash for you — how you assemble client data must match
-what your server expects.
+App Attest expects an **already-hashed** 32-byte value, passed as base64. For key
+attestation, hash the one-time server challenge. For each assertion, hash client
+data containing a fresh server challenge and the request payload. Send the exact
+string you hashed to your server for verification. The example assumes your app
+supplies the hashing and backend helpers. This library does **not** hash for you.
 
 ## Server verification (your responsibility)
 
@@ -110,7 +115,8 @@ device. See [Play Integrity verdicts](https://developer.android.com/google/play/
 
 Validate the attestation **once** per key against Apple's App Attest Root CA
 (cert chain, nonce, app-ID hash, counter = 0), store the public key + counter,
-then verify each **assertion's** signature and monotonic counter. See
+then verify each **assertion's** signature and monotonic counter. Check that the
+challenge in the client data matches an unused value issued by your server. See
 [Validating apps that connect to your server](https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server).
 
 ## Setup requirements

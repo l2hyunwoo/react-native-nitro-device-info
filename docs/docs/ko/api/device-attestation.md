@@ -155,7 +155,7 @@ attestKey(keyId: string, clientDataHash: string): Promise<string>
 generateAssertion(keyId: string, clientDataHash: string): Promise<string>
 ```
 
-후속 요청용 assertion을 오프라인으로 생성합니다. 불투명한 CBOR assertion 객체를 base64로 인코딩해 반환합니다. 서버는 단조 증가 카운터로 재전송 공격을 탐지합니다.
+후속 요청용 assertion을 오프라인으로 생성합니다. 요청마다 서버에서 새 일회용 challenge를 받아 요청 payload와 함께 구성한 client data를 해시하세요. 불투명한 CBOR assertion 객체를 base64로 인코딩해 반환합니다. 서버는 발급한 challenge와 단조 증가 카운터를 확인해 재전송 공격을 탐지합니다.
 
 ---
 
@@ -191,10 +191,14 @@ if (integrity.providerType === 'playIntegrity') {
   const attestation = await integrity.attestKey(keyId, clientDataHash); // once
   await postToYourServer({ keyId, attestation });           // one-time validation
   // ...per request:
-  const assertion = await integrity.generateAssertion(keyId, base64Sha256(payload));
-  await postToYourServer({ keyId, assertion });
+  const challenge = await fetchChallengeFromYourServer(); // fresh, one-time
+  const clientData = JSON.stringify({ challenge, payload });
+  const assertion = await integrity.generateAssertion(keyId, base64Sha256(clientData));
+  await postToYourServer({ keyId, assertion, clientData });
 }
 ```
+
+예제의 해시 함수와 백엔드 통신 함수는 앱에서 구현해야 합니다. 해시한 `clientData` 문자열을 그대로 보내세요. 서버는 같은 바이트로 서명을 검증하고 문자열에 포함된 challenge가 해당 요청에 발급한 값과 일치하는지 확인해야 합니다.
 
 ## 서버 검증(개발자 책임) {#server-verification-your-responsibility}
 
@@ -219,7 +223,7 @@ POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 ### App Attest(iOS) {#app-attest-ios}
 
 1. 키마다 한 번 Apple App Attest Root CA를 기준으로 **attestation**을 검증하세요(인증서 체인, nonce, app-ID 해시, counter = 0). 공개 키와 카운터를 저장하세요.
-2. 각 **assertion**의 서명을 저장한 공개 키로 검증하고 카운터가 엄격히 증가했는지 확인하세요.
+2. 각 **assertion**을 받으면 client data를 그대로 해시해 저장한 공개 키로 서명을 검증하세요. client data의 challenge가 서버에서 발급한 미사용 값과 일치하는지, 카운터가 이전 값보다 커졌는지 확인하세요.
 
 [서버에 연결하는 앱 검증](https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server)을 참고하세요.
 
