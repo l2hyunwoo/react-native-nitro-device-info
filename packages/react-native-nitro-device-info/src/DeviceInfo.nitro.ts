@@ -439,12 +439,20 @@ export interface DeviceInfo
    * Both platforms return consistent "active time" since boot.
    * This matches the behavior of `expo-device.getUptimeAsync()`.
    *
+   * @remarks
+   * On iOS, use only for app-event timing: elapsed time or timers (`35F9.1`), or
+   * app-event uptime converted to an absolute timestamp with `startupTime`
+   * (`8FFB.1`). Do not display or collect raw uptime as device information, send
+   * it off-device, or use it for fingerprinting. Only elapsed time between app
+   * events or the resulting absolute app-event timestamps may be sent off-device.
+   *
    * @returns Uptime in milliseconds (excludes deep sleep on both platforms)
    * @example
    * ```typescript
-   * const uptime = DeviceInfoModule.getUptime();
-   * const hours = Math.floor(uptime / 1000 / 60 / 60);
-   * console.log(`Device has been running for ${hours} hours`);
+   * const startedAt = DeviceInfoModule.getUptime();
+   * const usedMemory = DeviceInfoModule.getUsedMemory();
+   * const elapsedMs = DeviceInfoModule.getUptime() - startedAt;
+   * console.log({ usedMemory, elapsedMs });
    * ```
    *
    * @platform iOS, Android
@@ -454,6 +462,12 @@ export interface DeviceInfo
   /**
    * Get the device boot time as milliseconds since epoch.
    * Returns boot time, NOT app startup time.
+   *
+   * @remarks
+   * On iOS, use only as the time base for absolute timestamps of events within
+   * the app (`8FFB.1`). Do not display or collect the raw boot timestamp as device
+   * information, send it off-device, or use it for fingerprinting. Only the
+   * resulting absolute timestamps of app events may be sent off-device.
    *
    * @platform iOS, Android
    */

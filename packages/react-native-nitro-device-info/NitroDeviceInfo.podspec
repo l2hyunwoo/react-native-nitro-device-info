@@ -19,6 +19,10 @@ Pod::Spec.new do |s|
     "ios/**/*.{m,mm}",
   ]
 
+  s.resource_bundles = {
+    'NitroDeviceInfo_privacy' => ['ios/PrivacyInfo.xcprivacy']
+  }
+
   load 'nitrogen/generated/ios/NitroDeviceInfo+autolinking.rb'
   add_nitrogen_files(s)
 end

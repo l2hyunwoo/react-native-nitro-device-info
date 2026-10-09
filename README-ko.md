@@ -39,6 +39,8 @@ pnpm add react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
+Pod가 `PrivacyInfo.xcprivacy`를 `NitroDeviceInfo_privacy.bundle`에 포함합니다. Expo prebuild / EAS 빌드에도 적용되며, Privacy Manifest용 config plugin 옵션은 필요하지 않습니다. 선언한 API 사용 사유와 제한은 [iOS Privacy Manifest 가이드](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/getting-started#ios-privacy-manifest)를 참고하세요.
+
 ### Android 설정
 
 별도의 설정이 필요 없습니다.
@@ -118,11 +120,11 @@ const isEmulator = DeviceInfoModule.isEmulator; // false
 const deviceYearClass = DeviceInfoModule.deviceYearClass; // 2021 (추정 연도 클래스)
 
 // 시스템 리소스
+const resourceReadStartedAt = DeviceInfoModule.getUptime();
 const totalMemory = DeviceInfoModule.totalMemory;
 const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.totalDiskCapacity;
 const freeDisk = DeviceInfoModule.getFreeDiskStorage();
-const uptime = DeviceInfoModule.getUptime(); // 부팅 후 경과 시간 (밀리초)
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
@@ -131,7 +133,7 @@ console.log(
   `저장공간: ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB 중 ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB 사용 가능`
 );
 console.log(
-  `가동 시간: ${Math.floor(uptime / 1000 / 60 / 60)}시간 ${Math.floor((uptime / 1000 / 60) % 60)}분`
+  `리소스 조회 소요 시간: ${DeviceInfoModule.getUptime() - resourceReadStartedAt}ms`
 );
 
 // 배터리 정보
@@ -204,7 +206,7 @@ DeviceInfoModule.isTablet; // 동기
 DeviceInfoModule.totalMemory; // 동기
 DeviceInfoModule.getBatteryLevel(); // 동기 메서드
 DeviceInfoModule.deviceYearClass; // 동기 - 추정 디바이스 연도 클래스
-DeviceInfoModule.getUptime(); // 동기 - 부팅 후 경과 시간 (밀리초)
+DeviceInfoModule.getUptime(); // 동기 - 앱 이벤트 사이의 경과 시간 측정용 시계
 
 // 앱 정보
 DeviceInfoModule.version; // 동기

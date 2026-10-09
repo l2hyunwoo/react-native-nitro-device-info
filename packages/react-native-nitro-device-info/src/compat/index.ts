@@ -202,7 +202,12 @@ export const getLastUpdateTimeSync = syncProp(
   () => DeviceInfoModule.lastUpdateTimeSync
 );
 
+/**
+ * On iOS, use only to calculate absolute app-event timestamps (`8FFB.1`).
+ * Do not display, collect, or transmit the raw boot timestamp as device information.
+ */
 export const getStartupTime = asyncProp(() => DeviceInfoModule.startupTime);
+/** See {@link getStartupTime} for the iOS usage restriction. */
 export const getStartupTimeSync = syncProp(() => DeviceInfoModule.startupTime);
 
 // ============================================================================
