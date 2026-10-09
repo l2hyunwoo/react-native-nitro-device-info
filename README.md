@@ -456,7 +456,7 @@ same neutral constants the native side uses for an unsupported platform
 | `totalMemory` | `navigator.deviceMemory` × 1024³ (coarse, spec-bucketed; `-1` if unsupported) |
 | `getIsLandscape()` | `screen.width > screen.height` |
 | `getUserAgent()` | `navigator.userAgent` |
-| `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API (`navigator.getBattery()`), read once and cached; `-1`/`unknown` if the API is absent or denied |
+| `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API (`navigator.getBattery()`), requested once; getters read the live BatteryManager; `-1`/`unknown` if the API is absent or denied |
 | `getIsAirplaneMode()` | inferred from `navigator.onLine` (best effort) |
 
 **Always a fallback constant on web:** all Android `Build.*` fields, carrier/MNC/MCC

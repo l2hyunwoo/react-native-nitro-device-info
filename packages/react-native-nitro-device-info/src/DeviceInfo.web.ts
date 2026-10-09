@@ -64,7 +64,7 @@ function safeScreen(): WebScreen | undefined {
 
 /**
  * Minimal shape of the Battery Status API result we consume. The API is
- * deprecated and absent in most browsers, so it is always accessed defensively.
+ * not universally supported, so it is always accessed defensively.
  */
 interface BatteryManagerLike {
   level: number;
@@ -72,16 +72,16 @@ interface BatteryManagerLike {
 }
 
 /**
- * Cached battery snapshot. `navigator.getBattery()` is async, deprecated, and
- * missing on most browsers, so we kick off a single guarded read at module load
- * and consume whatever resolved value is available from the synchronous getters.
+ * Cached BatteryManager. `navigator.getBattery()` is async and not universally
+ * supported, so we request it once at module load. Its live properties provide
+ * current readings to the synchronous getters without event listeners.
  * It never rejects outward: failure leaves the cache `null` and getters fall back.
  */
 let batteryCache: BatteryManagerLike | null = null;
 
 function primeBatteryCache(): void {
   const nav = safeNavigator();
-  // `getBattery` is non-standard; guard the function's existence before calling.
+  // Guard the function's existence before calling.
   const getBattery = nav?.getBattery;
   if (typeof getBattery !== 'function' || nav === undefined) {
     return;
@@ -90,7 +90,7 @@ function primeBatteryCache(): void {
     getBattery
       .call(nav)
       .then((battery) => {
-        batteryCache = { level: battery.level, charging: battery.charging };
+        batteryCache = battery;
       })
       .catch(() => {
         // Permission-gated or unsupported: keep the fallback, never reject.
@@ -103,7 +103,7 @@ function primeBatteryCache(): void {
 primeBatteryCache();
 
 /**
- * Map the cached browser battery snapshot to the native `BatteryState` enum.
+ * Map the current browser battery reading to the native `BatteryState` enum.
  * Without a real reading we report "unknown" rather than guessing.
  */
 function currentBatteryState(): BatteryState {
