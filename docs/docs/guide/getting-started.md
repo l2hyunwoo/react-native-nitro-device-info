@@ -40,6 +40,24 @@ cd ios && pod install && cd ..
 
 That's it! The iOS setup is complete.
 
+### iOS Privacy Manifest
+
+The pod packages `ios/PrivacyInfo.xcprivacy` in `NitroDeviceInfo_privacy.bundle`. CocoaPods copies this resource bundle into the app, including when Expo prebuild or EAS Build installs the pod. No privacy-specific config plugin option or manual copy into the app target is needed.
+
+The declarations follow the resource-bundle pattern used by [Expo Device](https://github.com/expo/expo/blob/5729befbfdb34e4be8880c19b3c5eff99bd04795/packages/expo-device/ios/ExpoDevice.podspec#L23), with reasons selected for the APIs this library uses:
+
+| API category | Library APIs | Declared reasons |
+| --- | --- | --- |
+| File timestamp | `getFirstInstallTime()`, `getLastUpdateTime()` and their sync properties, which read metadata inside the app container | `C617.1`, also used by [Expo Application](https://github.com/expo/expo/blob/5729befbfdb34e4be8880c19b3c5eff99bd04795/packages/expo-application/ios/PrivacyInfo.xcprivacy) |
+| Disk space | `totalDiskCapacity`, `getFreeDiskStorage()` and their legacy variants | `E174.1`, `85F4.1`, also used by [Expo FileSystem](https://github.com/expo/expo/blob/5729befbfdb34e4be8880c19b3c5eff99bd04795/packages/expo-file-system/ios/PrivacyInfo.xcprivacy) |
+| System boot time | `getUptime()`, `startupTime` | `35F9.1`, also used by [Expo Device](https://github.com/expo/expo/blob/5729befbfdb34e4be8880c19b3c5eff99bd04795/packages/expo-device/ios/PrivacyInfo.xcprivacy) |
+
+These reasons have [Apple-defined usage limits](https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api). Disk-space data is for visible storage information or storage-dependent app behavior, with restrictions on sending it off-device. `35F9.1` covers elapsed time between app events and timers; it does not authorize sending raw uptime or boot timestamps off-device. Expo Device uses the same reason for its uptime getter, but [notes that the reason is not an exact match](https://github.com/expo/expo/blob/5729befbfdb34e4be8880c19b3c5eff99bd04795/packages/expo-device/ios/DeviceModule.swift#L69-L72). Review how your app uses these values; the declaration alone does not establish that every use is permitted.
+
+The library declares no collected data or tracking of its own. Your app remains responsible for declarations covering its own data collection, tracking, and other SDKs. Do not use these APIs for device fingerprinting.
+
+After building or archiving the iOS app, verify that the app contains `NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy`. Existing app-level privacy manifests can remain in place.
+
 ### Android Configuration
 
 No additional configuration needed! Gradle auto-linking handles everything automatically.

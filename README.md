@@ -39,6 +39,8 @@ pnpm add react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
+The pod includes `PrivacyInfo.xcprivacy` in `NitroDeviceInfo_privacy.bundle`, including for Expo prebuild / EAS builds. No privacy-specific config plugin option is needed. See [iOS Privacy Manifest](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/getting-started#ios-privacy-manifest) for the declared API reasons and usage limits.
+
 ### Android Setup
 
 No additional configuration needed! Gradle auto-linking handles everything.

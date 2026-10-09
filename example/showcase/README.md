@@ -63,6 +63,8 @@ yarn ios      # iOS
 yarn android  # Android
 ```
 
+On iOS, `pod install` includes the library's privacy manifest as `NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy` in the built app. The showcase's app-level manifest remains separate. See [iOS Privacy Manifest](../../docs/docs/guide/getting-started.md#ios-privacy-manifest) for the declared reasons and usage limits.
+
 ## Usage
 
 1. Launch the app on your device or simulator

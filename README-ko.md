@@ -39,6 +39,8 @@ pnpm add react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
+Pod가 `PrivacyInfo.xcprivacy`를 `NitroDeviceInfo_privacy.bundle`에 포함합니다. Expo prebuild / EAS 빌드에도 적용되며, Privacy Manifest용 config plugin 옵션은 필요하지 않습니다. 선언한 API 사용 사유와 제한은 [iOS Privacy Manifest 가이드](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/getting-started#ios-privacy-manifest)를 참고하세요.
+
 ### Android 설정
 
 별도의 설정이 필요 없습니다.
