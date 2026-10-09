@@ -28,7 +28,7 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
   - **lint**: oxlint + TypeScript typecheck (runs when library, mcp-server, or deps change)
   - **build**: TypeScript build via `yarn prepare`, verifies `lib/module`, `lib/typescript`, `nitrogen/generated` outputs
   - **build-ios**: CocoaPods install + xcodebuild on `macos-15` (showcase app, Release config, iphonesimulator)
-  - **build-android**: ktlint check + Gradle assembleDebug on `ubuntu-latest` (Java 17 temurin)
+  - **build-android**: ktlint check + Gradle assembleDebug on `ubuntu-24.04` (Java 17 temurin)
   - **validate-package**: `npm pack` + verifies tarball contains required files (lib, src, ios, android)
   - **mcp-server**: typecheck + build + test (only when `packages/mcp-server/**` changes)
 - Publish workflows are `workflow_dispatch` only, require `version` input (X.Y.Z format) and support `dry_run`
@@ -54,11 +54,11 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
 - Build jobs depend on monorepo workspace structure (`packages/`, `example/`)
 
 ### External
-- `actions/checkout@v4`, `actions/setup-node@v4`, `actions/cache@v4`
+- `actions/checkout@v7`, `actions/setup-node@v7`, `actions/cache@v4`
 - `actions/setup-java@v4` (Android build, temurin JDK 17)
 - `actions/configure-pages@v5`, `actions/upload-pages-artifact@v3`, `actions/deploy-pages@v4` (docs)
 - `actions/upload-artifact@v4` (docs validation)
 - `dorny/paths-filter@v3` - Change detection
-- `softprops/action-gh-release@v1` - GitHub Release creation (publish workflows)
+- `softprops/action-gh-release@v3` - GitHub Release creation (publish workflows)
 
 <!-- MANUAL: -->
