@@ -115,6 +115,7 @@ const isTablet = DeviceInfoModule.isTablet; // false
 const hasNotch = DeviceInfoModule.getHasNotch(); // true
 const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland(); // false
 const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
+const isPinOrFingerprintSet = DeviceInfoModule.isPinOrFingerprintSet; // iOS: passcode or biometrics available; no authentication prompt
 const isEmulator = DeviceInfoModule.isEmulator; // false
 const deviceYearClass = DeviceInfoModule.deviceYearClass; // 2021 (estimated year class)
 

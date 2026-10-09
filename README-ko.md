@@ -116,6 +116,7 @@ const isTablet = DeviceInfoModule.isTablet; // false
 const hasNotch = DeviceInfoModule.getHasNotch(); // true
 const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland(); // false
 const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
+const isPinOrFingerprintSet = DeviceInfoModule.isPinOrFingerprintSet; // iOS: 암호 또는 생체 인증 사용 가능 여부; 인증 창을 표시하지 않음
 const isEmulator = DeviceInfoModule.isEmulator; // false
 const deviceYearClass = DeviceInfoModule.deviceYearClass; // 2021 (추정 연도 클래스)
 

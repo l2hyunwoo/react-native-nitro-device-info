@@ -173,7 +173,7 @@ const hasCamera = DeviceInfoModule.isCameraPresent;
 
 ### `isPinOrFingerprintSet: boolean`
 
-Check if PIN, fingerprint, or Face ID is configured.
+Check if PIN, fingerprint, or Face ID is configured. On iOS, checks whether device-owner authentication is available, including the device passcode fallback when biometrics are unavailable or locked out. Returns `false` when no passcode is set. This check does not authenticate the user or show a prompt; the result is checked again on each read.
 
 ```typescript
 const isSecure = DeviceInfoModule.isPinOrFingerprintSet;

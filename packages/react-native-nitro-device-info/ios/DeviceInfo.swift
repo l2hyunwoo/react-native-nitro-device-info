@@ -14,6 +14,7 @@ import UIKit
 import NitroModules
 import os.log
 import AVFoundation
+import LocalAuthentication
 import CoreTelephony
 import CoreLocation
 import CryptoKit
@@ -420,7 +421,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if PIN or biometric authentication is set
   public var isPinOrFingerprintSet: Bool {
-    return false
+    return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
   }
 
   /// Check if hardware-backed key storage (Secure Enclave) is available

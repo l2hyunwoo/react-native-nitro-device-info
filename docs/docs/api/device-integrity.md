@@ -131,17 +131,17 @@ async function performTransaction(amount: number) {
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-function BiometricLogin() {
+function DeviceAuthenticationLogin() {
   const isSecure = !DeviceInfoModule.isDeviceCompromised();
-  const hasBiometric = DeviceInfoModule.isPinOrFingerprintSet;
+  const hasDeviceAuthentication = DeviceInfoModule.isPinOrFingerprintSet;
 
   if (!isSecure) {
     // Fall back to password-only login on compromised devices
     return <PasswordLogin />;
   }
 
-  if (hasBiometric) {
-    return <BiometricPrompt />;
+  if (hasDeviceAuthentication) {
+    return <DeviceAuthenticationPrompt />;
   }
 
   return <PasswordLogin />;
