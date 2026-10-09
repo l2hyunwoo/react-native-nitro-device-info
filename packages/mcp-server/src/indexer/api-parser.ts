@@ -464,6 +464,7 @@ export function parseDeviceInfoContent(
 
       const api = parseApiMember(member, jsDoc);
       if (api) {
+        api.module = interfaceName;
         apis.push(api);
       }
     }
@@ -486,6 +487,8 @@ function resolveNitroPath(
   fileName: string
 ): string {
   const possiblePaths = [
+    path.join(packageRoot, '..', 'data', fileName),
+    path.join(packageRoot, 'data', fileName),
     // From packages/mcp-server/{dist,src} -> packages/<pkg>/src/<File>
     path.join(packageRoot, '..', '..', pkgDir, 'src', fileName),
     // From packages/mcp-server -> packages/<pkg>/src/<File>

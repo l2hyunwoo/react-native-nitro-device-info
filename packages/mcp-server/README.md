@@ -168,7 +168,15 @@ package (Play Integrity + App Attest / DeviceCheck), so you can ask:
 >
 > "List all device-integrity APIs"
 
-### Troubleshooting Questions
+### Documentation snapshot
+
+The published package includes the core and attestation API specs, site Markdown, and library README under `data/`. The server indexes that bundled snapshot without fetching the website or requiring a sibling source checkout.
+
+Rebuild the MCP package after editing source documentation. Publish a new MCP release to deliver those edits to installed clients; deploying the website alone does not update them. Check the installed library declarations when they differ from this snapshot.
+
+The root API and `/compat` API differ. The API lookup returns native root signatures; use the migration guide for compatibility mappings. Korean search terms are retained, but matching still requires corresponding Korean content. The server does not translate queries.
+
+## Troubleshooting Questions
 
 > "Why does getIpAddress return empty on iOS simulator?"
 

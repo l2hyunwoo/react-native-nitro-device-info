@@ -202,12 +202,12 @@ export function validateIndex(index: SearchIndex): {
 
   // Check for missing categories
   const expectedCategories = [
-    'device-info',
-    'battery',
-    'memory',
-    'storage',
+    'core-device-info',
+    'battery-power',
+    'system-resources',
+    'application-metadata',
     'network',
-    'capabilities',
+    'device-capabilities',
   ];
   for (const category of expectedCategories) {
     const hasCategory = Array.from(index.apis.values()).some(

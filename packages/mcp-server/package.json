@@ -9,10 +9,11 @@
   },
   "files": [
     "dist",
+    "data",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/copy-docs.cjs",
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
     "dev": "tsc --watch",

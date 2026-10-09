@@ -41,6 +41,12 @@ describe('search_docs tool', () => {
   });
 
   describe('search execution', () => {
+    it('formats property results without suggesting a function call', () => {
+      const result = executeSearchDocs(index, { query: 'deviceId', limit: 1, type: 'api' });
+      expect(result.content).toContain('deviceId (API)');
+      expect(result.content).not.toContain('deviceId()');
+    });
+
     it('should return results for valid query', () => {
       const result = executeSearchDocs(index, {
         query: 'battery',

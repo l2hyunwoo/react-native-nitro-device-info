@@ -168,19 +168,19 @@ function formatApiDocumentation(api: ApiDefinition): string {
   lines.push('## Import');
   lines.push('');
   lines.push('```typescript');
-  lines.push("import { NitroModules } from 'react-native-nitro-modules';");
-  lines.push("import type { DeviceInfo } from 'react-native-nitro-device-info';");
-  lines.push('');
-  lines.push("const deviceInfo = NitroModules.createHybridObject<DeviceInfo>('DeviceInfo');");
+  const isIntegrity = api.module === 'DeviceIntegrity';
+  const moduleName = isIntegrity ? 'DeviceIntegrityModule' : 'DeviceInfoModule';
+  const packageName = isIntegrity ? 'react-native-nitro-device-integrity' : 'react-native-nitro-device-info';
+  lines.push(`import { ${moduleName} } from '${packageName}';`);
   lines.push('');
   if (api.kind === 'method') {
     if (api.isAsync) {
-      lines.push(`const result = await deviceInfo.${api.name}(${api.parameters.map(p => p.name).join(', ')});`);
+      lines.push(`const result = await ${moduleName}.${api.name}(${api.parameters.map(p => p.name).join(', ')});`);
     } else {
-      lines.push(`const result = deviceInfo.${api.name}(${api.parameters.map(p => p.name).join(', ')});`);
+      lines.push(`const result = ${moduleName}.${api.name}(${api.parameters.map(p => p.name).join(', ')});`);
     }
   } else {
-    lines.push(`const result = deviceInfo.${api.name};`);
+    lines.push(`const result = ${moduleName}.${api.name};`);
   }
   lines.push('```');
   lines.push('');
