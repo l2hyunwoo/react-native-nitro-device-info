@@ -1,5 +1,7 @@
 # react-native-nitro-device-info
 
+[English](README.md) | [한국어](README-ko.md)
+
 > Get comprehensive device information for React Native using Nitro Modules
 
 <a href="https://www.npmjs.com/package/react-native-nitro-device-info"><img src="https://img.shields.io/npm/v/react-native-nitro-device-info.svg?style=flat-square" alt="npm version"></a>
@@ -479,9 +481,11 @@ Windows-only fields. Promise-returning methods keep their signature and **resolv
 the fallback (they do not reject), except `getDeviceToken()` which rejects on web —
 it is Apple DeviceCheck, with no web equivalent, mirroring its behavior on Android.
 
-**SSR:** every browser global is accessed defensively, so importing the package and
-reading any member on a server (where `navigator`/`screen`/`window` may be absent)
-never throws.
+**SSR:** the web implementation guards browser globals and returns fallbacks on
+servers without them. This applies only when the server bundle selects the web
+implementation. Reading properties, calling methods, or calling `createDeviceInfo()`
+through the native entry still requires native bindings and can throw. See
+[Web Support](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/web-support).
 
 ## Contributing
 

@@ -1,5 +1,7 @@
 # Showcase App
 
+[English](README.md) | [한국어](README-ko.md)
+
 Comprehensive demonstration app showcasing all 80+ device properties from react-native-nitro-device-info, organized into 10 logical categories with a clean, collapsible interface.
 
 ## Features

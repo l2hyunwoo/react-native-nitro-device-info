@@ -1,5 +1,7 @@
 # Benchmark App
 
+[English](README.md) | [한국어](README-ko.md)
+
 Side-by-side performance comparison between react-native-nitro-device-info (Nitro) and react-native-device-info, benchmarking 26 methods with detailed timing statistics and speedup multipliers.
 
 ## Features

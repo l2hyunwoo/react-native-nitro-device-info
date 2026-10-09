@@ -1,203 +1,157 @@
-# 기여하기
+# 기여 안내
 
-크고 작은 모든 기여를 환영합니다 🎉
-이 프로젝트가 **서로를 존중하고 배려하는 커뮤니티**로 유지될 수 있도록,
-참여 전 [행동 강령](./CODE_OF_CONDUCT.md)을 꼭 읽어주세요.
+[English](CONTRIBUTING.md) | **한국어**
 
----
+작고 큰 기여를 모두 환영합니다. 프로젝트에 참여할 때 서로 존중해 주세요. 기여 전에 [행동 강령](CODE_OF_CONDUCT-ko.md)을 읽어 주세요.
 
-## 개발 워크플로우
+## 개발 절차
 
-이 프로젝트는 [Yarn Workspaces](https://yarnpkg.com/features/workspaces)를 사용하는 **모노레포 구조**로 관리됩니다.
-다음과 같은 패키지들이 포함되어 있습니다:
+이 프로젝트는 [Yarn workspaces](https://yarnpkg.com/features/workspaces)로 관리하는 모노레포입니다.
 
-- 루트 디렉토리: 라이브러리 패키지
-- `example/` 디렉토리: 두 개의 예제 앱
-  - **쇼케이스 앱 (`example/showcase/`)** — API 시연 및 디바이스 정보 표시
-  - **벤치마크 앱 (`example/benchmark/`)** — 성능 테스트 및 벤치마킹
+- `packages/`: 핵심 라이브러리, 선택 기기 증명 라이브러리, MCP 서버
+- `example/`: Showcase, Benchmark, Integrity Demo 앱
+- `docs/`: 의존성을 별도로 설치하는 문서 사이트
 
-시작하기 전 [`.nvmrc`](./.nvmrc) 파일에서 요구하는 **Node.js 버전**을 확인하세요.
+[`.nvmrc`](.nvmrc)에 지정한 Node.js 버전을 설치하세요. 루트에서 의존성을 설치합니다.
 
-### 종속성 설치
-
-```bash
+```sh
 yarn
 ```
 
-> ⚠️ 이 프로젝트는 Yarn Workspaces를 사용하므로, 별도의 설정 없이 `npm`을 사용할 수 없습니다.
+> Yarn workspaces에 의존하므로 별도로 마이그레이션하지 않고 npm으로 개발할 수는 없습니다.
 
----
+프로젝트는 Nitro Modules를 사용합니다. 구조가 익숙하지 않다면 [Nitro Modules 문서](https://nitro.margelo.com/)를 먼저 읽으세요.
 
-## Nitro 및 Nitrogen 설정
+예제 앱을 빌드하려면 [Nitrogen](https://nitro.margelo.com/docs/nitrogen)으로 네이티브 바인딩을 생성해야 합니다. 다음 경우에 실행하세요.
 
-이 프로젝트는 **Nitro 모듈**을 기반으로 동작합니다.
-아직 Nitro를 잘 모른다면 [공식 문서](https://nitro.margelo.com/)를 먼저 참고하세요.
+- `*.nitro.ts` 파일을 바꿨을 때
+- 처음 실행할 때(생성 파일은 저장소에 커밋하지 않음)
 
-또한, 필수 보일러플레이트 코드는 [Nitrogen](https://nitro.margelo.com/docs/nitrogen)을 통해 생성됩니다.
-이 단계가 없으면 예제 앱을 빌드할 수 없습니다.
+핵심 라이브러리 바인딩은 다음 명령으로 생성합니다.
 
-**다음 경우에는 반드시 Nitrogen을 실행하세요:**
-
-- `*.nitro.ts` 파일을 수정한 경우
-- 프로젝트를 처음 실행하는 경우 (생성된 파일이 저장소에 포함되지 않음)
-
-```bash
+```sh
 yarn nitrogen
 ```
 
----
+기기 증명 패키지를 바꿨다면 `yarn nitrogen:integrity`를 사용하세요.
 
-## 예제 앱 실행
+[Showcase](example/showcase/README-ko.md)와 [Benchmark](example/benchmark/README-ko.md) 앱에서 라이브러리 변경을 테스트하세요. 두 앱은 로컬 라이브러리를 사용합니다. JavaScript 변경은 다시 빌드하지 않아도 반영되지만 네이티브 변경은 재빌드가 필요합니다. 기기 증명은 [Integrity Demo](example/integrity-demo/README-ko.md)에서 확인하세요.
 
-예제 앱([쇼케이스](/example/showcase/) / [벤치마크](/example/benchmark/))은
-라이브러리의 사용 예시를 포함하고 있습니다.
+네이티브 코드를 편집하려면 다음 프로젝트를 여세요.
 
-라이브러리의 JavaScript 변경사항은 즉시 반영되지만,
-네이티브 코드 변경 시에는 **재빌드**가 필요합니다.
+- **iOS**: Xcode에서 `example/showcase/ios/NitroDeviceInfoExample.xcworkspace` 또는 `example/benchmark/ios/NitroDeviceInfoBenchmark.xcworkspace`를 엽니다. 라이브러리 소스는 `Pods > Development Pods > react-native-nitro-device-info`에 있습니다.
+- **Android**: Android Studio에서 `example/showcase/android` 또는 `example/benchmark/android`를 엽니다. `Android` 아래의 `react-native-nitro-device-info`에서 소스를 찾을 수 있습니다.
 
-### iOS / Android 네이티브 코드 편집
+아래 명령은 저장소 루트에서 실행합니다.
 
-- **iOS**:
-  Xcode에서 다음 워크스페이스 열기
-  - `example/showcase/ios/NitroDeviceInfoExample.xcworkspace`
-  - `example/benchmark/ios/NitroDeviceInfoBenchmark.xcworkspace`
-  - 경로: `Pods > Development Pods > react-native-nitro-device-info`
+### Showcase 앱 실행
 
-- **Android**:
-  Android Studio에서 다음 디렉토리 열기
-  - `example/showcase/android` 또는 `example/benchmark/android`
-  - 경로: `Android > react-native-nitro-device-info`
+Metro와 앱을 실행하세요.
 
----
-
-## 실행 명령
-
-### 쇼케이스 앱
-
-```bash
-# Metro 번들러 시작
+```sh
+# Start Metro bundler
 yarn showcase start
 
-# Android 실행
+# Run on Android
 yarn showcase android
 
-# iOS 실행
+# Run on iOS
 yarn showcase ios
 ```
 
-### 벤치마크 앱
+### Benchmark 앱 실행
 
-```bash
-# Metro 번들러 시작
+Metro와 앱을 실행하세요.
+
+```sh
+# Start Metro bundler
 yarn benchmark start
 
-# Android 실행
+# Run on Android
 yarn benchmark android
 
-# iOS 실행
+# Run on iOS
 yarn benchmark ios
 ```
 
-> 앱이 **뉴 아키텍처(Fabric)** 로 실행 중인지 확인하려면 Metro 로그에서 아래 메시지를 찾으세요:
->
-> ```bash
-> Running "NitroDeviceInfoShowcase" with {"fabric":true,"initialProps":{"concurrentRoot":true},"rootTag":1}
-> ```
->
-> `"fabric": true` 와 `"concurrentRoot": true"` 속성이 표시되면 성공입니다.
+New Architecture 실행 여부는 Metro 로그에서 확인할 수 있습니다.
 
----
+```sh
+Running "NitroDeviceInfoShowcase" with {"fabric":true,"initialProps":{"concurrentRoot":true},"rootTag":1}
+```
 
-## 코드 품질 검사
+`"fabric":true`와 `"concurrentRoot":true`를 확인하세요.
 
-아래 명령으로 타입 및 린팅 검사를 수행하세요:
+TypeScript와 oxlint 검사를 실행하세요.
 
-```bash
+```sh
 yarn typecheck
 yarn lint
 ```
 
-자동 포맷 수정:
+지원하는 린트 자동 수정을 적용할 수 있습니다.
 
-```bash
+```sh
 yarn lint --fix
 ```
 
-단위 테스트 실행:
+변경에 필요한 테스트를 추가하고 단위 테스트를 실행하세요.
 
-```bash
+```sh
 yarn test
 ```
 
-> 가능하다면, 변경사항에 대한 테스트를 함께 추가해주세요.
+라이브러리, 의존성, CI/Jest 설정 변경 시 CI가 핵심 라이브러리 Jest를 실행합니다. 단독 실행은 `yarn workspace react-native-nitro-device-info test --runInBand`입니다. 루트 `yarn test`는 MCP 테스트도 실행합니다. 기기 하네스 테스트에는 전용 실행기가 필요합니다.
 
----
+기기 증명 패키지나 예제 변경은 린트, `yarn workspace react-native-nitro-device-integrity typecheck`, `yarn workspace react-native-nitro-device-integrity prepare` 후 iOS·Android 예제 빌드를 실행합니다. 루트 `yarn prepare`는 핵심 라이브러리만 빌드합니다. 의존성과 CI 워크플로 변경은 두 라이브러리를 모두 검사합니다. `actionlint .github/workflows/ci.yml`로 문법을 검사하고 경로 필터가 바꾼 패키지와 설정을 포함하는지 확인하세요.
 
-## 커밋 메시지 규칙
+### 커밋 메시지 규칙
 
-커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/en) 규칙을 따릅니다.
+[Conventional Commits](https://www.conventionalcommits.org/en)를 따릅니다.
 
-| 타입       | 설명                            |
-| ---------- | ------------------------------- |
-| `fix`      | 버그 수정 (예: 충돌 해결)       |
-| `feat`     | 새로운 기능 추가                |
-| `refactor` | 코드 리팩토링                   |
-| `docs`     | 문서 수정 또는 보강             |
-| `test`     | 테스트 추가/수정                |
-| `chore`    | 빌드, CI, 설정 등 비기능적 변경 |
+- `fix`: 버그 수정
+- `feat`: 새 기능
+- `refactor`: 코드 구조 개선
+- `docs`: 문서 변경
+- `test`: 테스트 추가·수정
+- `chore`: 도구와 CI 설정 변경
 
-> pre-commit 훅이 자동으로 메시지 형식을 검사합니다.
+제목 한 줄로 작성하고 명시적으로 요청하지 않은 본문은 비우세요. 커밋 훅이 형식을 검사합니다.
 
----
+### 린트와 테스트
 
-## 린팅, 포매팅, 테스트
+[TypeScript](https://www.typescriptlang.org/)로 타입을, oxlint로 린트 통과 여부를 검사합니다. [Prettier](https://prettier.io/)로 형식을 맞추고 [Jest](https://jestjs.io/)로 단위 테스트를 실행합니다. 보조 명령 `yarn lint:eslint`의 알려진 설정 제한은 `AGENTS.md`를 참고하세요.
 
-이 프로젝트는 다음 도구들을 사용합니다:
+pre-commit 훅은 stage한 JavaScript·TypeScript를 린트하고 commit-msg 훅은 커밋 제목을 검사합니다. 변경을 제출하기 전에 필요한 테스트를 별도로 실행하세요.
 
-- **TypeScript** — 타입 검사
-- **ESLint + Prettier** — 코드 린팅 및 포매팅
-- **Jest** — 단위 테스트
+### npm 배포
 
-모든 커밋 전에 린터와 테스트가 자동으로 실행됩니다.
+관리자는 수동 실행하는 [핵심 라이브러리 워크플로](.github/workflows/publish.yml)와 [MCP 서버 워크플로](.github/workflows/publish-mcp.yml)로 배포합니다. 대상 `version`을 지정하고 실제 배포 없이 검증하려면 `dry_run`을 사용하세요. 루트에는 `yarn release` 스크립트가 없습니다.
 
----
+### 스크립트
 
-## npm 배포
+- `yarn`: 의존성 설치
+- `yarn typecheck`: TypeScript 타입 검사
+- `yarn lint`: oxlint 검사
+- `yarn lint:eslint`: 보조 ESLint 검사
+- `yarn test`: Jest 단위 테스트
+- `yarn nitrogen`: 핵심 `.nitro.ts` 네이티브 바인딩 생성
+- `yarn prepare`: 핵심 라이브러리 빌드
+- `yarn workspace react-native-nitro-device-integrity prepare`: 기기 증명 라이브러리 빌드
+- `yarn integrity-demo <command>`: 기기 증명 예제 실행(start/ios/android)
+- `yarn showcase <command>`: Showcase 실행(start/ios/android)
+- `yarn benchmark <command>`: Benchmark 실행(start/ios/android)
 
-버전 배포는 [release-it](https://github.com/release-it/release-it)을 사용합니다.
-버전 증가, 태그 생성, GitHub 릴리스 생성 등이 자동 처리됩니다.
+### PR 제출
 
-```bash
-yarn release
-```
+> 처음 PR을 제출한다면 무료 강좌 [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github)를 참고하세요.
 
----
+- 하나의 변경에 집중한 작은 PR을 권장합니다.
+- 린트와 테스트 통과 여부를 확인하세요.
+- 문서 표시를 검토하세요.
+- PR 템플릿을 따르세요.
+- API나 구현을 바꾸는 PR은 먼저 이슈로 관리자와 논의하세요.
 
-## 주요 스크립트 요약
+## 문서와 번역
 
-| 명령                   | 설명                                     |
-| ---------------------- | ---------------------------------------- |
-| `yarn`                 | 프로젝트 종속성 설치                     |
-| `yarn typecheck`       | TypeScript 타입 검사                     |
-| `yarn lint`            | oxlint 기반 린팅 (기본)                  |
-| `yarn lint:eslint`     | ESLint 기반 린팅                         |
-| `yarn test`            | Jest 테스트 실행                         |
-| `yarn nitrogen`        | `.nitro.ts` → 네이티브 바인딩 생성       |
-| `yarn prepare`         | 라이브러리 빌드 (자동 실행됨)            |
-| `yarn showcase <cmd>`  | 쇼케이스 앱 실행 (start / ios / android) |
-| `yarn benchmark <cmd>` | 벤치마크 앱 실행 (start / ios / android) |
-
----
-
-## Pull Request 가이드
-
-> 💡 처음 오픈소스 기여를 하신다면,
-> [이 무료 가이드](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github)를 추천드립니다.
-
-Pull Request를 보낼 때는 다음을 지켜주세요.
-
-- 하나의 변경에 집중한 **작고 명확한 PR**을 선호합니다.
-- 린터와 테스트가 통과했는지 확인합니다.
-- 문서 변경 시 시각적/내용적 오류가 없는지 검토합니다.
-- Pull Request 템플릿을 준수합니다.
-- **API나 내부 구현을 변경하는 경우**, 반드시 사전에 이슈를 열어 메인테이너와 논의해주세요.
+`docs/docs/`의 영어 페이지는 `docs/docs/ko/`에 한국어 대응 페이지를 둡니다. 동작을 바꾸면 API 이름, 단위, 권한, 예외를 유지하며 두 언어를 함께 갱신하세요. `translationOf`, `sourceCommit`, 명시적 제목 ID도 갱신하세요. 새 페이지는 `docs/rspress.config.ts`의 두 언어 메뉴에 추가하세요. [문서 개발](docs/README-ko.md)과 [한국어 번역 관리](docs/I18N_PLAN.ko.md)를 참고하세요.

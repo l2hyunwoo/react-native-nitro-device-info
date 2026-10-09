@@ -1,5 +1,7 @@
 # @react-native-nitro-device-info/mcp-server
 
+[English](README.md) | [한국어](README-ko.md)
+
 MCP (Model Context Protocol) server for react-native-nitro-device-info that enables AI tools like Claude, Cursor, and Copilot to accurately access library documentation and API information.
 
 ## Prerequisites

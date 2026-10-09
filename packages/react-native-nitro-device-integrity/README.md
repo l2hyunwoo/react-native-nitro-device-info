@@ -1,5 +1,9 @@
 # react-native-nitro-device-integrity
 
+[English](README.md) | [한국어](README-ko.md)
+
+**Unreleased:** this package is in the source repository but has no published npm release as of 2026-10-10. The manifest version `0.1.0` is not a release. The npm installation instructions below apply after publication.
+
 Opt-in, hardware-backed **device attestation** for React Native, built on
 [Nitro Modules](https://nitro.margelo.com/). A companion to
 [`react-native-nitro-device-info`](https://github.com/l2hyunwoo/react-native-nitro-device-info).
@@ -39,8 +43,10 @@ yarn add react-native-nitro-device-integrity react-native-nitro-modules
 cd ios && pod install
 ```
 
-Requires `react-native-nitro-modules` (peer dependency). iOS 14.0+ (App Attest)
-/ 11.0+ (DeviceCheck), Android API 23+ with Google Play Services.
+Requires `react-native-nitro-modules` (peer dependency). The package's native
+minimums are iOS 14.0 and Android API 24; dependencies can require higher minimums.
+DeviceCheck itself exists from iOS 11, but this package does not support installing
+on iOS 11. Android requires Google Play Services.
 
 ## Responsibility boundary
 
