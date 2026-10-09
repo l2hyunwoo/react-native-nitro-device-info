@@ -174,6 +174,8 @@ const isCompromised = DeviceInfoModule.isDeviceCompromised(); // Sync, <50ms
 const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // Async
 ```
 
+Android MAC address getters share a 5-second cache and return `"unknown"` when access is restricted or the Wi-Fi address is unavailable.
+
 > **Need server-verifiable attestation?** The local checks above are bypassable.
 > For hardware-backed, server-verified attestation (Play Integrity on Android,
 > App Attest / DeviceCheck on iOS), use the opt-in

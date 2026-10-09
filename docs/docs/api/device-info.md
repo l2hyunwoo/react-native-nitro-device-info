@@ -568,19 +568,19 @@ const ipAddressSync = DeviceInfoModule.getIpAddressSync();
 
 ### `getMacAddress(): Promise<string>`
 
-Get device MAC address.
+Get the Wi-Fi MAC address when Android allows access. Android uses the same 5-second cache as `getMacAddressSync()` and returns `"unknown"` when the address is unavailable. [Non-system apps generally cannot access hardware MAC addresses](https://developer.android.com/reference/java/net/NetworkInterface#getHardwareAddress()) on modern Android; this API does not bypass those restrictions.
 
 ```typescript
 const macAddress = await DeviceInfoModule.getMacAddress();
 // iOS: "02:00:00:00:00:00" (hardcoded since iOS 7 for privacy)
-// Android: "00:11:22:33:44:55" (actual MAC)
+// Android: "unknown" when restricted, otherwise the available wlan0 MAC
 ```
 
 **Performance**: ~20-50ms
 
 ### `getMacAddressSync(): string`
 
-Synchronous variant.
+Synchronous variant, sharing the same Android lookup, 5-second cache, and `"unknown"` fallback.
 
 ```typescript
 const macAddressSync = DeviceInfoModule.getMacAddressSync();

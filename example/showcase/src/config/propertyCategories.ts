@@ -280,6 +280,14 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: false,
   },
   {
+    key: 'getMacAddressSync',
+    label: 'MAC Address (Sync)',
+    category: PropertyCategory.NETWORK_CONNECTIVITY,
+    type: PropertyType.STRING,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+  {
     key: 'getCarrier',
     label: 'Carrier',
     category: PropertyCategory.NETWORK_CONNECTIVITY,
