@@ -576,9 +576,9 @@ function getLocationCapabilities() {
   const providers = DeviceInfoModule.getAvailableLocationProviders();
 
   return {
-    hasGps: providers['gps'] || false,
-    hasNetwork: providers['network'] || false,
-    hasFused: providers['fused'] || false,
+    hasGps: providers.includes('gps'),
+    hasNetwork: providers.includes('network'),
+    hasFused: providers.includes('fused'),
   };
 }
 ```
