@@ -3481,9 +3481,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@modelcontextprotocol/sdk@npm:^1.31.0":
-  version: 1.31.0
-  resolution: "@modelcontextprotocol/sdk@npm:1.31.0"
+"@modelcontextprotocol/sdk@npm:1.32.1":
+  version: 1.32.1
+  resolution: "@modelcontextprotocol/sdk@npm:1.32.1"
   dependencies:
     "@hono/node-server": "npm:^1.19.9 || ^2.0.5"
     ajv: "npm:^8.17.1"
@@ -3510,7 +3510,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: 10c0/2c4f011a765fb3346ec578455591d062008a842a0f6f8a763baa97b6a01e0f1febb97d1cc44024ee6d0761d43df56e9c71f72a37d47c7ea6aeb1c4f8be0f06d9
+  checksum: 10c0/8b6c8ff6aa5358aeb316fedfa2094a4241ce12d98a0f818cee42510ec9149fed21fc75244c5f0e8cb453337f243c09fa8a90425cd2533fd481964d8583a1f0c9
   languageName: node
   linkType: hard
 
@@ -4092,7 +4092,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-native-nitro-device-info/mcp-server@workspace:packages/mcp-server"
   dependencies:
-    "@modelcontextprotocol/sdk": "npm:^1.31.0"
+    "@modelcontextprotocol/sdk": "npm:1.32.1"
     "@types/jest": "npm:^29.5.14"
     "@types/node": "npm:^25.9.3"
     jest: "npm:^29.7.0"
@@ -11613,7 +11613,7 @@ __metadata:
     eslint: "npm:9.39.4"
     eslint-config-prettier: "npm:10.1.8"
     eslint-plugin-prettier: "npm:5.5.6"
-    http-cache-semantics: "npm:^4.3.0"
+    http-cache-semantics: "npm:4.3.0"
     jest: "npm:29.7.0"
     nitrogen: "npm:0.35.9"
     oxlint: "npm:1.57.0"
