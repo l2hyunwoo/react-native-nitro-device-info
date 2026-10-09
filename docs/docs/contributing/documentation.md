@@ -48,6 +48,14 @@ These paths are relative to `docs/docs/`. Static assets belong in `docs/docs/pub
 
 Use the exported TypeScript types. The signature source is [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts); Swift, Kotlin, and web implementations determine platform behavior.
 
+## Maintain availability badges
+
+Add introduction and platform badges to every new API section or grouped property row. Use the existing `rp-badge` spans from the Rspress theme. Keep the text inside each span so Markdown exports and MCP searches retain it.
+
+Check the [badge definitions and version evidence](/api/#availability-badges). Confirm a published npm version and its source before replacing `Unreleased` with `Since v…`. A manifest version or declaration alone does not prove a released platform implementation.
+
+When a platform replaces a constant fallback with a real implementation, update its badge and explain the first functional release. Preserve the original API introduction version. Check the Swift, Kotlin, and web implementations separately.
+
 ## Add or change a page
 
 1. Create or edit a Markdown file under the appropriate content directory.

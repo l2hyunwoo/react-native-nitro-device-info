@@ -10,9 +10,41 @@ Choose the API entry point before copying an example. The root API and `/compat`
 | `DeviceInfo` from `react-native-nitro-device-info/compat` | `react-native-device-info` 15.x-style functions | `DeviceInfo.getModel()` |
 | `{ useBatteryLevel }` from `react-native-nitro-device-info` | React hook returning a value | `number \| null` |
 | `{ useIsHeadphonesConnected }` from `react-native-nitro-device-info/compat` | Compatibility hook result | `{ loading, result }` |
-| `{ DeviceIntegrityModule }` from `react-native-nitro-device-integrity` | Optional attestation package | See [Device Attestation](/api/device-attestation) |
+| `{ DeviceIntegrityModule }` from `react-native-nitro-device-integrity` | Unreleased attestation package | See [Device Attestation](/api/device-attestation) |
 
 `DeviceInfo` from the root is a TypeScript type. It is not a default runtime object. See [Migration](/api/migration) for compatibility caveats.
+
+## Availability badges
+
+Each API section shows its introduction version and current platform behavior. Grouped properties have badges in their table rows.
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+- **Since** identifies the first published release with this member name and property or method form. Earlier releases may have different return types or behavior. It does not mean that every platform implemented the feature in that release.
+- **iOS / Android** identifies a functional native implementation. The number is an OS minimum, not a package version. A separate `since v…` inside the platform badge identifies a later functional implementation. The current core package requires iOS 15.1+ and Android API 24+; dependencies can raise these minimums.
+- **Limited** identifies an estimate, restricted implementation, or browser API dependency. Read the section's limitations before using the result.
+- **Fallback** identifies an unsupported operation that returns a fixed default. **Rejects** identifies a method that fails on that platform.
+- **Unreleased** identifies an implementation on `main` that has not reached a published npm release. It is not a version number.
+
+Web entry points and their fallback values are available from **v1.8.0**. A `Web: limited` badge identifies browser-derived values. Browser permissions, API availability, and SSR can still produce fallbacks. A fallback does not provide the native feature.
+
+The iOS camera and device-authentication implementations are unreleased. Core releases through v1.8.3 expose those names but return constants on iOS. The separate attestation package also has no published npm release as of 2026-10-10.
+
+### Version evidence
+
+Introduction versions were checked against [published npm versions and their `gitHead` values](https://registry.npmjs.org/react-native-nitro-device-info). These source snapshots show the relevant member declarations:
+
+| Published version | Source |
+| --- | --- |
+| v0.1.0 | [Initial interface](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/0.1.0/src/DeviceInfo.nitro.ts) |
+| v1.1.0 | [Expanded interface](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/v1.1.0/src/DeviceInfo.nitro.ts) |
+| v1.2.0 | [Property-based interface](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/v1.2.0/src/DeviceInfo.nitro.ts) |
+| v1.2.1 | [Key-store and Liquid Glass declarations](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/v1.2.1/src/DeviceInfo.nitro.ts) |
+| v1.3.0 | [Runtime getter interface](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/v1.3.0/src/DeviceInfo.nitro.ts) |
+| v1.4.0 | [React hook exports](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/v1.4.0/src/hooks/index.ts) |
+| v1.4.2 | [Local integrity and Expo Device parity declarations](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/v1.4.2/src/DeviceInfo.nitro.ts) |
+| v1.5.0 | [Carrier and build-field declarations](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/v1.5.0/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts) |
+| v1.8.0 | [Functional iOS async wrappers](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026) and [web entry point](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/v1.8.0/packages/react-native-nitro-device-info/src/index.web.ts) |
 
 ## Native API by task
 

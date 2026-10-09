@@ -200,6 +200,8 @@ Android 헤드폰 감지는 유선·USB 헤드셋(USB는 API 26 이상)과 Bluet
 
 100개 이상의 모든 메서드와 속성에 대한 완전한 API 문서는 **[API Reference (English)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/)**를 참고하세요.
 
+각 API에는 도입 버전과 지원 플랫폼 뱃지가 있습니다. OS 최소 버전, 제한된 지원, 고정 대체값, 미출시 구현의 차이는 [뱃지 설명(영어)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/#availability-badges)을 확인하세요.
+
 ### 빠른 참조
 
 #### 주요 속성 (동기)

@@ -199,6 +199,8 @@ Android headphone detection distinguishes wired/USB headsets (USB on API 26+) fr
 
 For complete API documentation with all 100+ methods and properties, see **[API Reference (English)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/)**.
 
+API sections show introduction-version and platform badges. Read the [badge definitions](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/#availability-badges) to distinguish OS minimums, limited support, fallbacks, and unreleased implementations.
+
 ### Quick Reference
 
 #### Core Properties (Synchronous)

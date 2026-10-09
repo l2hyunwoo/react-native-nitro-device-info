@@ -1,5 +1,9 @@
 # Web Support
 
+<span class="rp-badge rp-badge--tip">Since v1.8.0</span> <span class="rp-badge rp-badge--warning">Web: limited / fallback</span>
+
+Web entry points were introduced in v1.8.0. Each [API reference section](/api/#availability-badges) distinguishes browser-derived values from fixed fallbacks.
+
 `react-native-nitro-device-info` is built on [Nitro](https://nitro.margelo.com/),
 a JSI/native technology. A browser has no native module, so the goal on web is
 narrower than on native: **the package must be import-safe and return honest
@@ -50,7 +54,7 @@ real.**
 | `getIsLandscape()` | `screen.width > screen.height` |
 | `getUserAgent()` | `navigator.userAgent` |
 | `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API (`navigator.getBattery()`), requested once; getters read the live BatteryManager; `-1` / `"unknown"` if absent or denied |
-| `getIsAirplaneMode()` | `false` (unsupported: browsers cannot determine airplane mode) |
+| `isLowBatteryLevel(threshold)` | Compares the browser battery reading with the supplied threshold; returns `false` without a reading |
 
 When the underlying global is missing (an older browser, or a server with no
 `navigator`/`screen`), each of these degrades to the fallback constant rather
@@ -63,6 +67,7 @@ than throwing.
 - Carrier / MCC / MNC information
 - Disk capacity and used-memory figures
 - Headphone, location, notch, and Dynamic Island checks
+- Airplane mode: `getIsAirplaneMode()` returns `false`; browsers cannot determine this state
 - Integrity checks — `isDeviceCompromised()` returns `false`
 - App metadata (`version`, `buildNumber`, `bundleId`, `applicationName`, …)
 - Windows-only fields (`isMouseConnected`, `hostNames`, …)
