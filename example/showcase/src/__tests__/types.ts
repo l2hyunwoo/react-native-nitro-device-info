@@ -75,8 +75,8 @@ export function isValidPowerState(value: unknown): value is PowerState {
   const state = value as PowerState;
   return (
     typeof state.batteryLevel === 'number' &&
-    state.batteryLevel >= 0 &&
-    state.batteryLevel <= 1 &&
+    (state.batteryLevel === -1 ||
+      (state.batteryLevel >= 0 && state.batteryLevel <= 1)) &&
     isValidBatteryState(state.batteryState) &&
     typeof state.lowPowerMode === 'boolean'
   );

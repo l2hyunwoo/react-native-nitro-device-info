@@ -17,8 +17,8 @@ export const LOW_BATTERY_THRESHOLD = Platform.OS === 'android' ? 0.15 : 0.2;
  * Check if a battery level is considered "low" based on platform-specific thresholds
  *
  * @param level Battery level (0.0 to 1.0)
- * @returns true if battery is below platform-specific threshold
+ * @returns true if a valid battery reading is below the platform-specific threshold
  */
 export function isLowBatteryLevel(level: number): boolean {
-  return level < LOW_BATTERY_THRESHOLD;
+  return level >= 0 && level <= 1 && level < LOW_BATTERY_THRESHOLD;
 }

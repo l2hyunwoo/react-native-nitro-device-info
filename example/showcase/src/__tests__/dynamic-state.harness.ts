@@ -11,11 +11,10 @@ import { isValidPowerState, isValidBcp47 } from './types';
 
 describe('Dynamic State APIs - Battery', () => {
   // T019: getBatteryLevel test
-  test('getBatteryLevel returns number between 0.0 and 1.0', () => {
+  test('getBatteryLevel returns a valid reading or the unavailable sentinel', () => {
     const level = DeviceInfoModule.getBatteryLevel();
     expect(typeof level).toBe('number');
-    expect(level).toBeGreaterThanOrEqual(0);
-    expect(level).toBeLessThanOrEqual(1);
+    expect(level === -1 || (level >= 0 && level <= 1)).toBe(true);
   });
 
   // T022: getPowerState test
@@ -28,8 +27,10 @@ describe('Dynamic State APIs - Battery', () => {
 
     // Explicit property checks
     expect(typeof state.batteryLevel).toBe('number');
-    expect(state.batteryLevel).toBeGreaterThanOrEqual(0);
-    expect(state.batteryLevel).toBeLessThanOrEqual(1);
+    expect(
+      state.batteryLevel === -1 ||
+        (state.batteryLevel >= 0 && state.batteryLevel <= 1)
+    ).toBe(true);
 
     expect(['unknown', 'unplugged', 'charging', 'full']).toContain(
       state.batteryState

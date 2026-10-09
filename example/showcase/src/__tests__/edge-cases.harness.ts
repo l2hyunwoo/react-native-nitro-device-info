@@ -52,10 +52,10 @@ describe('Edge Cases - Simulator/Emulator Battery', () => {
     const level = DeviceInfoModule.getBatteryLevel();
     expect(typeof level).toBe('number');
 
-    // On simulator, battery level may be 1.0 or a simulated value
-    // Just verify it's in valid range
-    expect(level).toBeGreaterThanOrEqual(0);
-    expect(level).toBeLessThanOrEqual(1);
+    expect(level === -1 || (level >= 0 && level <= 1)).toBe(true);
+    if (level === -1) {
+      expect(DeviceInfoModule.isLowBatteryLevel(0.2)).toBe(false);
+    }
   });
 
   test('isLowBatteryLevel handles edge thresholds', () => {

@@ -211,7 +211,7 @@ const webDeviceInfo: DeviceInfo = {
     batteryCache !== null ? batteryCache.charging : false,
   isLowBatteryLevel: (threshold) => {
     const level = batteryCache !== null ? batteryCache.level : -1;
-    return level >= 0 && level < threshold;
+    return level >= 0 && level <= 1 && level < threshold;
   },
 
   // ---- Application metadata ----
