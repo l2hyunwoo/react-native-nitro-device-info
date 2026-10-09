@@ -28,7 +28,7 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
   - **lint**: oxlint + TypeScript typecheck (runs when library, mcp-server, or deps change)
   - **build**: TypeScript build via `yarn prepare`, verifies `lib/module`, `lib/typescript`, `nitrogen/generated` outputs
   - **build-ios**: CocoaPods install + xcodebuild on `macos-15` (showcase app, Release config, iphonesimulator)
-  - **build-android**: ktlint check + Gradle assembleDebug on `ubuntu-24.04` (Java 17 temurin)
+  - **build-android**: ktlint check + Gradle assembleDebug on `ubuntu-26.04` (Java 17 temurin)
   - **validate-package**: `npm pack` + verifies tarball contains required files (lib, src, ios, android)
   - **mcp-server**: typecheck + build + test (only when `packages/mcp-server/**` changes)
 - Publish workflows are `workflow_dispatch` only, require `version` input (X.Y.Z format) and support `dry_run`

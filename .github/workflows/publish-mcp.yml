@@ -24,7 +24,7 @@ jobs:
   # Job 1: Validate and build
   validate:
     name: Validate
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -74,7 +74,7 @@ jobs:
   # Job 2: Update version and publish
   publish:
     name: Publish to NPM
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: validate
     permissions:
       contents: write
@@ -184,7 +184,7 @@ jobs:
   # Job 3: Create GitHub Release
   create-github-release:
     name: Create GitHub Release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: publish
     if: github.event.inputs.dry_run != 'true'
     permissions:

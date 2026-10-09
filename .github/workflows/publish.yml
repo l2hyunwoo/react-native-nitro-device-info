@@ -26,7 +26,7 @@ jobs:
     name: Create Version Commit
     permissions:
       contents: write
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       commit_sha: ${{ steps.commit.outputs.sha }}
     steps:
@@ -107,7 +107,7 @@ jobs:
     name: Create Version Tag
     permissions:
       contents: write
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: create-version-commit
     steps:
       - name: Checkout
@@ -148,7 +148,7 @@ jobs:
   # Job 3: Publish to NPM
   publish-npm:
     name: Publish to NPM
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [create-version-commit, create-version-tag]
     permissions:
       contents: read
@@ -208,7 +208,7 @@ jobs:
   # Job 4: Create GitHub Release with changelog
   create-github-release:
     name: Create GitHub Release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [create-version-commit, publish-npm]
     permissions:
       contents: write

@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       library: ${{ steps.filter.outputs.library }}
       mcp-server: ${{ steps.filter.outputs.mcp-server }}
@@ -63,7 +63,7 @@ jobs:
 
   lint:
     name: Lint
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.mcp-server == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
@@ -90,7 +90,7 @@ jobs:
 
   build:
     name: Build Library
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
@@ -171,7 +171,7 @@ jobs:
 
   build-android:
     name: Build Android
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
@@ -221,7 +221,7 @@ jobs:
 
   validate-package:
     name: Validate NPM Package
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
@@ -256,7 +256,7 @@ jobs:
   # MCP Server CI - only runs when packages/mcp-server changes
   mcp-server:
     name: MCP Server
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: changes
     if: ${{ needs.changes.outputs.mcp-server == 'true' }}
     steps:
