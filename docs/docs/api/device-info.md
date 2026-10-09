@@ -1291,7 +1291,7 @@ if (canSideload) {
 **Platform behavior difference**:
 - **Android 7 and below**: Returns whether the device allows unknown sources globally (checks `Settings.Global.INSTALL_NON_MARKET_APPS`)
 - **Android 8.0+**: Returns whether THIS APP has permission to install other apps (per-app permission via `canRequestPackageInstalls()`)
-- **iOS**: Always returns `false` (sideloading not possible without jailbreak)
+- **iOS**: This API always returns `false`; it does not detect sideloading.
 
 **Important**: On Android 8.0+, even if the user has enabled "Install unknown apps" for other apps, this will return `false` unless they specifically granted permission to this app.
 

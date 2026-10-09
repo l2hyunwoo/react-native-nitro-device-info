@@ -1,5 +1,7 @@
 # Documentation Development
 
+[English](README.md) | [한국어](README-ko.md)
+
 The site uses `@rspress/core` 2.x. `docs/yarn.lock` pins the version used by CI.
 
 ## Run locally
@@ -35,22 +37,23 @@ docs/
     ├── api/
     ├── examples/
     ├── contributing/
+    ├── ko/                   # Korean counterparts, with the same page paths
     └── public/               # Shared static assets
 ```
 
-There is currently no Korean site locale. See [the Korean documentation plan](I18N_PLAN.ko.md) for the proposed layout and rollout.
+English pages keep their existing URLs. Korean pages use `/ko/` and the built-in language selector. See [Korean translation maintenance](I18N_PLAN.ko.md) for metadata and review requirements.
 
 ## Edit and verify
 
-1. Edit the relevant Markdown page in `docs/docs/`.
-2. For a new page, update both navigation and sidebar in `rspress.config.ts`.
+1. Edit the English Markdown page in `docs/docs/` and its Korean counterpart in `docs/docs/ko/`.
+2. For a new page, update navigation and sidebar for both locales in `rspress.config.ts`.
 3. Match API examples against the source interface and platform implementations. Update the English and Korean READMEs when relevant.
 4. Run `yarn build`, then `yarn preview`.
-5. Check changed routes, heading links, search results, and examples.
+5. Check changed routes, heading links, both directions of language switching, search results, and examples.
 
 The website follows `main`; installed releases can differ. Keep property access, synchronous methods, Promise methods, and `/compat` imports distinct. Do not maintain a second copy of the full TypeScript interface in Markdown.
 
-`llms: true` enables Rspress's built-in page Markdown, `llms.txt`, and `llms-full.txt` output. Verify these files under `doc_build/` after building.
+`llms: true` enables Rspress's built-in page Markdown, `llms.txt`, and `llms-full.txt` output. Verify the English files under `doc_build/` and Korean files under `doc_build/ko/` after building.
 
 ## MCP corpus
 
