@@ -416,7 +416,11 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   /// Check if camera is present
   public var isCameraPresent: Bool {
-    return true
+    #if targetEnvironment(simulator)
+      return false
+    #else
+      return AVCaptureDevice.default(for: .video) != nil
+    #endif
   }
 
   /// Check if PIN or biometric authentication is set

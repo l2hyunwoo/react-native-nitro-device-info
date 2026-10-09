@@ -165,7 +165,7 @@ Returns an estimated "year class" representing when this device's hardware would
 
 ### `isCameraPresent: boolean`
 
-Check if camera is available.
+Check if camera hardware is available. On iOS, returns `false` on the simulator or when no video capture device exists. This check does not request camera permission; a `true` result does not mean the app has permission to capture video.
 
 ```typescript
 const hasCamera = DeviceInfoModule.isCameraPresent;

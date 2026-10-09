@@ -73,7 +73,7 @@ Check what features the device supports:
 const isTablet = DeviceInfoModule.isTablet; // false
 const hasNotch = DeviceInfoModule.getHasNotch(); // true
 const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland(); // false
-const isCameraPresent = DeviceInfoModule.isCameraPresent; // true
+const isCameraPresent = DeviceInfoModule.isCameraPresent; // false on iOS simulator; hardware check only
 const isEmulator = DeviceInfoModule.isEmulator; // false
 ```
 
