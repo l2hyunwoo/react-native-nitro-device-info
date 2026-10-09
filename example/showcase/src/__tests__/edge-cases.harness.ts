@@ -84,6 +84,10 @@ describe('Tier 3 - Network APIs (Type Verification Only)', () => {
   test('getMacAddress returns string', async () => {
     const mac = await DeviceInfoModule.getMacAddress();
     expect(typeof mac).toBe('string');
+    if (Platform.OS === 'android') {
+      expect(mac).toBe(DeviceInfoModule.getMacAddressSync());
+      expect(mac.length).toBeGreaterThan(0);
+    }
 
     if (Platform.OS === 'ios') {
       // iOS always returns "02:00:00:00:00:00" due to privacy

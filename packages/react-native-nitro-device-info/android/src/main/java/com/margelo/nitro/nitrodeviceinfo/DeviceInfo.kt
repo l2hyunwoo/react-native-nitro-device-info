@@ -521,7 +521,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Get MAC address */
     override fun getMacAddress(): Promise<String> {
-        return Promise.async { "" }
+        return Promise.async { getMacAddressSync() }
     }
 
     /** Get MAC address with 5-second cache */
