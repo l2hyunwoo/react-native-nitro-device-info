@@ -215,6 +215,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
     "iPhone18,3": "iPhone 17",
     "iPhone18,4": "iPhone Air",
     "iPhone18,5": "iPhone 17e",
+    "iPhone19,2": "iPhone 18 Pro",
+    "iPhone19,3": "iPhone 18 Pro Max",
+    "iPhone19,4": "iPhone Duo",
+    "iPhone19,7": "iPhone 18 Pro Max",
 
     // MARK: iPod
     "iPod1,1": "iPod Touch",
@@ -308,14 +312,30 @@ class DeviceInfo: HybridDeviceInfoSpec {
     "iPad14,4": "iPad Pro 11-inch (4th generation)",
     "iPad14,5": "iPad Pro 12.9-inch (6th generation)",
     "iPad14,6": "iPad Pro 12.9-inch (6th generation)",
-    "iPad14,8": "iPad Air (6th generation)",
-    "iPad14,9": "iPad Air (6th generation)",
-    "iPad14,10": "iPad Air (7th generation)",
-    "iPad14,11": "iPad Air (7th generation)",
+    "iPad14,8": "iPad Air 11-inch (M2)",
+    "iPad14,9": "iPad Air 11-inch (M2)",
+    "iPad14,10": "iPad Air 13-inch (M2)",
+    "iPad14,11": "iPad Air 13-inch (M2)",
+    "iPad15,3": "iPad Air 11-inch (M3)",
+    "iPad15,4": "iPad Air 11-inch (M3)",
+    "iPad15,5": "iPad Air 13-inch (M3)",
+    "iPad15,6": "iPad Air 13-inch (M3)",
+    "iPad15,7": "iPad (A16)",
+    "iPad15,8": "iPad (A16)",
+    "iPad16,1": "iPad mini (A17 Pro)",
+    "iPad16,2": "iPad mini (A17 Pro)",
     "iPad16,3": "iPad Pro 11-inch (M4)",
     "iPad16,4": "iPad Pro 11-inch (M4)",
     "iPad16,5": "iPad Pro 13-inch (M4)",
     "iPad16,6": "iPad Pro 13-inch (M4)",
+    "iPad16,8": "iPad Air 11-inch (M4)",
+    "iPad16,9": "iPad Air 11-inch (M4)",
+    "iPad16,10": "iPad Air 13-inch (M4)",
+    "iPad16,11": "iPad Air 13-inch (M4)",
+    "iPad17,1": "iPad Pro 11-inch (M5)",
+    "iPad17,2": "iPad Pro 11-inch (M5)",
+    "iPad17,3": "iPad Pro 13-inch (M5)",
+    "iPad17,4": "iPad Pro 13-inch (M5)",
 
     // MARK: Apple TV
     "AppleTV2,1": "Apple TV (2nd generation)",
@@ -323,9 +343,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
     "AppleTV3,2": "Apple TV (3rd generation)",
     "AppleTV5,3": "Apple TV (4th generation)",
     "AppleTV6,2": "Apple TV 4K",
+    "AppleTV11,1": "Apple TV 4K (2nd generation)",
+    "AppleTV14,1": "Apple TV 4K (3rd generation)",
 
     // MARK: Apple Vision
     "RealityDevice14,1": "Apple Vision Pro",
+    "RealityDevice17,1": "Apple Vision Pro (M5)",
   ]
 
   /// Operating system name (e.g., "iOS" or "iPadOS")

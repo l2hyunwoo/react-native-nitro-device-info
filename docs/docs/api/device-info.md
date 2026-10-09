@@ -40,7 +40,7 @@ Device model marketing name. Maps the hardware identifier to a human-readable na
 
 ```typescript
 const model = DeviceInfoModule.model;
-// iOS: "iPhone 15 Pro", "iPad Air", "iPhone SE (3rd generation)"
+// iOS: "iPhone 18 Pro", "iPhone Duo", "iPad Pro 11-inch (M5)"
 // Android: Device-specific model name (e.g., "Pixel 7 Pro", "Galaxy S24")
 ```
 
