@@ -363,11 +363,13 @@ console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 Get device uptime since boot in milliseconds, excluding deep sleep time.
 
+On iOS, use this clock only for app-event timing: elapsed time or timers (`35F9.1`), or app-event uptime converted into an absolute timestamp using `startupTime` (`8FFB.1`). Do not display or collect raw uptime as general device information, send it off-device, or use it for fingerprinting. Only elapsed time between app events or the resulting absolute app-event timestamps may be sent off-device.
+
 ```typescript
-const uptime = DeviceInfoModule.getUptime();
-const hours = Math.floor(uptime / 1000 / 60 / 60);
-const minutes = Math.floor((uptime / 1000 / 60) % 60);
-console.log(`Device running for ${hours}h ${minutes}m`);
+const startedAt = DeviceInfoModule.getUptime();
+const usedMemory = DeviceInfoModule.getUsedMemory();
+const elapsedMs = DeviceInfoModule.getUptime() - startedAt;
+console.log({ usedMemory, elapsedMs });
 ```
 
 **Platform behavior**:
@@ -380,13 +382,16 @@ Both platforms return consistent "active time" since boot, matching the behavior
 
 Get device boot time (milliseconds since epoch).
 
+On iOS, use this value only as the time base for converting app-event uptime into an absolute timestamp (`8FFB.1`). Do not display or collect the raw boot timestamp as general device information, send it off-device, or use it for fingerprinting. Only the resulting absolute timestamps of events within the app may be sent off-device.
+
 ```typescript
-const bootTime = DeviceInfoModule.startupTime;
-const bootDate = new Date(bootTime);
-console.log(`Device booted: ${bootDate.toLocaleString()}`);
+// iOS: capture an event occurring in the app using the same uptime clock.
+const eventUptime = DeviceInfoModule.getUptime();
+const eventTimestamp = DeviceInfoModule.startupTime + eventUptime;
+console.log(`App event at: ${new Date(eventTimestamp).toISOString()}`);
 ```
 
-**Note**: Returns boot time, NOT app startup time
+This is the device boot time, not app startup time. See [iOS Privacy Manifest](../guide/getting-started.md#ios-privacy-manifest) for the supported purposes and Apple's usage limits.
 
 ---
 

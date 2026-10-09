@@ -565,12 +565,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Get device uptime since boot in milliseconds
+  /// iOS supports this clock only for app-event timing (35F9.1 / 8FFB.1).
   func getUptime() -> Double {
     return ProcessInfo.processInfo.systemUptime * 1000
   }
 
-  /// Device boot time in milliseconds since epoch
+  /// iOS supports this time base only for absolute app-event timestamps (8FFB.1).
   var startupTime: Double {
     let uptime = ProcessInfo.processInfo.systemUptime
     let bootTime = Date().timeIntervalSince1970 - uptime

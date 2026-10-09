@@ -220,7 +220,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     label: 'Uptime',
     category: PropertyCategory.SYSTEM_RESOURCES,
     type: PropertyType.NUMBER,
-    platform: PlatformAvailability.ALL,
+    platform: PlatformAvailability.ANDROID_ONLY,
     isSync: true,
   },
 

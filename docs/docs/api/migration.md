@@ -526,7 +526,6 @@ import * as Device from 'expo-device';
 
 async function getDeviceInfo() {
   const deviceType = await Device.getDeviceTypeAsync();
-  const uptime = await Device.getUptimeAsync();
   const isRooted = await Device.isRootedExperimentalAsync();
   const canSideload = await Device.isSideLoadingEnabledAsync();
 
@@ -536,7 +535,6 @@ async function getDeviceInfo() {
     yearClass: Device.deviceYearClass,
     totalMemory: Device.totalMemory,
     deviceType,
-    uptime,
     isRooted,
     canSideload,
   };
@@ -555,7 +553,6 @@ function getDeviceInfo() {
     yearClass: DeviceInfoModule.deviceYearClass,
     totalMemory: DeviceInfoModule.totalMemory,
     deviceType: DeviceInfoModule.deviceType,
-    uptime: DeviceInfoModule.getUptime(),
     isRooted: DeviceInfoModule.isDeviceCompromised(),
     canSideload: DeviceInfoModule.isSideLoadingEnabled(),
   };
@@ -574,6 +571,8 @@ These `expo-device` APIs do not have direct equivalents:
 ### Platform-Specific Considerations
 
 #### Uptime Behavior
+
+On iOS, `getUptime()` is supported only for app-event timing: measuring elapsed time, enabling timers, or converting app-event uptime to an absolute timestamp with `startupTime`. Keep raw uptime and boot timestamps out of generic device-info payloads. See [iOS Privacy Manifest](../guide/getting-started.md#ios-privacy-manifest) for the declared purposes and transmission limits.
 
 - **expo-device**: Returns uptime in milliseconds (excludes deep sleep)
 - **react-native-nitro-device-info**: Returns uptime in milliseconds (excludes deep sleep)

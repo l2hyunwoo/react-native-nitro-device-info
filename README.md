@@ -119,11 +119,11 @@ const isEmulator = DeviceInfoModule.isEmulator; // false
 const deviceYearClass = DeviceInfoModule.deviceYearClass; // 2021 (estimated year class)
 
 // System Resources
+const resourceReadStartedAt = DeviceInfoModule.getUptime();
 const totalMemory = DeviceInfoModule.totalMemory;
 const usedMemory = DeviceInfoModule.getUsedMemory();
 const totalDisk = DeviceInfoModule.totalDiskCapacity;
 const freeDisk = DeviceInfoModule.getFreeDiskStorage();
-const uptime = DeviceInfoModule.getUptime(); // Uptime in milliseconds
 
 console.log(
   `RAM: ${(usedMemory / 1024 / 1024).toFixed(0)}MB / ${(totalMemory / 1024 / 1024).toFixed(0)}MB`
@@ -132,7 +132,7 @@ console.log(
   `Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB free of ${(totalDisk / 1024 / 1024 / 1024).toFixed(1)}GB`
 );
 console.log(
-  `Uptime: ${Math.floor(uptime / 1000 / 60 / 60)}h ${Math.floor((uptime / 1000 / 60) % 60)}m`
+  `Resource reads took ${DeviceInfoModule.getUptime() - resourceReadStartedAt}ms`
 );
 
 // Battery Information
@@ -205,7 +205,7 @@ DeviceInfoModule.isTablet; // Sync
 DeviceInfoModule.totalMemory; // Sync
 DeviceInfoModule.getBatteryLevel(); // Sync method
 DeviceInfoModule.deviceYearClass; // Sync - estimated device year class
-DeviceInfoModule.getUptime(); // Sync - uptime in milliseconds
+DeviceInfoModule.getUptime(); // Sync - clock for elapsed time between app events
 
 // App Info
 DeviceInfoModule.version; // Sync
