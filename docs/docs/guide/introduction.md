@@ -1,74 +1,57 @@
 # Introduction
 
-Welcome to `react-native-nitro-device-info` - a high-performance device information library for React Native, built on [Nitro Modules](https://nitro.margelo.com/) for zero-overhead native access through JSI.
+`react-native-nitro-device-info` reads device information from Swift and Kotlin through [Nitro Modules](https://nitro.margelo.com/). It provides synchronous properties, synchronous methods, Promise-based methods, and React hooks.
 
-## What is `react-native-nitro-device-info`?
+## Start with your task
 
-`react-native-nitro-device-info` provides comprehensive device information and system metrics for React Native applications. Unlike traditional libraries that use the React Native bridge, this library leverages Nitro Modules to communicate directly with native code, delivering instant synchronous access to device information.
+| Task | Read first |
+| --- | --- |
+| Install in a React Native app | [Getting Started](/guide/getting-started) |
+| Install in an Expo app | [Expo Setup](/guide/expo-setup) |
+| Read device information | [Quick Start](/guide/quick-start) |
+| Update a component when device state changes | [React Hooks Guide](/guide/react-hooks) |
+| Replace `react-native-device-info` | [Migration Guide](/api/migration) |
+| Build for web or server rendering | [Web Support](/guide/web-support) |
+| Find an exact signature or platform fallback | [API Reference](/api/) |
+| Use documentation with an AI assistant | [MCP Integration](/guide/mcp-integration) |
 
-## Key Features
+## Choose an API entry point
 
-### 📱 100+ Device Properties
-
-Access comprehensive device information:
-- Device identification (model, brand, manufacturer)
-- System information (OS version, API level)
-- Hardware capabilities (memory, storage, battery)
-- Network and connectivity details
-- Application metadata
-
-### ⚡ Instant Synchronous Access
-
-Most methods return results immediately (<1ms) with no async overhead. Only I/O-bound operations like network queries remain asynchronous.
-
-### 📦 TypeScript-first
-
-Full type definitions included out of the box. All APIs are fully typed with comprehensive IntelliSense support.
-
-### 🌐 Cross-platform Support
-
-Works seamlessly on:
-- **iOS**: 13.4+
-- **Android**: API 24+ (Android 7.0 Nougat)
-- **Web**: import-safe fallback for react-native-web / Next.js SSR (see [Web Support](/guide/web-support))
-
-### 🔄 Easy Migration
-
-100% API compatible with `react-native-device-info` for seamless transition from existing projects.
-
-## Why Choose This Library?
-
-`react-native-nitro-device-info` is the ideal choice when you need:
-
-- **Best-in-class performance**: Synchronous APIs with <1ms latency
-- **Modern architecture**: Built on React Native's New Architecture
-- **Type safety**: Complete TypeScript definitions with IntelliSense
-- **Hassle-free migration**: Familiar API if coming from `react-native-device-info`
-- **Future-proof**: Built with the latest Nitro Modules technology
-
-## Quick Example
+The package has two API entry points. Their names and return types differ.
 
 ```typescript
+// Native API: named singleton, properties, and methods.
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
-
-// Synchronous properties (immediate - <1ms)
-console.log(DeviceInfoModule.deviceId);      // "iPhone14,2"
-console.log(DeviceInfoModule.systemVersion); // "15.0"
-console.log(DeviceInfoModule.brand);         // "Apple"
-
-// Synchronous properties/methods (immediate - <1ms)
-const uniqueId = DeviceInfoModule.uniqueId;
-const isTablet = DeviceInfoModule.isTablet;
-const batteryLevel = DeviceInfoModule.getBatteryLevel();
-
-// Asynchronous methods (Promise-based - <100ms)
-const ipAddress = await DeviceInfoModule.getIpAddress();
-const carrier = await DeviceInfoModule.getCarrier();
+const model = DeviceInfoModule.model;
+const battery = DeviceInfoModule.getBatteryLevel();
 ```
 
-## Next Steps
+```typescript
+// Compatibility API: react-native-device-info-style functions.
+import DeviceInfo from 'react-native-nitro-device-info/compat';
 
-- Learn [Why Nitro Module](/guide/why-nitro-module) was chosen for this library
-- Follow the [Getting Started](/guide/getting-started) guide to install
-- Check out the [Quick Start](/guide/quick-start) examples
-- Explore the complete [API Reference](/api/)
+async function readBattery() {
+  return await DeviceInfo.getBatteryLevel();
+}
+const model = DeviceInfo.getModel();
+```
+
+The compatibility layer targets `react-native-device-info` 15.x. Review its [placeholder values and behavior differences](/api/migration#compat-layer-caveats) before migrating.
+
+## Platforms and return values
+
+- **iOS**: The library's deployment target is 15.1+.
+- **Android**: The library's minimum SDK is API 24 (Android 7.0).
+- **Web**: A JavaScript fallback provides browser-derived values where available. Other APIs return placeholders; see [Web Support](/guide/web-support).
+
+Your React Native and Nitro versions can impose higher platform requirements. Synchronous calls return directly and run on the calling thread. They do not guarantee a particular execution time.
+
+Unsupported or unavailable values can be `"unknown"`, `-1`, `false`, or an empty collection. Check each API's contract before using a result.
+
+## Device information and security
+
+[Local integrity checks](/api/device-integrity) detect root or jailbreak indicators. They are bypassable and do not prove that a device is trustworthy.
+
+For tokens that your backend verifies, use the separate, optional [`react-native-nitro-device-integrity` package](/api/device-attestation).
+
+For the architecture and measurement guidance, read [Why Nitro Module](/guide/why-nitro-module).

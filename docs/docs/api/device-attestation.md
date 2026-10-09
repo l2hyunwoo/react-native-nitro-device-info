@@ -1,7 +1,13 @@
 # Device Attestation API
 
 **Server-verifiable, hardware-backed** device attestation via the opt-in package
-[`react-native-nitro-device-integrity`](https://www.npmjs.com/package/react-native-nitro-device-integrity).
+`react-native-nitro-device-integrity`.
+
+<span class="rp-badge rp-badge--warning">Unreleased</span>
+
+This package is available in the source repository but has no published npm release as of 2026-10-10. Its manifest version `0.1.0` is not a release. The npm installation instructions apply after publication.
+
+Read the [availability badge definitions](/api/#availability-badges). Its pod targets iOS 14+ and its Android module targets API 24+. Dependencies can require higher minimums. There is no web entry point.
 
 - **Android** → [Play Integrity API](https://developer.android.com/google/play/integrity)
 - **iOS** → [App Attest (`DCAppAttestService`)](https://developer.apple.com/documentation/devicecheck/dcappattestservice) + [DeviceCheck (`DCDevice`)](https://developer.apple.com/documentation/devicecheck/dcdevice)
@@ -46,8 +52,7 @@ yarn add react-native-nitro-device-integrity react-native-nitro-modules
 cd ios && pod install
 ```
 
-Requirements: iOS 14.0+ (App Attest) / 11.0+ (DeviceCheck), Android API 23+ with
-Google Play Services.
+The package sets iOS 14.0+ and Android API 24+ as native minimums. Its Nitro and React Native dependencies can raise these minimums. Play Integrity requires Google Play Services. DeviceCheck exists from iOS 11, but this package does not support installing on iOS 11.
 
 ## API Reference
 
@@ -61,6 +66,8 @@ const integrity = createDeviceIntegrity();
 
 #### `isSupported`
 
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+
 ```typescript
 readonly isSupported: boolean
 ```
@@ -70,6 +77,8 @@ Best-effort check. On Android, `true` when Google Play Services is available
 iOS, `DCAppAttestService.shared.isSupported` — always `false` on the Simulator.
 
 #### `providerType`
+
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 readonly providerType: 'playIntegrity' | 'appAttest' | 'unsupported'
@@ -84,6 +93,8 @@ calling platform-specific methods.
 
 #### `prepareStandardProvider()`
 
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+
 ```typescript
 prepareStandardProvider(cloudProjectNumber: string): Promise<void>
 ```
@@ -96,6 +107,8 @@ avoid JS number-precision loss.
 `PLAY_STORE_NOT_FOUND`, `NETWORK_ERROR`, etc. On iOS: `UNSUPPORTED_PLATFORM`.
 
 #### `requestIntegrityToken()`
+
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 requestIntegrityToken(requestHash: string): Promise<string>
@@ -111,6 +124,8 @@ opaque, encrypted token string.
 
 #### `requestClassicIntegrityToken()`
 
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+
 ```typescript
 requestClassicIntegrityToken(nonce: string, cloudProjectNumber: string): Promise<string>
 ```
@@ -124,6 +139,8 @@ base64 value of 16–500 bytes.
 ### iOS — App Attest
 
 #### `generateKey()`
+
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 generateKey(): Promise<string>
@@ -139,6 +156,8 @@ regenerate on `DCError.invalidKey`.
 
 #### `attestKey()`
 
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+
 ```typescript
 attestKey(keyId: string, clientDataHash: string): Promise<string>
 ```
@@ -148,6 +167,8 @@ Attests a key (**once** per key, per install). Makes a network call to Apple.
 **not** hash for you. Returns base64 of the opaque CBOR attestation object.
 
 #### `generateAssertion()`
+
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 generateAssertion(keyId: string, clientDataHash: string): Promise<string>
@@ -162,6 +183,8 @@ replays.
 ### iOS — DeviceCheck
 
 #### `getDeviceCheckToken()`
+
+<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 getDeviceCheckToken(): Promise<string>

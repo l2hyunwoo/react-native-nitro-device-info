@@ -59,7 +59,7 @@ function formatPlatform(api: ApiDefinition): string {
 function formatApiResult(api: ApiDefinition, score: number, index: number): string {
   const lines: string[] = [];
 
-  lines.push(`### ${index}. ${api.name}() (API)`);
+  lines.push(`### ${index}. ${api.name}${api.kind === 'method' ? '()' : ''} (API)`);
   lines.push(`**Relevance**: ${score}%`);
   lines.push(`**Platform**: ${formatPlatform(api)}`);
   lines.push('');

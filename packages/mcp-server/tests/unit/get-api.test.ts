@@ -103,7 +103,7 @@ describe('get_api tool', () => {
       const result = executeGetApi(index, { name: 'getBatteryLevel' });
       expect(result.isError).toBe(false);
       expect(result.content).toContain('## Import');
-      expect(result.content).toContain("react-native-nitro-modules");
+      expect(result.content).toContain("import { DeviceInfoModule } from 'react-native-nitro-device-info'");
     });
 
     it('should mark iOS-only APIs correctly', () => {
@@ -120,6 +120,20 @@ describe('get_api tool', () => {
   });
 
   describe('properties vs methods', () => {
+    it('uses the separate package for attestation API imports', () => {
+      const content = [
+        'export interface DeviceIntegrity extends HybridObject {',
+        '  /** Check support. */',
+        '  readonly isSupported: boolean;',
+        '}',
+      ].join('\n');
+      const apis = parseDeviceInfoContent(content, 'DeviceIntegrity');
+      const result = executeGetApi(buildSearchIndex(apis, []), { name: 'isSupported' });
+      expect(result.isError).toBe(false);
+      expect(result.content).toContain("import { DeviceIntegrityModule } from 'react-native-nitro-device-integrity'");
+      expect(result.content).toContain('const result = DeviceIntegrityModule.isSupported;');
+    });
+
     it('should format properties without parentheses', () => {
       const result = executeGetApi(index, { name: 'deviceId' });
       expect(result.isError).toBe(false);

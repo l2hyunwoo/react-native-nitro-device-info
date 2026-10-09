@@ -24,9 +24,9 @@ features:
   - title: 📦 TypeScript-first
     details: Full type definitions included for excellent developer experience
   - title: 🚀 Synchronous APIs
-    details: Most methods are synchronous for instant access (<1ms)
+    details: Read properties and synchronous methods directly; await Promise-based methods
   - title: 🌐 Cross-platform
-    details: Works on iOS 13.4+ and Android API 24+ (Android 7.0+)
+    details: Works on iOS 15.1+ and Android API 24+ (Android 7.0+)
   - title: 🔄 Easy Migration
-    details: 100% API compatible with react-native-device-info for seamless transition
+    details: Migrate react-native-device-info 15.x imports with the /compat entry point; review documented caveats
 ---

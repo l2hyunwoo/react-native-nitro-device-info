@@ -27,9 +27,13 @@ These APIs perform **local detection only** (file system checks, package detecti
 - Use as one layer of defense-in-depth, not as sole security measure
 :::
 
+Read the [availability badge definitions](/api/#availability-badges). Both APIs belong to the core package; web only returns fallback values.
+
 ## API Reference
 
 ### `isDeviceCompromised()`
+
+<span class="rp-badge rp-badge--tip">Since v1.4.2</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Synchronously checks if the device is rooted (Android) or jailbroken (iOS).
 
@@ -46,6 +50,8 @@ isDeviceCompromised(): boolean
 ---
 
 ### `verifyDeviceIntegrity()`
+
+<span class="rp-badge rp-badge--tip">Since v1.4.2</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Asynchronous wrapper for device integrity verification.
 
@@ -166,5 +172,5 @@ function DeviceAuthenticationLogin() {
 ## See Also
 
 - [Device Attestation](/api/device-attestation)
-- [isEmulator](/api/device-info#isemulator)
-- [isPinOrFingerprintSet](/api/device-info#ispinorfingerprintset)
+- [isEmulator](/api/device-info#isemulator-boolean)
+- [isPinOrFingerprintSet](/api/device-info#ispinorfingerprintset-boolean)

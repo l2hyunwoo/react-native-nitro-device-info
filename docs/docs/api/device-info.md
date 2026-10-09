@@ -1,6 +1,8 @@
 # DeviceInfo Module
 
-Complete API documentation for the DeviceInfo module.
+Complete API documentation for the DeviceInfo module. Read the [availability badge definitions](/api/#availability-badges) before choosing an API.
+
+The native build minimums are iOS 15.1 and Android API 24. Dependencies can require higher minimums. Web entry points and fallbacks were added in v1.8.0.
 
 ## Import
 
@@ -16,6 +18,8 @@ Synchronous properties providing instant access to basic device identity.
 
 ### `deviceId: string`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Device model identifier.
 
 ```typescript
@@ -25,6 +29,8 @@ const deviceId = DeviceInfoModule.deviceId;
 ```
 
 ### `brand: string`
+
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
 
 Device brand/manufacturer name.
 
@@ -36,6 +42,8 @@ const brand = DeviceInfoModule.brand;
 
 ### `model: string`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Device model marketing name. Maps the hardware identifier to a human-readable name, falling back to a generic name for unknown devices.
 
 ```typescript
@@ -45,6 +53,8 @@ const model = DeviceInfoModule.model;
 ```
 
 ### `systemName: string`
+
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
 
 Operating system name.
 
@@ -56,6 +66,8 @@ const systemName = DeviceInfoModule.systemName;
 
 ### `systemVersion: string`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Operating system version string.
 
 ```typescript
@@ -66,6 +78,8 @@ const systemVersion = DeviceInfoModule.systemVersion;
 
 ### `deviceType: DeviceType`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Device type category.
 
 ```typescript
@@ -74,6 +88,8 @@ const deviceType = DeviceInfoModule.deviceType;
 ```
 
 ### `uniqueId: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get unique device identifier.
 
@@ -84,10 +100,14 @@ const uniqueId = DeviceInfoModule.uniqueId;
 // Example: "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 ```
 
-- **iOS**: Persists across app installs from the same vendor
-- **Android**: Usually persists across app installs
+- **iOS**: Reads the current IDFV, or `""` when unavailable. Do not assume that it survives removal of all apps from the vendor.
+- **Android**: Reads ANDROID_ID, or `""` when unavailable. Its scope and reset behavior depend on Android.
+
+Do not use this value as a permanent device identity or account identifier. See [Apple IDFV](https://developer.apple.com/documentation/uikit/uidevice/identifierforvendor) and [Android ANDROID_ID](https://developer.android.com/reference/android/provider/Settings.Secure#ANDROID_ID).
 
 ### `manufacturer: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
 
 Get device manufacturer name.
 
@@ -98,6 +118,8 @@ const manufacturer = DeviceInfoModule.manufacturer;
 ```
 
 ### `deviceName: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get user-assigned device name.
 
@@ -114,6 +136,8 @@ Boolean checks for device features and hardware availability.
 
 ### `isTablet: boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Check if device is a tablet.
 
 ```typescript
@@ -127,6 +151,8 @@ const isTablet = DeviceInfoModule.isTablet;
 
 ### `isEmulator: boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Check if running in simulator/emulator.
 
 ```typescript
@@ -134,6 +160,8 @@ const isEmulator = DeviceInfoModule.isEmulator;
 ```
 
 ### `deviceYearClass: number`
+
+<span class="rp-badge rp-badge--tip">Since v1.4.2</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get estimated device year class based on hardware specifications.
 
@@ -165,6 +193,10 @@ Returns an estimated "year class" representing when this device's hardware would
 
 ### `isCameraPresent: boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: unreleased</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+The iOS implementation is unreleased. Published versions through v1.8.3 return `true` unconditionally. See the [implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/be976f0).
+
 Check if camera hardware is available. On iOS, returns `false` on the simulator or when no video capture device exists. This check does not request camera permission; a `true` result does not mean the app has permission to capture video.
 
 ```typescript
@@ -172,6 +204,10 @@ const hasCamera = DeviceInfoModule.isCameraPresent;
 ```
 
 ### `isPinOrFingerprintSet: boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: unreleased</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+The iOS implementation is unreleased. Published versions through v1.8.3 return `false` unconditionally. See the [implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/801903e).
 
 Check if PIN, fingerprint, or Face ID is configured. On iOS, checks whether device-owner authentication is available, including the device passcode fallback when biometrics are unavailable or locked out. Returns `false` when no passcode is set. This check does not authenticate the user or show a prompt; the result is checked again on each read.
 
@@ -181,23 +217,27 @@ const isSecure = DeviceInfoModule.isPinOrFingerprintSet;
 
 ### `isHardwareKeyStoreAvailable: boolean`
 
-Check if hardware-backed cryptographic key storage is available on the device.
+<span class="rp-badge rp-badge--tip">Since v1.2.1</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android API 24+: limited</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+Check platform key-storage availability. Android does not verify hardware backing.
 
 ```typescript
 const hasHardwareKeyStore = DeviceInfoModule.isHardwareKeyStoreAvailable;
 
 if (hasHardwareKeyStore) {
-  console.log('Hardware-backed key storage available');
-  // Safe to store sensitive cryptographic keys
+  console.log('Platform key-storage check passed');
+  // Apply your key-storage policy; this check alone is not a security guarantee.
 } else {
-  console.log('No hardware-backed storage');
+  console.log('Platform key storage unavailable');
   // Use alternative security measures
 }
 ```
 
-**Platform**: Android, iOS (except for iOS Emulator)
+**Platform limits**: iOS checks Secure Enclave availability. Android only checks whether `AndroidKeyStore` can be opened; it does not prove that a key is hardware-backed.
 
 ### `isLowRamDevice: boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Check if device is classified as low RAM device.
 
@@ -207,7 +247,7 @@ const isLowRam = DeviceInfoModule.isLowRamDevice;
 // iOS: false
 ```
 
-**Platform**: Android API 19+
+**Platform**: Android. The OS classification API exists from API 19, but this package requires API 24+.
 
 ---
 
@@ -216,6 +256,8 @@ const isLowRam = DeviceInfoModule.isLowRamDevice;
 Screen and display-related properties.
 
 ### `getHasNotch(): boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Check if device has a display notch.
 
@@ -230,6 +272,8 @@ const hasNotch = DeviceInfoModule.getHasNotch();
 
 ### `getHasDynamicIsland(): boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 16+</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Check if device has Dynamic Island.
 
 ```typescript
@@ -243,6 +287,8 @@ const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland();
 
 ### `isDisplayZoomed: boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Check if iOS Display Zoom is enabled.
 
 ```typescript
@@ -255,6 +301,8 @@ const isZoomed = DeviceInfoModule.isDisplayZoomed;
 
 ### `getIsLandscape(): boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
+
 Check if device is in landscape orientation.
 
 ```typescript
@@ -262,6 +310,8 @@ const isLandscape = DeviceInfoModule.getIsLandscape();
 ```
 
 ### `getBrightness(): number`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get current screen brightness level (0.0 to 1.0).
 
@@ -276,6 +326,8 @@ console.log(`Brightness: ${(brightness * 100).toFixed(0)}%`);
 
 ### `getFontScale(): number`
 
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get current font scale multiplier.
 
 ```typescript
@@ -284,6 +336,8 @@ const fontScale = DeviceInfoModule.getFontScale();
 ```
 
 ### `isLiquidGlassAvailable: boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.1</span> <span class="rp-badge rp-badge--info">iOS 26+</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Check if the liquid glass effect is available on the device.
 
@@ -301,6 +355,8 @@ if (hasLiquidGlass) {
 
 **Platform**: iOS 26.0+
 
+Requires a Swift 6.2+ compiler. Returns `false` on older compiler builds or when `UIDesignRequiresCompatibility` is enabled.
+
 ---
 
 ## System Resources (7 APIs)
@@ -308,6 +364,8 @@ if (hasLiquidGlass) {
 Memory, storage, and uptime information.
 
 ### `totalMemory: number`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
 
 Get total device RAM in bytes.
 
@@ -319,6 +377,8 @@ console.log(`Total RAM: ${(totalMemory / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 ### `getUsedMemory(): number`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get current app memory usage in bytes.
 
 ```typescript
@@ -328,6 +388,8 @@ console.log(`Used Memory: ${(usedMemory / 1024 / 1024).toFixed(0)}MB`);
 ```
 
 ### `maxMemory: number`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get maximum memory available to app (in bytes).
 
@@ -341,6 +403,8 @@ const maxMemory = DeviceInfoModule.maxMemory;
 
 ### `totalDiskCapacity: number`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get total internal storage size in bytes.
 
 ```typescript
@@ -351,6 +415,8 @@ console.log(`Total Storage: ${(totalDisk / 1024 / 1024 / 1024).toFixed(0)}GB`);
 
 ### `getFreeDiskStorage(): number`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get available free storage space in bytes.
 
 ```typescript
@@ -360,6 +426,8 @@ console.log(`Free Storage: ${(freeDisk / 1024 / 1024 / 1024).toFixed(1)}GB`);
 ```
 
 ### `getUptime(): number`
+
+<span class="rp-badge rp-badge--tip">Since v1.4.2</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get device uptime since boot in milliseconds, excluding deep sleep time.
 
@@ -379,6 +447,8 @@ console.log({ usedMemory, elapsedMs });
 Both platforms return consistent "active time" since boot, matching the behavior of `expo-device.getUptimeAsync()`.
 
 ### `startupTime: number`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get device boot time (milliseconds since epoch).
 
@@ -401,6 +471,8 @@ Battery and power state information.
 
 ### `getBatteryLevel(): number`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
+
 Get current battery level (0.0 to 1.0), or `-1` if unavailable. A known empty battery returns `0`.
 
 On web, battery getters read the live BatteryManager after the initial async
@@ -415,6 +487,10 @@ console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
 ```
 
 ### `getPowerState(): PowerState`
+
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android API 24+: limited</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
+
+On Android, `lowPowerMode` is always `false`. Battery level and charging state are implemented.
 
 Get comprehensive power state information.
 
@@ -437,6 +513,8 @@ interface PowerState {
 
 ### `getIsBatteryCharging(): boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
+
 Check if battery is currently charging.
 
 ```typescript
@@ -444,6 +522,8 @@ const isCharging = DeviceInfoModule.getIsBatteryCharging();
 ```
 
 ### `isLowBatteryLevel(threshold: number): boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
 
 Check if a valid battery level is below threshold. Returns `false` for an unavailable reading; a known `0%` reading still counts as low.
 
@@ -462,6 +542,8 @@ App bundle and version information.
 
 ### `version: string`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get application version string.
 
 ```typescript
@@ -470,6 +552,8 @@ const version = DeviceInfoModule.version;
 ```
 
 ### `buildNumber: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get application build number.
 
@@ -480,6 +564,8 @@ const buildNumber = DeviceInfoModule.buildNumber;
 
 ### `bundleId: string`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get bundle ID (iOS) or package name (Android).
 
 ```typescript
@@ -488,6 +574,8 @@ const bundleId = DeviceInfoModule.bundleId;
 ```
 
 ### `applicationName: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get application display name.
 
@@ -498,6 +586,8 @@ const appName = DeviceInfoModule.applicationName;
 
 ### `readableVersion: string`
 
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get human-readable version string (version.buildNumber).
 
 ```typescript
@@ -507,6 +597,10 @@ const readableVersion = DeviceInfoModule.readableVersion;
 
 ### `getFirstInstallTime(): Promise<number>`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: limited</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+On iOS, this estimates installation time from the Documents directory creation time. It returns `0` when unavailable.
+
 Get timestamp when app was first installed (ms since epoch).
 
 ```typescript
@@ -515,9 +609,10 @@ const installDate = new Date(installTime);
 console.log(`Installed: ${installDate.toLocaleDateString()}`);
 ```
 
-**Performance**: ~10-30ms
 
 ### `getLastUpdateTime(): Promise<number>`
+
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: limited</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get timestamp of most recent app update (ms since epoch).
 
@@ -527,10 +622,13 @@ const updateDate = new Date(updateTime);
 console.log(`Last Updated: ${updateDate.toLocaleDateString()}`);
 ```
 
-**Performance**: ~10-30ms
-**Note**: Returns -1 on iOS
+**iOS limitation**: Reads the Documents directory modification time, not an App Store update timestamp. Returns `0` if unavailable.
 
 ### `firstInstallTimeSync: number`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS 15.1+: limited</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+On iOS, this caches the Documents directory creation time on first access. It returns `0` when unavailable.
 
 Synchronous variant (uses cached value from module initialization).
 
@@ -539,6 +637,8 @@ const firstInstallTimeSync = DeviceInfoModule.firstInstallTimeSync;
 ```
 
 ### `lastUpdateTimeSync: number`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Synchronous variant (returns -1 on iOS).
 
@@ -554,6 +654,8 @@ Network connectivity APIs (excluding carrier).
 
 ### `getIpAddress(): Promise<string>`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get device local IP address.
 
 ```typescript
@@ -561,9 +663,10 @@ const ipAddress = await DeviceInfoModule.getIpAddress();
 // Example: "192.168.1.100", "10.0.0.5"
 ```
 
-**Performance**: ~20-50ms
 
 ### `getIpAddressSync(): string`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Synchronous variant (with 5-second cache).
 
@@ -573,6 +676,8 @@ const ipAddressSync = DeviceInfoModule.getIpAddressSync();
 
 ### `getMacAddress(): Promise<string>`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get the Wi-Fi MAC address when Android allows access. Android uses the same 5-second cache as `getMacAddressSync()` and returns `"unknown"` when the address is unavailable. [Non-system apps generally cannot access hardware MAC addresses](https://developer.android.com/reference/java/net/NetworkInterface#getHardwareAddress()) on modern Android; this API does not bypass those restrictions.
 
 ```typescript
@@ -581,9 +686,10 @@ const macAddress = await DeviceInfoModule.getMacAddress();
 // Android: "unknown" when restricted, otherwise the available wlan0 MAC
 ```
 
-**Performance**: ~20-50ms
 
 ### `getMacAddressSync(): string`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Synchronous variant, sharing the same Android lookup, 5-second cache, and `"unknown"` fallback.
 
@@ -593,6 +699,8 @@ const macAddressSync = DeviceInfoModule.getMacAddressSync();
 
 ### `getUserAgent(): Promise<string>`
 
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
+
 Get HTTP User-Agent string.
 
 ```typescript
@@ -600,11 +708,11 @@ const userAgent = await DeviceInfoModule.getUserAgent();
 // Example: "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) ..."
 ```
 
-**Performance**:
-- iOS: 100-500ms (requires WebView initialization, cached after first call)
-- Android: sync capable
+iOS initializes a WebView and caches the first successful result. Android queries `WebSettings` asynchronously. Both platforms return a `Promise<string>`.
 
 ### `getIsAirplaneMode(): boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Check if airplane mode is enabled.
 
@@ -627,6 +735,10 @@ Cellular carrier data for telecom apps, analytics, and geo-detection.
 
 ### `getCarrier(): Promise<string>`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (since v1.8.0)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+iOS has a functional implementation from v1.8.0. Earlier async versions return a fixed fallback, even when a synchronous counterpart is implemented. See the [iOS implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026).
+
 Get cellular carrier name.
 
 ```typescript
@@ -634,9 +746,10 @@ const carrier = await DeviceInfoModule.getCarrier();
 // Example: "Verizon", "AT&T", "T-Mobile"
 ```
 
-**Performance**: ~20-50ms
 
 ### `getCarrierSync(): string`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Synchronous variant (with 5-second cache).
 
@@ -645,6 +758,8 @@ const carrierSync = DeviceInfoModule.getCarrierSync();
 ```
 
 ### `carrierAllowsVOIP: boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.5.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Check if carrier allows VoIP calls on its network.
 
@@ -658,6 +773,8 @@ const allowsVOIP = DeviceInfoModule.carrierAllowsVOIP;
 
 ### `carrierIsoCountryCode: string`
 
+<span class="rp-badge rp-badge--tip">Since v1.5.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get ISO 3166-1 alpha-2 country code for the carrier.
 
 ```typescript
@@ -667,6 +784,8 @@ const countryCode = DeviceInfoModule.carrierIsoCountryCode;
 ```
 
 ### `mobileCountryCode: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.5.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get Mobile Country Code (MCC) per ITU-T Recommendation E.212.
 
@@ -688,6 +807,8 @@ const mcc = DeviceInfoModule.mobileCountryCode;
 
 ### `mobileNetworkCode: string`
 
+<span class="rp-badge rp-badge--tip">Since v1.5.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get Mobile Network Code (MNC) that identifies the carrier within a country.
 
 ```typescript
@@ -697,6 +818,8 @@ const mnc = DeviceInfoModule.mobileNetworkCode;
 ```
 
 ### `mobileNetworkOperator: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.5.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get combined MCC + MNC string.
 
@@ -721,15 +844,20 @@ Audio device detection.
 
 ### `isHeadphonesConnected(): Promise<boolean>`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (since v1.8.0)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+iOS has a functional implementation from v1.8.0. Earlier async versions return a fixed fallback, even when a synchronous counterpart is implemented. See the [iOS implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026).
+
 Check if headphones are connected (wired or Bluetooth). On Android, this uses the same output-device detection as the synchronous getter.
 
 ```typescript
 const hasHeadphones = await DeviceInfoModule.isHeadphonesConnected();
 ```
 
-**Performance**: ~10-30ms
 
 ### `getIsHeadphonesConnected(): boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Synchronous variant.
 
@@ -739,6 +867,8 @@ const isHeadphonesConnected = DeviceInfoModule.getIsHeadphonesConnected();
 
 ### `getIsWiredHeadphonesConnected(): boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Check if wired headphones are connected. On Android, this includes wired headphones/headsets and [USB headsets on API 26+](https://developer.android.com/reference/android/media/AudioDeviceInfo#TYPE_USB_HEADSET). Built-in speakers and Bluetooth devices do not count as wired headphones.
 
 ```typescript
@@ -746,6 +876,8 @@ const hasWiredHeadphones = DeviceInfoModule.getIsWiredHeadphonesConnected();
 ```
 
 ### `getIsBluetoothHeadphonesConnected(): boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Check if Bluetooth headphones are connected.
 
@@ -761,15 +893,20 @@ Location provider information.
 
 ### `isLocationEnabled(): Promise<boolean>`
 
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (since v1.8.0)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+iOS has a functional implementation from v1.8.0. Earlier async versions return a fixed fallback, even when a synchronous counterpart is implemented. See the [iOS implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/cb6eb026).
+
 Check if location services are enabled.
 
 ```typescript
 const isLocationEnabled = await DeviceInfoModule.isLocationEnabled();
 ```
 
-**Performance**: ~10-30ms
 
 ### `getIsLocationEnabled(): boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Synchronous variant.
 
@@ -778,6 +915,8 @@ const isLocationEnabled = DeviceInfoModule.getIsLocationEnabled();
 ```
 
 ### `getAvailableLocationProviders(): string[]`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get list of enabled location providers.
 
@@ -793,6 +932,8 @@ const providers = DeviceInfoModule.getAvailableLocationProviders();
 Language and regional settings.
 
 ### `systemLanguage: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: limited</span>
 
 Get device system language in BCP 47 format.
 
@@ -833,6 +974,8 @@ Processor and ABI information.
 
 ### `supportedAbis: string[]`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get supported CPU architectures.
 
 ```typescript
@@ -842,6 +985,8 @@ const abis = DeviceInfoModule.supportedAbis;
 ```
 
 ### `supported32BitAbis: string[]`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get list of supported 32-bit ABIs.
 
@@ -854,6 +999,8 @@ const abis32 = DeviceInfoModule.supported32BitAbis;
 **Platform**: Android API 21+, returns `[]` on iOS
 
 ### `supported64BitAbis: string[]`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get list of supported 64-bit ABIs.
 
@@ -871,6 +1018,8 @@ Android-specific APIs and build information.
 
 ### `apiLevel: number`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get Android API level.
 
 ```typescript
@@ -883,6 +1032,8 @@ const apiLevel = DeviceInfoModule.apiLevel;
 **Platform**: Android only
 
 ### `navigationMode: NavigationMode`
+
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get Android navigation mode.
 
@@ -926,6 +1077,8 @@ if (navMode === 'gesture') {
 
 ### `getHasGms(): boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Check if Google Mobile Services is available.
 
 ```typescript
@@ -939,6 +1092,8 @@ const hasGms = DeviceInfoModule.getHasGms();
 
 ### `getHasHms(): boolean`
 
+<span class="rp-badge rp-badge--tip">Since v1.3.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Check if Huawei Mobile Services is available.
 
 ```typescript
@@ -950,6 +1105,8 @@ const hasHms = DeviceInfoModule.getHasHms();
 **Platform**: Android (Huawei devices) only
 
 ### `hasSystemFeature(feature: string): boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Check if specific system feature is available.
 
@@ -970,6 +1127,8 @@ const hasNfc = DeviceInfoModule.hasSystemFeature('android.hardware.nfc');
 
 ### `systemAvailableFeatures: string[]`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get list of all available system features.
 
 ```typescript
@@ -981,6 +1140,8 @@ const features = DeviceInfoModule.systemAvailableFeatures;
 **Platform**: Android only
 
 ### `supportedMediaTypeList: string[]`
+
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get list of supported media/codec types.
 
@@ -999,7 +1160,7 @@ Synchronous properties providing Android system build information.
 **Platform**: Android only (all return "unknown" or default values on iOS)
 
 ```typescript
-const serialNumber = DeviceInfoModule.serialNumber; // Requires READ_PHONE_STATE on Android 8.0+
+const serialNumber = DeviceInfoModule.serialNumber; // Android 8–9 needs granted READ_PHONE_STATE; Android 10+ is restricted
 const androidId = DeviceInfoModule.androidId;
 const previewSdkInt = DeviceInfoModule.previewSdkInt; // Android API 23+, 0 for release
 const securityPatch = DeviceInfoModule.securityPatch; // Android API 23+, "YYYY-MM-DD"
@@ -1020,6 +1181,30 @@ const radioVersion = DeviceInfoModule.radioVersion;
 const buildId = DeviceInfoModule.buildId;
 ```
 
+| Property | Availability |
+| --- | --- |
+| `serialNumber` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--warning">Android API 24+: limited</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `androidId` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `previewSdkInt` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `securityPatch` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `codename` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `incremental` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `board` | <span class="rp-badge rp-badge--tip">Since v1.5.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `bootloader` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `device` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `display` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `fingerprint` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `hardware` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `host` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `product` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `tags` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `type` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `baseOs` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `radioVersion` | <span class="rp-badge rp-badge--tip">Since v1.5.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+| `buildId` | <span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> |
+
+`serialNumber` is cached on first access. Android 8–9 requires a granted `READ_PHONE_STATE` permission. Android 10+ restricts ordinary apps even with that permission.
+
 ---
 
 ## iOS Platform (2 APIs)
@@ -1027,6 +1212,8 @@ const buildId = DeviceInfoModule.buildId;
 iOS-specific APIs.
 
 ### `getDeviceToken(): Promise<string>`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: rejects</span>
 
 Get Apple DeviceCheck token.
 
@@ -1039,20 +1226,20 @@ try {
 }
 ```
 
-**Performance**: ~500-2000ms (network request to Apple servers)
-**Platform**: iOS 11+ only (throws error on Android)
+**Platform**: iOS. DeviceCheck exists from iOS 11, but this package requires iOS 15.1+. Rejects on Android.
 
 ### `syncUniqueId(): Promise<string>`
 
-Synchronize unique ID to iCloud Keychain.
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--warning">Android: ID only</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
+Write the current IDFV to an app-specific Keychain item on iOS. This method does not enable iCloud Keychain synchronization or restore an earlier IDFV.
 
 ```typescript
 const uniqueId = await DeviceInfoModule.syncUniqueId();
-// iOS: Saves IDFV to Keychain (persists across reinstalls)
-// Android: Returns getUniqueId() without Keychain sync
+// iOS: Writes and returns the current IDFV.
+// Android: Returns uniqueId without a Keychain operation.
 ```
 
-**Performance**: ~10-50ms (Keychain I/O)
 **Platform**: iOS (no-op on Android)
 
 ---
@@ -1062,6 +1249,8 @@ const uniqueId = await DeviceInfoModule.syncUniqueId();
 App installation and distribution metadata.
 
 ### `installerPackageName: string`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get package name of the app store that installed this app.
 
@@ -1073,6 +1262,8 @@ const installer = DeviceInfoModule.installerPackageName;
 
 ### `getInstallReferrer(): Promise<string>`
 
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get install referrer information (Android Play Store).
 
 ```typescript
@@ -1081,10 +1272,11 @@ const referrer = await DeviceInfoModule.getInstallReferrer();
 // iOS: "unknown"
 ```
 
-**Performance**: ~50-200ms (Play Services API call)
 **Platform**: Android only (requires Google Play Services)
 
 ### `isSideLoadingEnabled(): boolean`
+
+<span class="rp-badge rp-badge--tip">Since v1.4.2</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Check if sideloading (installing from unknown sources) is enabled.
 
@@ -1118,6 +1310,8 @@ Deprecated APIs for backward compatibility.
 
 ### `totalDiskCapacityOld: number`
 
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+
 Get total disk capacity using legacy Android API.
 
 ```typescript
@@ -1127,6 +1321,8 @@ const totalDiskOld = DeviceInfoModule.totalDiskCapacityOld;
 ```
 
 ### `getFreeDiskStorageOld(): number`
+
+<span class="rp-badge rp-badge--tip">Since v1.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get free disk storage using legacy Android API.
 
@@ -1138,75 +1334,42 @@ const freeDiskOld = DeviceInfoModule.getFreeDiskStorageOld();
 
 ---
 
+### Unsupported compatibility properties
+
+These names exist for API compatibility. This package has no Windows native target. They return fixed defaults on iOS, Android, and web.
+
+| Property | Availability | Default |
+| --- | --- | --- |
+| `isMouseConnected` | <span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> | `false` |
+| `isKeyboardConnected` | <span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> | `false` |
+| `hostNames` | <span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> | `[]` |
+| `isTabletMode` | <span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--warning">Android: fallback</span> <span class="rp-badge rp-badge--warning">Web: fallback</span> | `false` |
+
+---
+
 ## Performance Notes
 
-### Synchronous Methods (<1ms)
+Synchronous properties and methods run on the calling thread. Some query the OS or initialize a cache, so synchronous does not mean instantaneous.
 
-All synchronous methods use cached values and return instantly:
-
-- Core device properties
-- Device capabilities
-- Display & screen
-- System resources (memory, disk)
-- Battery information
-- Application metadata
-- CPU & architecture
-
-### Asynchronous Methods
-
-Performance varies by operation type:
-
-- **Fast (10-30ms)**: Install times, location status, headphone detection
-- **Medium (20-50ms)**: Network queries (IP, MAC, carrier)
-- **Slow (100-500ms)**: UserAgent (iOS WebView init, cached after first call)
-- **Very Slow (500-2000ms)**: DeviceCheck token (network request)
+Promise-based methods do not have a guaranteed completion time. On iOS, `getUserAgent()` initializes a WebView on its first successful call and caches that result. Avoid repeated calls to expensive APIs during rendering.
 
 ### Caching
 
-Network-related synchronous properties use 5-second caches:
+These synchronous methods use a five-second cache:
 
 - `getIpAddressSync()`
 - `getMacAddressSync()`
 - `getCarrierSync()`
 
-This provides fast access while keeping data reasonably fresh.
+A cache refresh queries the OS. Values can remain stale until the next call after expiry. For continuously changing battery or audio state, use [React hooks](/api/hooks).
+
+Measure latency in your app with its actual device, OS, build mode, and cache state.
 
 ---
 
 ## Platform Compatibility Matrix
 
-| Feature                 | iOS | Android | Notes                               |
-| ----------------------- | --- | ------- | ----------------------------------- |
-| Core device info        | ✅  | ✅      | All platforms                       |
-| Device capabilities     | ✅  | ✅      | All platforms                       |
-| Display & screen        | ✅  | ✅      | Notch/Dynamic Island iOS only       |
-| System resources        | ✅  | ✅      | All platforms                       |
-| Battery info            | ✅  | ✅      | Low power mode iOS only             |
-| Application metadata    | ✅  | ✅      | All platforms                       |
-| Network                 | ✅  | ✅      | MAC hardcoded on iOS 7+             |
-| Carrier info (MCC/MNC)  | ✅  | ✅      | Empty string if no SIM              |
-| carrierAllowsVOIP       | ✅  | ⚠️      | Android always returns true         |
-| Audio accessories       | ✅  | ✅      | All platforms                       |
-| Location services       | ✅  | ✅      | All platforms                       |
-| Localization            | ✅  | ✅      | BCP 47 format                       |
-| CPU & architecture      | ✅  | ✅      | All platforms                       |
-| Android platform        | ❌  | ✅      | Android only                        |
-| iOS platform            | ✅  | ❌      | iOS only                            |
-| Installation metadata   | ✅  | ✅      | All platforms                       |
-| Legacy compatibility    | ✅  | ✅      | All platforms                       |
-| getUptime               | ✅  | ✅      | Both exclude deep sleep             |
-| deviceYearClass         | ✅  | ✅      | Extended 2025 algorithm             |
-| isSideLoadingEnabled    | ❌  | ✅      | Android only (per-app on 8.0+)      |
-| Navigation mode         | ❌  | ✅      | Android only (API 29+)              |
-| getHasNotch/Dynamic Island | ✅  | ❌      | iOS only                            |
-| Hardware KeyStore       | ✅  | ✅      | All platforms                       |
-| GMS/HMS detection       | ❌  | ✅      | Android only                        |
-| DeviceCheck             | ✅  | ❌      | iOS 11+ only                        |
-| Display Zoom            | ✅  | ❌      | iOS only                            |
-| Brightness              | ✅  | ❌      | iOS only                            |
-| Liquid Glass            | ✅  | ❌      | iOS 26.0+ only (requires Xcode 16+) |
-| System features         | ❌  | ✅      | Android only                        |
-| Media codecs            | ❌  | ✅      | Android only                        |
+Support differs between members in the same category. Use the badges beside each API or grouped property above. See [badge definitions](/api/#availability-badges) and [web limitations](/guide/web-support).
 
 ---
 

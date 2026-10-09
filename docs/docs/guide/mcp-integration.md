@@ -2,11 +2,26 @@
 
 Enable AI coding assistants like Claude, Cursor, and Copilot to access accurate react-native-nitro-device-info documentation through the MCP (Model Context Protocol) server.
 
+## Check the documentation version and entry point
+
+The MCP package bundles API specs and Markdown when it is built. It does not fetch the latest website at runtime. Use a server release whose documented APIs match your installed library version, and verify against the installed TypeScript declarations.
+
+For AI-assisted changes, specify these details:
+
+- Installed library version and target platforms
+- Native root imports or `/compat` imports
+- Expo development build, bare React Native, or web/SSR
+- Whether a result can be unavailable or a Promise can reject
+
+Use `get_api` for the exact signature, then `search_docs` for setup and platform caveats. A search result can contain only part of a page.
+
+The website also provides [llms.txt](https://l2hyunwoo.github.io/react-native-nitro-device-info/llms.txt) and [llms-full.txt](https://l2hyunwoo.github.io/react-native-nitro-device-info/llms-full.txt). These follow the website build rather than an installed npm release.
+
 ## What is MCP?
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) is an open protocol by Anthropic that enables AI tools to access external data sources and tools. The MCP server for react-native-nitro-device-info allows AI assistants to:
 
-- Provide accurate API documentation instead of hallucinating
+- Retrieve API declarations and documentation sections
 - Generate correct TypeScript code with proper types
 - Answer platform-specific questions (iOS vs Android)
 - Help troubleshoot common issues

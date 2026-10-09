@@ -3,6 +3,7 @@ src/
 tests/
 *.ts
 !*.d.ts
+!data/*.ts
 
 # Config files
 tsconfig.json

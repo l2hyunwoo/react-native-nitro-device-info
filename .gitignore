@@ -81,6 +81,7 @@ packages/react-native-nitro-device-info/lib/
 
 # MCP server build output
 packages/mcp-server/dist/
+packages/mcp-server/data/
 
 # React Native Codegen
 ios/generated

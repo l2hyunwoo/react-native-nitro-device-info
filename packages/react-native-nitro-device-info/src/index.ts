@@ -4,7 +4,6 @@
  * Provides comprehensive device information through Nitro's zero-overhead JSI bindings.
  *
  * @module react-native-nitro-device-info
- * @version 0.1.0
  */
 
 import { NitroModules } from 'react-native-nitro-modules';
@@ -19,8 +18,8 @@ import type {
 /**
  * Create the DeviceInfo HybridObject instance
  *
- * This singleton provides access to all device information methods.
- * It is created once and reused throughout the application lifecycle.
+ * Each call creates a DeviceInfo HybridObject. For a shared lazy instance,
+ * use DeviceInfoModule.
  *
  * @example
  * ```typescript
@@ -33,8 +32,8 @@ import type {
  * console.log(deviceInfo.systemVersion)
  *
  * // Asynchronous access
- * const uniqueId = await deviceInfo.getUniqueId()
- * const powerState = await deviceInfo.getPowerState()
+ * const ipAddress = await deviceInfo.getIpAddress()
+ * const powerState = deviceInfo.getPowerState()
  * ```
  */
 export function createDeviceInfo(): DeviceInfo {
@@ -51,8 +50,8 @@ export function createDeviceInfo(): DeviceInfo {
  * which ignores the `browser` export condition on the server) can still load
  * this native module. Deferring instantiation means merely importing the
  * package never throws; the native binding is only touched when a value is
- * actually read, which during SSR never happens (effects don't run on the
- * server). Native runtimes are unaffected: Nitro caches the constructor, so the
+ * actually read. SSR component bodies can still read properties, so keep
+ * those reads in client-only code. Nitro caches the constructor, so the
  * singleton is still created exactly once on first use.
  */
 let nativeInstance: DeviceInfo | undefined;
@@ -62,16 +61,16 @@ function getNativeInstance(): DeviceInfo {
 }
 
 /**
- * Pre-created singleton instance for convenience
+ * Lazy singleton instance for convenience
  *
  * Use this if you don't need to create multiple instances.
  *
  * @example
  * ```typescript
- * import { DeviceInfo } from 'react-native-nitro-device-info'
+ * import { DeviceInfoModule } from 'react-native-nitro-device-info'
  *
- * console.log(DeviceInfo.deviceId)
- * const uniqueId = await DeviceInfo.getUniqueId()
+ * console.log(DeviceInfoModule.deviceId)
+ * const uniqueId = DeviceInfoModule.uniqueId
  * ```
  */
 export const DeviceInfoModule: DeviceInfo = new Proxy({} as DeviceInfo, {

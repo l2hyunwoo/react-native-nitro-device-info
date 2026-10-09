@@ -140,7 +140,7 @@ const STOPWORDS = new Set([
 export function tokenize(text: string): string[] {
   return text
     .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .split(/\s+/)
     .filter((term) => term.length > 1 && !STOPWORDS.has(term));
 }

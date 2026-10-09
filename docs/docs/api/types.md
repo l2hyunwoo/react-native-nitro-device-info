@@ -182,135 +182,20 @@ if (deviceType === 'Tablet') {
 
 ## DeviceInfo Interface
 
-The main module interface providing all device information methods.
+Import the published interface rather than copying its declaration into your app:
 
 ```typescript
-interface DeviceInfo extends HybridObject {
-  // Core Device Properties
-  readonly deviceId: string;
-  readonly brand: string;
-  readonly systemName: string;
-  readonly systemVersion: string;
-  readonly model: string;
-  readonly deviceType: DeviceType;
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
+import type { DeviceInfo } from 'react-native-nitro-device-info';
 
-  // Application Properties
-  readonly readableVersion: string;
-  readonly installerPackageName: string;
-  readonly startupTime: number;
-
-  // Android Build Properties
-  readonly serialNumber: string;
-  readonly androidId: string;
-  readonly securityPatch: string;
-  readonly bootloader: string;
-  readonly codename: string;
-  readonly device: string;
-  readonly display: string;
-  readonly fingerprint: string;
-  readonly hardware: string;
-  readonly host: string;
-  readonly product: string;
-  readonly tags: string;
-  readonly type: string;
-  readonly baseOs: string;
-  readonly previewSdkInt: number;
-  readonly incremental: string;
-  readonly buildId: string;
-
-  // Synchronous Cached Network Methods
-  getIpAddressSync(): string;
-  getMacAddressSync(): string;
-  getCarrierSync(): string;
-  readonly firstInstallTimeSync: number;
-  readonly lastUpdateTimeSync: number;
-  getIsLocationEnabled(): boolean;
-  getIsHeadphonesConnected(): boolean;
-
-  // Device Capability Methods
-  readonly isTablet: boolean;
-  getHasNotch(): boolean;
-  getHasDynamicIsland(): boolean;
-  readonly isHardwareKeyStoreAvailable: boolean;
-  readonly isCameraPresent: boolean;
-  readonly isPinOrFingerprintSet: boolean;
-  readonly isEmulator: boolean;
-
-  // Device Identification Properties
-  readonly uniqueId: string;
-  readonly manufacturer: string;
-
-  // System Resource Properties
-  readonly totalMemory: number;
-  getUsedMemory(): number;
-  readonly totalDiskCapacity: number;
-  getFreeDiskStorage(): number;
-  readonly totalDiskCapacityOld: number;
-  getFreeDiskStorageOld(): number;
-
-  // Battery Methods
-  getBatteryLevel(): number;
-  getPowerState(): PowerState;
-  getIsBatteryCharging(): boolean;
-  isLowBatteryLevel(threshold: number): boolean;
-
-  // Application Metadata Properties
-  readonly version: string;
-  readonly buildNumber: string;
-  readonly bundleId: string;
-  readonly applicationName: string;
-  getFirstInstallTime(): Promise<number>;
-  getLastUpdateTime(): Promise<number>;
-
-  // Network & Connectivity Methods (Async)
-  getIpAddress(): Promise<string>;
-  getMacAddress(): Promise<string>;
-  getCarrier(): Promise<string>;
-  isLocationEnabled(): Promise<boolean>;
-  isHeadphonesConnected(): Promise<boolean>;
-  getUserAgent(): Promise<string>;
-  readonly deviceName: string;
-
-  // Platform-Specific Properties
-  readonly apiLevel: number;
-  readonly supportedAbis: string[];
-  readonly supported32BitAbis: string[];
-  readonly supported64BitAbis: string[];
-  readonly hasGms: boolean;
-  readonly hasHms: boolean;
-  getFontScale(): number;
-  hasSystemFeature(feature: string): boolean;
-  readonly systemAvailableFeatures: string[];
-  getAvailableLocationProviders(): string[];
-  readonly maxMemory: number;
-  readonly supportedMediaTypeList: string[];
-
-  // Installation Methods
-  getInstallReferrer(): Promise<string>;
-
-  // Localization & Navigation Properties
-  readonly systemLanguage: string;
-  readonly navigationMode: NavigationMode;
-
-  // Advanced Capability Methods
-  getIsWiredHeadphonesConnected(): boolean;
-  getIsBluetoothHeadphonesConnected(): boolean;
-  getIsAirplaneMode(): boolean;
-  readonly isLowRamDevice: boolean;
-  getIsLandscape(): boolean;
-  readonly isMouseConnected: boolean;
-  readonly isKeyboardConnected: boolean;
-  readonly isTabletMode: boolean;
-  readonly hostNames: string[];
-
-  // iOS-Specific Properties
-  readonly isDisplayZoomed: boolean;
-  getBrightness(): number;
-  readonly isLiquidGlassAvailable: boolean;
-  getDeviceToken(): Promise<string>;
-  syncUniqueId(): Promise<string>;
-}
+const deviceInfo: DeviceInfo = DeviceInfoModule;
+const model: string = deviceInfo.model;
+const hasGms: boolean = deviceInfo.getHasGms();
 ```
+
+`DeviceInfo` is a type, not a runtime singleton. Use `DeviceInfoModule` to read values.
+
+The complete signature source is [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts). Check your installed release's declarations when it differs from the current website. See [DeviceInfo Module](/api/device-info) for return values and platform behavior.
 
 ## Usage Examples
 
@@ -415,21 +300,22 @@ Full autocomplete for all methods and properties:
 
 ```typescript
 // TypeScript knows all available methods
-DeviceInfoModule.get; // Shows all available getters
-DeviceInfoModule.is; // Shows all available boolean checks
+const model: string = DeviceInfoModule.model;
+const charging: boolean = DeviceInfoModule.getIsBatteryCharging();
 ```
 
 ### Compile-Time Error Checking
 
 ```typescript
-// Error: Property 'invalid' does not exist
+// Intentional type errors: do not copy these into working code.
+// @ts-expect-error Property 'invalid' does not exist
 const invalid = DeviceInfoModule.invalid;
 
-// Error: Expected 1 argument, got 0
-const isLow = DeviceInfoModule.isLowBatteryLevel();
+// @ts-expect-error Expected 1 argument, got 0
+const missingThreshold = DeviceInfoModule.isLowBatteryLevel();
 
-// Error: Argument of type 'string' not assignable to 'number'
-const isLow = DeviceInfoModule.isLowBatteryLevel('0.2');
+// @ts-expect-error Threshold must be a number
+const invalidThreshold = DeviceInfoModule.isLowBatteryLevel('0.2');
 ```
 
 ### Type Guards

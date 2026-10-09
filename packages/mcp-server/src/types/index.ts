@@ -51,6 +51,9 @@ export type ApiCategory =
  * Represents a single API method or property from the DeviceInfo interface
  */
 export interface ApiDefinition {
+  /** HybridObject interface that owns this API */
+  module?: string;
+
   /** Unique identifier (method/property name) */
   name: string;
 

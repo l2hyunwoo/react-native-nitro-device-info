@@ -162,21 +162,7 @@ async function createServer(): Promise<Server> {
             properties: {
               category: {
                 type: 'string',
-                enum: [
-                  'all',
-                  'device-info',
-                  'battery',
-                  'memory',
-                  'storage',
-                  'network',
-                  'capabilities',
-                  'application',
-                  'platform-specific',
-                  'display',
-                  'audio',
-                  'location',
-                  'identification',
-                ],
+                enum: listApisInputSchema.shape.category.unwrap().options,
                 description: 'Filter by API category',
                 default: 'all',
               },
@@ -228,12 +214,12 @@ async function createServer(): Promise<Server> {
 
     try {
       // Check if index is empty
-      if (index.documentCount === 0) {
+      if (index.apis.size === 0 || index.documentCount === 0) {
         return {
           content: [
             {
               type: 'text',
-              text: 'Error: Documentation index is empty or could not be built. Please check that the server is running from the correct directory.',
+              text: 'Error: API documentation is missing. Rebuild or reinstall the MCP server package with its bundled data directory.',
             },
           ],
           isError: true,

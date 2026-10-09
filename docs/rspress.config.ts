@@ -7,6 +7,7 @@ export default defineConfig({
   description:
     'Get comprehensive device information for React Native using Nitro Modules',
   base: '/react-native-nitro-device-info/',
+  llms: true,
   icon: '/logo.png',
   logo: {
     light: '/logo.png',
@@ -74,6 +75,7 @@ export default defineConfig({
             { text: 'Introduction', link: '/guide/introduction' },
             { text: 'Why Nitro Module', link: '/guide/why-nitro-module' },
             { text: 'Getting Started', link: '/guide/getting-started' },
+            { text: 'Expo Setup', link: '/guide/expo-setup' },
             { text: 'Quick Start', link: '/guide/quick-start' },
             { text: 'React Hooks', link: '/guide/react-hooks' },
             { text: 'Web Support', link: '/guide/web-support' },

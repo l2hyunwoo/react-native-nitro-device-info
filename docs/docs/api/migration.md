@@ -5,7 +5,7 @@ Migrating from `react-native-device-info` to `react-native-nitro-device-info`.
 ## Overview
 
 `react-native-nitro-device-info` ships a **drop-in compatibility layer** that exposes the exact
-`react-native-device-info` (RNDI) API surface — same function names, same signatures, same default
+`react-native-device-info` (RNDI) 15.x API surface — same function names, same signatures, same default
 `DeviceInfo` object, same hooks. You import from `react-native-nitro-device-info/compat` instead of
 `react-native-device-info`, and **your call sites stay unchanged**.
 
@@ -13,7 +13,7 @@ There are two ways to migrate. Pick based on how much you want to change:
 
 | Path | Effort | What you get |
 |------|--------|--------------|
-| **Drop-in (recommended)** | One command — rewrite imports only | Zero code changes. RNDI's exact API, backed by Nitro/JSI. |
+| **Drop-in (recommended)** | One command — rewrite imports only | Keep call sites; review placeholders and platform differences. |
 | **Native (optional)** | Manual rewrite of call sites | Direct property access + synchronous getters for maximum performance. |
 
 Start with the drop-in path. Move individual call sites to the native API later if you want the
@@ -67,7 +67,7 @@ npm uninstall react-native-device-info
 
 ### 4. Review the documented caveats
 
-The compat layer covers **the entire RNDI API surface**. A small number of APIs return placeholder
+The compat layer targets the RNDI **15.x API surface**. A small number of APIs return placeholder
 values because they have no native equivalent in this library — see
 [Compat Layer Caveats](#compat-layer-caveats) below. If your app doesn't use those APIs, you're done.
 
@@ -85,7 +85,7 @@ exceptions:
 | `getUserAgentSync()` | Returns `''` | This library computes the user agent asynchronously (iOS WebView). Use the async `getUserAgent()` for a real value. |
 | `getInstallReferrerSync()` | Returns `'unknown'` | The install referrer is only available asynchronously. Use the async `getInstallReferrer()`. |
 
-Everything else maps to a real value. A few APIs differ in *shape* but are transparently converted
+Other APIs delegate to this library’s native implementation. They can still return platform-specific placeholders or behave differently from RNDI. A few APIs differ in *shape* but are converted
 for you (e.g. `getAvailableLocationProviders()` returns RNDI's `{ gps: true, network: true }` map,
 `getFreeDiskStorage(storageType?)` accepts and ignores the iOS storage-type argument, and the async
 accessory hooks return RNDI's `{ loading, result }` shape).
@@ -99,8 +99,8 @@ If you want direct property access and synchronous getters instead of the compat
 
 **Architecture**
 
-- **react-native-device-info**: TurboModule / Bridge (JSON serialization)
-- **react-native-nitro-device-info**: Nitro HybridObject (JSI, zero overhead)
+- **react-native-device-info**: API and implementation depend on the installed release
+- **react-native-nitro-device-info**: Nitro HybridObject (JSI)
 
 **Properties vs methods** — most RNDI methods become direct property accessors:
 
@@ -119,7 +119,7 @@ const batteryLevel = DeviceInfoModule.getBatteryLevel(); // sync method
 const isTablet = DeviceInfoModule.isTablet;             // sync property
 ```
 
-**Only I/O operations stay async**:
+**Promise-based methods still need `await`**:
 
 ```typescript
 const ipAddress = await DeviceInfoModule.getIpAddress();
@@ -352,12 +352,12 @@ function DeviceInfoScreen() {
 ### 1. Performance Improvement
 
 ```typescript
-// Old: ~5-10ms per call (async + bridge serialization)
-const brand = await DeviceInfo.getBrand();
-const model = await DeviceInfo.getModel();
+// react-native-device-info: model and brand already return synchronously.
+const brand = DeviceInfo.getBrand();
+const model = DeviceInfo.getModel();
 const memory = await DeviceInfo.getTotalMemory();
 
-// New: <1ms total (synchronous properties + JSI)
+// Native API: direct properties; measure latency in your app.
 const brand = DeviceInfoModule.brand;
 const model = DeviceInfoModule.model;
 const memory = DeviceInfoModule.totalMemory;
@@ -370,8 +370,8 @@ No need for `async`/`await` for simple getters:
 ```typescript
 // Old - required async function
 async function getDeviceInfo() {
-  const brand = await DeviceInfo.getBrand();
-  const model = await DeviceInfo.getModel();
+  const brand = DeviceInfo.getBrand();
+  const model = DeviceInfo.getModel();
   return `${brand} ${model}`;
 }
 
@@ -438,7 +438,7 @@ See the [React Hooks Guide](/guide/react-hooks) for detailed hook documentation.
 ### Behavioral Changes (native path only)
 
 These differences apply when you adopt the **native API** (`DeviceInfoModule`). The drop-in compat
-layer preserves the original RNDI behavior, so none of these affect you on the drop-in path.
+layer adapts function signatures and hook result shapes. It does not reproduce all platform behavior; review [Compat Layer Caveats](#compat-layer-caveats).
 
 1. **Synchronous by default**: Most methods no longer return Promises
 2. **Property accessors**: Some getters are now properties
@@ -490,7 +490,7 @@ If you're migrating from `expo-device`, many APIs have compatible alternatives i
 | Architecture | Expo Module API | Nitro Modules (JSI) |
 | Sync/Async | Mixed (some async) | Mostly synchronous |
 | Expo Dependency | Requires Expo | Works with bare React Native |
-| Performance | Good | Excellent (<1ms for sync APIs) |
+| Performance | Good | Direct synchronous access; measure in your app |
 
 ### API Migration Reference
 

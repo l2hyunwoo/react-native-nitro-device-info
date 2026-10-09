@@ -4,15 +4,15 @@
 # hooks/ (React Hooks)
 
 ## Purpose
-React hooks for polling-based runtime device monitoring. Provides reactive state updates for battery, audio, brightness, and power properties at 5-second intervals.
+React hooks for polling-based runtime device monitoring. Battery and power poll every 5 seconds, low battery every 2 seconds, headphones every second, and brightness every 500 milliseconds.
 
 ## Key Files
 
 | File | Description |
 |------|-------------|
 | `index.ts` | Barrel export for all hooks |
-| `useBatteryLevel.ts` | Hook returning current battery level (0.0-1.0) |
-| `useBatteryLevelIsLow.ts` | Hook returning boolean for low battery (Android: 0.15, iOS: 0.2) |
+| `useBatteryLevel.ts` | Hook returning current battery level (0.0-1.0), or null before reading or when unavailable |
+| `useBatteryLevelIsLow.ts` | Hook returning the low battery level as number or null, not a boolean (Android threshold: 0.15, iOS: 0.2) |
 | `useBrightness.ts` | Hook returning screen brightness level |
 | `useIsHeadphonesConnected.ts` | Hook for any headphones connected |
 | `useIsWiredHeadphonesConnected.ts` | Hook for wired headphones |
@@ -23,28 +23,17 @@ React hooks for polling-based runtime device monitoring. Provides reactive state
 ## For AI Agents
 
 ### Working In This Directory
-- All hooks follow the same pattern: `useState` + `useEffect` + `setInterval(5000ms)`
+- Hooks use `useState` + `useEffect` + `setInterval` with the per-hook intervals above
 - Each hook calls the corresponding sync getter from `DeviceInfoModule`
 - Hooks are re-exported from the main `src/index.ts`
 
 ### Testing Requirements
-- Verify hooks update state at 5-second intervals
+- Verify hooks update state at their documented intervals
 - Test cleanup (clearInterval) on unmount
 - Verify platform-specific thresholds in utils.ts
 
 ### Common Patterns
-```typescript
-export function useXxx(): Type {
-  const [value, setValue] = useState<Type>(DeviceInfoModule.getXxx());
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setValue(DeviceInfoModule.getXxx());
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-  return value;
-}
-```
+Initialize state without reading native APIs during render. Read the getter in `useEffect`, then poll and clear the interval on unmount. Check the individual hook implementation for initial values and unavailable results.
 
 ## Dependencies
 

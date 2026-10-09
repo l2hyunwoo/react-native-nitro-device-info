@@ -1,199 +1,82 @@
-# Documentation
+# Contributing to Documentation
 
-This guide covers how to contribute to the `react-native-nitro-device-info` documentation.
+The documentation site uses Rspress. Source pages are in `docs/docs/`; the configuration is `docs/rspress.config.ts`.
 
-## Local Development
+## Run the site
 
-### Prerequisites
-
-- Node.js 22 or higher
-- Yarn package manager
-
-### Running Locally
-
-1. Navigate to the docs directory:
+From the repository root:
 
 ```bash
 cd docs
-```
-
-2. Install dependencies:
-
-```bash
-yarn install
-```
-
-3. Start the development server:
-
-```bash
+yarn install --immutable
 yarn dev
 ```
 
-The documentation site will be available at `http://localhost:5173`.
+Open the URL printed by Rspress, including the `/react-native-nitro-device-info/` base path.
 
-### Building for Production
-
-To build the documentation for production:
+From the same directory, build and preview the production site:
 
 ```bash
-cd docs
 yarn build
+yarn preview
 ```
 
-The built files will be output to `docs/doc_build`.
+Build output is `doc_build/` inside this directory.
 
-## Documentation Structure
+## Choose the right page
 
-```
-docs/
-├── docs/
-│   ├── index.md              # Homepage
-│   ├── guide/                # Getting started guides
-│   │   ├── introduction.md
-│   │   ├── why-nitro-module.md
-│   │   ├── getting-started.md
-│   │   └── quick-start.md
-│   ├── api/                  # API documentation
-│   │   ├── index.md
-│   │   ├── device-info.md
-│   │   ├── types.md
-│   │   └── migration.md
-│   └── examples/             # Usage examples
-│       ├── basic-usage.md
-│       └── advanced-usage.md
-├── .rspress/
-│   └── config.ts             # RSPress configuration
-└── public/                   # Static assets
-```
+| Content | Location | Purpose |
+| --- | --- | --- |
+| Installation and configuration | `guide/getting-started.md`, `guide/expo-setup.md` | Requirements, commands, and verification |
+| First working example | `guide/quick-start.md` | A short path from installation to use |
+| Reactive usage | `guide/react-hooks.md` | Polling intervals, initial values, and component patterns |
+| Exact API contracts | `api/` | Signatures, units, platform behavior, and errors |
+| Migration | `api/migration.md` | Entry points, mappings, and compatibility exceptions |
+| Task-specific code | `examples/` | Examples that build on the guides |
 
-## Writing Documentation
+These paths are relative to `docs/docs/`. Static assets belong in `docs/docs/public/`.
 
-### Markdown Guidelines
+## Write examples readers can use
 
-- Use GitHub-flavored Markdown
-- Include code examples with proper syntax highlighting
-- Add TypeScript types for API examples
-- Use backticks around `library-name` in prose
-- Link to related pages using relative paths
+- Identify the import path. Root APIs and `/compat` APIs have different names and return types.
+- Use `tsx` for code containing JSX.
+- Include imports in standalone examples. Label fragments that depend on earlier code.
+- Explain unavailable values, units, platform restrictions, and Promise rejection.
+- Keep required setup before the code that needs it.
+- Label intentional type errors. Do not present nonexistent members as autocomplete examples.
+- State measured performance with the test conditions. A synchronous return type is not a timing guarantee.
 
-### Code Examples
+Use the exported TypeScript types. The signature source is [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts); Swift, Kotlin, and web implementations determine platform behavior.
 
-```typescript
-import { DeviceInfoModule } from 'react-native-nitro-device-info';
+## Maintain availability badges
 
-// Add clear comments explaining the code
-const deviceId = DeviceInfoModule.deviceId;
-console.log('Device ID:', deviceId);
-```
+Add introduction and platform badges to every new API section or grouped property row. Use the existing `rp-badge` spans from the Rspress theme. Keep the text inside each span so Markdown exports and MCP searches retain it.
 
-### Adding New Pages
+Check the [badge definitions and version evidence](/api/#availability-badges). Confirm a published npm version and its source before replacing `Unreleased` with `Since v…`. A manifest version or declaration alone does not prove a released platform implementation.
 
-1. Create a new `.md` file in the appropriate directory
-2. Update `.rspress/config.ts` to add the page to navigation:
+When a platform replaces a constant fallback with a real implementation, update its badge and explain the first functional release. Preserve the original API introduction version. Check the Swift, Kotlin, and web implementations separately.
 
-```typescript
-{
-  text: 'New Section',
-  items: [
-    { text: 'Page Title', link: '/section/page' },
-  ],
-}
-```
+## Add or change a page
+
+1. Create or edit a Markdown file under the appropriate content directory.
+2. Add new pages to both `themeConfig.nav` and `themeConfig.sidebar` in `docs/rspress.config.ts`.
+3. Use content-root links such as `/guide/quick-start`, or relative Markdown links. Do not repeat the deployment base in internal links.
+4. Preserve existing routes and heading anchors when possible.
+5. Update related examples and both READMEs if the change affects them.
+6. Build and preview the site. Check changed links and search results.
+
+Korean site pages are planned but are not configured yet. The repository's [Korean documentation plan](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/docs/I18N_PLAN.ko.md) describes the rollout and translation review.
+
+## AI-readable documentation
+
+Rspress generates page Markdown, `llms.txt`, and `llms-full.txt` during the site build.
+
+The MCP server bundles a separate documentation snapshot during its build. Website deployment alone does not refresh a published MCP package. Rebuild and test that package when updating its documentation corpus.
+
+Keep API names, import paths, platform fallbacks, and compatibility caveats explicit in each relevant section. Search results may contain a single section without the rest of the page.
 
 ## Deployment
 
-Documentation is automatically deployed to GitHub Pages when changes are merged to the `main` branch.
+Pull requests that change `docs/**` run the documentation validation workflow. It builds the site and uploads an artifact for review.
 
-### Automated Workflows
-
-#### Pull Request Validation
-
-When you open a PR with documentation changes, the `docs-validation.yml` workflow will:
-
-1. Install dependencies
-2. Build the documentation
-3. Upload build artifacts for review
-
-This ensures all documentation builds successfully before merging.
-
-#### Production Deployment
-
-When changes are merged to `main`, the `docs-deploy.yml` workflow will:
-
-1. Build the documentation
-2. Deploy to GitHub Pages
-3. Make the site available at: `https://l2hyunwoo.github.io/react-native-nitro-device-info/`
-
-### Manual Deployment
-
-If needed, you can manually trigger a deployment by pushing to the `main` branch:
-
-```bash
-git push origin main
-```
-
-## Configuration
-
-### RSPress Config
-
-The main configuration is in `.rspress/config.ts`:
-
-```typescript
-export default defineConfig({
-  root: 'docs',
-  title: 'React Native Nitro Device Info',
-  base: '/react-native-nitro-device-info/',
-  // ... other settings
-});
-```
-
-Key configuration options:
-
-- `base`: The base path for GitHub Pages deployment
-- `themeConfig.nav`: Top navigation bar items
-- `themeConfig.sidebar`: Sidebar navigation structure
-- `locales`: Internationalization settings (English and Korean)
-
-## Troubleshooting
-
-### Build Fails Locally
-
-If the build fails:
-
-1. Clear the cache:
-```bash
-rm -rf node_modules docs/doc_build
-yarn install
-```
-
-2. Check for syntax errors in Markdown files
-3. Ensure all internal links are valid
-
-### Changes Not Appearing
-
-- Clear your browser cache
-- Check that the dev server restarted after file changes
-- Verify the file is in the correct directory structure
-
-### GitHub Pages Not Updating
-
-1. Check the Actions tab in GitHub for workflow status
-2. Verify GitHub Pages is enabled in repository settings
-3. Ensure the workflow has proper permissions (configured in `docs-deploy.yml`)
-
-## Best Practices
-
-1. **Keep it concise**: Users prefer shorter, focused documentation
-2. **Show, don't tell**: Use code examples liberally
-3. **Update related pages**: If you change an API, update all relevant docs
-4. **Test locally**: Always build and preview before submitting a PR
-5. **Check links**: Ensure all internal and external links work
-6. **Mobile-friendly**: RSPress is responsive, but test on different screen sizes
-
-## Getting Help
-
-If you need help with documentation:
-
-- Check the [RSPress documentation](https://rspress.dev/)
-- Open an issue on GitHub
-- Ask in pull request comments
+Changes merged to `main` trigger the deployment workflow. If publication fails, check the [Actions logs](https://github.com/l2hyunwoo/react-native-nitro-device-info/actions) and GitHub Pages settings.

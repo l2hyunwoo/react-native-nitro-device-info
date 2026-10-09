@@ -28,7 +28,7 @@
 
 ## Purpose
 
-Monorepo for `react-native-nitro-device-info` (v1.5.1), a high-performance React Native library providing 80+ device information properties through Nitro's zero-overhead JSI bindings. Implements native code in Swift (iOS) and Kotlin (Android).
+Monorepo for `react-native-nitro-device-info` (version in the library package.json), a high-performance React Native library providing 80+ device information properties through Nitro's zero-overhead JSI bindings. Implements native code in Swift (iOS) and Kotlin (Android).
 
 ## Key Files
 
@@ -37,12 +37,11 @@ Monorepo for `react-native-nitro-device-info` (v1.5.1), a high-performance React
 | `package.json` | Monorepo root with workspace definitions and shared scripts |
 | `turbo.json` | Turborepo configuration for build caching and task orchestration |
 | `.nvmrc` | Node.js version (22) |
-| `.yarnrc.yml` | Yarn 3.6.1 configuration (`nodeLinker: node-modules`, not PnP) |
+| `.yarnrc.yml` | Yarn 4.17.0 configuration (`nodeLinker: node-modules`, not PnP) |
 | `tsconfig.json` | Root TypeScript configuration |
 | `README.md` | Main project documentation |
 | `CONTRIBUTING.md` | Development workflow and guidelines |
-| `CLAUDE.md` | Project-specific AI assistant instructions |
-| `API-REFERENCE.md` | Complete API documentation for all 100+ methods |
+| `docs/docs/api/device-info.md` | Native API reference; signatures are defined in `packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts` |
 
 ## Subdirectories
 
@@ -61,7 +60,7 @@ Monorepo for `react-native-nitro-device-info` (v1.5.1), a high-performance React
 
 These are non-obvious traps that have bitten automated runs. Follow them before touching the repo.
 
-**Package manager — Yarn 3.6.1 (Berry), `nodeLinker: node-modules`.** Not PnP. Deps are hoisted into `node_modules`, but `ts-jest` (mcp-server) and `react-native-harness` (showcase/integrity-demo) live in their *workspace* `node_modules`, not the root. Lockfile-only refresh: `yarn install --mode update-lockfile`.
+**Package manager — Yarn 4.17.0 (Berry), `nodeLinker: node-modules`.** Not PnP. Deps are hoisted into `node_modules`, but `ts-jest` (mcp-server) and `react-native-harness` (showcase/integrity-demo) live in their *workspace* `node_modules`, not the root. Lockfile-only refresh: `yarn install --mode update-lockfile`.
 
 **Worktree isolation when the main checkout is dirty.** If the working tree has unrelated in-progress work (e.g. a feature branch with uncommitted changes), do NOT stash-juggle it to do an independent task. Cut a worktree off the base branch instead so the dirty checkout is never disturbed:
 ```bash
@@ -92,7 +91,7 @@ A fresh worktree needs its own `yarn install` (node-modules linker) before `yarn
 3. Implement native code in Swift (iOS) and Kotlin (Android)
 4. Run `yarn prepare` to build library
 5. Test in showcase/benchmark apps
-6. Update docs (`API-REFERENCE.md`, `docs/`, `README.md`, showcase app)
+6. Update docs (`docs/docs/api/`, `docs/`, `README.md`, `README-ko.md`, showcase app)
 7. Verify: `yarn typecheck`, `yarn lint`, `yarn test`
 
 **File Rules**:
@@ -142,7 +141,7 @@ override fun getNewInfo(): Promise<String> = Promise.async { "value" }
 
 **Runtime**: `react-native-nitro-modules >=0.35.0 <1.0.0` (peer dependency)
 
-**Development**: `yarn@3.6.1`, `node@22`, `typescript@5.9.3`, `nitrogen@0.35.9`, `turbo@2.9.18`, `oxlint@1.57.0`, `jest@29.7.0`, `commitlint@21.0.2`
+**Development**: `yarn@4.17.0`, `node@22`, `typescript@5.9.3`, `nitrogen@0.35.9`, `turbo@2.9.18`, `oxlint@1.57.0`, `jest@29.7.0`, `commitlint@21.0.2`
 
 **Native**: iOS Swift 5.9+ (UIKit, Foundation, Combine), Android Kotlin 1.9+ (kotlinx-coroutines 1.7.3)
 
@@ -164,8 +163,8 @@ yarn clean            # Clean build artifacts
 ### Important Notes
 
 1. **Nitro Codegen**: After any `.nitro.ts` change, run `yarn nitrogen` or build fails
-2. **Documentation is Mandatory**: All features must update API-REFERENCE.md, docs/, README.md, and showcase app
-3. **Platform Support**: iOS 13.4+, Android API 24+
+2. **Documentation is Mandatory**: Features must update the relevant docs/docs/api/ pages, README.md, README-ko.md, and showcase app
+3. **Platform Support**: iOS 15.1+, Android API 24+
 4. **Commit Conventions**: Conventional commits with empty body (enforced by commitlint)
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->

@@ -132,13 +132,26 @@ export function parseMarkdownContent(
     parentId?: string;
   } | null = null;
   let chunkIndex = 0;
+  let fence: { marker: string; length: number } | undefined;
 
   // Track parent chain for hierarchy
   const parentStack: { id: string; level: number }[] = [];
 
   for (const line of lines) {
+    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+    if (fenceMatch) {
+      if (!fence) {
+        fence = { marker: fenceMatch[1][0], length: fenceMatch[1].length };
+      } else if (
+        fenceMatch[1][0] === fence.marker &&
+        fenceMatch[1].length >= fence.length &&
+        fenceMatch[2].trim() === ''
+      ) {
+        fence = undefined;
+      }
+    }
     // Check for heading
-    const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+    const headingMatch = !fence && !fenceMatch && line.match(/^(#{1,6})\s+(.+)$/);
 
     if (headingMatch) {
       // Save previous chunk
@@ -146,7 +159,7 @@ export function parseMarkdownContent(
         const chunkContent = currentChunk.content.join('\n').trim();
         if (chunkContent.length > 0) {
           chunks.push({
-            id: `${path.basename(source, '.md')}-${chunkIndex}`,
+            id: `${source}-${chunkIndex}`,
             source,
             title: currentChunk.title,
             content: chunkContent,
@@ -182,7 +195,7 @@ export function parseMarkdownContent(
 
       // Add current heading to parent stack
       parentStack.push({
-        id: `${path.basename(source, '.md')}-${chunkIndex}`,
+        id: `${source}-${chunkIndex}`,
         level,
       });
     } else if (currentChunk) {
@@ -196,7 +209,7 @@ export function parseMarkdownContent(
     const chunkContent = currentChunk.content.join('\n').trim();
     if (chunkContent.length > 0) {
       chunks.push({
-        id: `${path.basename(source, '.md')}-${chunkIndex}`,
+        id: `${source}-${chunkIndex}`,
         source,
         title: currentChunk.title,
         content: chunkContent,
@@ -252,6 +265,8 @@ export function parseDocsDirectory(dirPath: string): DocumentationChunk[] {
  */
 export function getDocsPaths(packageRoot: string): string[] {
   const possiblePaths = [
+    path.join(packageRoot, '..', 'data', 'docs'),
+    path.join(packageRoot, 'data', 'docs'),
     // From packages/mcp-server/dist -> repo root (3 levels up)
     path.join(packageRoot, '..', '..', '..', 'docs', 'docs'),
     path.join(packageRoot, '..', '..', '..', 'docs'),
@@ -263,7 +278,8 @@ export function getDocsPaths(packageRoot: string): string[] {
     path.join(packageRoot, 'docs'),
   ];
 
-  return possiblePaths.filter((p) => fs.existsSync(p));
+  const docsPath = possiblePaths.find((p) => fs.existsSync(p));
+  return docsPath ? [docsPath] : [];
 }
 
 /**
@@ -274,6 +290,8 @@ export function getDocsPaths(packageRoot: string): string[] {
  */
 export function parseReadme(packageRoot: string): DocumentationChunk[] {
   const possiblePaths = [
+    path.join(packageRoot, '..', 'data', 'README.md'),
+    path.join(packageRoot, 'data', 'README.md'),
     // From packages/mcp-server/dist -> repo root (3 levels up)
     path.join(packageRoot, '..', '..', '..', 'README.md'),
     // From packages/mcp-server -> repo root (2 levels up)
@@ -346,9 +364,9 @@ Known Android limitations and platform-specific behaviors:
 
 - **getBrightness**: Returns -1 on Android (iOS-only)
 - **isDisplayZoomed**: Returns false on Android (iOS-only)
-- **getHasNotch**: Complex detection not fully implemented for all Android devices
+- **getHasNotch**: Returns false on Android (not implemented)
 - **getHasDynamicIsland**: Returns false on Android (iPhone-only feature)
-- **serialNumber**: Requires READ_PHONE_STATE permission on Android 8.0+
+- **serialNumber**: Requires granted READ_PHONE_STATE on Android 8.0-9. Android 10+ adds privileged access restrictions; ordinary apps generally receive "unknown" even with that permission.
 - **androidId**: Unique per device/app/user combination, may reset on factory reset
 
 For Android-specific issues, check that:

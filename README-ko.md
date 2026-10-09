@@ -48,6 +48,8 @@ Gradle 자동 링크가 모든 작업을 처리합니다.
 
 ### Expo (prebuild / dev client)
 
+Expo Go에는 이 네이티브 모듈이 없으므로 개발 빌드를 사용하세요. 설치하거나 네이티브 설정을 바꾼 뒤에는 앱을 다시 빌드해야 합니다.
+
 ```sh
 npx expo install react-native-nitro-device-info react-native-nitro-modules
 ```
@@ -68,18 +70,23 @@ npx expo install react-native-nitro-device-info react-native-nitro-modules
 
 ## 빠른 시작
 
+패키지 루트에서는 `DeviceInfoModule`의 속성과 메서드를 사용합니다. `react-native-device-info` 15.x 방식의 함수 호출을 유지하려면 `react-native-nitro-device-info/compat`에서 가져오세요. [마이그레이션 주의사항(영어)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/migration#compat-layer-caveats)을 먼저 확인하세요.
+
+동기 호출은 실행 시간을 보장하지 않습니다. 배터리 값을 알 수 없으면 getter는 `-1`, 배터리 훅은 `null`을 반환합니다. 바뀌는 값을 화면에 반영하려면 [React 훅(영어)](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/react-hooks)을 사용하세요.
+
+
 ### 기본 사용법
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-// 동기 속성 (즉시 - <1ms)
+// 동기 속성
 console.log(DeviceInfoModule.deviceId); // "iPhone14,2"
 console.log(DeviceInfoModule.systemVersion); // "15.0"
 console.log(DeviceInfoModule.brand); // "Apple"
 console.log(DeviceInfoModule.model); // "iPhone 13 Pro"
 
-// 동기 속성 (즉시 - <1ms)
+// 동기 속성
 const uniqueId = DeviceInfoModule.uniqueId;
 console.log(uniqueId); // "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
 
@@ -93,7 +100,7 @@ console.log(isTablet); // false
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 console.log(`배터리: ${batteryLevel >= 0 ? `${(batteryLevel * 100).toFixed(0)}%` : '확인 불가'}`); // "배터리: 85%"
 
-// 비동기 메서드 (Promise 기반 - <100ms)
+// 비동기 메서드 (async 함수 안에서 사용)
 const ipAddress = await DeviceInfoModule.getIpAddress();
 console.log(ipAddress); // "192.168.1.100"
 
@@ -191,11 +198,13 @@ Android 헤드폰 감지는 유선·USB 헤드셋(USB는 API 26 이상)과 Bluet
 
 ## API 레퍼런스
 
-100개 이상의 모든 메서드와 속성에 대한 완전한 API 문서는 **[API-REFERENCE-ko.md](API-REFERENCE-ko.md)**를 참고하세요.
+100개 이상의 모든 메서드와 속성에 대한 완전한 API 문서는 **[API Reference (English)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/)**를 참고하세요.
+
+각 API에는 도입 버전과 지원 플랫폼 뱃지가 있습니다. OS 최소 버전, 제한된 지원, 고정 대체값, 미출시 구현의 차이는 [뱃지 설명(영어)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/#availability-badges)을 확인하세요.
 
 ### 빠른 참조
 
-#### 주요 속성 (동기 - <1ms)
+#### 주요 속성 (동기)
 
 ```typescript
 DeviceInfoModule.deviceId; // "iPhone14,2"
@@ -223,15 +232,15 @@ DeviceInfoModule.bundleId; // 동기
 DeviceInfoModule.isSideLoadingEnabled(); // 동기 - 사이드로딩 권한 확인
 
 // 네트워크 (비동기 메서드)
-await DeviceInfoModule.getIpAddress(); // ~20-50ms
-await DeviceInfoModule.getCarrier(); // ~20-50ms
+await DeviceInfoModule.getIpAddress(); // Promise<string>
+await DeviceInfoModule.getCarrier(); // Promise<string>
 ```
 
-모든 메서드, 속성 및 상세 문서는 **[API-REFERENCE-ko.md](API-REFERENCE-ko.md)**를 참고하세요.
+모든 메서드, 속성 및 상세 문서는 **[API Reference (English)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/)**를 참고하세요.
 
 ## 타입 정의
 
-라이브러리는 완전한 TypeScript 정의를 포함합니다. 전체 타입 문서는 [API-REFERENCE-ko.md](API-REFERENCE-ko.md#타입-정의)를 참고하세요.
+라이브러리는 완전한 TypeScript 정의를 포함합니다. 전체 타입 문서는 [Type Definitions (English)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/types)를 참고하세요.
 
 ```typescript
 import type {
@@ -244,9 +253,7 @@ import type {
 
 ## react-native-device-info에서 마이그레이션
 
-`react-native-nitro-device-info`는 `react-native-device-info`(RNDI)의 **드롭인 대체재**입니다.
-번들로 제공되는 호환 레이어가 RNDI의 정확한 API 표면(동일한 함수명·시그니처·기본 `DeviceInfo`
-객체·훅)을 그대로 노출하므로, **import만 바꾸면 호출부는 그대로 둔 채** 마이그레이션할 수 있습니다.
+`react-native-device-info`(RNDI) 15.x에서 옮길 때는 번들로 제공되는 `/compat` 진입점을 사용하세요. 함수 시그니처와 훅 반환 형태를 맞춰 호출부를 유지할 수 있습니다. 플랫폼별 동작은 다를 수 있고 일부 API는 대체값을 반환합니다. [호환성 주의사항(영어)](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/migration#compat-layer-caveats)을 확인하고 앱에서 사용하는 API를 검증하세요.
 
 ```bash
 # 1. 설치
@@ -273,7 +280,7 @@ import DeviceInfo from 'react-native-nitro-device-info/compat';
 import { getModel, useBatteryLevel } from 'react-native-nitro-device-info/compat';
 ```
 
-호환 레이어는 RNDI 표면 전체를 커버하며, deprecated되었거나 대응 API가 없는 소수의 API만 문서화된
+호환 레이어는 RNDI 15.x API를 대상으로 커버하며, deprecated되었거나 대응 API가 없는 소수의 API만 문서화된
 placeholder 값을 반환합니다. 최고 성능을 원한다면 네이티브 API(`DeviceInfoModule`)가 직접 속성
 접근과 동기 getter를 제공합니다. 전체 매핑·주의사항·선택적 네이티브 경로는
 [마이그레이션 가이드](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/migration)를
@@ -413,7 +420,7 @@ npx @react-native-nitro-device-info/mcp-server init
 
 ## 지원 플랫폼
 
-- **iOS**: 13.4+
+- **iOS**: 15.1+
 - **Android**: API 24+ (Android 7.0 Nougat)
 - **Web**: import-safe 폴백 (아래 참고)
 

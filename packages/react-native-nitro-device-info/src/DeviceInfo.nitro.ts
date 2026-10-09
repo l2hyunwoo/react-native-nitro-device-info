@@ -58,12 +58,12 @@ export type NavigationMode = 'gesture' | 'buttons' | 'twobuttons' | 'unknown';
  * This interface exposes device information methods through Nitro's
  * zero-overhead JSI bindings. Methods are categorized as:
  * - Synchronous (readonly getters): Cached values, access
- * - Asynchronous (Promise methods): I/O operations, <100ms completion
+ * - Asynchronous (Promise methods): completion time depends on the operation
  *
  * @example
  * ```typescript
  * import { NitroModules } from 'react-native-nitro-modules'
- * import type { DeviceInfo } from './specs/DeviceInfo.nitro'
+ * import type { DeviceInfo } from 'react-native-nitro-device-info'
  *
  * const deviceInfo = NitroModules.createHybridObject<DeviceInfo>('DeviceInfo')
  *
@@ -73,12 +73,12 @@ export type NavigationMode = 'gesture' | 'buttons' | 'twobuttons' | 'unknown';
  * console.log(deviceInfo.serialNumber)  // "ABC123XYZ"
  *
  * // Asynchronous access (Promise-based)
- * const uniqueId = await deviceInfo.getUniqueId()
+ * const ipAddress = await deviceInfo.getIpAddress()
  * const referrer = await deviceInfo.getInstallReferrer()
  * ```
  *
- * @platform ios 13.4+
- * @platform android API 21+
+ * @platform ios 15.1+
+ * @platform android API 24+
  */
 export interface DeviceInfo
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
@@ -115,7 +115,7 @@ export interface DeviceInfo
    *
    * @returns Model name
    * @example
-   * iOS: "iPhone", "iPad"
+   * iOS: "iPhone 13 Pro", "iPad Pro 11-inch (M5)"
    * Android: "Galaxy S21", "Pixel 7"
    */
   readonly model: string;
@@ -153,9 +153,10 @@ export interface DeviceInfo
   /**
    * Get unique device identifier
    *
-   * Returns a persistent device-unique ID:
-   * - iOS: IDFV (Identifier for Vendor) - persists across app installs
-   * - Android: ANDROID_ID - persists across app installs (usually)
+   * Returns the current platform identifier, or an empty string if unavailable:
+   * - iOS: IDFV (Identifier for Vendor)
+   * - Android: ANDROID_ID
+   * Neither value is a permanent device or account identity.
    *
    * @returns Unique ID string
    * @example "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
@@ -576,7 +577,6 @@ export interface DeviceInfo
    * @returns Promise resolving to install time in milliseconds since epoch
    * @example 1698249600000 (2023-10-25T12:00:00Z)
    *
-   * @async ~10-30ms
    */
   getFirstInstallTime(): Promise<number>;
 
@@ -588,7 +588,6 @@ export interface DeviceInfo
    * @returns Promise resolving to update time in milliseconds since epoch
    * @example 1698336000000 (2023-10-26T12:00:00Z)
    *
-   * @async ~10-30ms
    */
   getLastUpdateTime(): Promise<number>;
 
@@ -620,7 +619,6 @@ export interface DeviceInfo
    * @returns Promise resolving to IP address string
    * @example "192.168.1.100", "10.0.0.5"
    *
-   * @async ~20-50ms
    */
   getIpAddress(): Promise<string>;
 
@@ -645,9 +643,8 @@ export interface DeviceInfo
    * @returns Promise resolving to MAC address
    * @example
    * iOS: "02:00:00:00:00:00" (always)
-   * Android: "00:11:22:33:44:55" (actual MAC)
+   * Android: "unknown" when restricted, otherwise the available wlan0 MAC
    *
-   * @async ~20-50ms
    */
   getMacAddress(): Promise<string>;
 
@@ -656,17 +653,16 @@ export interface DeviceInfo
    *
    * @returns MAC address string or "unknown"
    * @platform iOS: Always returns "02:00:00:00:00:00" (privacy restriction)
-   * @platform Android: Actual MAC address
+   * @platform Android: Available wlan0 MAC, or "unknown" when restricted
    */
   getMacAddressSync(): string;
 
   /**
    * Get HTTP User-Agent string.
-   * iOS requires WebView initialization (heavy operation, cached after first call).
-   * Android can return synchronously from System.getProperty().
+   * iOS initializes a WebView and caches the first successful result.
+   * Android queries WebSettings asynchronously. Both return a Promise.
    *
    * @platform iOS (async), Android, Web
-   * @async iOS: 100-500ms (WebView init), Android: sync capable
    */
   getUserAgent(): Promise<string>;
 
@@ -692,7 +688,6 @@ export interface DeviceInfo
    * @returns Promise resolving to carrier name
    * @example "Verizon", "AT&T", "T-Mobile"
    *
-   * @async ~20-50ms
    */
   getCarrier(): Promise<string>;
 
@@ -793,7 +788,6 @@ export interface DeviceInfo
    * Detects both wired and Bluetooth headphones.
    *
    * @returns Promise resolving to true if headphones connected
-   * @async ~10-30ms
    */
   isHeadphonesConnected(): Promise<boolean>;
 
@@ -835,7 +829,6 @@ export interface DeviceInfo
    * Check if location services are enabled
    *
    * @returns Promise resolving to true if location enabled
-   * @async ~10-30ms
    */
   isLocationEnabled(): Promise<boolean>;
 
@@ -1004,7 +997,9 @@ export interface DeviceInfo
 
   /**
    * Returns the Android device serial number.
-   * Requires READ_PHONE_STATE permission on Android 8.0+.
+   * Requires granted READ_PHONE_STATE on Android 8.0-9.
+   * Android 10+ also restricts access to privileged callers; ordinary apps
+   * generally receive "unknown". Cached on first access.
    * Returns "unknown" on iOS/Windows or when permission denied.
    *
    * @platform Android (returns "unknown" on iOS)
@@ -1168,17 +1163,15 @@ export interface DeviceInfo
    * Throws error on Android.
    *
    * @platform iOS 11+ (throws on Android)
-   * @async ~500-2000ms (network request)
    */
   getDeviceToken(): Promise<string>;
 
   /**
-   * Synchronize unique ID to iCloud Keychain.
-   * Saves IDFV to Keychain on iOS (persists across reinstalls).
-   * Returns getUniqueId() on Android without Keychain sync.
+   * Write the current IDFV to an app-specific Keychain item on iOS.
+   * Does not enable iCloud synchronization or restore an earlier IDFV.
+   * Returns uniqueId on Android without a Keychain operation.
    *
    * @platform iOS (no-op on Android)
-   * @async ~10-50ms (Keychain I/O)
    */
   syncUniqueId(): Promise<string>;
 
@@ -1200,7 +1193,6 @@ export interface DeviceInfo
    * Returns "unknown" on iOS.
    *
    * @platform Android (returns "unknown" on iOS)
-   * @async ~50-200ms (Play Services API call)
    */
   getInstallReferrer(): Promise<string>;
 
@@ -1310,8 +1302,8 @@ export interface DeviceInfo
   /**
    * Asynchronous wrapper for device integrity verification
    *
-   * Currently identical to `isDeviceCompromised()` but wrapped in a Promise.
-   * Provided for API consistency and future extensibility.
+   * Runs bypassable local root/jailbreak checks asynchronously.
+   * This is not server-verifiable attestation.
    *
    * **iOS:** Includes SSH port scanning (can take up to 200ms) in addition to
    * all checks performed by `isDeviceCompromised()`.
@@ -1328,7 +1320,6 @@ export interface DeviceInfo
    * ```
    *
    * @platform iOS, Android
-   * @async iOS: up to 200ms (includes SSH port scan), Android: <50ms
    */
   verifyDeviceIntegrity(): Promise<boolean>;
 
