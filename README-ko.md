@@ -178,6 +178,8 @@ const isCompromisedAsync = await DeviceInfoModule.verifyDeviceIntegrity(); // �
 
 Android MAC 주소의 비동기·동기 조회는 5초 캐시를 공유하며, 접근이 제한되거나 Wi-Fi 주소를 읽을 수 없으면 `"unknown"`을 반환합니다.
 
+Android 헤드폰 감지는 유선·USB 헤드셋(USB는 API 26 이상)과 Bluetooth를 구분하며, 비동기·동기 조회가 같은 판정을 사용합니다.
+
 > **서버 검증이 가능한 attestation이 필요하신가요?** 위 로컬 검사는 우회 가능합니다.
 > 하드웨어 기반·서버 검증 attestation(Android의 Play Integrity, iOS의 App Attest /
 > DeviceCheck)이 필요하면 opt-in

@@ -105,6 +105,9 @@ describe('Tier 3 - Audio APIs (Type Verification Only)', () => {
   test('isHeadphonesConnected returns boolean', async () => {
     const connected = await DeviceInfoModule.isHeadphonesConnected();
     expect(typeof connected).toBe('boolean');
+    if (Platform.OS === 'android') {
+      expect(connected).toBe(DeviceInfoModule.getIsHeadphonesConnected());
+    }
   });
 
   test('getIsHeadphonesConnected returns boolean', () => {

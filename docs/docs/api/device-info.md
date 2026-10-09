@@ -718,7 +718,7 @@ Audio device detection.
 
 ### `isHeadphonesConnected(): Promise<boolean>`
 
-Check if headphones are connected (wired or Bluetooth).
+Check if headphones are connected (wired or Bluetooth). On Android, this uses the same output-device detection as the synchronous getter.
 
 ```typescript
 const hasHeadphones = await DeviceInfoModule.isHeadphonesConnected();
@@ -736,7 +736,7 @@ const isHeadphonesConnected = DeviceInfoModule.getIsHeadphonesConnected();
 
 ### `getIsWiredHeadphonesConnected(): boolean`
 
-Check if wired headphones are connected.
+Check if wired headphones are connected. On Android, this includes wired headphones/headsets and [USB headsets on API 26+](https://developer.android.com/reference/android/media/AudioDeviceInfo#TYPE_USB_HEADSET). Built-in speakers and Bluetooth devices do not count as wired headphones.
 
 ```typescript
 const hasWiredHeadphones = DeviceInfoModule.getIsWiredHeadphonesConnected();

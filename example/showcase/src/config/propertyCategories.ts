@@ -319,6 +319,30 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     platform: PlatformAvailability.ALL,
     isSync: false,
   },
+  {
+    key: 'getIsHeadphonesConnected',
+    label: 'Headphones Connected (Sync)',
+    category: PropertyCategory.NETWORK_CONNECTIVITY,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+  {
+    key: 'getIsWiredHeadphonesConnected',
+    label: 'Wired Headphones Connected',
+    category: PropertyCategory.NETWORK_CONNECTIVITY,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+  {
+    key: 'getIsBluetoothHeadphonesConnected',
+    label: 'Bluetooth Headphones Connected',
+    category: PropertyCategory.NETWORK_CONNECTIVITY,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
 
   // ==========================================================================
   // CATEGORY 8: Localization & Navigation
