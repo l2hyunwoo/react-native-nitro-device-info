@@ -443,7 +443,7 @@ console.log(DeviceInfoModule.deviceId);       // "unknown" — 브라우저에�
 | `totalMemory` | `navigator.deviceMemory` × 1024³ (스펙상 거칠게 버킷팅; 미지원 시 `-1`) |
 | `getIsLandscape()` | `screen.width > screen.height` |
 | `getUserAgent()` | `navigator.userAgent` |
-| `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API(`navigator.getBattery()`)를 한 번 읽어 캐시; API 부재/거부 시 `-1`/`unknown` |
+| `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API(`navigator.getBattery()`)를 한 번 요청하고 getter에서 현재 BatteryManager 값을 읽음; API 부재/거부 시 `-1`/`unknown` |
 | `getIsAirplaneMode()` | `navigator.onLine` 기반 추정(best effort) |
 
 **웹에서는 항상 폴백 상수:** 모든 Android `Build.*` 필드, 캐리어/MNC/MCC 정보, 디스크/사용

@@ -83,3 +83,5 @@ The showcase app serves as both a demonstration and testing tool for the library
 - **Platform Coverage**: Test iOS-only and Android-only properties
 - **Type Safety**: All components fully typed with TypeScript
 - **Error Boundaries**: Individual property errors don't crash the app
+
+Web fallback: battery getters read current BatteryManager values after the initial request resolves. Refresh the displayed properties after a level or charging change; unsupported or denied access keeps the fallback values.

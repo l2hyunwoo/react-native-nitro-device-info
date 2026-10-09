@@ -403,6 +403,11 @@ Battery and power state information.
 
 Get current battery level (0.0 to 1.0).
 
+On web, battery getters read the live BatteryManager after the initial async
+request resolves. Before resolution, or if the API is unavailable or denied,
+level is `-1`, charging is `false`, battery state is `"unknown"`, and
+`isLowBatteryLevel()` returns `false`.
+
 ```typescript
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
 console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
