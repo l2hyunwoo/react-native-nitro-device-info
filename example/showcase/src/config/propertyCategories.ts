@@ -92,6 +92,14 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
   {
+    key: 'isPinOrFingerprintSet',
+    label: 'Passcode or Biometrics Set',
+    category: PropertyCategory.DEVICE_CAPABILITIES,
+    type: PropertyType.BOOLEAN,
+    platform: PlatformAvailability.ALL,
+    isSync: true,
+  },
+  {
     key: 'isCameraPresent',
     label: 'Has Camera',
     category: PropertyCategory.DEVICE_CAPABILITIES,
