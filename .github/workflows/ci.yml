@@ -246,7 +246,7 @@ jobs:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.integrity == 'true' || needs.changes.outputs.deps == 'true' }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
           - platform: ios
@@ -256,6 +256,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
