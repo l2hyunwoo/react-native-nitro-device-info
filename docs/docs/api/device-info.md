@@ -608,10 +608,13 @@ const userAgent = await DeviceInfoModule.getUserAgent();
 
 Check if airplane mode is enabled.
 
+On web this always returns `false`: browsers cannot determine airplane mode.
+Being offline does not establish that airplane mode is enabled.
+
 ```typescript
 const isAirplaneMode = DeviceInfoModule.getIsAirplaneMode();
 // Android: true/false
-// iOS: false (not available)
+// iOS and web: false (not available)
 ```
 
 **Platform**: Android only

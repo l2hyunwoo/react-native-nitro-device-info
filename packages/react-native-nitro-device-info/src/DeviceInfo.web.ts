@@ -36,7 +36,6 @@ interface WebNavigator {
   readonly userAgent?: string;
   readonly language?: string;
   readonly vendor?: string;
-  readonly onLine?: boolean;
   readonly deviceMemory?: number;
   readonly getBattery?: () => Promise<BatteryManagerLike>;
 }
@@ -231,12 +230,7 @@ const webDeviceInfo: DeviceInfo = {
   getMacAddress: () => Promise.resolve('02:00:00:00:00:00'),
   getMacAddressSync: () => '02:00:00:00:00:00',
   getUserAgent: () => Promise.resolve(safeNavigator()?.userAgent ?? 'unknown'),
-  getIsAirplaneMode: () => {
-    const nav = safeNavigator();
-    // `onLine` only tells us connectivity, not airplane mode; report the
-    // honest default and never throw.
-    return nav !== undefined ? nav.onLine === false : false;
-  },
+  getIsAirplaneMode: () => false,
 
   // ---- Carrier information ----
   getCarrier: () => Promise.resolve('unknown'),

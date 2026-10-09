@@ -449,7 +449,7 @@ console.log(DeviceInfoModule.deviceId);       // "unknown" — 브라우저에�
 | `getIsLandscape()` | `screen.width > screen.height` |
 | `getUserAgent()` | `navigator.userAgent` |
 | `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API(`navigator.getBattery()`)를 한 번 요청하고 getter에서 현재 BatteryManager 값을 읽음; API 부재/거부 시 `-1`/`unknown` |
-| `getIsAirplaneMode()` | `navigator.onLine` 기반 추정(best effort) |
+| `getIsAirplaneMode()` | `false` (미지원: 브라우저에서는 비행기 모드 확인 불가) |
 
 **웹에서는 항상 폴백 상수:** 모든 Android `Build.*` 필드, 캐리어/MNC/MCC 정보, 디스크/사용
 메모리 수치, 헤드폰/위치/노치 검사, 무결성 검사(`isDeviceCompromised()` → `false`), 앱
