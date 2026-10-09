@@ -464,7 +464,7 @@ same neutral constants the native side uses for an unsupported platform
 | `getIsLandscape()` | `screen.width > screen.height` |
 | `getUserAgent()` | `navigator.userAgent` |
 | `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API (`navigator.getBattery()`), requested once; getters read the live BatteryManager; `-1`/`unknown` if the API is absent or denied |
-| `getIsAirplaneMode()` | inferred from `navigator.onLine` (best effort) |
+| `getIsAirplaneMode()` | `false` (unsupported: browsers cannot determine airplane mode) |
 
 **Always a fallback constant on web:** all Android `Build.*` fields, carrier/MNC/MCC
 info, disk/used-memory figures, headphone/location/notch checks, integrity checks

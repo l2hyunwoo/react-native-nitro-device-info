@@ -53,7 +53,7 @@ real.**
 | `getIsLandscape()` | `screen.width > screen.height` |
 | `getUserAgent()` | `navigator.userAgent` |
 | `getBatteryLevel()`, `getPowerState()`, `getIsBatteryCharging()` | Battery Status API (`navigator.getBattery()`), requested once; getters read the live BatteryManager; `-1` / `"unknown"` if absent or denied |
-| `getIsAirplaneMode()` | inferred from `navigator.onLine` (best effort) |
+| `getIsAirplaneMode()` | `false` (unsupported: browsers cannot determine airplane mode) |
 
 When the underlying global is missing (an older browser, or a server with no
 `navigator`/`screen`), each of these degrades to the fallback constant rather
