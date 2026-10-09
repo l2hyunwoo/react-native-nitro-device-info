@@ -131,11 +131,11 @@ export default function BatteryIndicator() {
   const batteryLevel = DeviceInfoModule.getBatteryLevel();
   const isCharging = DeviceInfoModule.getIsBatteryCharging();
 
-  const percentage = (batteryLevel * 100).toFixed(0);
+  const batteryText = batteryLevel < 0 ? 'Unavailable' : `${(batteryLevel * 100).toFixed(0)}%`;
 
   return (
     <View>
-      <Text>Battery: {percentage}%</Text>
+      <Text>Battery: {batteryText}</Text>
       {isCharging && <Text>⚡ Charging</Text>}
     </View>
   );
@@ -150,10 +150,15 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 function checkBatteryStatus() {
   const batteryLevel = DeviceInfoModule.getBatteryLevel();
 
-  if (DeviceInfoModule.isLowBatteryLevel(0.2)) {
+  if (batteryLevel < 0) {
+    console.log('Battery: unavailable');
+    return 'unavailable';
+  }
+
+  if (batteryLevel < 0.2) {
     console.warn(`Battery low: ${(batteryLevel * 100).toFixed(0)}%`);
     return 'low';
-  } else if (DeviceInfoModule.isLowBatteryLevel(0.5)) {
+  } else if (batteryLevel < 0.5) {
     console.log(`Battery moderate: ${(batteryLevel * 100).toFixed(0)}%`);
     return 'moderate';
   } else {
@@ -174,11 +179,11 @@ import type { PowerState } from 'react-native-nitro-device-info';
 export default function PowerStateDisplay() {
   const powerState: PowerState = DeviceInfoModule.getPowerState();
 
-  const percentage = (powerState.batteryLevel * 100).toFixed(0);
+  const batteryText = powerState.batteryLevel < 0 ? 'Unavailable' : `${(powerState.batteryLevel * 100).toFixed(0)}%`;
 
   return (
     <View>
-      <Text>Battery: {percentage}%</Text>
+      <Text>Battery: {batteryText}</Text>
       <Text>Status: {powerState.batteryState}</Text>
       {powerState.lowPowerMode && <Text>🔋 Low Power Mode</Text>}
     </View>
@@ -411,7 +416,7 @@ export default function DeviceInfoScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>System Status</Text>
-        <Text>Battery: {(batteryLevel * 100).toFixed(0)}%</Text>
+        <Text>Battery: {batteryLevel < 0 ? 'Unavailable' : `${(batteryLevel * 100).toFixed(0)}%`}</Text>
         <Text>RAM: {(totalMemory / 1024 / 1024 / 1024).toFixed(1)} GB</Text>
         <Text>Free Storage: {(freeDisk / 1024 / 1024 / 1024).toFixed(1)} GB</Text>
       </View>

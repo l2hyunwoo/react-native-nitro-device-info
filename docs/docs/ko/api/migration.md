@@ -298,7 +298,7 @@ function DeviceInfoScreen() {
       <Text>Device: {brand} {deviceId}</Text>
       <Text>Unique ID: {uniqueId}</Text>
       <Text>Memory: {totalMemory}</Text>
-      <Text>Battery: {(batteryLevel * 100).toFixed(0)}%</Text>
+      <Text>Battery: {batteryLevel < 0 ? 'Unavailable' : `${(batteryLevel * 100).toFixed(0)}%`}</Text>
       <Text>IP: {ipAddress}</Text>
     </View>
   );
@@ -331,7 +331,7 @@ function DeviceInfoScreen() {
       <Text>Device: {brand} {deviceId}</Text>
       <Text>Unique ID: {uniqueId}</Text>
       <Text>Memory: {totalMemory}</Text>
-      <Text>Battery: {(batteryLevel * 100).toFixed(0)}%</Text>
+      <Text>Battery: {batteryLevel < 0 ? 'Unavailable' : `${(batteryLevel * 100).toFixed(0)}%`}</Text>
       <Text>IP: {ipAddress}</Text>
     </View>
   );

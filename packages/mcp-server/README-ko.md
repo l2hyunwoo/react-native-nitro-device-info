@@ -154,7 +154,9 @@ const deviceInfo = NitroModules.createHybridObject<DeviceInfo>('DeviceInfo');
 
 // Get battery level (0.0 to 1.0)
 const batteryLevel = deviceInfo.getBatteryLevel();
-console.log(`Battery: ${Math.round(batteryLevel * 100)}%`);
+console.log(batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${Math.round(batteryLevel * 100)}%`);
 ```
 
 ### API 찾기

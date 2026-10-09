@@ -487,7 +487,9 @@ console.log(`App event at: ${new Date(eventTimestamp).toISOString()}`);
 
 ```typescript
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
-console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
+console.log(batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${(batteryLevel * 100).toFixed(0)}%`);
 // Output: "Battery: 75%"
 ```
 
@@ -501,7 +503,9 @@ Android에서 `lowPowerMode`는 항상 `false`입니다. 배터리 잔량과 충
 
 ```typescript
 const powerState = DeviceInfoModule.getPowerState();
-console.log(`Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
+console.log(powerState.batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
 console.log(`Status: ${powerState.batteryState}`);
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`); // iOS only
 ```

@@ -482,7 +482,9 @@ level is `-1`, charging is `false`, battery state is `"unknown"`, and
 
 ```typescript
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
-console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
+console.log(batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${(batteryLevel * 100).toFixed(0)}%`);
 // Output: "Battery: 75%"
 ```
 
@@ -496,7 +498,9 @@ Get comprehensive power state information.
 
 ```typescript
 const powerState = DeviceInfoModule.getPowerState();
-console.log(`Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
+console.log(powerState.batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
 console.log(`Status: ${powerState.batteryState}`);
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`); // iOS only
 ```

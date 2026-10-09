@@ -337,7 +337,7 @@ function BatteryMonitor() {
 
   return (
     <View>
-      <Text>Battery: {(powerState.batteryLevel * 100).toFixed(0)}%</Text>
+      <Text>Battery: {powerState.batteryLevel < 0 ? 'Unavailable' : `${(powerState.batteryLevel * 100).toFixed(0)}%`}</Text>
       <Text>Status: {powerState.batteryState}</Text>
       {powerState.lowPowerMode && <Text>Low Power Mode Active</Text>}
     </View>
@@ -655,7 +655,7 @@ export default function AdvancedDeviceInfo() {
       <Section title="Power">
         <Info
           label="Battery"
-          value={`${(powerState.batteryLevel * 100).toFixed(0)}%`}
+          value={powerState.batteryLevel < 0 ? 'Unavailable' : `${(powerState.batteryLevel * 100).toFixed(0)}%`}
         />
         <Info label="Status" value={powerState.batteryState} />
         {powerState.lowPowerMode && (
