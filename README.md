@@ -194,8 +194,6 @@ DeviceInfoModule.systemVersion; // "15.0"
 DeviceInfoModule.model; // "iPhone 13 Pro"
 ```
 
-On iOS, `model` also recognizes iPhone 18 Pro/Pro Max, iPhone Duo, and recent iPad models. See the [model reference](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/device-info#model-string) for mapping details and sources.
-
 #### Common Properties
 
 ```typescript

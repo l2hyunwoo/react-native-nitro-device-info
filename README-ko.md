@@ -195,8 +195,6 @@ DeviceInfoModule.systemVersion; // "15.0"
 DeviceInfoModule.model; // "iPhone 13 Pro"
 ```
 
-iOS의 `model`은 iPhone 18 Pro/Pro Max, iPhone Duo와 최근 iPad 모델도 인식합니다. 매핑 세부 정보와 출처는 [model 레퍼런스](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/device-info#model-string)를 참고하세요.
-
 #### 주요 속성
 
 ```typescript
