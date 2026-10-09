@@ -46,7 +46,7 @@
     "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.6",
-    "http-cache-semantics": "^4.1.1",
+    "http-cache-semantics": "4.3.0",
     "jest": "29.7.0",
     "nitrogen": "0.35.9",
     "oxlint": "1.57.0",
@@ -79,7 +79,8 @@
     "esbuild": "0.28.2",
     "fast-xml-parser": "5.7.0",
     "braces@npm:^3.0.3": "patch:braces@npm%3A3.0.3#~/.yarn/patches/braces-npm-3.0.3-582c14023c.patch",
-    "http-cache-semantics@npm:^4.1.1": "patch:http-cache-semantics@npm%3A4.2.0#~/.yarn/patches/http-cache-semantics-npm-4.2.0-fadacfb3ad.patch"
+    "http-cache-semantics@npm:^4.1.1": "patch:http-cache-semantics@npm%3A4.3.0#~/.yarn/patches/http-cache-semantics-npm-4.3.0-ee45f76976.patch",
+    "http-cache-semantics@npm:4.3.0": "patch:http-cache-semantics@npm%3A4.3.0#~/.yarn/patches/http-cache-semantics-npm-4.3.0-ee45f76976.patch"
   },
   "dependenciesMeta": {
     "@evilmartians/lefthook": {
