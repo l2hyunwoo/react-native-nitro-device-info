@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Detect which files changed to conditionally run jobs
   changes:
@@ -19,6 +23,7 @@ jobs:
       pull-requests: read
     runs-on: ubuntu-26.04
     outputs:
+      integrity: ${{ steps.filter.outputs.integrity }}
       library: ${{ steps.filter.outputs.library }}
       mcp-server: ${{ steps.filter.outputs.mcp-server }}
       docs: ${{ steps.filter.outputs.docs }}
@@ -30,20 +35,17 @@ jobs:
           fetch-depth: 0
 
       - name: Check for changes
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
         id: filter
         with:
           filters: |
             library:
-              - 'packages/react-native-nitro-device-info/src/**'
-              - 'packages/react-native-nitro-device-info/ios/**'
-              - 'packages/react-native-nitro-device-info/*.podspec'
-              - 'packages/react-native-nitro-device-info/android/**'
-              - 'packages/react-native-nitro-device-info/nitrogen/**'
-              - 'packages/react-native-nitro-device-info/package.json'
-              - 'packages/react-native-nitro-device-info/tsconfig.json'
-              - 'packages/react-native-nitro-device-info/babel.config.js'
-              - 'example/**'
+              - 'packages/react-native-nitro-device-info/**'
+              - 'example/showcase/**'
+              - 'example/benchmark/**'
+            integrity:
+              - 'packages/react-native-nitro-device-integrity/**'
+              - 'example/integrity-demo/**'
             mcp-server:
               - 'packages/mcp-server/**'
             docs:
@@ -53,9 +55,13 @@ jobs:
               - 'yarn.lock'
               - '.yarn/patches/**'
               - 'scripts/security-regressions.cjs'
+              - '.github/workflows/ci.yml'
+              - 'jest.config.js'
+              - 'tsconfig.json'
 
       - name: Debug outputs
         run: |
+          echo "integrity=${{ steps.filter.outputs.integrity }}"
           echo "library=${{ steps.filter.outputs.library }}"
           echo "mcp-server=${{ steps.filter.outputs.mcp-server }}"
           echo "docs=${{ steps.filter.outputs.docs }}"
@@ -64,8 +70,9 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     needs: changes
-    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.mcp-server == 'true' || needs.changes.outputs.deps == 'true' }}
+    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.mcp-server == 'true' || needs.changes.outputs.integrity == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -88,9 +95,20 @@ jobs:
       - name: Run TypeScript type check
         run: yarn typecheck
 
+      - name: Run library tests
+        if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
+        run: yarn workspace react-native-nitro-device-info test --runInBand
+
+      - name: Type check and build integrity library
+        if: ${{ needs.changes.outputs.integrity == 'true' || needs.changes.outputs.deps == 'true' }}
+        run: |
+          yarn workspace react-native-nitro-device-integrity typecheck
+          yarn workspace react-native-nitro-device-integrity prepare
+
   build:
     name: Build Library
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
@@ -118,6 +136,7 @@ jobs:
   build-ios:
     name: Build iOS
     runs-on: macos-15
+    timeout-minutes: 60
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
@@ -172,6 +191,7 @@ jobs:
   build-android:
     name: Build Android
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
@@ -219,9 +239,89 @@ jobs:
         working-directory: example/showcase/android
         run: ./gradlew :app:assembleDebug --no-daemon
 
+  build-integrity:
+    name: Build Integrity (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    needs: [changes, lint]
+    if: ${{ needs.changes.outputs.integrity == 'true' || needs.changes.outputs.deps == 'true' }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: ios
+            runner: macos-15
+          - platform: android
+            runner: ubuntu-26.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Setup Java
+        if: matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Gradle
+        if: matrix.platform == 'android'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            example/integrity-demo/android/.gradle
+          key: integrity-gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/gradle.properties') }}
+          restore-keys: |
+            integrity-gradle-${{ runner.os }}-
+
+      - name: Cache CocoaPods downloads
+        if: matrix.platform == 'ios'
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/CocoaPods
+          key: pods-download-${{ runner.os }}-${{ hashFiles('example/integrity-demo/package.json') }}
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build integrity library
+        run: yarn workspace react-native-nitro-device-integrity prepare
+
+      - name: Install Pods
+        if: matrix.platform == 'ios'
+        working-directory: example/integrity-demo/ios
+        run: pod install
+
+      - name: Build iOS app
+        if: matrix.platform == 'ios'
+        working-directory: example/integrity-demo
+        run: |
+          xcodebuild \
+            -workspace ios/NitroDeviceIntegrityDemo.xcworkspace \
+            -scheme NitroDeviceIntegrityDemo \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -derivedDataPath ios/build \
+            -quiet \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Build Android app
+        if: matrix.platform == 'android'
+        working-directory: example/integrity-demo/android
+        run: ./gradlew :app:assembleDebug --no-daemon
+
   validate-package:
     name: Validate NPM Package
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
@@ -257,8 +357,9 @@ jobs:
   mcp-server:
     name: MCP Server
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     needs: changes
-    if: ${{ needs.changes.outputs.mcp-server == 'true' }}
+    if: ${{ needs.changes.outputs.mcp-server == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7

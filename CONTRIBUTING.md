@@ -108,6 +108,10 @@ Remember to add tests for your change if possible. Run the unit tests by:
 yarn test
 ```
 
+CI runs the core library Jest suite for library, dependency, and CI/Jest configuration changes. Run it alone with `yarn workspace react-native-nitro-device-info test --runInBand`. Root `yarn test` also runs the MCP server suite; device harness suites require their own runner.
+
+Integrity package or demo changes run lint, `yarn workspace react-native-nitro-device-integrity typecheck`, and `yarn workspace react-native-nitro-device-integrity prepare`, followed by iOS and Android demo builds. Root `yarn prepare` builds only the core library. Dependency and CI workflow changes run both libraries' checks. Validate workflow syntax with `actionlint .github/workflows/ci.yml` and check that path filters cover the affected packages and configuration.
+
 ### Commit message convention
 
 We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
