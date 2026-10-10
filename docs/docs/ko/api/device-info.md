@@ -466,7 +466,7 @@ const eventTimestamp = DeviceInfoModule.startupTime + eventUptime;
 console.log(`App event at: ${new Date(eventTimestamp).toISOString()}`);
 ```
 
-앱 시작 시각이 아니라 기기 부팅 시각입니다. 지원 목적과 Apple의 사용 제한은 [iOS 개인정보 보호 매니페스트](../guide/getting-started.md#ios-privacy-manifest)를 참고하세요.
+앱 시작 시각이 아니라 기기 부팅 시각입니다. 지원 목적과 Apple의 사용 제한은 [iOS privacy info manifest](../guide/getting-started.md#ios-privacy-manifest)를 참고하세요.
 
 ---
 

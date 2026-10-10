@@ -49,7 +49,7 @@ async function readIpAddress() {
 
 ## 앱에서 성능 측정하기 {#measure-in-your-app}
 
-저장소의 [벤치마크 앱](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/example/benchmark)으로 앱에 필요한 호출을 비교하세요.
+레포지터리의 [벤치마크 앱](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/example/benchmark)으로 앱에 필요한 호출을 비교하세요.
 
 기기, OS, 라이브러리 버전, 빌드 모드를 기록하세요. 캐시에 값이 저장되어 있었는지도 함께 기록하세요. 호출 지연 시간과 렌더링에 미치는 영향을 함께 측정하세요. 이 문서는 지연 시간이나 다른 라이브러리 대비 속도 향상을 보장하지 않습니다.
 

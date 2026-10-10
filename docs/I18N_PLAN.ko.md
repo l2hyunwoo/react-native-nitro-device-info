@@ -40,7 +40,7 @@ API 이름, import 경로, 명령, 타입, 수치, 단위, 반환값, 권한 이
 
 영어 문장의 어순과 명사구를 그대로 옮기지 않습니다. 제목은 독자가 궁금해할 내용이나 수행할 작업을 드러내고 본문은 누가 무엇을 하는지 분명하게 씁니다. 예를 들어 “호출이 네이티브 코드에 도달하는 과정”은 “JS 함수 호출로 네이티브 모듈 함수를 어떻게 호출할 수 있을까?”로 쓸 수 있습니다. 모든 제목을 질문형으로 바꿀 필요는 없습니다.
 
-개발자에게 익숙한 기술 용어는 원문을 씁니다. 모듈을 불러오거나 공개하는 동작은 `import 문`, `import 경로`, `export`로 쓰고 Promise 관련 설명에는 `resolve`와 `reject`를 씁니다. 기술 문맥의 `fallback`, `entry point`, `provider`, `device attestation`도 그대로 사용하되 처음 읽는 데 필요한 설명을 덧붙입니다. 같은 문서 안에서는 용어를 통일합니다.
+개발자에게 익숙한 기술 용어는 원문을 씁니다. 모듈을 불러오거나 공개하는 동작은 `import 문`, `import 경로`, `export`로 쓰고 Promise 관련 설명에는 `resolve`와 `reject`를 씁니다. 기술 문맥의 `fallback`, `entry point`, `provider`, `device attestation`도 그대로 사용하되 처음 읽는 데 필요한 설명을 덧붙입니다. `toolchain`, `peer dependencies`, `privacy info manifest`도 원문을 쓰고 소스 코드를 관리하는 repository는 “레포지터리”로 씁니다. `approved reason`은 처음 나올 때 “Apple이 허용한 API 사용 목적”으로 설명합니다. 같은 문서 안에서는 용어를 통일합니다.
 
 속성, 메서드, 반환값, 동기·비동기, 타입, 훅, 캐시, 폴링처럼 널리 쓰는 한국어 표현은 유지합니다. 용어의 뜻을 살펴 문맥에 맞게 선택하세요. OS에서 값을 가져오는 동작을 `import`로 쓰거나, 권한 거부를 Promise의 `reject`와 혼동하지 않도록 합니다.
 

@@ -78,7 +78,7 @@ config/benchmarkMethods.ts - Method configurations
 
 ## 앱 실행
 
-### 저장소 루트에서
+### 레포지터리 루트에서
 
 ```bash
 yarn benchmark ios      # iOS

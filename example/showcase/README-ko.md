@@ -46,7 +46,7 @@ DeviceInfoScreen.tsx (main screen)
 
 ## 앱 실행
 
-### 저장소 루트에서
+### 레포지터리 루트에서
 
 ```bash
 yarn showcase ios      # iOS
@@ -61,7 +61,7 @@ yarn ios      # iOS
 yarn android  # Android
 ```
 
-iOS의 `pod install`은 빌드한 앱에 `NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy`를 포함합니다. Showcase의 앱 수준 매니페스트는 별도로 유지합니다. 선언한 사유와 사용 제한은 [iOS 개인정보 보호 매니페스트](../../docs/docs/ko/guide/getting-started.md#ios-privacy-manifest)를 참고하세요.
+iOS의 `pod install`은 빌드한 앱에 `NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy`를 포함합니다. Showcase의 앱 수준 매니페스트는 별도로 유지합니다. 선언한 `approved reason`(API 사용 목적)과 사용 제한은 [iOS privacy info manifest](../../docs/docs/ko/guide/getting-started.md#ios-privacy-manifest)를 참고하세요.
 
 라이브러리는 앱 이벤트의 시간 측정과 타이머에만 iOS 가동 시간 조회를 지원합니다. 그래서 iOS 속성 목록에서 원시 가동 시간을 제외합니다. [경과 시간 예제](../../docs/docs/ko/api/device-info.md#getuptime-number)를 참고하세요.
 

@@ -6,7 +6,7 @@
 
 ## 로컬 실행
 
-저장소 루트에서 실행하세요.
+레포지터리 루트에서 실행하세요.
 
 ```bash
 cd docs
@@ -22,7 +22,7 @@ yarn build
 yarn preview
 ```
 
-프로덕션 빌드 결과는 저장소 루트 기준 `docs/doc_build/`에 생성됩니다. 빌드 오류를 해결하려고 출력 파일을 편집하거나 lockfile을 삭제하지 마세요.
+프로덕션 빌드 결과는 레포지터리 루트 기준 `docs/doc_build/`에 생성됩니다. 빌드 오류를 해결하려고 출력 파일을 편집하거나 lockfile을 삭제하지 마세요.
 
 ## 소스 구조
 
@@ -57,7 +57,7 @@ docs/
 
 ## MCP 문서 모음
 
-MCP 패키지는 빌드할 때 API 명세, 영어·한국어 사이트 Markdown, 루트 README를 포함합니다. 문서를 바꿨다면 저장소 루트에서 다시 빌드하세요.
+MCP 패키지는 빌드할 때 API 명세, 영어·한국어 사이트 Markdown, 루트 README를 포함합니다. 문서를 바꿨다면 레포지터리 루트에서 다시 빌드하세요.
 
 ```bash
 yarn workspace @react-native-nitro-device-info/mcp-server build

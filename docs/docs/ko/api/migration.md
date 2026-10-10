@@ -448,7 +448,7 @@ yarn install
 
 "Cannot read property" 오류가 발생하면 확인하세요.
 
-1. 피어 의존성 `react-native-nitro-modules` 설치 여부
+1. peer dependencies `react-native-nitro-modules` 설치 여부
 2. iOS의 `pod install` 실행 여부
 3. 정리 후 빌드(`yarn android` / `yarn ios`)
 
@@ -555,7 +555,7 @@ function getDeviceInfo() {
 
 #### 가동 시간 동작 {#uptime-behavior}
 
-iOS의 `getUptime()`은 앱 이벤트 시간 측정에만 지원합니다. 경과 시간 측정, 타이머, 또는 `startupTime`으로 앱 이벤트 uptime을 절대 타임스탬프로 변환하는 용도입니다. 원시 가동 시간과 부팅 타임스탬프는 일반 기기 정보 데이터에 포함하지 마세요. 선언한 목적과 전송 제한은 [iOS 개인정보 보호 매니페스트](../guide/getting-started.md#ios-privacy-manifest)를 참고하세요.
+iOS의 `getUptime()`은 앱 이벤트 시간 측정에만 지원합니다. 경과 시간 측정, 타이머, 또는 `startupTime`으로 앱 이벤트 uptime을 절대 타임스탬프로 변환하는 용도입니다. 원시 가동 시간과 부팅 타임스탬프는 일반 기기 정보 데이터에 포함하지 마세요. 선언한 목적과 전송 제한은 [iOS privacy info manifest](../guide/getting-started.md#ios-privacy-manifest)를 참고하세요.
 
 - **expo-device**: 깊은 절전을 제외한 가동 시간을 밀리초로 반환
 - **react-native-nitro-device-info**: 깊은 절전을 제외한 가동 시간을 밀리초로 반환

@@ -9,7 +9,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 ## 사이트 실행 {#run-the-site}
 
-저장소 루트에서 실행하세요.
+레포지터리 루트에서 실행하세요.
 
 ```bash
 cd docs

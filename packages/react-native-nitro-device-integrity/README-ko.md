@@ -4,7 +4,7 @@
 
 React Native에서 하드웨어 기반 **device attestation**을 사용할 때 설치하는 선택 패키지입니다. 기기에서 발급한 토큰을 서버에서 검증하는 방식입니다. [Nitro Modules](https://nitro.margelo.com/)로 구현했으며 [`react-native-nitro-device-info`](https://github.com/l2hyunwoo/react-native-nitro-device-info)를 보완합니다.
 
-**미배포**: 2026-10-10 기준 소스 저장소에만 있으며 npm 배포 이력이 없습니다. 매니페스트 `0.1.0`은 배포 버전이 아닙니다. 아래 npm 설치 명령은 배포 후에 적용됩니다.
+**미배포**: 2026-10-10 기준 소스 레포지터리에만 있으며 npm 배포 이력이 없습니다. 매니페스트 `0.1.0`은 배포 버전이 아닙니다. 아래 npm 설치 명령은 배포 후에 적용됩니다.
 
 - **Android** → [Play Integrity API](https://developer.android.com/google/play/integrity)
 - **iOS** → [App Attest(`DCAppAttestService`)](https://developer.apple.com/documentation/devicecheck/dcappattestservice) + [DeviceCheck(`DCDevice`)](https://developer.apple.com/documentation/devicecheck/dcdevice)
@@ -31,7 +31,7 @@ yarn add react-native-nitro-device-integrity react-native-nitro-modules
 cd ios && pod install
 ```
 
-피어 의존성 `react-native-nitro-modules`가 필요합니다. 패키지의 네이티브 최소 버전은 iOS 14.0과 Android API 24이며 의존성에 따라 높아질 수 있습니다. DeviceCheck 자체는 iOS 11부터 있지만 이 패키지는 iOS 11 설치를 지원하지 않습니다. Android에는 Google Play Services가 필요합니다.
+peer dependencies `react-native-nitro-modules`가 필요합니다. 패키지의 네이티브 최소 버전은 iOS 14.0과 Android API 24이며 의존성에 따라 높아질 수 있습니다. DeviceCheck 자체는 iOS 11부터 있지만 이 패키지는 iOS 11 설치를 지원하지 않습니다. Android에는 Google Play Services가 필요합니다.
 
 ## 책임 범위
 

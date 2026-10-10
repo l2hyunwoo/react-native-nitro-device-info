@@ -17,7 +17,7 @@
 
 ## 앱 실행
 
-저장소 루트에서:
+레포지터리 루트에서:
 
 ```bash
 yarn integrity-demo ios      # iOS (real device required for App Attest)
@@ -32,7 +32,7 @@ yarn ios
 yarn android
 ```
 
-패키지의 `.nitro.ts` API를 바꾸면 저장소 루트에서 `yarn nitrogen:integrity`를 실행하세요.
+패키지의 `.nitro.ts` API를 바꾸면 레포지터리 루트에서 `yarn nitrogen:integrity`를 실행하세요.
 
 ## 실제 토큰에 필요한 설정
 

@@ -9,7 +9,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 <span class="rp-badge rp-badge--warning">미배포</span>
 
-이 패키지는 소스 저장소에 있지만 2026-10-10 기준 npm에 배포하지 않았습니다. 매니페스트의 `0.1.0`은 릴리스가 아닙니다. npm 설치 명령은 배포 후에 적용됩니다.
+이 패키지는 소스 레포지터리에 있지만 2026-10-10 기준 npm에 배포하지 않았습니다. 매니페스트의 `0.1.0`은 릴리스가 아닙니다. npm 설치 명령은 배포 후에 적용됩니다.
 
 [지원 여부 배지 설명](/api/#availability-badges)을 읽으세요. Pod의 대상은 iOS 14 이상, Android 모듈의 대상은 API 24 이상입니다. 의존성은 더 높은 최소 버전을 요구할 수 있습니다. 웹용 entry point는 없습니다.
 

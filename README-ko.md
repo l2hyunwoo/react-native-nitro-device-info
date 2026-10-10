@@ -33,7 +33,7 @@ yarn add react-native-nitro-device-info react-native-nitro-modules
 pnpm add react-native-nitro-device-info react-native-nitro-modules
 ```
 
-> **필수 피어 의존성**: `react-native-nitro-modules` >=0.35.0 <1.0.0
+> **필수 peer dependencies**: `react-native-nitro-modules` >=0.35.0 <1.0.0
 
 ### iOS 설정
 
@@ -41,7 +41,7 @@ pnpm add react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
-Pod는 `PrivacyInfo.xcprivacy`를 `NitroDeviceInfo_privacy.bundle`에 포함합니다. Expo prebuild / EAS Build에도 같은 번들이 포함됩니다. 개인정보 보호 전용 config plugin 옵션은 필요하지 않습니다. 선언한 API 사유와 사용 제한은 [iOS 개인정보 보호 매니페스트](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/getting-started#ios-privacy-manifest)를 참고하세요.
+Pod는 `PrivacyInfo.xcprivacy`를 `NitroDeviceInfo_privacy.bundle`에 포함합니다. Expo prebuild / EAS Build에도 같은 번들이 포함됩니다. 개인정보 보호 전용 config plugin 옵션은 필요하지 않습니다. 선언한 `approved reason`(API 사용 목적)과 사용 제한은 [iOS privacy info manifest](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/getting-started#ios-privacy-manifest)를 참고하세요.
 
 ### Android 설정
 
@@ -287,7 +287,7 @@ import { getModel, useBatteryLevel } from 'react-native-nitro-device-info/compat
 
 ## 예제 앱
 
-저장소에는 라이브러리를 사용하고 테스트할 예제 앱 세 개가 있습니다.
+레포지터리에는 라이브러리를 사용하고 테스트할 예제 앱 세 개가 있습니다.
 
 ### Showcase 앱(`example/showcase/`)
 

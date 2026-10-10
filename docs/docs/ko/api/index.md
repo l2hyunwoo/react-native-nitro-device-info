@@ -104,4 +104,4 @@ async function readIpAddress(): Promise<string> {
 
 `DeviceInfo`, `PowerState`, `BatteryState`, `DeviceType`, `NavigationMode`는 `import type`으로 import하세요. [타입 정의](/api/types)를 참고하세요.
 
-현재 웹사이트는 저장소의 `main` 브랜치를 기준으로 작성합니다. 이전 릴리스를 설치했다면 해당 릴리스의 선언을 확인하세요. API 시그니처의 원본은 [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts)이며 네이티브 구현이 플랫폼 동작을 정의합니다.
+현재 웹사이트는 레포지터리의 `main` 브랜치를 기준으로 작성합니다. 이전 릴리스를 설치했다면 해당 릴리스의 선언을 확인하세요. API 시그니처의 원본은 [`DeviceInfo.nitro.ts`](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts)이며 네이티브 구현이 플랫폼 동작을 정의합니다.

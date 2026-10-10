@@ -25,7 +25,7 @@ yarn
 예제 앱을 빌드하려면 [Nitrogen](https://nitro.margelo.com/docs/nitrogen)으로 네이티브 바인딩을 생성해야 합니다. 다음 경우에 실행하세요.
 
 - `*.nitro.ts` 파일을 바꿨을 때
-- 처음 실행할 때(생성 파일은 저장소에 커밋하지 않음)
+- 처음 실행할 때(생성 파일은 레포지터리에 커밋하지 않음)
 
 핵심 라이브러리 바인딩은 다음 명령으로 생성합니다.
 
@@ -42,7 +42,7 @@ device attestation 패키지를 바꿨다면 `yarn nitrogen:integrity`를 사용
 - **iOS**: Xcode에서 `example/showcase/ios/NitroDeviceInfoExample.xcworkspace` 또는 `example/benchmark/ios/NitroDeviceInfoBenchmark.xcworkspace`를 엽니다. 라이브러리 소스는 `Pods > Development Pods > react-native-nitro-device-info`에 있습니다.
 - **Android**: Android Studio에서 `example/showcase/android` 또는 `example/benchmark/android`를 엽니다. `Android` 아래의 `react-native-nitro-device-info`에서 소스를 찾을 수 있습니다.
 
-아래 명령은 저장소 루트에서 실행합니다.
+아래 명령은 레포지터리 루트에서 실행합니다.
 
 ### Showcase 앱 실행
 

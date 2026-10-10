@@ -22,7 +22,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 import { DeviceInfoModule, createDeviceInfo } from 'react-native-nitro-device-info';
 ```
 
-일반적인 웹 도구 체인에서는 다음 두 방식으로 웹 구현을 선택합니다.
+일반적인 웹 toolchain에서는 다음 두 방식으로 웹 구현을 선택합니다.
 
 - **Metro / react-native-web(Expo web)**: Metro는 `.web.ts` 플랫폼 확장자를 해석하여 `index.ts`보다 `index.web.ts`를 먼저 찾습니다. 웹 플랫폼에서는 `browser` export 조건도 적용합니다.
 - **webpack / Next.js**: `package.json`의 `exports`는 웹 빌드를 가리키는 `"browser"` 조건을 선언합니다. webpack은 `target: 'web'`에서 이 조건을 따릅니다.
