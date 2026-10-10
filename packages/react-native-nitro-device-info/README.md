@@ -12,8 +12,4 @@ This package supports iOS 15.1+ and Android API 24+. Your React Native and Nitro
 See the [project README](https://github.com/l2hyunwoo/react-native-nitro-device-info#readme) for usage and migration examples.
 See the [API documentation](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/) for method signatures and platform support.
 
-For server-verified Play Integrity, App Attest, or DeviceCheck tokens, use the separate optional `react-native-nitro-device-integrity` package.
-The integrity package is unpublished as of 2026-10-10. Token verification requires your backend.
-
-All packages share one repository and use independent versions through Changesets.
-See the [release procedure](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/CONTRIBUTING.md#publishing-to-npm).
+For Play Integrity, App Attest, or DeviceCheck tokens, see the optional [react-native-nitro-device-integrity package](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/react-native-nitro-device-integrity) for availability and setup. Token verification requires your backend.

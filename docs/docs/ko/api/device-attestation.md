@@ -1,6 +1,6 @@
 ---
 translationOf: api/device-attestation.md
-sourceCommit: 238a195ce4b3bfd8535a6c32775d42fce658731d
+sourceCommit: 09ad2e50615e614bf0286208e439515686f88194
 ---
 
 # Device attestation API {#device-attestation-api}
@@ -9,7 +9,7 @@ sourceCommit: 238a195ce4b3bfd8535a6c32775d42fce658731d
 
 <span class="rp-badge rp-badge--warning">미배포</span>
 
-이 패키지는 소스 레포지터리에 있지만 2026-10-10 기준 npm에 배포하지 않았습니다. 매니페스트의 `0.1.0`은 릴리스가 아닙니다. npm 설치 명령은 배포 후에 적용됩니다.
+이 패키지는 소스 레포지터리에서 제공하며 npm 설치 명령은 최초 배포 후에 적용됩니다.
 
 [지원 여부 배지 설명](/api/#availability-badges)을 읽으세요. Pod의 대상은 iOS 14 이상, Android 모듈의 대상은 API 24 이상입니다. 의존성은 더 높은 최소 버전을 요구할 수 있습니다. 웹용 entry point는 없습니다.
 
@@ -22,15 +22,15 @@ sourceCommit: 238a195ce4b3bfd8535a6c32775d42fce658731d
 이 API는 핵심 [기기 무결성 API](./device-integrity)를 **보완**합니다.
 
 - **로컬 탐지**([`isDeviceCompromised()`](./device-integrity)): 빠르고 오프라인에서 동작하지만 쉽게 우회할 수 있습니다. 첫 단계 사전 필터로 사용합니다.
-- **device attestation**(이 페이지): 네트워크를 사용하고 **서버에서 검증**하는 강한 판단 근거입니다.
+- **device attestation**(이 페이지): 플랫폼이 발급한 결과를 **서버에서 검증**합니다.
 
-로컬 검사는 빠른 사전 필터로, device attestation은 서버가 신뢰 여부를 판단하는 기준으로 사용하세요.
+서버에서 검증한 attestation과 서비스의 다른 위험 신호를 함께 사용해 접근 정책을 적용하세요.
 :::
 
 ## 토큰 발급과 검증은 누가 담당하나요? {#the-responsibility-boundary}
 
 :::warning 라이브러리는 토큰만 발급합니다. 검증은 서버에서 해야 합니다
-모든 메서드는 **불투명한 토큰**을 반환합니다. 라이브러리는 토큰 내용을 해석할 수 없으며 기기가 안전한지 불리언으로 반환하지 않습니다. **서버**에서 판단해야 하므로 토큰을 백엔드로 보내 검증하세요.
+토큰·attestation·assertion 발급 메서드는 **불투명한 값**을 반환합니다. 이 값만으로 기기가 안전한지 판단할 수는 없습니다. 결과를 백엔드로 보내 검증하고 보호할 작업을 허용할지 결정하세요.
 :::
 
 | 작업 | 담당 |
@@ -39,7 +39,7 @@ sourceCommit: 238a195ce4b3bfd8535a6c32775d42fce658731d
 | `clientDataHash`(SHA-256) 계산과 클라이언트 데이터 구성 | 앱 |
 | 토큰을 백엔드로 전송 | 앱 |
 | 복호화 / 서명 검증 / 판정 해석 | **서버** |
-| App Attest `keyId` 저장 | 앱(라이브러리는 상태를 보관하지 않음) |
+| App Attest `keyId` 저장 | 앱(라이브러리는 `keyId`를 저장하지 않음) |
 | Google Cloud / Apple 콘솔 설정 | 개발자 |
 
 ## 설치 {#installation}
@@ -134,7 +134,7 @@ generateKey(): Promise<string>
 Secure Enclave에서 App Attest 키 쌍을 만들고 `keyId`를 반환합니다.
 
 :::warning keyId를 직접 저장하세요
-`keyId`는 이 키에 접근하는 유일한 핸들입니다. Keychain 등에 저장하세요. 라이브러리는 상태를 보관하지 않습니다. App Attest 키는 **앱 재설치 후 유지되지 않습니다**. `DCError.invalidKey`가 발생하면 다시 생성하세요.
+`keyId`는 이 키에 접근하는 유일한 핸들입니다. Keychain 등에 저장하세요. 라이브러리는 `keyId`를 저장하지 않습니다. App Attest 키는 **앱 재설치 후 유지되지 않습니다**. `DCError.invalidKey`가 발생하면 다시 생성하세요.
 :::
 
 #### `attestKey()` {#attestkey}
@@ -229,11 +229,13 @@ if (integrity.providerType === 'playIntegrity') {
 POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 ```
 
-응답에서 다음 판정 값을 확인하세요.
+판정을 확인하기 전에 `requestDetails`를 검증하세요. `requestPackageName`이 예상한 앱과 일치하고 `timestampMillis`가 허용한 유효 기간 안에 있어야 합니다. Standard는 보호할 요청으로 계산한 `requestHash`와, Classic은 서버가 발급한 미사용 `nonce`와 일치하는지 확인하세요. 불일치하거나 만료된 요청은 백엔드에서 거부합니다.
+
+그다음 응답의 판정 값에 서비스 정책을 적용하세요.
 
 - `deviceIntegrity.deviceRecognitionVerdict`에 `MEETS_DEVICE_INTEGRITY` 포함 여부
 - `appIntegrity.appRecognitionVerdict === 'PLAY_RECOGNIZED'`
-- **빈** `deviceRecognitionVerdict`는 보안이 침해된 기기 또는 에뮬레이터를 나타내는 신호입니다.
+- `deviceRecognitionVerdict`가 비어 있거나 없으면 판정 기준을 충족하지 못한 것입니다. API hooking, 시스템 침해, Google의 검사를 통과하지 못한 에뮬레이터 등이 원인일 수 있습니다.
 
 [Play Integrity 판정](https://developer.android.com/google/play/integrity/verdicts)을 참고하세요.
 
@@ -265,15 +267,12 @@ POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 
 ## 제한 사항 {#limitations}
 
-소스 레포지터리에는 반복 실행할 수 있는 검사(`yarn test:integrity`, `yarn test:integrity:native`)와 시뮬레이터 하네스 검사가 있습니다. 패키지의 [검증 안내](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/react-native-nitro-device-integrity#validation-from-the-source-repository)를 참고하세요. 이 검사는 클라이언트 동작을 확인하며 실제 토큰 발급이나 백엔드 검증 성공을 확인하지는 않습니다. 데모는 고정된 테스트 challenge를 사용하고 토큰 발급까지만 수행합니다. 실제 앱은 서버에서 새 challenge를 받고 결과를 백엔드에서 검증해야 합니다.
-
 :::warning Device attestation의 범위와 한계
 
 - **App Attest는 탈옥 탐지기가 아닙니다.** 실제 Apple 하드웨어에서 변조하지 않은 정식 앱이 실행 중임을 증명합니다. 긍정적인 신호로 사용하세요.
-- **시뮬레이터 / 에뮬레이터**: iOS 시뮬레이터에서 `isSupported`는 `false`입니다. Play Integrity는 에뮬레이터에서 약하거나 빈 판정을 반환합니다.
-- **루팅 기기**: Play Integrity는 토큰을 반환하지만 `deviceRecognitionVerdict`가 비어 있습니다. 서버에서 실패로 처리해야 합니다.
+- **지원 여부와 판정은 다릅니다.** iOS 시뮬레이터에서 `isSupported`는 `false`입니다. Android의 Google Play Services 사용 가능 여부는 토큰 발급 성공이나 특정 무결성 판정을 보장하지 않습니다. 서버에서 [Play Integrity 판정](https://developer.android.com/google/play/integrity/verdicts)을 확인하세요.
 - **우회 방법이 존재합니다**(PlayIntegrityFix 등). device attestation은 더 넓은 부정 사용 방지 전략의 한 신호이며 절대적인 보장이 아닙니다.
 - **네트워크와 콘솔 설정이 필요합니다.** 없으면 토큰 발급 요청이 reject됩니다. reject를 처리하고 기기가 안전하다고 간주하지 마세요.
-- **App Attest 호출 제한**: Apple은 `attestKey` 호출 빈도를 제한합니다. 앱에서 빈도를 제어하세요. 상태를 보관하지 않는 라이브러리는 재시도나 타이머를 추가하지 않습니다.
+- **App Attest 호출 제한**: Apple은 `attestKey` 호출 빈도를 제한합니다. 앱에서 빈도를 제어하세요. App Attest 호출에는 라이브러리가 자동 재시도나 타이머를 추가하지 않습니다.
 
 :::

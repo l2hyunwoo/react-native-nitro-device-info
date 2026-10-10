@@ -5,7 +5,7 @@
 
 <span class="rp-badge rp-badge--warning">Unreleased</span>
 
-This package is available in the source repository but has no published npm release as of 2026-10-10. Its manifest version `0.1.0` is not a release. The npm installation instructions apply after publication.
+This package is available in the source repository. The npm installation instructions apply after its first publication.
 
 Read the [availability badge definitions](/api/#availability-badges). Its pod targets iOS 14+ and its Android module targets API 24+. Dependencies can require higher minimums. There is no web entry point.
 
@@ -21,19 +21,18 @@ This API **complements** the core [Device Integrity API](./device-integrity).
 
 - **Local detection** ([`isDeviceCompromised()`](./device-integrity)) — instant,
   offline, easily bypassed. A first-line pre-filter.
-- **Attestation** (this page) — network-bound, **server-verified**, strong. The
-  authoritative signal.
+- **Attestation** (this page) — platform-issued results that your **server verifies**.
 
-Use the local check as a fast pre-filter and attestation as the gate your server
-trusts.
+Apply your access policy using verified attestation results together with other
+risk signals for your service.
 :::
 
 ## The responsibility boundary
 
 :::warning This library issues tokens. It does not verify them.
-Every method returns an **opaque** token. The library cannot decode it and never
-returns a boolean "is this device safe?" — that decision belongs to **your
-server**. You must send the token to your backend for verification.
+Token, attestation, and assertion methods return **opaque** values. These values
+alone do not establish device trust. Send them to your backend for verification
+before deciding whether to accept a protected action.
 :::
 
 | Responsibility | Owner |
@@ -42,7 +41,7 @@ server**. You must send the token to your backend for verification.
 | Compute `clientDataHash` (SHA-256), assemble client data | your app |
 | Send the token to your backend | your app |
 | Decrypt / verify signature / interpret the verdict | **your server** |
-| Persist the App Attest `keyId` | your app (library is stateless) |
+| Persist the App Attest `keyId` | your app (the library does not persist `keyId`) |
 | Google Cloud / Apple console setup | you (developer) |
 
 ## Installation
@@ -152,7 +151,7 @@ Generates an App Attest key pair in the Secure Enclave and returns its `keyId`.
 
 :::warning Persist the keyId yourself
 The `keyId` is the only handle to this key — store it (e.g. Keychain). The
-library is stateless. App Attest keys **do not survive app reinstall**;
+library does not persist `keyId`. App Attest keys **do not survive app reinstall**;
 regenerate on `DCError.invalidKey`.
 :::
 
@@ -264,11 +263,16 @@ Send the token to your server, then call Google's decode endpoint (recommended):
 POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 ```
 
-Interpret the decoded verdict:
+Before checking verdicts, validate `requestDetails`: the expected
+`requestPackageName`, a recent `timestampMillis`, and the `requestHash` computed
+from the protected request (Standard) or the unused server-issued `nonce`
+(Classic). Reject mismatches and expired requests on your backend.
+
+Then apply your policy to the decoded verdict:
 
 - `deviceIntegrity.deviceRecognitionVerdict` containing `MEETS_DEVICE_INTEGRITY`
 - `appIntegrity.appRecognitionVerdict === 'PLAY_RECOGNIZED'`
-- An **empty** `deviceRecognitionVerdict` signals a compromised/emulated device.
+- An empty or absent `deviceRecognitionVerdict` means the device meets none of the verdict criteria. Possible causes include API hooking, system compromise, or an emulator that fails Google's integrity checks.
 
 See [Play Integrity verdicts](https://developer.android.com/google/play/integrity/verdicts).
 
@@ -308,26 +312,18 @@ cannot set it up — it only issues tokens once your app is configured.
 
 ## Limitations
 
-The source repository includes deterministic checks (`yarn test:integrity` and
-`yarn test:integrity:native`) and simulator harness tests. See the package
-[validation guide](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/react-native-nitro-device-integrity#validation-from-the-source-repository).
-These validate client behavior, not real token issuance or backend verification.
-The demo uses fixed sample challenges and stops at issuance. Production apps
-must use fresh server challenges and verify results on their backend.
-
-:::warning Be honest about what attestation can and cannot do
+:::warning Attestation limits
 
 - **App Attest is not a jailbreak detector.** It proves a genuine, unmodified
   app on genuine Apple hardware — use it as a *positive* signal.
-- **Simulators / emulators**: `isSupported` is `false` on the iOS Simulator;
-  Play Integrity returns weak/empty verdicts on emulators.
-- **Rooted devices**: Play Integrity still returns a token, but with an empty
-  `deviceRecognitionVerdict` — your server must treat that as a failure.
+- **Availability is separate from the verdict.** `isSupported` is `false` on the
+  iOS Simulator. Google Play Services availability on Android does not guarantee
+  token issuance or any integrity verdict. Check the [Play Integrity verdicts](https://developer.android.com/google/play/integrity/verdicts) on your server.
 - **Bypasses exist** (e.g. PlayIntegrityFix). Attestation is one signal in a
   broader anti-abuse strategy, not an absolute guarantee.
 - **Network + console configuration required.** Without them, token issuance
   rejects — handle the rejection; don't treat it as "safe".
 - **App Attest throttling**: Apple rate-limits `attestKey`. Control call
-  frequency in your app; the library adds no retry/timer (it stays stateless).
+  frequency in your app; the library adds no automatic retries or timers for App Attest calls.
 
 :::

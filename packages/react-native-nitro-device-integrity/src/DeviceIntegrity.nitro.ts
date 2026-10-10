@@ -9,11 +9,11 @@
  *
  * ## Responsibility boundary (READ THIS)
  *
- * This library is a **token-issuing client only**. It produces opaque tokens
- * on the device. It does NOT, and cannot, decrypt them or interpret a verdict.
+ * This library issues tokens, attestations, and assertions on the device.
+ * It does not verify these results or interpret a verdict.
  *
- * Every method returns an opaque, encrypted/signed token string. The caller
- * MUST forward that token to their own backend, which performs the actual
+ * Token, attestation, and assertion methods return opaque values. The caller
+ * MUST forward those results to their own backend, which performs the actual
  * verification:
  * - Play Integrity: call Google `:decodeIntegrityToken` (or self-managed keys)
  * - App Attest: validate Apple's cert chain, nonce, counter, and app-ID hash
@@ -51,9 +51,11 @@ export type IntegrityProviderType = 'playIntegrity' | 'appAttest' | 'unsupported
  *   // POST `token` to your server -> Google :decodeIntegrityToken
  * } else if (integrity.providerType === 'appAttest') {
  *   const keyId = await integrity.generateKey()            // store this yourself
- *   const attestation = await integrity.attestKey(keyId, clientDataHashB64) // once
+ *   const attestation = await integrity.attestKey(keyId, challengeHashB64) // once
  *   // POST { keyId, attestation } to your server for one-time validation
- *   const assertion = await integrity.generateAssertion(keyId, clientDataHashB64) // per request
+ *   // Hash fresh server challenge + payload for each protected request.
+ *   const assertion = await integrity.generateAssertion(keyId, requestClientDataHashB64)
+ *   // POST { keyId, assertion, clientData } to your server
  * }
  * ```
  */
@@ -140,7 +142,7 @@ export interface DeviceIntegrity
    * Generate a new App Attest key pair in the Secure Enclave.
    *
    * The returned `keyId` is the ONLY handle to this key. **You must persist it
-   * yourself** (e.g. Keychain). The library is stateless and does not store it.
+   * yourself** (e.g. Keychain). The library does not store the keyId.
    * App Attest keys do not survive app reinstall; regenerate on
    * `DCError.invalidKey`.
    *

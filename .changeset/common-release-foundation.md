@@ -3,4 +3,4 @@
 '@react-native-nitro-device-info/mcp-server': patch
 ---
 
-Include core package READMEs, package-specific repository metadata, and release tags for independent monorepo releases. Publish checked workspace archives so the MCP package retains its bundled specifications and documentation.
+Include core package READMEs and package-specific repository metadata in npm archives. Preserve the MCP server's bundled specifications and documentation, including the updated attestation API reference.
