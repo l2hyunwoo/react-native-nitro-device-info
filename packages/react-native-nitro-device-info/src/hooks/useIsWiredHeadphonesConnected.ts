@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { DeviceInfoModule } from '../index';
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 /**
  * Monitor wired headphone connection state.

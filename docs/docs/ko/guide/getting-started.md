@@ -49,7 +49,7 @@ Pod 설치 후 iOS 앱을 다시 빌드하세요. Metro만 재시작하면 네�
 
 ### iOS privacy info manifest {#ios-privacy-manifest}
 
-> **버전 안내(2026-10-10)**: privacy info manifest 자동 포함은 아직 배포되지 않았습니다. `1.8.3`에는 포함되지 않으며, 아래 설명은 [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144)가 반영된 `main` 브랜치 기준입니다.
+> **v1.9.0**: privacy info manifest 자동 포함은 v1.9.0부터 지원합니다. `1.8.3`에는 포함되지 않습니다. [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144)를 참고하세요.
 
 Pod는 `ios/PrivacyInfo.xcprivacy`를 `NitroDeviceInfo_privacy.bundle`에 포함합니다. CocoaPods는 이 리소스 번들을 앱에 복사합니다. Expo prebuild나 EAS Build에서 Pod를 설치할 때도 같습니다. 개인정보 보호 전용 config plugin 옵션을 켜거나 앱 타깃에 직접 복사할 필요는 없습니다.
 

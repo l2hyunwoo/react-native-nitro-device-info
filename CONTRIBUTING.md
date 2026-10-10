@@ -111,6 +111,8 @@ yarn test
 
 CI runs the core library Jest suite for library, dependency, and CI/Jest configuration changes. Run it alone with `yarn workspace react-native-nitro-device-info test --runInBand`. Root `yarn test` also runs the MCP server suite; device harness suites require their own runner.
 
+After `yarn prepare`, run `npm pack` in `packages/react-native-nitro-device-info`, then run `yarn test:web` from the repository root. This checks hooks, compat, browser/source conditions, and SSR fallbacks against the packed artifact using the showcase toolchain's installed esbuild. CI runs it in Validate NPM Package.
+
 Integrity package or demo changes run lint, `yarn workspace react-native-nitro-device-integrity typecheck`, and `yarn workspace react-native-nitro-device-integrity prepare`, followed by iOS and Android demo builds. Root `yarn prepare` builds only the core library. Dependency and CI workflow changes run both libraries' checks. Validate workflow syntax with `actionlint .github/workflows/ci.yml` and check that path filters cover the affected packages and configuration.
 
 ### Commit message convention
@@ -137,6 +139,15 @@ The pre-commit hook lints staged JavaScript and TypeScript files. The commit-msg
 ### Publishing to npm
 
 Maintainers publish through the manually dispatched [core library workflow](.github/workflows/publish.yml) and [MCP server workflow](.github/workflows/publish-mcp.yml). Supply the target `version` and use `dry_run` for validation without publishing. The root package does not define a `yarn release` script.
+
+For the v1.9.0 core release:
+
+1. Confirm CI and Docs Validation pass on the release-preparation PR, merge it, and wait for `main` CI and the documentation deployment to succeed.
+2. Run **Publish** on `main` with `version: 1.9.0` and `dry_run: true`. Wait for that run to finish before starting another Publish run; concurrent runs on the same branch can cancel one another.
+3. After the dry run succeeds, run **Publish** on `main` with `version: 1.9.0` and `dry_run: false`. The workflow creates the version commit, tag, npm publication, and GitHub Release. Keep the package version at v1.8.3 in the preparation PR because this workflow creates the version commit itself.
+4. Verify the published npm version and package contents. Add the [v1.9.0 upgrade notes](CHANGELOG.md) to the generated GitHub Release, and date the changelog entries after publication is confirmed.
+
+The optional integrity package remains unreleased. MCP publication uses its own workflow and version; do not publish either package as part of the core v1.9.0 release.
 
 ### Scripts
 

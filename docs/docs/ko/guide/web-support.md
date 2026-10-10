@@ -29,6 +29,12 @@ import { DeviceInfoModule, createDeviceInfo } from 'react-native-nitro-device-in
 
 서버 번들러가 네이티브 entry point를 선택하면 HybridObject는 처음 속성에 접근할 때 생성됩니다. 이 entry point를 import하는 것만으로는 HybridObject가 생성되지 않습니다. `DeviceInfoModule.model` 읽기, 메서드 호출, `createDeviceInfo()` 호출은 여전히 네이티브 바인딩이 필요하므로 서버에서 예외가 발생할 수 있습니다.
 
+## 훅과 compat 진입점 {#hooks-and-compat-entry}
+
+<span class="rp-badge rp-badge--tip">v1.9.0부터</span>
+
+훅과 `/compat` 진입점은 패키지의 조건부 export로 `DeviceInfoModule` singleton을 import합니다. 따라서 브라우저 번들은 `.web.js` 확장자 우선순위가 없어도 웹 구현을 선택합니다. `browser`와 `source` 조건을 함께 적용하면 루트의 `browser` export를 먼저 선택합니다.
+
 ## 브라우저에서 읽는 값과 fallback 값 {#what-is-real-vs-fallback}
 
 브라우저 API로 조회할 수 있으면 실제 값을 반환합니다. 나머지는 네이티브 구현이 미지원 플랫폼에서 반환하는 상수(`"unknown"` / `-1` / `false` / `[]`)를 반환합니다. **실제 값처럼 보이는 데이터를 만들어 반환하지 않습니다.**

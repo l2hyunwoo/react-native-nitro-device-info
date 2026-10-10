@@ -198,9 +198,9 @@ if (yearClass >= 2020) {
 
 ### `isCameraPresent: boolean` {#iscamerapresent-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 미배포</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (v1.9.0부터)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-iOS 구현은 아직 배포하지 않았습니다. v1.8.3까지의 배포 버전은 항상 `true`를 반환합니다. [구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/be976f0)을 참고하세요.
+iOS 구현은 v1.9.0부터 사용할 수 있습니다. v1.8.3까지의 배포 버전은 항상 `true`를 반환합니다. [구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/be976f0)을 참고하세요.
 
 카메라 하드웨어가 있는지 확인합니다. iOS 시뮬레이터나 영상 캡처 기기가 없을 때는 `false`를 반환합니다. 카메라 권한을 요청하지 않으며, `true`라고 해서 앱에 영상 촬영 권한이 있다는 뜻은 아닙니다.
 
@@ -210,9 +210,9 @@ const hasCamera = DeviceInfoModule.isCameraPresent;
 
 ### `isPinOrFingerprintSet: boolean` {#ispinorfingerprintset-boolean}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: 미배포</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (v1.9.0부터)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-iOS 구현은 아직 배포하지 않았습니다. v1.8.3까지의 배포 버전은 항상 `false`를 반환합니다. [구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/801903e)을 참고하세요.
+iOS 구현은 v1.9.0부터 사용할 수 있습니다. v1.8.3까지의 배포 버전은 항상 `false`를 반환합니다. [구현 변경](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/801903e)을 참고하세요.
 
 PIN, 지문 또는 Face ID를 설정했는지 확인합니다. iOS에서는 기기 소유자를 인증할 수 있는지 확인합니다. 생체 인증을 사용할 수 없거나 잠겨 있어 기기 암호로 인증하는 경우도 포함합니다. 암호를 설정하지 않았으면 `false`를 반환합니다. 사용자를 인증하거나 인증 창을 표시하지 않으며, 읽을 때마다 다시 검사합니다.
 

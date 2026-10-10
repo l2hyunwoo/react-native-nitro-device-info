@@ -29,11 +29,10 @@ describe('compat: async getters resolve and agree with core', () => {
     }
   });
 
-  test('getBatteryLevel resolves to a number in [0, 1]', async () => {
+  test('getBatteryLevel resolves to -1 or a number in [0, 1]', async () => {
     const value = await compat.getBatteryLevel();
     expect(typeof value).toBe('number');
-    expect(value).toBeGreaterThanOrEqual(0);
-    expect(value).toBeLessThanOrEqual(1);
+    expect(value === -1 || (value >= 0 && value <= 1)).toBe(true);
   });
 
   test('isEmulator resolves to a boolean matching core', async () => {

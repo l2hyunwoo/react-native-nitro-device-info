@@ -193,9 +193,9 @@ Returns an estimated "year class" representing when this device's hardware would
 
 ### `isCameraPresent: boolean`
 
-<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: unreleased</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (since v1.9.0)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
-The iOS implementation is unreleased. Published versions through v1.8.3 return `true` unconditionally. See the [implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/be976f0).
+The iOS implementation is available from v1.9.0. Published versions through v1.8.3 return `true` unconditionally. See the [implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/be976f0).
 
 Check if camera hardware is available. On iOS, returns `false` on the simulator or when no video capture device exists. This check does not request camera permission; a `true` result does not mean the app has permission to capture video.
 
@@ -205,9 +205,9 @@ const hasCamera = DeviceInfoModule.isCameraPresent;
 
 ### `isPinOrFingerprintSet: boolean`
 
-<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: unreleased</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+ (since v1.9.0)</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
-The iOS implementation is unreleased. Published versions through v1.8.3 return `false` unconditionally. See the [implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/801903e).
+The iOS implementation is available from v1.9.0. Published versions through v1.8.3 return `false` unconditionally. See the [implementation change](https://github.com/l2hyunwoo/react-native-nitro-device-info/commit/801903e).
 
 Check if PIN, fingerprint, or Face ID is configured. On iOS, checks whether device-owner authentication is available, including the device passcode fallback when biometrics are unavailable or locked out. Returns `false` when no passcode is set. This check does not authenticate the user or show a prompt; the result is checked again on each read.
 

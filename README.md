@@ -41,9 +41,11 @@ pnpm add react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
-> **Version availability (2026-10-10)**: Privacy manifest bundling is unreleased and is not included in `1.8.3`. The following describes `main` after [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144).
+> **v1.9.0**: Privacy manifest bundling is available from `1.9.0` and is not included in `1.8.3`. See [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144).
 
 The pod includes `PrivacyInfo.xcprivacy` in `NitroDeviceInfo_privacy.bundle`, including for Expo prebuild / EAS builds. No privacy-specific config plugin option is needed. See [iOS Privacy Manifest](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/getting-started#ios-privacy-manifest) for the declared API reasons and usage limits.
+
+> **Upgrading to v1.9.0**: An unavailable iOS battery reading changes from `0` to `-1`; a known empty battery remains `0`. `useBatteryLevel()` and `useBatteryLevelIsLow()` return `null` when unavailable. Reinstall pods and rebuild native apps for the iOS capability, privacy-manifest, and Android audio fixes. See the [release notes](CHANGELOG.md).
 
 ### Android Setup
 
