@@ -3,7 +3,13 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { test } = require('node:test');
-const { prepare, verify, publish, readRegistry } = require('./release.cjs');
+const {
+  prepare,
+  verify,
+  publish,
+  readRegistry,
+  verifyOidc,
+} = require('./release.cjs');
 
 const sha = '1234567890abcdef1234567890abcdef12345678';
 const env = {
@@ -459,4 +465,180 @@ test('pending changesets allow a dry run and block publication before versioning
     0
   );
   assert.equal(f.tags.size, 0);
+});
+
+function oidcFixture(t, overrides = {}) {
+  const f = fixture(t);
+  const summary = path.join(f.root, 'summary.md');
+  const oidcEnv = {
+    ...env,
+    RELEASE_PUBLISH: 'false',
+    ACTIONS_ID_TOKEN_REQUEST_URL:
+      'https://pipelines.actions.githubusercontent.com/oidc?api-version=2',
+    ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'test-request-token',
+    GITHUB_STEP_SUMMARY: summary,
+  };
+  const claims = {
+    iss: 'https://token.actions.githubusercontent.com',
+    aud: 'npm:registry.npmjs.org',
+    repository: env.GITHUB_REPOSITORY,
+    ref: env.GITHUB_REF,
+    environment: 'npm',
+    workflow_ref: `${env.GITHUB_REPOSITORY}/.github/workflows/release.yml@refs/heads/main`,
+    ...overrides,
+  };
+  const idToken = `header.${Buffer.from(JSON.stringify(claims)).toString('base64url')}.signature`;
+  const calls = [];
+  const logs = [];
+  const request = async (url, options) => {
+    calls.push([String(url), options]);
+    if (calls.length === 1)
+      return { ok: true, status: 200, json: async () => ({ value: idToken }) };
+    return {
+      ok: true,
+      status: 201,
+      json: async () => ({
+        token_type: 'oidc',
+        token: `test-exchange-token-${calls.length}`,
+        expires: new Date(Date.now() + 3_600_000).toISOString(),
+      }),
+    };
+  };
+  return {
+    ...f,
+    env: oidcEnv,
+    summary,
+    idToken,
+    requests: calls,
+    request,
+    logs,
+    log: (line) => logs.push(line),
+  };
+}
+
+test('OIDC verification exchanges all package tokens without publishing or saving credentials', async (t) => {
+  const f = oidcFixture(t);
+  const results = await verifyOidc(f.root, f);
+  assert.deepEqual(
+    results.map((result) => result.name),
+    entries.map(([, name]) => name)
+  );
+  assert.equal(
+    new URL(f.requests[0][0]).searchParams.get('audience'),
+    'npm:registry.npmjs.org'
+  );
+  assert.equal(
+    f.requests[0][1].headers.Authorization,
+    'Bearer test-request-token'
+  );
+  assert.deepEqual(
+    f.requests.slice(1).map(([url]) => url),
+    entries.map(
+      ([, name]) =>
+        `https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${name.replace('/', '%2f')}`
+    )
+  );
+  for (const [, options] of f.requests.slice(1)) {
+    assert.equal(options.method, 'POST');
+    assert.equal(options.redirect, 'error');
+    assert.equal(options.headers.Authorization, `Bearer ${f.idToken}`);
+  }
+  assert.equal(
+    f.calls.length,
+    0,
+    'OIDC verification must not run npm or GitHub mutation commands'
+  );
+  const summary = fs.readFileSync(f.summary, 'utf8');
+  assert.ok(!summary.includes(f.idToken));
+  assert.ok(!summary.includes('test-exchange-token'));
+  assert.equal(
+    f.logs.filter((line) => line.startsWith('::add-mask::')).length,
+    4
+  );
+  assert.ok(
+    f.logs
+      .filter((line) => !line.startsWith('::add-mask::'))
+      .every((line) => !line.includes('test-exchange-token'))
+  );
+});
+
+test('OIDC verification rejects unsafe dispatches before requesting credentials', async (t) => {
+  for (const override of [
+    { RELEASE_PUBLISH: 'true' },
+    { GITHUB_ACTIONS: 'false' },
+    { GITHUB_EVENT_NAME: 'push' },
+    { GITHUB_REF: 'refs/heads/feature/test' },
+  ]) {
+    const f = oidcFixture(t);
+    await assert.rejects(
+      verifyOidc(f.root, { ...f, env: { ...f.env, ...override } })
+    );
+    assert.equal(f.requests.length, 0);
+  }
+});
+
+test('OIDC claims must identify the protected release workflow before npm exchange', async (t) => {
+  for (const override of [
+    { aud: 'sigstore' },
+    { environment: 'other' },
+    { repository: 'other/repo' },
+    { workflow_ref: 'owner/repo/.github/workflows/other.yml@refs/heads/main' },
+  ]) {
+    const f = oidcFixture(t, override);
+    await assert.rejects(verifyOidc(f.root, f));
+    assert.equal(f.requests.length, 1);
+  }
+});
+
+test('a failed package exchange still checks the other packages and fails the job', async (t) => {
+  const f = oidcFixture(t);
+  const request = async (url, options) => {
+    const response = await f.request(url, options);
+    if (String(url).endsWith('/react-native-nitro-device-integrity'))
+      return {
+        ok: false,
+        status: 401,
+        json: () => assert.fail('Never print an error response body'),
+      };
+    return response;
+  };
+  await assert.rejects(
+    verifyOidc(f.root, { ...f, request }),
+    /One or more npm OIDC exchanges failed/
+  );
+  assert.equal(f.requests.length, 4);
+  assert.match(
+    fs.readFileSync(f.summary, 'utf8'),
+    /npm exchange failed: HTTP 401/
+  );
+  assert.ok(
+    f.logs.some((line) =>
+      line.includes(
+        '@react-native-nitro-device-info/mcp-server: OIDC exchange succeeded'
+      )
+    )
+  );
+});
+
+test('an empty or expired npm credential cannot pass OIDC verification', async (t) => {
+  for (const body of [
+    { token_type: 'oidc', token: '', expires: '2099-01-01T00:00:00Z' },
+    {
+      token_type: 'oidc',
+      token: 'test-expired-token',
+      expires: '2000-01-01T00:00:00Z',
+    },
+  ]) {
+    const f = oidcFixture(t);
+    const request = async (url, options) => {
+      const response = await f.request(url, options);
+      return f.requests.length === 1
+        ? response
+        : { ok: true, status: 201, json: async () => body };
+    };
+    await assert.rejects(
+      verifyOidc(f.root, { ...f, request }),
+      /One or more npm OIDC exchanges failed/
+    );
+  }
 });

@@ -226,6 +226,115 @@ function releaseNotes(root, pkg) {
   return `Published ${pkg.name}@${pkg.version}.`;
 }
 
+async function verifyOidc(
+  root,
+  { env = process.env, request = fetch, log = console.log } = {}
+) {
+  assert.equal(
+    env.GITHUB_ACTIONS,
+    'true',
+    'OIDC verification requires Actions'
+  );
+  assert.equal(env.GITHUB_EVENT_NAME, 'workflow_dispatch');
+  assert.equal(env.GITHUB_REF, 'refs/heads/main');
+  assert.equal(
+    env.RELEASE_PUBLISH,
+    'false',
+    'Disable publish for OIDC verification'
+  );
+  assert.ok(
+    env.ACTIONS_ID_TOKEN_REQUEST_URL && env.ACTIONS_ID_TOKEN_REQUEST_TOKEN
+  );
+  const audience = 'npm:registry.npmjs.org';
+  const url = new URL(env.ACTIONS_ID_TOKEN_REQUEST_URL);
+  url.searchParams.set('audience', audience);
+  const identity = await request(url, {
+    headers: { Authorization: `Bearer ${env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}` },
+    redirect: 'error',
+    signal: AbortSignal.timeout(30_000),
+  });
+  assert.ok(identity.ok, `GitHub OIDC request failed: HTTP ${identity.status}`);
+  const { value: idToken } = await identity.json().catch(() => {
+    throw new Error('GitHub returned invalid OIDC JSON');
+  });
+  assert.ok(
+    typeof idToken === 'string' && /^\S+$/.test(idToken),
+    'Missing GitHub OIDC token'
+  );
+  log(`::add-mask::${idToken}`);
+  const claims = JSON.parse(
+    Buffer.from(idToken.split('.')[1], 'base64url').toString()
+  );
+  assert.equal(claims.iss, 'https://token.actions.githubusercontent.com');
+  assert.equal(claims.aud, audience);
+  assert.equal(claims.repository, env.GITHUB_REPOSITORY);
+  assert.equal(claims.ref, 'refs/heads/main');
+  assert.equal(claims.environment, 'npm');
+  assert.equal(
+    claims.workflow_ref,
+    `${env.GITHUB_REPOSITORY}/.github/workflows/release.yml@refs/heads/main`
+  );
+  const results = [];
+  for (const pkg of publicPackages(root)) {
+    try {
+      const escapedName = pkg.name.replace('/', '%2f');
+      const response = await request(
+        `${registryUrl}/-/npm/v1/oidc/token/exchange/package/${escapedName}`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${idToken}` },
+          redirect: 'error',
+          signal: AbortSignal.timeout(30_000),
+        }
+      );
+      assert.ok(response.ok, `npm exchange failed: HTTP ${response.status}`);
+      const body = await response.json().catch(() => {
+        throw new Error('npm returned invalid exchange JSON');
+      });
+      assert.ok(
+        typeof body.token === 'string' && /^\S+$/.test(body.token),
+        'Missing npm exchange token'
+      );
+      log(`::add-mask::${body.token}`);
+      assert.ok(body.token_type === 'oidc', 'Unexpected npm token type');
+      assert.ok(
+        Date.parse(body.expires) > Date.now(),
+        'npm exchange token is expired'
+      );
+      results.push({
+        name: pkg.name,
+        status: response.status,
+        expires: body.expires,
+      });
+      log(`${pkg.name}: OIDC exchange succeeded (HTTP ${response.status})`);
+    } catch (error) {
+      results.push({ name: pkg.name, error: error.message });
+      log(`${pkg.name}: ${error.message}`);
+    }
+  }
+  if (env.GITHUB_STEP_SUMMARY) {
+    fs.appendFileSync(
+      env.GITHUB_STEP_SUMMARY,
+      [
+        '## npm OIDC token exchange',
+        '',
+        ...results.map(
+          (result) =>
+            `- ${result.name}: ${result.error || `HTTP ${result.status}, expires ${result.expires}`}`
+        ),
+        '',
+        'Only token exchange was requested. No packages, dist-tags, Git tags, or GitHub Releases were changed.',
+        '',
+      ].join('\n')
+    );
+  }
+  assert.ok(
+    results.every((result) => !result.error),
+    'One or more npm OIDC exchanges failed'
+  );
+  return results;
+}
+
 async function publish(
   root,
   output,
@@ -363,8 +472,9 @@ async function main() {
   const root = path.resolve(__dirname, '..');
   const [command, directory = '.release', ...extra] = process.argv.slice(2);
   assert.ok(
-    ['prepare', 'verify', 'publish'].includes(command) && !extra.length,
-    'Usage: node scripts/release.cjs <prepare|verify|publish> [artifact-directory]'
+    ['prepare', 'verify', 'publish', 'verify-oidc'].includes(command) &&
+      !extra.length,
+    'Usage: node scripts/release.cjs <prepare|verify|publish|verify-oidc> [artifact-directory]'
   );
   const output = path.resolve(root, directory);
   assert.ok(
@@ -373,6 +483,7 @@ async function main() {
         Number(process.versions.node.split('.')[1]) >= 14),
     'Node.js 22.14.0+ is required'
   );
+  if (command === 'verify-oidc') return verifyOidc(root);
   const npm = run('npm', ['--version']).trim().split('.').map(Number);
   assert.ok(
     npm[0] > 11 ||
@@ -382,7 +493,7 @@ async function main() {
   await { prepare, verify, publish }[command](root, output);
 }
 
-module.exports = { prepare, verify, publish, readRegistry };
+module.exports = { prepare, verify, publish, readRegistry, verifyOidc };
 if (require.main === module)
   main().catch((error) => {
     console.error(error.message);

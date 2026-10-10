@@ -10,6 +10,11 @@ on:
         type: boolean
         required: true
         default: false
+      verify_oidc:
+        description: 'Only verify npm OIDC token exchange for all packages; never publish'
+        type: boolean
+        required: true
+        default: false
 
 permissions:
   contents: read
@@ -58,7 +63,7 @@ jobs:
 
   validate:
     name: Validate Release
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && !inputs.verify_oidc
     uses: ./.github/workflows/ci.yml
     with:
       full_validation: true
@@ -68,7 +73,7 @@ jobs:
 
   prepare:
     name: Prepare Release Archives
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && !inputs.verify_oidc
     needs: validate
     runs-on: ubuntu-26.04
     timeout-minutes: 30
@@ -111,9 +116,36 @@ jobs:
         if: ${{ !inputs.publish }}
         run: echo 'Dry run completed. Verified archives are attached to this run; npm publication, tags, and GitHub Releases were skipped.' >> "$GITHUB_STEP_SUMMARY"
 
+  verify-oidc:
+    name: Verify npm OIDC Token Exchange
+    if: github.event_name == 'workflow_dispatch' && inputs.verify_oidc && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout verification commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+
+      - name: Exchange OIDC tokens without publishing
+        env:
+          RELEASE_PUBLISH: ${{ inputs.publish }}
+        run: node scripts/release.cjs verify-oidc
+
   publish:
     name: Publish Verified Archives
-    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && !inputs.verify_oidc && github.ref == 'refs/heads/main'
     needs: prepare
     runs-on: ubuntu-26.04
     timeout-minutes: 20

@@ -35,7 +35,8 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
   - **mcp-server**: typecheck + build + test when the server or its bundled source/documentation inputs change
 - Main pushes only create or update a Changesets version PR; they never publish. The version command refreshes the Yarn lockfile before the action commits.
 - Manual `release.yml` dispatch defaults `publish` to false. It validates CI, selects unpublished exact versions of device-info, device-integrity, and MCP, then uploads verified archives with their commit SHA and SHA512 digests.
-- Publication requires `publish: true`, the main branch, no pending changesets, and the `npm` environment. Only that job has `id-token: write`; it uses npm CLI OIDC to publish the exact downloaded archives after revalidation. No npm token or automatic first-publication bootstrap is used.
+- Manual `verify_oidc: true` skips builds and publication. Its protected `npm` environment job checks GitHub OIDC claims and exchanges tokens for all three public packages. It masks credentials and records only results and expiry times. Both inputs set to true fail before token requests.
+- Publication requires `publish: true`, `verify_oidc: false`, the main branch, no pending changesets, and the `npm` environment. Only publish and OIDC verification jobs have `id-token: write`. Publication uses npm CLI OIDC to publish the exact downloaded archives after revalidation. No npm token or automatic first-publication bootstrap is used.
 - Package tags use `{package-name}@{version}`. Tags and GitHub Releases are created only after the registry confirms the matching archive. Rerun failed jobs to recover partial releases with the original artifact; existing exact versions are not republished.
 - Release concurrency is repository-wide and never cancels an in-progress release.
 
