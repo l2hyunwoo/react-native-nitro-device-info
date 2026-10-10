@@ -628,6 +628,8 @@ test('an empty or expired npm credential cannot pass OIDC verification', async (
       token: 'test-expired-token',
       expires: '2000-01-01T00:00:00Z',
     },
+    { token_type: 'oidc', token: 'test-expired-token', expires: 946684800000 },
+    { token_type: 'oidc', token: 'test-invalid-token', expires: 'invalid' },
   ]) {
     const f = oidcFixture(t);
     const request = async (url, options) => {
@@ -660,4 +662,23 @@ test('a successful npm exchange does not require optional expiry metadata', asyn
   const summary = fs.readFileSync(f.summary, 'utf8');
   assert.ok(!summary.includes('undefined'));
   assert.ok(!summary.includes('test-exchange-token'));
+});
+
+test('npm expiry metadata accepts epoch milliseconds', async (t) => {
+  const f = oidcFixture(t);
+  const expires = Date.now() + 3_600_000;
+  const request = async (url, options) => {
+    const response = await f.request(url, options);
+    if (f.requests.length === 1) return response;
+    return {
+      ok: true,
+      status: 201,
+      json: async () => ({ ...(await response.json()), expires }),
+    };
+  };
+  const results = await verifyOidc(f.root, { ...f, request });
+  assert.ok(results.every((result) => result.expires === expires));
+  assert.ok(
+    f.logs.some((line) => line.includes('expiry metadata type number'))
+  );
 });
