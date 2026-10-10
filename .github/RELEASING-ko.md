@@ -12,6 +12,20 @@
 - GitHub-hosted runner에서 Node 22.14 이상과 npm 11.5.1 이상을 사용합니다. publish job은 `id-token: write` 권한으로 OIDC 인증을 사용하며 장기 `NPM_TOKEN`은 사용하지 않습니다.
 - 한 번도 배포하지 않은 패키지는 publisher 설정에 앞서 [최초 배포 절차](#integrity-최초-배포)를 거쳐야 합니다.
 
+## 배포 없이 OIDC 검증
+
+`main`에서 **Release**를 `publish: false`, `verify_oidc: true`로 실행합니다.
+
+```sh
+gh workflow run release.yml --ref main -f publish=false -f verify_oidc=true
+```
+
+선택한 커밋을 검토한 뒤 `npm` environment를 승인합니다. 이 모드는 GitHub OIDC 토큰을 요청하고 공개 패키지 3개의 npm 인증 토큰으로 교환합니다. 저장소, workflow, 브랜치, environment, 토큰 종류와 만료 시간을 검사합니다. 토큰 값은 마스킹하며 파일에 저장하지 않습니다. job 요약에는 패키지 이름, HTTP 결과, 만료 시간만 기록합니다.
+
+이 모드에서는 릴리스 빌드와 배포를 건너뜁니다. 패키지 버전, dist-tag, Git 태그, GitHub Release를 변경하지 않습니다. 두 입력을 모두 `true`로 지정하면 검증에 실패하며 publish job은 실행되지 않습니다.
+
+토큰 교환에 성공해도 npm이 요구하는 최초 배포를 대신하지는 않습니다. 새 trusted publisher는 등록 후 2일 안에 첫 배포를 완료해야 합니다. [설정 만료 정책](https://docs.npmjs.com/trusted-publishers/#trusted-publisher-configuration-expiry)을 참고하세요.
+
 ## 릴리스 순서
 
 1. 영향을 받는 패키지의 changeset과 변경을 병합합니다. `main` push 시 **chore(release): version packages** PR을 만들거나 갱신합니다. push 이벤트로 npm에 배포하지는 않습니다.

@@ -12,6 +12,20 @@ This guide is for maintainers publishing the three public packages. For changese
 - Use a GitHub-hosted runner with Node 22.14+ and npm 11.5.1+. The publish job has `id-token: write`; it uses OIDC without a long-lived `NPM_TOKEN`.
 - A package that has never been published needs the [first-publication procedure](#first-integrity-publication) before configuring its publisher.
 
+## Verify OIDC without publication
+
+Dispatch **Release** on `main` with `publish: false` and `verify_oidc: true`:
+
+```sh
+gh workflow run release.yml --ref main -f publish=false -f verify_oidc=true
+```
+
+Approve the `npm` environment after reviewing the selected commit. This mode requests a GitHub OIDC identity and exchanges it for npm credentials for all three public packages. It checks the repository, workflow, branch, environment, token type, and expiry. Token values are masked and are not saved to files. The job summary contains only package names, HTTP results, and expiry times.
+
+This mode skips release builds and publication. It does not change package versions, dist-tags, Git tags, or GitHub Releases. Setting both inputs to `true` fails verification and cannot run the publish job.
+
+Token exchange does not replace npm's requirement for a first successful publish within two days of creating a trusted publisher. See [configuration expiry](https://docs.npmjs.com/trusted-publishers/#trusted-publisher-configuration-expiry).
+
 ## Release sequence
 
 1. Merge changes with changesets for the affected packages. A push to `main` opens or updates **chore(release): version packages**. Push events do not publish.
