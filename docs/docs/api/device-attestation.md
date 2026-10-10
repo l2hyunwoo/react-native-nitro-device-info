@@ -3,9 +3,9 @@
 **Server-verifiable, hardware-backed** device attestation via the opt-in package
 `react-native-nitro-device-integrity`.
 
-<span class="rp-badge rp-badge--warning">Unreleased</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span>
 
-This package is available in the source repository. The npm installation instructions apply after its first publication.
+The version badges on this page refer to the integrity package. [v0.1.0 on npm](https://www.npmjs.com/package/react-native-nitro-device-integrity/v/0.1.0) corresponds to [this source](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/react-native-nitro-device-integrity%400.1.0/packages/react-native-nitro-device-integrity).
 
 Read the [availability badge definitions](/api/#availability-badges). Its pod targets iOS 14+ and its Android module targets API 24+. Dependencies can require higher minimums. There is no web entry point.
 
@@ -65,7 +65,7 @@ const integrity = createDeviceIntegrity();
 
 #### `isSupported`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 readonly isSupported: boolean
@@ -77,7 +77,7 @@ iOS, `DCAppAttestService.shared.isSupported` — always `false` on the Simulator
 
 #### `providerType`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 readonly providerType: 'playIntegrity' | 'appAttest' | 'unsupported'
@@ -92,7 +92,7 @@ calling platform-specific methods.
 
 #### `prepareStandardProvider()`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 prepareStandardProvider(cloudProjectNumber: string): Promise<void>
@@ -109,7 +109,7 @@ example, a network failure is `STANDARD_INTEGRITY_ERROR_-3`. On iOS:
 
 #### `requestIntegrityToken()`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 requestIntegrityToken(requestHash: string): Promise<string>
@@ -125,7 +125,7 @@ opaque, encrypted token string.
 
 #### `requestClassicIntegrityToken()`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--warning">iOS: rejects</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 requestClassicIntegrityToken(nonce: string, cloudProjectNumber: string): Promise<string>
@@ -141,7 +141,7 @@ base64 value of 16–500 bytes.
 
 #### `generateKey()`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 generateKey(): Promise<string>
@@ -157,7 +157,7 @@ regenerate on `DCError.invalidKey`.
 
 #### `attestKey()`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 attestKey(keyId: string, clientDataHash: string): Promise<string>
@@ -172,7 +172,7 @@ opaque CBOR attestation object.
 
 #### `generateAssertion()`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 generateAssertion(keyId: string, clientDataHash: string): Promise<string>
@@ -190,7 +190,7 @@ monotonic counter to detect replays.
 
 #### `getDeviceCheckToken()`
 
-<span class="rp-badge rp-badge--warning">Unreleased</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
+<span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: rejects</span> <span class="rp-badge rp-badge--warning">Web: unavailable</span>
 
 ```typescript
 getDeviceCheckToken(): Promise<string>
