@@ -18,7 +18,8 @@
     "prepare": "yarn workspace react-native-nitro-device-info prepare",
     "nitrogen": "yarn workspace react-native-nitro-device-info nitrogen",
     "nitrogen:integrity": "yarn workspace react-native-nitro-device-integrity nitrogen",
-    "test:security": "node --test scripts/security-regressions.cjs"
+    "test:security": "node --test scripts/security-regressions.cjs",
+    "test:web": "node --test scripts/web-package-regressions.cjs"
   },
   "repository": {
     "type": "git",

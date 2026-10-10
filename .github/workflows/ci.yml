@@ -55,6 +55,7 @@ jobs:
               - 'yarn.lock'
               - '.yarn/patches/**'
               - 'scripts/security-regressions.cjs'
+              - 'scripts/web-package-regressions.cjs'
               - '.github/workflows/ci.yml'
               - 'jest.config.js'
               - 'tsconfig.json'
@@ -354,6 +355,9 @@ jobs:
           tar -tzf *.tgz | grep "package/src/DeviceInfo.nitro.ts"
           tar -tzf *.tgz | grep "package/ios/DeviceInfo.swift"
           tar -tzf *.tgz | grep "package/android"
+
+      - name: Verify web package hooks
+        run: yarn test:web
 
   # MCP Server CI - only runs when packages/mcp-server changes
   mcp-server:

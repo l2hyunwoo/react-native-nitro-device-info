@@ -34,6 +34,11 @@ common web toolchains:
   `"browser"` condition that points at the web build, which webpack honors for
   `target: 'web'`.
 
+In the planned v1.9.0 release, hooks and the `/compat` entry import the singleton
+through the package's conditional exports. Browser bundles select the web
+implementation without requiring `.web.js` extension priority. The root
+`browser` export takes precedence over `source` when both conditions are enabled.
+
 If a server bundler selects the native entry, its HybridObject is created lazily on first property access. Importing that entry does not create a HybridObject. Reading `DeviceInfoModule.model`, calling a method, or calling `createDeviceInfo()` still requires native bindings and can throw on the server.
 
 ## What is real vs. fallback

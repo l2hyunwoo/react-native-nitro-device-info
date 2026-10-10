@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
-import { DeviceInfoModule } from '../index';
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 /**
  * Monitor screen brightness changes (iOS only).

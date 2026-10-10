@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { DeviceInfoModule } from '../index';
+import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 /**
  * Monitor battery level changes by polling every five seconds.

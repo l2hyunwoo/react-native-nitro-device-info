@@ -27,6 +27,8 @@ import { DeviceInfoModule, createDeviceInfo } from 'react-native-nitro-device-in
 - **Metro / react-native-web(Expo web)**: Metro는 `.web.ts` 플랫폼 확장자를 해석하여 `index.ts`보다 `index.web.ts`를 먼저 찾습니다. 웹 플랫폼에서는 `browser` export 조건도 적용합니다.
 - **webpack / Next.js**: `package.json`의 `exports`는 웹 빌드를 가리키는 `"browser"` 조건을 선언합니다. webpack은 `target: 'web'`에서 이 조건을 따릅니다.
 
+출시 예정인 v1.9.0에서는 훅과 `/compat` 진입점이 패키지의 조건부 export를 통해 singleton을 import합니다. 따라서 브라우저 번들은 `.web.js` 확장자 우선순위가 없어도 웹 구현을 선택합니다. `browser`와 `source` 조건을 함께 적용하면 루트의 `browser` export를 먼저 선택합니다.
+
 서버 번들러가 네이티브 entry point를 선택하면 HybridObject는 처음 속성에 접근할 때 생성됩니다. 이 entry point를 import하는 것만으로는 HybridObject가 생성되지 않습니다. `DeviceInfoModule.model` 읽기, 메서드 호출, `createDeviceInfo()` 호출은 여전히 네이티브 바인딩이 필요하므로 서버에서 예외가 발생할 수 있습니다.
 
 ## 브라우저에서 읽는 값과 fallback 값 {#what-is-real-vs-fallback}
