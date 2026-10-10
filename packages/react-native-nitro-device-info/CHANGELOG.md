@@ -1,6 +1,6 @@
 # react-native-nitro-device-info
 
-## 1.9.0 (Unreleased)
+## 1.9.0
 
 Changes since v1.8.3:
 

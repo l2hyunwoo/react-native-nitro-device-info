@@ -28,7 +28,7 @@ Each API section shows its introduction version and current platform behavior. G
 
 Web entry points and their fallback values are available from **v1.8.0**. A `Web: limited` badge identifies browser-derived values. Browser permissions, API availability, and SSR can still produce fallbacks. A fallback does not provide the native feature.
 
-The iOS camera and device-authentication implementations are planned for v1.9.0. Core releases through v1.8.3 expose those names but return constants on iOS. A `planned v1.9.0` badge marks the upcoming implementation, which is not yet published. The separate attestation package also has no published npm release as of 2026-10-10.
+The iOS camera and device-authentication implementations are available from v1.9.0. Core releases through v1.8.3 expose those names but return constants on iOS. The separate attestation package also has no published npm release as of 2026-10-10.
 
 ### Version evidence
 
