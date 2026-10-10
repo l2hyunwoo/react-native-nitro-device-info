@@ -11,8 +11,7 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
 | File | Description |
 |------|-------------|
 | `workflows/ci.yml` | Main CI: lint, typecheck, build, build-ios, build-android, validate-package, mcp-server (path-based change detection) |
-| `workflows/publish.yml` | Library publish: version bump -> tag -> NPM publish with provenance -> GitHub Release (`workflow_dispatch`) |
-| `workflows/publish-mcp.yml` | MCP server publish: validate -> version bump -> tag -> NPM publish -> GitHub Release (`workflow_dispatch`) |
+| `workflows/release.yml` | Changesets version PRs on main push; manual dry run or verified archive publication for all public packages |
 | `workflows/docs-deploy.yml` | Docs deployment to GitHub Pages on push to main (`docs/**` path filter) |
 | `workflows/docs-validation.yml` | Docs build validation on PRs (`docs/**` path filter) |
 | `CODEOWNERS` | Default reviewer: @l2hyunwoo (all files) |
@@ -22,29 +21,35 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
 ## For AI Agents
 
 ### Working In This Directory
-- CI uses `dorny/paths-filter@v3` for change detection with 4 filters: `library`, `mcp-server`, `docs`, `deps`
-- All workflows use Node.js 22 and `yarn install --immutable`
+- CI uses SHA-pinned `dorny/paths-filter` for change detection: `library`, `integrity`, `mcp-server`, `docs`, `deps`. MCP also tracks both bundled Nitro specs, documentation, and the root README. Shared scripts, Changesets, and release workflow changes trigger dependency checks.
+- Reusable CI defaults `full_validation` to true so manual releases run every native and archive check.
+- Workflows use Node.js 22 and `yarn install --immutable`. Release jobs follow the Node.js 22 release line and pin npm 11.5.1; the CLI enforces Node.js 22.14.0+ and npm 11.5.1+.
 - CI jobs (triggered on push to main/develop and PRs):
   - **lint**: oxlint + TypeScript typecheck (runs when library, mcp-server, or deps change)
   - **build**: TypeScript build via `yarn prepare`, verifies `lib/module`, `lib/typescript`, `nitrogen/generated` outputs
   - **build-ios**: CocoaPods install + xcodebuild on `macos-15` (showcase app, Release config, iphonesimulator)
   - **build-android**: ktlint check + Gradle assembleDebug on `ubuntu-26.04` (Java 17 temurin)
-  - **validate-package**: `npm pack` + verifies tarball contains required files (lib, src, ios, android)
-  - **mcp-server**: typecheck + build + test (only when `packages/mcp-server/**` changes)
-- Publish workflows are `workflow_dispatch` only, require `version` input (X.Y.Z format) and support `dry_run`
-- Library tags: `v{VERSION}`, MCP server tags: `mcp-server-v{VERSION}`
+  - **validate-package**: build and pack all three public packages; run release/checker tests, archive validation, isolated Expo/MCP smoke checks, and web package regressions
+  - **build-integrity**: native iOS/Android example builds; Swift/Kotlin regression suite on macOS with a checksum-verified Kotlin compiler
+  - **mcp-server**: typecheck + build + test when the server or its bundled source/documentation inputs change
+- Main pushes only create or update a Changesets version PR; they never publish. The version command refreshes the Yarn lockfile before the action commits.
+- Manual `release.yml` dispatch defaults `publish` to false. It validates CI, selects unpublished exact versions of device-info, device-integrity, and MCP, then uploads verified archives with their commit SHA and SHA512 digests.
+- Publication requires `publish: true`, the main branch, no pending changesets, and the `npm` environment. Only that job has `id-token: write`; it uses npm CLI OIDC to publish the exact downloaded archives after revalidation. No npm token or automatic first-publication bootstrap is used.
+- Package tags use `{package-name}@{version}`. Tags and GitHub Releases are created only after the registry confirms the matching archive. Rerun failed jobs to recover partial releases with the original artifact; existing exact versions are not republished.
+- Release concurrency is repository-wide and never cancels an in-progress release.
 
 ### Testing Requirements
-- Verify workflow syntax with `act` or manual trigger
+- Verify workflow syntax with `actionlint`; do not trigger a workflow or publish unless explicitly authorized
 - Test path filters match actual monorepo directory structure (`packages/react-native-nitro-device-info/`, `packages/mcp-server/`, `docs/`, `example/`)
-- Ensure `NPM_TOKEN` and `GITHUB_TOKEN` secrets are configured for publish workflows
-- Publish workflows use NPM provenance (`--provenance --access public`)
+- `yarn test:release` requires built public packages and covers archive validation and injected release failure/retry cases without publishing.
+- npm trusted publishers must authorize `release.yml`, the `npm` environment, and direct `npm publish` for each existing package. See the contribution guide for the first integrity publication.
+- Dirty local dry runs are marked as drafts and cannot be published. Release archives use `--ignore-scripts`; actual npm publication also uses `--provenance --access public`.
 
 ### Common Patterns
 - Path-based filtering via `dorny/paths-filter@v3` to skip unnecessary CI jobs
 - CI workflow exposes `workflow_call` for reuse from other workflows
 - Caching strategies: Yarn (built-in `actions/setup-node` cache), Gradle (`~/.gradle/caches`), CocoaPods (`~/Library/Caches/CocoaPods`), Xcode DerivedData
-- Publish workflows: version commit -> tag -> NPM publish -> GitHub Release with auto-generated release notes
+- Release workflow: Changesets version PR -> manual full CI -> build/pack/check immutable artifacts -> explicit OIDC publish -> package tag -> GitHub Release with the version changelog entry
 - Concurrency groups on publish workflows to prevent parallel releases
 
 ## Dependencies
@@ -59,6 +64,7 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
 - `actions/configure-pages@v5`, `actions/upload-pages-artifact@v3`, `actions/deploy-pages@v4` (docs)
 - `actions/upload-artifact@v4` (docs validation)
 - `dorny/paths-filter@v3` - Change detection
-- `softprops/action-gh-release@v3` - GitHub Release creation (publish workflows)
+- SHA-pinned `changesets/action` v2 - version PR automation with Changesets CLI v3
+- `actions/download-artifact` v4 - exact artifact download; GitHub CLI creates post-publication tags and releases
 
 <!-- MANUAL: -->

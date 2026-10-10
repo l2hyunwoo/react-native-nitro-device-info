@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main, develop]
   workflow_call:
+    inputs:
+      full_validation:
+        description: Run every check for a release
+        type: boolean
+        required: false
+        default: true
 
 permissions:
   contents: read
@@ -18,23 +24,25 @@ jobs:
   # Detect which files changed to conditionally run jobs
   changes:
     name: Detect Changes
+    timeout-minutes: 10
     permissions:
       contents: read
       pull-requests: read
     runs-on: ubuntu-26.04
     outputs:
-      integrity: ${{ steps.filter.outputs.integrity }}
-      library: ${{ steps.filter.outputs.library }}
-      mcp-server: ${{ steps.filter.outputs.mcp-server }}
-      docs: ${{ steps.filter.outputs.docs }}
-      deps: ${{ steps.filter.outputs.deps }}
+      integrity: ${{ inputs.full_validation && 'true' || steps.filter.outputs.integrity }}
+      library: ${{ inputs.full_validation && 'true' || steps.filter.outputs.library }}
+      mcp-server: ${{ inputs.full_validation && 'true' || steps.filter.outputs.mcp-server }}
+      docs: ${{ inputs.full_validation && 'true' || steps.filter.outputs.docs }}
+      deps: ${{ inputs.full_validation && 'true' || steps.filter.outputs.deps }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
       - name: Check for changes
+        if: ${{ !inputs.full_validation }}
         uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
         id: filter
         with:
@@ -48,14 +56,22 @@ jobs:
               - 'example/integrity-demo/**'
             mcp-server:
               - 'packages/mcp-server/**'
+              - 'packages/react-native-nitro-device-info/src/DeviceInfo.nitro.ts'
+              - 'packages/react-native-nitro-device-integrity/src/DeviceIntegrity.nitro.ts'
+              - 'docs/**'
+              - 'README.md'
             docs:
               - 'docs/**'
             deps:
               - 'package.json'
               - 'yarn.lock'
               - '.yarn/patches/**'
-              - 'scripts/security-regressions.cjs'
-              - 'scripts/web-package-regressions.cjs'
+              - 'scripts/**'
+              - '.changeset/**'
+              - '.github/actions/**'
+              - '.github/workflows/release.yml'
+              - '.yarnrc.yml'
+              - '.nvmrc'
               - '.github/workflows/ci.yml'
               - 'jest.config.js'
               - 'tsconfig.json'
@@ -76,10 +92,10 @@ jobs:
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.mcp-server == 'true' || needs.changes.outputs.integrity == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '22'
           cache: 'yarn'
@@ -100,6 +116,10 @@ jobs:
         if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
         run: yarn workspace react-native-nitro-device-info test --runInBand
 
+      - name: Run integrity regression tests
+        if: ${{ needs.changes.outputs.integrity == 'true' || needs.changes.outputs.deps == 'true' }}
+        run: yarn test:integrity
+
       - name: Type check and build integrity library
         if: ${{ needs.changes.outputs.integrity == 'true' || needs.changes.outputs.deps == 'true' }}
         run: |
@@ -114,10 +134,10 @@ jobs:
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '22'
           cache: 'yarn'
@@ -142,16 +162,16 @@ jobs:
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '22'
           cache: 'yarn'
 
       - name: Cache CocoaPods downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/Library/Caches/CocoaPods
           key: pods-download-${{ runner.os }}-${{ hashFiles('example/showcase/package.json') }}
@@ -197,22 +217,22 @@ jobs:
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '22'
           cache: 'yarn'
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Cache Gradle
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             ~/.gradle/caches
@@ -256,26 +276,25 @@ jobs:
             runner: ubuntu-26.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '22'
           cache: 'yarn'
 
       - name: Setup Java
-        if: matrix.platform == 'android'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Cache Gradle
         if: matrix.platform == 'android'
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             ~/.gradle/caches
@@ -287,13 +306,25 @@ jobs:
 
       - name: Cache CocoaPods downloads
         if: matrix.platform == 'ios'
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/Library/Caches/CocoaPods
           key: pods-download-${{ runner.os }}-${{ hashFiles('example/integrity-demo/package.json') }}
 
       - name: Install dependencies
         run: yarn install --immutable
+
+      - name: Install Kotlin compiler for native regressions
+        if: matrix.platform == 'ios'
+        run: |
+          curl --fail --location --silent --show-error https://github.com/JetBrains/kotlin/releases/download/v2.4.21/kotlin-compiler-2.4.21.zip -o "$RUNNER_TEMP/kotlin.zip"
+          echo "7cc140e76daf416a0424a5557f99afd7ca89ebd463ea1101261e3e01c33e75cd  $RUNNER_TEMP/kotlin.zip" | shasum -a 256 -c -
+          unzip -q "$RUNNER_TEMP/kotlin.zip" -d "$RUNNER_TEMP/kotlin"
+          echo "$RUNNER_TEMP/kotlin/kotlinc/bin" >> "$GITHUB_PATH"
+
+      - name: Run Swift and Kotlin native regression tests
+        if: matrix.platform == 'ios'
+        run: yarn test:integrity:native
 
       - name: Build integrity library
         run: yarn workspace react-native-nitro-device-integrity prepare
@@ -322,44 +353,51 @@ jobs:
         run: ./gradlew :app:assembleDebug --no-daemon
 
   validate-package:
-    name: Validate NPM Package
+    name: Validate Public NPM Packages
     runs-on: ubuntu-26.04
     timeout-minutes: 30
     needs: changes
-    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
+    if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.integrity == 'true' || needs.changes.outputs.mcp-server == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '22'
           cache: 'yarn'
 
+      - name: Install npm used by the release pipeline
+        run: npm install --global npm@11.5.1
+
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Build library
-        run: yarn prepare
-
-      - name: Pack NPM package
-        working-directory: packages/react-native-nitro-device-info
-        run: npm pack
-
-      - name: Verify package contents
-        working-directory: packages/react-native-nitro-device-info
+      - name: Build public packages
         run: |
-          tar -tzf *.tgz | grep "package/lib/module/index.js"
-          tar -tzf *.tgz | grep "package/lib/typescript"
-          tar -tzf *.tgz | grep "package/src/DeviceInfo.nitro.ts"
-          tar -tzf *.tgz | grep "package/ios/DeviceInfo.swift"
-          tar -tzf *.tgz | grep "package/android"
+          yarn prepare
+          yarn workspace react-native-nitro-device-integrity prepare
+          yarn workspace @react-native-nitro-device-info/mcp-server build
+
+      - name: Run release regression tests
+        run: yarn test:release
+
+      - name: Pack public packages without rebuilding
+        run: |
+          npm pack ./packages/react-native-nitro-device-info --ignore-scripts --pack-destination ./packages/react-native-nitro-device-info
+          npm pack ./packages/react-native-nitro-device-integrity --ignore-scripts --pack-destination ./packages/react-native-nitro-device-integrity
+          npm pack ./packages/mcp-server --ignore-scripts --pack-destination ./packages/mcp-server
+
+      - name: Verify package archives
+        run: node scripts/check-package.cjs packages/react-native-nitro-device-info/*.tgz packages/react-native-nitro-device-integrity/*.tgz packages/mcp-server/*.tgz
 
       - name: Verify web package hooks
         run: yarn test:web
 
-  # MCP Server CI - only runs when packages/mcp-server changes
+  # MCP Server CI also tracks the specs and documentation bundled in its archive
   mcp-server:
     name: MCP Server
     runs-on: ubuntu-26.04
@@ -368,10 +406,10 @@ jobs:
     if: ${{ needs.changes.outputs.mcp-server == 'true' || needs.changes.outputs.deps == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '22'
           cache: 'yarn'

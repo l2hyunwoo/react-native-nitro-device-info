@@ -495,6 +495,9 @@ through the native entry still requires native bindings and can throw. See
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow and guidelines.
 
+The core, integrity, and MCP packages share this repository and use independent versions through Changesets.
+See the [release procedure](CONTRIBUTING.md#publishing-to-npm) for version PRs and the common manual release workflow.
+
 ## License
 
 MIT © [HyunWoo Lee](https://github.com/l2hyunwoo)

@@ -462,6 +462,8 @@ console.log(DeviceInfoModule.deviceId);       // "unknown" — not available in 
 
 개발 절차는 [CONTRIBUTING-ko.md](CONTRIBUTING-ko.md)를 참고하세요.
 
+핵심 라이브러리·integrity·MCP 패키지는 이 저장소에서 함께 개발하며 Changesets로 버전을 독립적으로 관리합니다. 버전 PR과 공통 수동 릴리스 workflow는 [배포 절차](CONTRIBUTING-ko.md#npm-배포)를 참고하세요.
+
 ## 라이선스
 
 MIT © [HyunWoo Lee](https://github.com/l2hyunwoo)

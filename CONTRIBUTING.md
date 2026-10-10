@@ -138,16 +138,59 @@ The pre-commit hook lints staged JavaScript and TypeScript files. The commit-msg
 
 ### Publishing to npm
 
-Maintainers publish through the manually dispatched [core library workflow](.github/workflows/publish.yml) and [MCP server workflow](.github/workflows/publish-mcp.yml). Supply the target `version` and use `dry_run` for validation without publishing. The root package does not define a `yarn release` script.
+All three public packages use independent versions through [Changesets](.changeset/config.json). Examples and the private root are excluded.
 
-For the v1.9.0 core release:
+| Package                                      | Release policy                                                          |
+| -------------------------------------------- | ----------------------------------------------------------------------- |
+| `react-native-nitro-device-info`             | Changeset for API, implementation, or packaged content changes          |
+| `react-native-nitro-device-integrity`        | Initial release uses `0.1.0`; subsequent changes require changesets     |
+| `@react-native-nitro-device-info/mcp-server` | Changeset for MCP code or embedded specifications/documentation changes |
 
-1. Confirm CI and Docs Validation pass on the release-preparation PR, merge it, and wait for `main` CI and the documentation deployment to succeed.
-2. Run **Publish** on `main` with `version: 1.9.0` and `dry_run: true`. Wait for that run to finish before starting another Publish run; concurrent runs on the same branch can cancel one another.
-3. After the dry run succeeds, run **Publish** on `main` with `version: 1.9.0` and `dry_run: false`. The workflow creates the version commit, tag, npm publication, and GitHub Release. Keep the package version at v1.8.3 in the preparation PR because this workflow creates the version commit itself.
-4. Verify the published npm version and package contents. Add the [v1.9.0 upgrade notes](CHANGELOG.md) to the generated GitHub Release, and date the changelog entries after publication is confirmed.
+MCP copies the core `.nitro.ts` specifications, `docs/docs/`, and root README during its build.
+Include an MCP changeset when those contents change. This build dependency does not require a runtime dependency or matching package versions.
 
-The optional integrity package remains unreleased. MCP publication uses its own workflow and version; do not publish either package as part of the core v1.9.0 release.
+1. Run `yarn changeset` with the implementation change. Select affected packages and the appropriate SemVer bump.
+2. Merge the change. The [Release workflow](.github/workflows/release.yml) opens or updates a **chore(release): version packages** PR on `main`.
+3. Review the generated package versions and package changelogs. Merge the version PR after validation.
+4. Dispatch **Release** on `main` with `publish: false`, the default. Review CI, the registry plan, and checked tarball artifacts.
+5. When publication is authorized, dispatch **Release** with `publish: true`. Approve the `npm` environment if protection rules require it.
+
+Push events only manage the version PR. They never publish packages.
+The manual workflow validates its selected commit, builds packages, and packs the actual workspaces with lifecycle scripts disabled.
+It checks metadata, entry points, native bindings, Expo plugins, and bundled MCP data before uploading archives with SHA-512 hashes.
+The publish job rechecks the downloaded archives and publishes those exact files with npm provenance.
+Its only write operations are npm publication followed by package-specific tags and GitHub Releases.
+Tags use `<package-name>@<version>`, including scoped MCP names. Existing historical tags remain valid.
+
+An already published exact version is skipped. Registry failures stop the run.
+After a partial failure, use **Re-run failed jobs** on the same run to retain its original artifacts and commit.
+Recovery checks the registry archive hash before creating a missing tag or GitHub Release.
+Do not create a new dispatch to recover missing release metadata for an already published version.
+
+Before enabling publication:
+
+- Allow GitHub Actions to create pull requests in repository settings. Check the version PR's validation status before merging.
+- Configure an npm trusted publisher for each package: owner `l2hyunwoo`, repository `react-native-nitro-device-info`, workflow `release.yml`, environment `npm`.
+- If npm defaults the publisher to staged publishing, explicitly allow direct publishing for this workflow. Activate new publisher configurations within npm's expiry period.
+- The hosted publish runner uses Node 22.14+ and npm 11.5.1+. It needs `id-token: write`; no long-lived `NPM_TOKEN` is used.
+- The unpublished integrity package needs its first real release from an authenticated maintainer before its trusted publisher can be configured.
+  Publish the reviewed `0.1.0` tarball once with `npm publish <checked-tarball.tgz> --access public --ignore-scripts`, then configure its publisher.
+  Retain that run's artifacts and rerun its publish job to verify the same archive and finish release metadata.
+
+This migration keeps manifest versions unchanged until the version PR is merged.
+Integrity remains unpublished until that explicit first publication. Real-device attestation and backend verification remain release prerequisites.
+Do not use the monorepo-wide `changeset pre enter` command for an integrity-only beta release.
+
+For local validation without publishing, use Node 22.14+ and npm 11.5.1+:
+
+```sh
+yarn release:prepare
+yarn release:verify
+```
+
+These commands read the public registry and write checked archives under ignored `.release/`.
+They do not publish, create tags, or create GitHub Releases. A dirty local checkout produces a draft artifact that cannot be published.
+`release:publish` requires the manual Actions publish job, a clean artifact, and no pending changesets.
 
 ### Scripts
 
@@ -161,6 +204,12 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn nitrogen`: generate native bindings from `.nitro.ts` files.
 - `yarn prepare`: build the core library.
 - `yarn workspace react-native-nitro-device-integrity prepare`: build the attestation library.
+- `yarn test:integrity`: check hash vectors, Expo plugin behavior, and Android runtime dependencies after the integrity build.
+- `yarn test:integrity:native`: compile and test native validation and provider retries with Kotlin/Swift test doubles.
+- `yarn test:release`: test release logic and packed artifacts after all three package builds (npm 11.5.1+ required).
+- `yarn changeset`: describe the affected packages and version bumps.
+- `yarn version-packages`: apply pending changesets locally for review.
+- `yarn release:prepare` / `yarn release:verify`: prepare and check local release archives without publishing.
 - `yarn integrity-demo <command>`: run integrity demo commands (start/ios/android).
 - `yarn showcase <command>`: run showcase app commands (start/ios/android).
 - `yarn benchmark <command>`: run benchmark app commands (start/ios/android).
