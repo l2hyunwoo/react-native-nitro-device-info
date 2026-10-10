@@ -66,6 +66,7 @@
     "react-native": "0.85.3",
     "react-native-builder-bob": "0.41.0",
     "react-native-nitro-modules": "0.35.9",
+    "tar": "7.5.22",
     "turbo": "2.9.18",
     "typescript": "5.9.3"
   },

@@ -27,7 +27,9 @@ function prohibited(file) {
     /(^|\/)(build|Pods|DerivedData)(\/|$)/.test(
       file.replace(/^plugin\/build(?:\/|$)/, '')
     ) ||
-    /^android\/(src\/(test|androidTest)(\/|$)|gradle\/|gradlew(?:\.bat)?$|local\.properties$)/.test(file) ||
+    /^android\/(src\/(test|androidTest)(\/|$)|gradle\/|gradlew(?:\.bat)?$|local\.properties$)/.test(
+      file
+    ) ||
     /\.(tgz|log|tsbuildinfo|o|a|so|dylib|aar|apk)$/.test(file) ||
     /\.(test|spec)\.[cm]?[jt]sx?$/.test(file)
   );

@@ -11933,6 +11933,7 @@ __metadata:
     react-native: "npm:0.85.3"
     react-native-builder-bob: "npm:0.41.0"
     react-native-nitro-modules: "npm:0.35.9"
+    tar: "npm:7.5.22"
     turbo: "npm:2.9.18"
     typescript: "npm:5.9.3"
   dependenciesMeta:
@@ -13221,7 +13222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^7.5.2":
+"tar@npm:7.5.22, tar@npm:^7.5.2":
   version: 7.5.22
   resolution: "tar@npm:7.5.22"
   dependencies:
