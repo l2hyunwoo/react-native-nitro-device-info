@@ -315,6 +315,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Build integrity library
+        run: yarn workspace react-native-nitro-device-integrity prepare
+
       - name: Run Swift native regression tests
         if: matrix.platform == 'ios'
         run: yarn test:integrity:ios
@@ -322,9 +325,6 @@ jobs:
       - name: Run Android native regression tests
         if: matrix.platform == 'android'
         run: yarn test:integrity:android
-
-      - name: Build integrity library
-        run: yarn workspace react-native-nitro-device-integrity prepare
 
       - name: Install Pods
         if: matrix.platform == 'ios'
