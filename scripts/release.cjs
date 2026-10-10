@@ -277,7 +277,7 @@ async function verifyOidc(
   const results = [];
   for (const pkg of publicPackages(root)) {
     try {
-      const escapedName = pkg.name.replace('/', '%2f');
+      const escapedName = pkg.name.replaceAll('/', '%2f');
       const response = await request(
         `${registryUrl}/-/npm/v1/oidc/token/exchange/package/${escapedName}`,
         {

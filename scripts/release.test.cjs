@@ -535,7 +535,7 @@ test('OIDC verification exchanges all package tokens without publishing or savin
     f.requests.slice(1).map(([url]) => url),
     entries.map(
       ([, name]) =>
-        `https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${name.replace('/', '%2f')}`
+        `https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${name.replaceAll('/', '%2f')}`
     )
   );
   for (const [, options] of f.requests.slice(1)) {
