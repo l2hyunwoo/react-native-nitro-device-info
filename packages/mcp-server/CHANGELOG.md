@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+### Patch Changes
+
+- c8dd038: Include core package READMEs and package-specific repository metadata in npm archives. Preserve the MCP server's bundled specifications and documentation, including the updated attestation API reference.
+
 ## 1.0.3
 
 ### Patch Changes

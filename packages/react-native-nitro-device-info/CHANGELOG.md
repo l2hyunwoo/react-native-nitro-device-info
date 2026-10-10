@@ -2,6 +2,12 @@
 
 Release dates for v1.5.0–v1.8.3 use npm publication timestamps (UTC).
 
+## 1.9.1
+
+### Patch Changes
+
+- c8dd038: Include core package READMEs and package-specific repository metadata in npm archives. Preserve the MCP server's bundled specifications and documentation, including the updated attestation API reference.
+
 ## 1.9.0
 
 Changes since v1.8.3:
