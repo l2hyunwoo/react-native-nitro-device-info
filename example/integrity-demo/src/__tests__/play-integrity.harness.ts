@@ -53,9 +53,12 @@ describe('Play Integrity (Android-only)', () => {
 
   test('Android-only methods reject on iOS', async () => {
     if (Platform.OS !== 'ios') return;
-    const message = await expectRejection(
-      integrity.prepareStandardProvider('123456789012')
-    );
-    expect(message).toContain('UNSUPPORTED_PLATFORM');
+    for (const invoke of [
+      () => integrity.prepareStandardProvider('123456789012'),
+      () => integrity.requestIntegrityToken(''),
+      () => integrity.requestClassicIntegrityToken('nonce', '123456789012'),
+    ]) {
+      expect(await expectRejection(invoke())).toContain('UNSUPPORTED_PLATFORM');
+    }
   });
 });

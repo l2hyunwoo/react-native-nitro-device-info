@@ -2,62 +2,34 @@
 
 [English](README.md) | [한국어](README-ko.md)
 
-**Unreleased:** this package is in the source repository but has no published npm release as of 2026-10-10. The manifest version `0.1.0` is not a release. The npm installation instructions below apply after publication.
+Device attestation for React Native, built on [Nitro Modules](https://nitro.margelo.com/).
 
-Opt-in, hardware-backed **device attestation** for React Native, built on
-[Nitro Modules](https://nitro.margelo.com/). A companion to
-[`react-native-nitro-device-info`](https://github.com/l2hyunwoo/react-native-nitro-device-info).
+| Platform | APIs                                |
+| -------- | ----------------------------------- |
+| Android  | Play Integrity Standard and Classic |
+| iOS      | App Attest and DeviceCheck          |
 
-- **Android** → [Play Integrity API](https://developer.android.com/google/play/integrity)
-- **iOS** → [App Attest (`DCAppAttestService`)](https://developer.apple.com/documentation/devicecheck/dcappattestservice) + [DeviceCheck (`DCDevice`)](https://developer.apple.com/documentation/devicecheck/dcdevice)
+This optional package complements [`react-native-nitro-device-info`](https://github.com/l2hyunwoo/react-native-nitro-device-info).
+Install it when your app needs tokens that your backend can verify. It adds native dependencies and platform setup separately from the core device information library.
 
-> **This package issues attestation tokens. It does not verify them.**
-> Every method returns an opaque token that **you must send to your own backend
-> for verification.** The library never decides whether a device is "safe" —
-> that decision belongs to your server. See [Responsibility boundary](#responsibility-boundary).
-
-## Why a separate package?
-
-The core `react-native-nitro-device-info` ships local-only integrity checks
-(`isDeviceCompromised()`), which — as its own docs admit — can be bypassed
-(Magisk + Shamiko, RootHide, etc.). Real, server-verifiable attestation requires
-extra native dependencies (`com.google.android.play:integrity`), platform
-capabilities (App Attest entitlement), and Google/Apple console setup. Keeping it
-in a separate, opt-in package isolates that weight and configuration burden from
-the core.
-
-| | Core `isDeviceCompromised()` | This package |
-|---|---|---|
-| Type | Local heuristics | Hardware-backed, OS-vendor attestation |
-| Network | Offline | Required |
-| Trust | First-line, easily bypassed | Server-verified, strong |
-| Use as | Fast pre-check | Authoritative gate (verified on your server) |
-
-They are **complementary**: use the core check as an instant offline pre-filter,
-and this package's tokens as the authoritative, server-verified signal.
+> **Your backend must verify the issued tokens, attestations, and assertions before accepting a protected action.** The library provides the native APIs; your server decides whether to trust a request.
 
 ## Installation
+
+**Unreleased:** this package is available in the source repository. The npm commands below apply after its first publication.
 
 ```sh
 yarn add react-native-nitro-device-integrity react-native-nitro-modules
 cd ios && pod install
 ```
 
-Requires `react-native-nitro-modules` (peer dependency). The package's native
-minimums are iOS 14.0 and Android API 24; dependencies can require higher minimums.
-DeviceCheck itself exists from iOS 11, but this package does not support installing
-on iOS 11. Android requires Google Play Services.
+Rebuild your native app after installation. The package targets iOS 14.0+ and Android API 24+; React Native and Nitro dependencies can require newer versions. There is no web entry point.
 
-## Responsibility boundary
+- **Android:** Google Play Services and a Google Cloud project configured for Play Integrity are required. Link the project in Play Console and use its project number.
+- **iOS:** configure your app's signing and App Attest capability. DeviceCheck server queries need a DeviceCheck key from your Apple Developer account.
+- **Expo:** see the [Expo setup guide](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/expo-setup) for the optional config plugin.
 
-| Responsibility | Owner |
-|---|---|
-| Issue token / attestation / assertion on the device | **This library** |
-| Compute `clientDataHash` (SHA-256) and assemble client data | **You (app)** |
-| Send the token to your backend | **You (app)** |
-| Decrypt / verify signature / interpret the verdict | **Your server** |
-| Persist the App Attest `keyId` | **You (app)** — library is stateless |
-| Google Cloud / Apple console setup | **You (developer)** |
+See [platform setup](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/device-attestation#setup-requirements) for details.
 
 ## Usage
 
@@ -66,96 +38,33 @@ import { createDeviceIntegrity } from 'react-native-nitro-device-integrity';
 
 const integrity = createDeviceIntegrity();
 
-if (integrity.providerType === 'playIntegrity') {
-  // --- Android: Play Integrity (Standard) ---
-  await integrity.prepareStandardProvider('123456789012'); // your Cloud project number, once
-  const requestHash = '<base64 SHA-256 of your request params>';
-  const token = await integrity.requestIntegrityToken(requestHash);
-  // POST `token` to your server → Google :decodeIntegrityToken
-} else if (integrity.providerType === 'appAttest') {
-  // --- iOS: App Attest ---
-  const keyId = await integrity.generateKey();          // persist this yourself
-  const clientDataHash = '<base64 SHA-256 of your server challenge>';
-  const attestation = await integrity.attestKey(keyId, clientDataHash); // once
-  // POST { keyId, attestation } to your server for one-time validation
-  // Each subsequent request needs a fresh one-time challenge.
-  const challenge = await fetchChallengeFromYourServer();
-  const clientData = JSON.stringify({ challenge, payload });
-  const assertion = await integrity.generateAssertion(keyId, base64Sha256(clientData));
-  // POST { keyId, assertion, clientData } to your server
-}
+console.log(integrity.providerType); // 'playIntegrity', 'appAttest', or 'unsupported'
+console.log(integrity.isSupported);
 ```
 
-### `clientDataHash` (iOS)
+`isSupported` checks device availability. It does not confirm that your developer accounts are configured or that server verification will succeed.
 
-App Attest expects an **already-hashed** 32-byte value, passed as base64. For key
-attestation, hash the one-time server challenge. For each assertion, hash client
-data containing a fresh server challenge and the request payload. Send the exact
-string you hashed to your server for verification. The example assumes your app
-supplies the hashing and backend helpers. This library does **not** hash for you.
+| Flow                    | App calls                                                                           | Backend responsibility                                        |
+| ----------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Play Integrity Standard | `prepareStandardProvider(projectNumber)`, then `requestIntegrityToken(requestHash)` | Decode the token and validate the request and verdict         |
+| Play Integrity Classic  | `requestClassicIntegrityToken(nonce, projectNumber)`                                | Decode the token and validate the issued nonce and verdict    |
+| App Attest registration | `generateKey()`, then `attestKey(keyId, clientDataHash)`                            | Validate the attestation and store the public key             |
+| App Attest requests     | `generateAssertion(keyId, clientDataHash)`                                          | Verify the signature, fresh challenge, and increasing counter |
+| DeviceCheck             | `getDeviceCheckToken()`                                                             | Use Apple's DeviceCheck server API                            |
 
-## Server verification (your responsibility)
+Your app computes the request hashes and sends the results to your backend. For App Attest, `clientDataHash` must be a base64-encoded, 32-byte SHA-256 digest. Use a fresh server challenge and include the request payload in assertion client data. Persist the `keyId` in your app; the library does not store it for you.
 
-This library stops at issuing the token. Your backend must verify it.
+Native failures reject the returned promise. Error identifiers are prefixes in `Error.message`. See the [API reference](https://l2hyunwoo.github.io/react-native-nitro-device-info/api/device-attestation) for complete examples, input requirements, error prefixes, and server verification guidance.
 
-### Play Integrity (Android)
+## Limitations
 
-Send the token to your server, then call Google's decode endpoint (recommended):
+- App Attest is unavailable on the iOS simulator. Use a supported physical device for attestation.
+- A token alone does not establish device trust. Your backend must check the provider's response and apply your access policy.
+- Handle unsupported devices, network failures, and platform quotas. App Attest is not a jailbreak detector, and attestation is one input to your abuse prevention policy.
 
-```http
-POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
-```
+## Examples and contributing
 
-Interpret the verdict: `deviceIntegrity.deviceRecognitionVerdict` containing
-`MEETS_DEVICE_INTEGRITY`, `appIntegrity.appRecognitionVerdict === PLAY_RECOGNIZED`,
-etc. An **empty** `deviceRecognitionVerdict` is a signal of a compromised/emulated
-device. See [Play Integrity verdicts](https://developer.android.com/google/play/integrity/verdicts).
-
-### App Attest (iOS)
-
-Validate the attestation **once** per key against Apple's App Attest Root CA
-(cert chain, nonce, app-ID hash, counter = 0), store the public key + counter,
-then verify each **assertion's** signature and monotonic counter. Check that the
-challenge in the client data matches an unused value issued by your server. See
-[Validating apps that connect to your server](https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server).
-
-## Setup requirements
-
-### Android (Play Integrity)
-
-1. Create / select a **Google Cloud** project, enable the Play Integrity API.
-2. Link the Cloud project in **Play Console** → *Play Integrity API*.
-3. Pass your **Cloud project number** to `prepareStandardProvider` /
-   `requestClassicIntegrityToken`.
-4. On your server, set up the Google service account (or response-encryption keys).
-
-### iOS (App Attest / DeviceCheck)
-
-1. Add the **App Attest** capability to your app target (Xcode → Signing &
-   Capabilities). This adds the
-   `com.apple.developer.devicecheck.appattest-environment` entitlement
-   (`development` / `production`).
-2. For DeviceCheck server queries, create a DeviceCheck `.p8` key in the Apple
-   Developer portal.
-
-> The library does not (and cannot) perform any of this setup — it is configured
-> on your developer accounts and app target.
-
-## Honest limitations
-
-- **App Attest is not a jailbreak detector.** It proves a genuine, unmodified app
-  instance on genuine Apple hardware — use it as a *positive* signal, not as
-  rooting/jailbreak detection.
-- **Simulators / emulators**: `isSupported` is `false` on the iOS simulator; Play
-  Integrity returns weak/empty verdicts on emulators.
-- **Rooted devices**: Play Integrity still returns a token, but with an empty
-  `deviceRecognitionVerdict` — your server must treat that as a failure.
-- **Bypasses exist** (e.g. PlayIntegrityFix). Attestation is not absolute; use it
-  as one signal in a broader anti-abuse strategy.
-- **Network required.** Without Google Cloud / Apple configuration, token
-  issuance fails — handle the rejection, don't treat it as "safe".
-- **App Attest throttling**: Apple rate-limits `attestKey`. Control call frequency
-  in your app; the library adds no retry/timer (it stays stateless).
+The [Integrity Demo](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/example/integrity-demo) demonstrates the client flows. For source setup and tests, see [CONTRIBUTING](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/CONTRIBUTING.md).
 
 ## License
 

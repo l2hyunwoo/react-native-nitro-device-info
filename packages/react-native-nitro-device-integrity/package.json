@@ -1,7 +1,7 @@
 {
   "name": "react-native-nitro-device-integrity",
   "version": "0.1.0",
-  "description": "Opt-in hardware-backed device attestation (Play Integrity + App Attest) for react-native-nitro-device-info",
+  "description": "React Native device attestation with Play Integrity, App Attest, and DeviceCheck using Nitro Modules",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
@@ -27,6 +27,7 @@
     "plugin/build/**",
     "!ios/build",
     "!android/build",
+    "!android/src/test",
     "!android/gradle",
     "!android/gradlew",
     "!android/gradlew.bat",
@@ -55,16 +56,18 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/l2hyunwoo/react-native-nitro-device-info.git"
+    "url": "git+https://github.com/l2hyunwoo/react-native-nitro-device-info.git",
+    "directory": "packages/react-native-nitro-device-integrity"
   },
   "author": "HyunWoo Lee <l2hyunwoo@gmail.com> (https://github.com/l2hyunwoo)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/l2hyunwoo/react-native-nitro-device-info/issues"
   },
-  "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info#readme",
+  "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/react-native-nitro-device-integrity#readme",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "peerDependencies": {
     "react": "*",

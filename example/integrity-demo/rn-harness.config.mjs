@@ -17,7 +17,7 @@ const config = {
   runners: [
     applePlatform({
       name: 'ios',
-      device: appleSimulator('iPhone 17 Pro', '26.2'),
+      device: appleSimulator('iPhone 17 Pro', process.env.INTEGRITY_IOS_VERSION ?? '26.2'),
       bundleId: 'nitrodeviceintegrity.demo',
     }),
     androidPlatform({

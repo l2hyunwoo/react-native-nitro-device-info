@@ -7,7 +7,7 @@
  * backend.
  */
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Platform,
   SafeAreaView,
@@ -64,8 +64,8 @@ export default function App() {
           <Text style={styles.footerTitle}>What happens next?</Text>
           <Text style={styles.footerText}>
             In production, POST the issued token to your backend. Your server
-            verifies it (Play Integrity {'→'} Google decode endpoint; App
-            Attest {'→'} Apple root-CA chain). This app stops at issuing.
+            verifies it (Play Integrity {'→'} Google decode endpoint; App Attest{' '}
+            {'→'} Apple root-CA chain). This app stops at issuing.
           </Text>
         </View>
       </ScrollView>
@@ -106,6 +106,10 @@ function PlayIntegritySection({ integrity }: { integrity: Integrity }) {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Play Integrity (Standard)</Text>
+      <Text style={styles.hint}>
+        Uses a fixed sample request payload. Issued tokens are not verified by
+        this demo.
+      </Text>
       <Text style={styles.label}>Google Cloud project number</Text>
       <TextInput
         style={styles.input}
@@ -132,6 +136,7 @@ function PlayIntegritySection({ integrity }: { integrity: Integrity }) {
 }
 
 function AppAttestSection({ integrity }: { integrity: Integrity }) {
+  const keyGeneration = useRef(0);
   const [keyId, setKeyId] = useState<string | null>(null);
   const [key, setKey] = useState<ResultState>({ status: 'idle' });
   const [attestation, setAttestation] = useState<ResultState>({
@@ -143,38 +148,52 @@ function AppAttestSection({ integrity }: { integrity: Integrity }) {
   });
 
   const runGenerateKey = async () => {
+    const generation = ++keyGeneration.current;
+    setKeyId(null);
+    setAttestation({ status: 'idle' });
+    setAssertion({ status: 'idle' });
     setKey({ status: 'loading' });
     try {
       const id = await integrity.generateKey();
+      if (generation !== keyGeneration.current) return;
       setKeyId(id);
       setKey({ status: 'success', value: id });
     } catch (e) {
+      if (generation !== keyGeneration.current) return;
       setKey({ status: 'error', value: errorMessage(e) });
     }
   };
 
   const runAttest = async () => {
     if (!keyId) return;
+    const generation = keyGeneration.current;
     setAttestation({ status: 'loading' });
     try {
       // clientDataHash = base64(SHA-256(server challenge)). The challenge must
       // come from your server; we use a fixed string for the demo.
       const clientDataHash = await sha256Base64('demo-server-challenge');
+      if (generation !== keyGeneration.current) return;
       const result = await integrity.attestKey(keyId, clientDataHash);
+      if (generation !== keyGeneration.current) return;
       setAttestation({ status: 'success', value: result });
     } catch (e) {
+      if (generation !== keyGeneration.current) return;
       setAttestation({ status: 'error', value: errorMessage(e) });
     }
   };
 
   const runAssert = async () => {
-    if (!keyId) return;
+    if (!keyId || attestation.status !== 'success') return;
+    const generation = keyGeneration.current;
     setAssertion({ status: 'loading' });
     try {
       const clientDataHash = await sha256Base64('demo-request-payload');
+      if (generation !== keyGeneration.current) return;
       const result = await integrity.generateAssertion(keyId, clientDataHash);
+      if (generation !== keyGeneration.current) return;
       setAssertion({ status: 'success', value: result });
     } catch (e) {
+      if (generation !== keyGeneration.current) return;
       setAssertion({ status: 'error', value: errorMessage(e) });
     }
   };
@@ -193,19 +212,25 @@ function AppAttestSection({ integrity }: { integrity: Integrity }) {
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>App Attest</Text>
       <Text style={styles.hint}>
-        Persist the keyId yourself (Keychain). It does not survive reinstall.
+        Uses fixed demo challenges and keeps keyId only until restart. No server
+        verifies these results. In production, use fresh server challenges and
+        persist keyId in Keychain; it does not survive reinstall.
       </Text>
       <Button label="1. Generate key" onPress={runGenerateKey} />
       <ResultCard title="generateKey (keyId)" state={key} />
       <Button
         label="2. Attest key (once)"
-        disabled={!keyId}
+        disabled={
+          !keyId ||
+          attestation.status === 'success' ||
+          attestation.status === 'loading'
+        }
         onPress={runAttest}
       />
       <ResultCard title="attestKey" state={attestation} truncate />
       <Button
         label="3. Generate assertion (per request)"
-        disabled={!keyId}
+        disabled={attestation.status !== 'success'}
         onPress={runAssert}
       />
       <ResultCard title="generateAssertion" state={assertion} truncate />

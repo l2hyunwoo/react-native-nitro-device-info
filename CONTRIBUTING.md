@@ -39,7 +39,11 @@ To invoke **Nitrogen**, use the following command:
 yarn nitrogen
 ```
 
+For integrity bindings, use `yarn nitrogen:integrity`.
+
 The example apps ([showcase](example/showcase/README.md) and [benchmark](example/benchmark/README.md)) demonstrate usage of the library. You need to run one of them to test any changes you make.
+
+For attestation changes, use the [Integrity Demo](example/integrity-demo/README.md).
 
 Both apps are configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example apps. Changes to the library's JavaScript code will be reflected in the example apps without a rebuild, but native code changes will require a rebuild.
 
@@ -115,6 +119,26 @@ After `yarn prepare`, run `npm pack` in `packages/react-native-nitro-device-info
 
 Integrity package or demo changes run lint, `yarn workspace react-native-nitro-device-integrity typecheck`, and `yarn workspace react-native-nitro-device-integrity prepare`, followed by iOS and Android demo builds. Root `yarn prepare` builds only the core library. Dependency and CI workflow changes run both libraries' checks. Validate workflow syntax with `actionlint .github/workflows/ci.yml` and check that path filters cover the affected packages and configuration.
 
+### Integrity tests
+
+After installing workspace dependencies, build the integrity package from the repository root:
+
+```sh
+yarn workspace react-native-nitro-device-integrity prepare
+```
+
+Run the suites for the platforms available on your machine:
+
+| Command | Coverage | Requirements |
+| --- | --- | --- |
+| `yarn test:integrity` | Android runtime dependency, Expo plugin idempotence, demo SHA-256 vectors and stale key results | Workspace dependencies |
+| `yarn test:integrity:android` | Provider refresh races, retry limits, invalid project numbers | JDK 17 and the demo's Android SDK setup |
+| `yarn test:integrity:ios` | Base64 decoding and 32-byte hash validation | macOS and Xcode's `swiftc` with Foundation |
+
+Android tests live in `android/src/test` and run with JUnit and Google SDK mocks through the demo's Gradle project. Gradle supplies Kotlin. The iOS suite compiles production Swift with small platform doubles. CI runs each native suite in its platform job. These suites do not call Google or Apple servers.
+
+For native-to-JavaScript rejection tests and device selection, follow the [Integrity Demo harness instructions](example/integrity-demo/README.md#device-tests).
+
 ### Commit message convention
 
 We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
@@ -138,16 +162,19 @@ The pre-commit hook lints staged JavaScript and TypeScript files. The commit-msg
 
 ### Publishing to npm
 
-Maintainers publish through the manually dispatched [core library workflow](.github/workflows/publish.yml) and [MCP server workflow](.github/workflows/publish-mcp.yml). Supply the target `version` and use `dry_run` for validation without publishing. The root package does not define a `yarn release` script.
+The three public packages use independent versions through [Changesets](.changeset/config.json). Examples and the private root are excluded.
 
-For the v1.9.0 core release:
+Run `yarn changeset` with a change to a published package. Select affected packages, choose the SemVer bump, and describe the user-visible change.
 
-1. Confirm CI and Docs Validation pass on the release-preparation PR, merge it, and wait for `main` CI and the documentation deployment to succeed.
-2. Run **Publish** on `main` with `version: 1.9.0` and `dry_run: true`. Wait for that run to finish before starting another Publish run; concurrent runs on the same branch can cancel one another.
-3. After the dry run succeeds, run **Publish** on `main` with `version: 1.9.0` and `dry_run: false`. The workflow creates the version commit, tag, npm publication, and GitHub Release. Keep the package version at v1.8.3 in the preparation PR because this workflow creates the version commit itself.
-4. Verify the published npm version and package contents. Add the [v1.9.0 upgrade notes](CHANGELOG.md) to the generated GitHub Release, and date the changelog entries after publication is confirmed.
+| Package | When to add a changeset |
+| --- | --- |
+| `react-native-nitro-device-info` | API, implementation, or packaged content changes |
+| `react-native-nitro-device-integrity` | API, implementation, or packaged content changes after its first publication |
+| `@react-native-nitro-device-info/mcp-server` | MCP code or embedded specifications/documentation changes |
 
-The optional integrity package remains unreleased. MCP publication uses its own workflow and version; do not publish either package as part of the core v1.9.0 release.
+MCP embeds both libraries' `.nitro.ts` specifications, `docs/docs/`, and the English root README during its build. Include an MCP changeset when these inputs change. This build dependency does not require a runtime dependency or matching versions.
+
+The Release workflow creates a version PR on `main`. Maintainers review it and explicitly run publication. See the [maintainer release guide](.github/RELEASING.md) for setup, dry runs, first integrity publication, and recovery.
 
 ### Scripts
 
@@ -161,6 +188,13 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn nitrogen`: generate native bindings from `.nitro.ts` files.
 - `yarn prepare`: build the core library.
 - `yarn workspace react-native-nitro-device-integrity prepare`: build the attestation library.
+- `yarn test:integrity`: run integrity source regressions.
+- `yarn test:integrity:android`: run Android JUnit regressions through Gradle.
+- `yarn test:integrity:ios`: run Swift hash validation regressions.
+- `yarn test:release`: test release logic and packed artifacts after all three package builds (npm 11.5.1+ required).
+- `yarn changeset`: describe the affected packages and version bumps.
+- `yarn version-packages`: apply pending changesets locally for review.
+- `yarn release:prepare` / `yarn release:verify`: prepare and check local release archives without publishing.
 - `yarn integrity-demo <command>`: run integrity demo commands (start/ios/android).
 - `yarn showcase <command>`: run showcase app commands (start/ios/android).
 - `yarn benchmark <command>`: run benchmark app commands (start/ios/android).

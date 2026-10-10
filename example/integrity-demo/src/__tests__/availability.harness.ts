@@ -38,4 +38,15 @@ describe('Attestation availability', () => {
     // unsupported provider must mean not supported, and vice versa.
     expect(integrity.isSupported).toBe(integrity.providerType !== 'unsupported');
   });
+
+  test('unsupported iOS rejects key generation', async () => {
+    if (Platform.OS !== 'ios' || integrity.isSupported) return;
+    let message = '';
+    try {
+      await integrity.generateKey();
+    } catch (error) {
+      message = error instanceof Error ? error.message : String(error);
+    }
+    expect(message).toContain('UNSUPPORTED_PLATFORM');
+  });
 });

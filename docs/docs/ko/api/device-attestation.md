@@ -1,6 +1,6 @@
 ---
 translationOf: api/device-attestation.md
-sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
+sourceCommit: 09ad2e50615e614bf0286208e439515686f88194
 ---
 
 # Device attestation API {#device-attestation-api}
@@ -9,7 +9,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 <span class="rp-badge rp-badge--warning">미배포</span>
 
-이 패키지는 소스 레포지터리에 있지만 2026-10-10 기준 npm에 배포하지 않았습니다. 매니페스트의 `0.1.0`은 릴리스가 아닙니다. npm 설치 명령은 배포 후에 적용됩니다.
+이 패키지는 소스 레포지터리에서 제공하며 npm 설치 명령은 최초 배포 후에 적용됩니다.
 
 [지원 여부 배지 설명](/api/#availability-badges)을 읽으세요. Pod의 대상은 iOS 14 이상, Android 모듈의 대상은 API 24 이상입니다. 의존성은 더 높은 최소 버전을 요구할 수 있습니다. 웹용 entry point는 없습니다.
 
@@ -22,15 +22,15 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 이 API는 핵심 [기기 무결성 API](./device-integrity)를 **보완**합니다.
 
 - **로컬 탐지**([`isDeviceCompromised()`](./device-integrity)): 빠르고 오프라인에서 동작하지만 쉽게 우회할 수 있습니다. 첫 단계 사전 필터로 사용합니다.
-- **device attestation**(이 페이지): 네트워크를 사용하고 **서버에서 검증**하는 강한 판단 근거입니다.
+- **device attestation**(이 페이지): 플랫폼이 발급한 결과를 **서버에서 검증**합니다.
 
-로컬 검사는 빠른 사전 필터로, device attestation은 서버가 신뢰 여부를 판단하는 기준으로 사용하세요.
+서버에서 검증한 attestation과 서비스의 다른 위험 신호를 함께 사용해 접근 정책을 적용하세요.
 :::
 
 ## 토큰 발급과 검증은 누가 담당하나요? {#the-responsibility-boundary}
 
 :::warning 라이브러리는 토큰만 발급합니다. 검증은 서버에서 해야 합니다
-모든 메서드는 **불투명한 토큰**을 반환합니다. 라이브러리는 토큰 내용을 해석할 수 없으며 기기가 안전한지 불리언으로 반환하지 않습니다. **서버**에서 판단해야 하므로 토큰을 백엔드로 보내 검증하세요.
+토큰·attestation·assertion 발급 메서드는 **불투명한 값**을 반환합니다. 이 값만으로 기기가 안전한지 판단할 수는 없습니다. 결과를 백엔드로 보내 검증하고 보호할 작업을 허용할지 결정하세요.
 :::
 
 | 작업 | 담당 |
@@ -39,7 +39,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 | `clientDataHash`(SHA-256) 계산과 클라이언트 데이터 구성 | 앱 |
 | 토큰을 백엔드로 전송 | 앱 |
 | 복호화 / 서명 검증 / 판정 해석 | **서버** |
-| App Attest `keyId` 저장 | 앱(라이브러리는 상태를 보관하지 않음) |
+| App Attest `keyId` 저장 | 앱(라이브러리는 `keyId`를 저장하지 않음) |
 | Google Cloud / Apple 콘솔 설정 | 개발자 |
 
 ## 설치 {#installation}
@@ -95,7 +95,7 @@ prepareStandardProvider(cloudProjectNumber: string): Promise<void>
 
 Play Integrity **Standard** 토큰 provider를 준비합니다. 네이티브에서 provider를 캐시하므로 세션마다 한 번 호출하세요. JavaScript 숫자 정밀도 손실을 막기 위해 `cloudProjectNumber`는 문자열로 전달합니다.
 
-**reject 시 오류 메시지**: `CLOUD_PROJECT_NUMBER_IS_INVALID`, `PLAY_STORE_NOT_FOUND`, `NETWORK_ERROR` 등. iOS에서는 `UNSUPPORTED_PLATFORM`입니다.
+프로젝트 번호가 잘못되면 오류 메시지는 `CLOUD_PROJECT_NUMBER_IS_INVALID`로 시작합니다. SDK 오류는 `STANDARD_INTEGRITY_ERROR_<숫자 코드>`로 시작합니다. 예를 들어 네트워크 오류는 `STANDARD_INTEGRITY_ERROR_-3`입니다. iOS에서는 `UNSUPPORTED_PLATFORM`입니다.
 
 #### `requestIntegrityToken()` {#requestintegritytoken}
 
@@ -134,7 +134,7 @@ generateKey(): Promise<string>
 Secure Enclave에서 App Attest 키 쌍을 만들고 `keyId`를 반환합니다.
 
 :::warning keyId를 직접 저장하세요
-`keyId`는 이 키에 접근하는 유일한 핸들입니다. Keychain 등에 저장하세요. 라이브러리는 상태를 보관하지 않습니다. App Attest 키는 **앱 재설치 후 유지되지 않습니다**. `DCError.invalidKey`가 발생하면 다시 생성하세요.
+`keyId`는 이 키에 접근하는 유일한 핸들입니다. Keychain 등에 저장하세요. 라이브러리는 `keyId`를 저장하지 않습니다. App Attest 키는 **앱 재설치 후 유지되지 않습니다**. `DCError.invalidKey`가 발생하면 다시 생성하세요.
 :::
 
 #### `attestKey()` {#attestkey}
@@ -145,7 +145,7 @@ Secure Enclave에서 App Attest 키 쌍을 만들고 `keyId`를 반환합니다.
 attestKey(keyId: string, clientDataHash: string): Promise<string>
 ```
 
-키 attestation을 수행하며 Apple에 네트워크 요청을 보냅니다(설치마다 키당 **한 번**). `clientDataHash`는 `SHA-256(server challenge)`의 base64 값입니다. 라이브러리는 해시를 계산하지 않습니다. 불투명한 CBOR attestation 객체를 base64로 인코딩해 반환합니다.
+키 attestation을 수행하며 Apple에 네트워크 요청을 보냅니다(설치마다 키당 **한 번**). `clientDataHash`는 `SHA-256(server challenge)`의 base64 값이며, 해독한 길이가 정확히 **32바이트**여야 합니다. 라이브러리는 해시를 계산하지 않습니다. 잘못된 base64는 `INVALID_BASE64`, 해독한 길이가 다르면 `INVALID_INPUT`으로 reject됩니다. 이 검사는 iOS 기기 지원 여부보다 먼저 수행합니다. 불투명한 CBOR attestation 객체를 base64로 인코딩해 반환합니다.
 
 #### `generateAssertion()` {#generateassertion}
 
@@ -155,7 +155,7 @@ attestKey(keyId: string, clientDataHash: string): Promise<string>
 generateAssertion(keyId: string, clientDataHash: string): Promise<string>
 ```
 
-후속 요청용 assertion을 오프라인으로 생성합니다. 요청마다 서버에서 새 일회용 challenge를 받아 요청 payload와 함께 구성한 client data를 해시하세요. 불투명한 CBOR assertion 객체를 base64로 인코딩해 반환합니다. 서버는 발급한 challenge와 단조 증가 카운터를 확인해 재전송 공격을 탐지합니다.
+후속 요청용 assertion을 오프라인으로 생성합니다. 요청마다 서버에서 새 일회용 challenge를 받아 요청 payload와 함께 구성한 client data를 해시하세요. 32바이트 SHA-256 해시를 base64로 전달하며, `attestKey`와 같은 입력 검사를 적용합니다. 불투명한 CBOR assertion 객체를 base64로 인코딩해 반환합니다. 서버는 발급한 challenge와 단조 증가 카운터를 확인해 재전송 공격을 탐지합니다.
 
 ---
 
@@ -170,6 +170,23 @@ getDeviceCheckToken(): Promise<string>
 ```
 
 Apple DeviceCheck 토큰을 생성합니다(기기 수준이며 App Attest보다 가벼움). 서버는 Apple DeviceCheck API로 기기의 2비트 상태를 조회·갱신합니다.
+
+## 오류 {#errors}
+
+reject 시 `Error.message` 앞부분에 오류 코드를 포함합니다. JavaScript `error.code` 속성은 별도로 보장하지 않습니다.
+
+| 메시지 앞부분 | 의미 |
+| --- | --- |
+| `UNSUPPORTED_PLATFORM` | 다른 플랫폼 전용 메서드를 호출했거나 iOS 하드웨어가 지원하지 않음. |
+| `CLOUD_PROJECT_NUMBER_IS_INVALID` | 프로젝트 번호가 양의 부호 있는 64비트 정수 문자열이 아님. |
+| `PROVIDER_NOT_PREPARED` | Standard 토큰 요청 전에 `prepareStandardProvider`를 호출해야 함. |
+| `STANDARD_INTEGRITY_ERROR_<숫자 코드>` | Standard SDK 오류. Provider 무효화(`-19`)는 한 번 새로 준비하고 재시도하며, 다른 오류는 그대로 반환함. |
+| `CLASSIC_INTEGRITY_ERROR_<숫자 코드>` | Classic SDK 오류. 자동 재시도하지 않음. |
+| `INVALID_BASE64` | iOS `clientDataHash`가 올바른 base64가 아님. |
+| `INVALID_INPUT` | 해독한 iOS 해시가 32바이트가 아니거나 Apple이 잘못된 입력으로 처리함. |
+| `INVALID_KEY`, `SERVER_UNAVAILABLE`, `FEATURE_UNSUPPORTED`, `UNKNOWN_SYSTEM_FAILURE`, `UNKNOWN` | Apple DeviceCheck / App Attest 오류를 변환한 코드. 다른 네이티브 오류는 원래 메시지를 유지함. |
+
+SDK 숫자 코드를 `NETWORK_ERROR` 같은 이름으로 변환하지 않고 유지합니다. [Standard SDK 오류 코드](https://developer.android.com/google/play/integrity/reference/com/google/android/play/core/integrity/model/StandardIntegrityErrorCode)를 참고하세요. reject를 처리하고 이를 신뢰할 수 있는 판정으로 간주하지 마세요.
 
 ## 사용법 {#usage}
 
@@ -212,11 +229,13 @@ if (integrity.providerType === 'playIntegrity') {
 POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 ```
 
-응답에서 다음 판정 값을 확인하세요.
+판정을 확인하기 전에 `requestDetails`를 검증하세요. `requestPackageName`이 예상한 앱과 일치하고 `timestampMillis`가 허용한 유효 기간 안에 있어야 합니다. Standard는 보호할 요청으로 계산한 `requestHash`와, Classic은 서버가 발급한 미사용 `nonce`와 일치하는지 확인하세요. 불일치하거나 만료된 요청은 백엔드에서 거부합니다.
+
+그다음 응답의 판정 값에 서비스 정책을 적용하세요.
 
 - `deviceIntegrity.deviceRecognitionVerdict`에 `MEETS_DEVICE_INTEGRITY` 포함 여부
 - `appIntegrity.appRecognitionVerdict === 'PLAY_RECOGNIZED'`
-- **빈** `deviceRecognitionVerdict`는 보안이 침해된 기기 또는 에뮬레이터를 나타내는 신호입니다.
+- `deviceRecognitionVerdict`가 비어 있거나 없으면 판정 기준을 충족하지 못한 것입니다. API hooking, 시스템 침해, Google의 검사를 통과하지 못한 에뮬레이터 등이 원인일 수 있습니다.
 
 [Play Integrity 판정](https://developer.android.com/google/play/integrity/verdicts)을 참고하세요.
 
@@ -251,10 +270,9 @@ POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 :::warning Device attestation의 범위와 한계
 
 - **App Attest는 탈옥 탐지기가 아닙니다.** 실제 Apple 하드웨어에서 변조하지 않은 정식 앱이 실행 중임을 증명합니다. 긍정적인 신호로 사용하세요.
-- **시뮬레이터 / 에뮬레이터**: iOS 시뮬레이터에서 `isSupported`는 `false`입니다. Play Integrity는 에뮬레이터에서 약하거나 빈 판정을 반환합니다.
-- **루팅 기기**: Play Integrity는 토큰을 반환하지만 `deviceRecognitionVerdict`가 비어 있습니다. 서버에서 실패로 처리해야 합니다.
+- **지원 여부와 판정은 다릅니다.** iOS 시뮬레이터에서 `isSupported`는 `false`입니다. Android의 Google Play Services 사용 가능 여부는 토큰 발급 성공이나 특정 무결성 판정을 보장하지 않습니다. 서버에서 [Play Integrity 판정](https://developer.android.com/google/play/integrity/verdicts)을 확인하세요.
 - **우회 방법이 존재합니다**(PlayIntegrityFix 등). device attestation은 더 넓은 부정 사용 방지 전략의 한 신호이며 절대적인 보장이 아닙니다.
 - **네트워크와 콘솔 설정이 필요합니다.** 없으면 토큰 발급 요청이 reject됩니다. reject를 처리하고 기기가 안전하다고 간주하지 마세요.
-- **App Attest 호출 제한**: Apple은 `attestKey` 호출 빈도를 제한합니다. 앱에서 빈도를 제어하세요. 상태를 보관하지 않는 라이브러리는 재시도나 타이머를 추가하지 않습니다.
+- **App Attest 호출 제한**: Apple은 `attestKey` 호출 빈도를 제한합니다. 앱에서 빈도를 제어하세요. App Attest 호출에는 라이브러리가 자동 재시도나 타이머를 추가하지 않습니다.
 
 :::

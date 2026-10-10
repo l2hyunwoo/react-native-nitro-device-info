@@ -51,15 +51,38 @@ describe('App Attest / DeviceCheck (iOS-only)', () => {
     expect(message).toContain('UNSUPPORTED_PLATFORM');
   });
 
-  test('attestKey rejects an invalid base64 clientDataHash on iOS', async () => {
+  test('App Attest rejects malformed base64 on iOS, including the Simulator', async () => {
     if (Platform.OS !== 'ios') return;
-    // Only meaningful where App Attest is supported; on the Simulator the
-    // unsupported guard fires first. Either rejection message is acceptable.
-    const message = await expectRejection(
-      integrity.attestKey('some-key-id', 'not valid base64!!')
+    for (const invoke of [
+      () => integrity.attestKey('key', 'not valid base64!!'),
+      () => integrity.generateAssertion('key', 'not valid base64!!'),
+    ]) {
+      expect(await expectRejection(invoke())).toContain('INVALID_BASE64');
+    }
+  });
+
+  test('App Attest rejects hashes that do not decode to 32 bytes on iOS', async () => {
+    if (Platform.OS !== 'ios') return;
+    for (const hash of ['', 'AA==', `${'A'.repeat(42)}==`, 'A'.repeat(44)]) {
+      for (const invoke of [
+        () => integrity.attestKey('key', hash),
+        () => integrity.generateAssertion('key', hash),
+      ]) {
+        const message = await expectRejection(invoke());
+        expect(message).toContain('INVALID_INPUT');
+        expect(message).toContain('32-byte SHA-256 digest');
+      }
+    }
+  });
+
+  test('valid hash on unsupported iOS rejects with UNSUPPORTED_PLATFORM', async () => {
+    if (Platform.OS !== 'ios' || integrity.isSupported) return;
+    const hash = `${'A'.repeat(43)}=`;
+    expect(await expectRejection(integrity.attestKey('key', hash))).toContain(
+      'UNSUPPORTED_PLATFORM'
     );
     expect(
-      message.includes('INVALID_BASE64') || message.includes('App Attest')
-    ).toBe(true);
+      await expectRejection(integrity.generateAssertion('key', hash))
+    ).toContain('UNSUPPORTED_PLATFORM');
   });
 });

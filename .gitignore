@@ -83,6 +83,12 @@ packages/react-native-nitro-device-info/lib/
 packages/mcp-server/dist/
 packages/mcp-server/data/
 
+# Local release archives and manifests
+.release/
+
+# React Native Harness runtime output
+.harness/
+
 # React Native Codegen
 ios/generated
 android/generated
