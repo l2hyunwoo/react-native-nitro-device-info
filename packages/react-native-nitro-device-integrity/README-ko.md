@@ -15,8 +15,6 @@
 
 ## 설치
 
-**미배포:** 소스 레포지터리에서 제공하는 패키지입니다. 아래 npm 설치 명령은 최초 배포 후에 적용됩니다.
-
 ```sh
 yarn add react-native-nitro-device-integrity react-native-nitro-modules
 cd ios && pod install
