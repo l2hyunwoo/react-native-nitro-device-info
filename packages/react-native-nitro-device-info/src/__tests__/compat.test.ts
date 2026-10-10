@@ -7,6 +7,7 @@
 
 import DeviceInfo from '../compat';
 import * as compat from '../compat';
+import { createDeviceInfo } from '../index';
 
 describe('compat: async getters return Promises', () => {
   it('getUniqueId resolves to the core uniqueId string', async () => {
@@ -25,6 +26,17 @@ describe('compat: async getters return Promises', () => {
     const value = await compat.getBatteryLevel();
     expect(typeof value).toBe('number');
     expect(value).toBe(0.75);
+  });
+
+  it('preserves unavailable battery readings in async and sync getters', async () => {
+    const batteryLevel = jest.spyOn(createDeviceInfo(), 'getBatteryLevel');
+    batteryLevel.mockReturnValue(-1);
+    try {
+      await expect(compat.getBatteryLevel()).resolves.toBe(-1);
+      expect(compat.getBatteryLevelSync()).toBe(-1);
+    } finally {
+      batteryLevel.mockRestore();
+    }
   });
 
   it('isEmulator resolves to a boolean', async () => {
