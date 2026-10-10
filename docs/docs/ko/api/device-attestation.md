@@ -249,10 +249,12 @@ POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 ## 제한 사항 {#limitations}
 
 :::warning Device attestation의 범위와 한계
+
 - **App Attest는 탈옥 탐지기가 아닙니다.** 실제 Apple 하드웨어에서 변조하지 않은 정식 앱이 실행 중임을 증명합니다. 긍정적인 신호로 사용하세요.
 - **시뮬레이터 / 에뮬레이터**: iOS 시뮬레이터에서 `isSupported`는 `false`입니다. Play Integrity는 에뮬레이터에서 약하거나 빈 판정을 반환합니다.
 - **루팅 기기**: Play Integrity는 토큰을 반환하지만 `deviceRecognitionVerdict`가 비어 있습니다. 서버에서 실패로 처리해야 합니다.
 - **우회 방법이 존재합니다**(PlayIntegrityFix 등). device attestation은 더 넓은 부정 사용 방지 전략의 한 신호이며 절대적인 보장이 아닙니다.
 - **네트워크와 콘솔 설정이 필요합니다.** 없으면 토큰 발급 요청이 reject됩니다. reject를 처리하고 기기가 안전하다고 간주하지 마세요.
 - **App Attest 호출 제한**: Apple은 `attestKey` 호출 빈도를 제한합니다. 앱에서 빈도를 제어하세요. 상태를 보관하지 않는 라이브러리는 재시도나 타이머를 추가하지 않습니다.
+
 :::

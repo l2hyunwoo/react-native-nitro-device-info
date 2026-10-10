@@ -21,11 +21,13 @@ Android 루팅 또는 iOS 탈옥 기기를 탐지하는 **로컬 전용** 무결
 - DRM이 필요한 앱
 
 :::warning 제한 사항
+
 **모든 탐지 방식은 로컬 전용이며** Magisk + Shamiko, RootHide, PlayIntegrityFix 같은 도구로 **우회할 수 있습니다**.
 
 - **탐지하지 못했다고 기기가 안전하다는 뜻은 아닙니다.**
 - Play Integrity API나 iOS App Attest를 사용하지 않습니다.
 - 유일한 보안 수단이 아니라 다층 방어의 한 수단으로 사용하세요.
+
 :::
 
 [지원 여부 배지 설명](/api/#availability-badges)을 읽으세요. 두 API는 핵심 패키지에 속하며 웹에서는 fallback 값만 반환합니다.

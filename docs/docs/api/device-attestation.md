@@ -283,6 +283,7 @@ cannot set it up — it only issues tokens once your app is configured.
 ## Limitations
 
 :::warning Be honest about what attestation can and cannot do
+
 - **App Attest is not a jailbreak detector.** It proves a genuine, unmodified
   app on genuine Apple hardware — use it as a *positive* signal.
 - **Simulators / emulators**: `isSupported` is `false` on the iOS Simulator;
@@ -295,4 +296,5 @@ cannot set it up — it only issues tokens once your app is configured.
   rejects — handle the rejection; don't treat it as "safe".
 - **App Attest throttling**: Apple rate-limits `attestKey`. Control call
   frequency in your app; the library adds no retry/timer (it stays stateless).
+
 :::
