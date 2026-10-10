@@ -36,7 +36,7 @@ integrity 최초 배포는 manifest의 `0.1.0`을 사용합니다. 최초 배포
 
 이 배포를 승인하기 전에 지원하는 실기기의 attestation과 백엔드의 토큰 검증을 확인하세요. 빌드, 플랫폼 대역, 시뮬레이터 테스트로는 이 결과를 확인할 수 없습니다.
 
-1. 위 버전 PR과 릴리스 검증을 마칩니다. 배포가 승인되면 `main`에서 **Release**를 `publish: true`로 실행하고 해당 실행의 검증된 integrity archive를 보존합니다. trusted publisher가 없는 동안 publish job은 integrity를 배포할 수 없습니다.
+1. 위 버전 PR과 릴리스 검증을 마칩니다. 배포가 승인되면 `main`에서 **Release**를 `publish: true`로 실행합니다. trusted publisher가 없어 publish job이 integrity에서 실패할 때까지 기다린 뒤 해당 실행의 검증된 integrity archive를 보존합니다.
 2. 인증된 npm 관리자가 검토한 integrity archive를 한 번 배포합니다.
 
    ```sh
@@ -44,7 +44,7 @@ integrity 최초 배포는 manifest의 `0.1.0`을 사용합니다. 최초 배포
    ```
 
 3. 패키지의 trusted publisher를 설정합니다.
-4. 원래 publish job을 재실행해 레지스트리의 archive 해시를 확인하고 릴리스 정보를 완성합니다.
+4. 같은 `publish: true` 실행의 **Re-run failed jobs**를 사용해 레지스트리의 archive 해시를 확인하고 릴리스 정보를 완성합니다.
 
 integrity만 beta로 배포하려고 모노레포 전체에 적용되는 `changeset pre enter`를 사용하지 마세요.
 

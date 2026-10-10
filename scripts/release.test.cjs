@@ -108,6 +108,7 @@ function fixture(t) {
   return {
     root,
     output,
+    env: {},
     calls,
     tags,
     releases,
@@ -299,6 +300,109 @@ test('failure after registry success recovers the missing tag without republishi
     ).length,
     3
   );
+});
+
+test('polls until the published version is visible before creating release metadata', async (t) => {
+  const f = fixture(t);
+  await prepare(f.root, f.output, f);
+  let staleReads = 0;
+  const waits = [];
+  await publish(f.root, f.output, {
+    ...f,
+    env,
+    registry: async (name) => {
+      if (name === entries[0][1] && f.versions.has(name) && staleReads++ < 2)
+        return { name, versions: { '0.9.0': {} } };
+      return f.registry(name);
+    },
+    wait: async (ms) => {
+      assert.equal(f.tags.size, 0);
+      assert.equal(f.releases.size, 0);
+      waits.push(ms);
+    },
+  });
+  assert.deepEqual(waits, [1_000, 2_000]);
+  assert.equal(f.releases.size, 3);
+});
+
+test('bounds registry polling and recovers later without republishing the archive', async (t) => {
+  const f = fixture(t);
+  await prepare(f.root, f.output, f);
+  let reads = 0;
+  const waits = [];
+  await assert.rejects(
+    publish(f.root, f.output, {
+      ...f,
+      env,
+      registry: async () => {
+        reads++;
+        return null;
+      },
+      wait: async (ms) => {
+        waits.push(ms);
+      },
+    }),
+    /publication is not visible/
+  );
+  assert.equal(reads, 7);
+  assert.deepEqual(waits, [1_000, 2_000, 4_000, 8_000, 16_000]);
+  assert.equal(f.tags.size, 0);
+  assert.equal(f.releases.size, 0);
+  await publish(f.root, f.output, { ...f, env });
+  assert.equal(f.releases.size, 3);
+  assert.equal(
+    f.calls.filter(
+      ([command, args]) => command === 'npm' && args[0] === 'publish'
+    ).length,
+    3
+  );
+});
+
+test('a mismatched archive after publication fails without retrying or creating metadata', async (t) => {
+  const f = fixture(t);
+  await prepare(f.root, f.output, f);
+  await assert.rejects(
+    publish(f.root, f.output, {
+      ...f,
+      env,
+      registry: async (name) =>
+        f.versions.has(name)
+          ? {
+              name,
+              versions: {
+                '1.0.0': { dist: { integrity: 'sha512-different' } },
+              },
+            }
+          : null,
+      wait: async () => {
+        assert.fail('Must not retry a mismatched archive');
+      },
+    }),
+    /Registry archive differs/
+  );
+  assert.equal(f.tags.size, 0);
+  assert.equal(f.releases.size, 0);
+});
+
+test('registry errors after publication stop without creating metadata', async (t) => {
+  const f = fixture(t);
+  await prepare(f.root, f.output, f);
+  await assert.rejects(
+    publish(f.root, f.output, {
+      ...f,
+      env,
+      registry: async (name) => {
+        if (f.versions.has(name)) throw new Error('HTTP 503');
+        return null;
+      },
+      wait: async () => {
+        assert.fail('Must not mask registry errors');
+      },
+    }),
+    /HTTP 503/
+  );
+  assert.equal(f.tags.size, 0);
+  assert.equal(f.releases.size, 0);
 });
 
 test('an existing version with another archive never receives release metadata', async (t) => {

@@ -36,7 +36,7 @@ The initial integrity release uses the manifest's `0.1.0` baseline. Fixes before
 
 Before authorizing this release, confirm attestation on supported physical devices and token verification on your backend. Builds, platform doubles, and simulator tests do not establish these results.
 
-1. Complete the version PR and release validation above. Once publication is authorized, dispatch **Release** with `publish: true` on `main` and retain that run's checked integrity archive. Its publish job cannot publish integrity until the package has a trusted publisher.
+1. Complete the version PR and release validation above. Once publication is authorized, dispatch **Release** with `publish: true` on `main`. Wait for its publish job to fail on integrity because the package has no trusted publisher, and retain that run's checked integrity archive.
 2. An authenticated npm maintainer publishes the reviewed integrity archive once:
 
    ```sh
@@ -44,7 +44,7 @@ Before authorizing this release, confirm attestation on supported physical devic
    ```
 
 3. Configure the package's trusted publisher.
-4. Re-run the original publish job to check the registry archive hash and complete release metadata.
+4. Use **Re-run failed jobs** on that same `publish: true` run to check the registry archive hash and complete release metadata.
 
 Do not use the monorepo-wide `changeset pre enter` command for an integrity-only beta release.
 

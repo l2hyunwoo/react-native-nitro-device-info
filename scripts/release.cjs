@@ -3,6 +3,7 @@ const { execFileSync } = require('node:child_process');
 const { createHash } = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
+const { setTimeout: delay } = require('node:timers/promises');
 
 const registryUrl = 'https://registry.npmjs.org';
 const packages = [
@@ -228,7 +229,12 @@ function releaseNotes(root, pkg) {
 async function publish(
   root,
   output,
-  { registry = readRegistry, runner = run, env = process.env } = {}
+  {
+    registry = readRegistry,
+    runner = run,
+    env = process.env,
+    wait = delay,
+  } = {}
 ) {
   assert.equal(
     env.GITHUB_ACTIONS,
@@ -290,7 +296,11 @@ async function publish(
         ],
         { cwd: root, stdio: 'inherit' }
       );
-      published = (await registry(pkg.name))?.versions[pkg.version];
+      for (let attempt = 0; attempt < 6; attempt++) {
+        if (attempt > 0) await wait(1_000 * 2 ** (attempt - 1));
+        published = (await registry(pkg.name))?.versions[pkg.version];
+        if (published) break;
+      }
     }
     assert.equal(
       published?.dist?.integrity,
