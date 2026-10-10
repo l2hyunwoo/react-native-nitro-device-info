@@ -106,6 +106,9 @@ function PlayIntegritySection({ integrity }: { integrity: Integrity }) {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Play Integrity (Standard)</Text>
+      <Text style={styles.hint}>
+        Uses a fixed sample request payload. Issued tokens are not verified by this demo.
+      </Text>
       <Text style={styles.label}>Google Cloud project number</Text>
       <TextInput
         style={styles.input}
@@ -143,6 +146,9 @@ function AppAttestSection({ integrity }: { integrity: Integrity }) {
   });
 
   const runGenerateKey = async () => {
+    setKeyId(null);
+    setAttestation({ status: 'idle' });
+    setAssertion({ status: 'idle' });
     setKey({ status: 'loading' });
     try {
       const id = await integrity.generateKey();
@@ -168,7 +174,7 @@ function AppAttestSection({ integrity }: { integrity: Integrity }) {
   };
 
   const runAssert = async () => {
-    if (!keyId) return;
+    if (!keyId || attestation.status !== 'success') return;
     setAssertion({ status: 'loading' });
     try {
       const clientDataHash = await sha256Base64('demo-request-payload');
@@ -193,19 +199,21 @@ function AppAttestSection({ integrity }: { integrity: Integrity }) {
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>App Attest</Text>
       <Text style={styles.hint}>
-        Persist the keyId yourself (Keychain). It does not survive reinstall.
+        Uses fixed demo challenges and keeps keyId only until restart. No server
+        verifies these results. In production, use fresh server challenges and
+        persist keyId in Keychain; it does not survive reinstall.
       </Text>
       <Button label="1. Generate key" onPress={runGenerateKey} />
       <ResultCard title="generateKey (keyId)" state={key} />
       <Button
         label="2. Attest key (once)"
-        disabled={!keyId}
+        disabled={!keyId || attestation.status === 'success' || attestation.status === 'loading'}
         onPress={runAttest}
       />
       <ResultCard title="attestKey" state={attestation} truncate />
       <Button
         label="3. Generate assertion (per request)"
-        disabled={!keyId}
+        disabled={attestation.status !== 'success'}
         onPress={runAssert}
       />
       <ResultCard title="generateAssertion" state={assertion} truncate />
