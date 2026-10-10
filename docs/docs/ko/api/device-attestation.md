@@ -1,15 +1,15 @@
 ---
 translationOf: api/device-attestation.md
-sourceCommit: 09ad2e50615e614bf0286208e439515686f88194
+sourceCommit: fe4734e26c07bb1ad819c34784ba0e69391db281
 ---
 
 # Device attestation API {#device-attestation-api}
 
 선택 패키지 `react-native-nitro-device-integrity`는 하드웨어 기반 **device attestation** 토큰을 발급합니다. 기기가 보낸 토큰은 서버에서 검증해야 합니다.
 
-<span class="rp-badge rp-badge--warning">미배포</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span>
 
-이 패키지는 소스 레포지터리에서 제공하며 npm 설치 명령은 최초 배포 후에 적용됩니다.
+이 페이지의 버전 배지는 integrity 패키지를 기준으로 합니다. npm의 [v0.1.0](https://www.npmjs.com/package/react-native-nitro-device-integrity/v/0.1.0)은 [이 소스](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/react-native-nitro-device-integrity%400.1.0/packages/react-native-nitro-device-integrity)에 해당합니다.
 
 [지원 여부 배지 설명](/api/#availability-badges)을 읽으세요. Pod의 대상은 iOS 14 이상, Android 모듈의 대상은 API 24 이상입니다. 의존성은 더 높은 최소 버전을 요구할 수 있습니다. 웹용 entry point는 없습니다.
 
@@ -63,7 +63,7 @@ const integrity = createDeviceIntegrity();
 
 #### `isSupported` {#issupported}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 readonly isSupported: boolean
@@ -73,7 +73,7 @@ readonly isSupported: boolean
 
 #### `providerType` {#providertype}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 readonly providerType: 'playIntegrity' | 'appAttest' | 'unsupported'
@@ -87,7 +87,7 @@ readonly providerType: 'playIntegrity' | 'appAttest' | 'unsupported'
 
 #### `prepareStandardProvider()` {#preparestandardprovider}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--warning">iOS: reject</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: reject</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 prepareStandardProvider(cloudProjectNumber: string): Promise<void>
@@ -99,7 +99,7 @@ Play Integrity **Standard** 토큰 provider를 준비합니다. 네이티브에�
 
 #### `requestIntegrityToken()` {#requestintegritytoken}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--warning">iOS: reject</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: reject</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 requestIntegrityToken(requestHash: string): Promise<string>
@@ -111,7 +111,7 @@ Standard 토큰을 요청합니다. 먼저 `prepareStandardProvider`를 호출�
 
 #### `requestClassicIntegrityToken()` {#requestclassicintegritytoken}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--warning">iOS: reject</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--warning">iOS: reject</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 requestClassicIntegrityToken(nonce: string, cloudProjectNumber: string): Promise<string>
@@ -125,7 +125,7 @@ Play Integrity **Classic** 흐름입니다(일회성, 서버 nonce 기반). 자�
 
 #### `generateKey()` {#generatekey}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 generateKey(): Promise<string>
@@ -139,7 +139,7 @@ Secure Enclave에서 App Attest 키 쌍을 만들고 `keyId`를 반환합니다.
 
 #### `attestKey()` {#attestkey}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 attestKey(keyId: string, clientDataHash: string): Promise<string>
@@ -149,7 +149,7 @@ attestKey(keyId: string, clientDataHash: string): Promise<string>
 
 #### `generateAssertion()` {#generateassertion}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 generateAssertion(keyId: string, clientDataHash: string): Promise<string>
@@ -163,7 +163,7 @@ generateAssertion(keyId: string, clientDataHash: string): Promise<string>
 
 #### `getDeviceCheckToken()` {#getdevicechecktoken}
 
-<span class="rp-badge rp-badge--warning">미배포</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
+<span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 14+</span> <span class="rp-badge rp-badge--warning">Android: reject</span> <span class="rp-badge rp-badge--warning">웹: 미지원</span>
 
 ```typescript
 getDeviceCheckToken(): Promise<string>

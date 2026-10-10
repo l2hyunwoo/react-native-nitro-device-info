@@ -1,6 +1,6 @@
 ---
 translationOf: api/index.md
-sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
+sourceCommit: fe4734e26c07bb1ad819c34784ba0e69391db281
 ---
 
 # API 레퍼런스 개요 {#api-reference-overview}
@@ -15,7 +15,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 | `react-native-nitro-device-info/compat`의 `DeviceInfo` | `react-native-device-info` 15.x 형식의 함수 | `DeviceInfo.getModel()` |
 | `react-native-nitro-device-info`의 `{ useBatteryLevel }` | 값을 반환하는 React 훅 | `number \| null` |
 | `react-native-nitro-device-info/compat`의 `{ useIsHeadphonesConnected }` | 호환 훅 결과 | `{ loading, result }` |
-| `react-native-nitro-device-integrity`의 `{ DeviceIntegrityModule }` | 미배포 device attestation 패키지 | [device attestation](/api/device-attestation) 참고 |
+| `react-native-nitro-device-integrity`의 `{ DeviceIntegrityModule }` | 백엔드에서 검증하는 device attestation | [device attestation](/api/device-attestation) 참고 |
 
 루트의 `DeviceInfo`는 TypeScript 타입이며 런타임에 사용하는 기본 객체가 아닙니다. 호환성 주의 사항은 [마이그레이션](/api/migration)을 참고하세요.
 
@@ -33,7 +33,7 @@ sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
 
 웹용 entry point와 fallback 값은 **v1.8.0**부터 사용할 수 있습니다. `웹: 제한적 지원` 배지는 브라우저에서 값을 읽는다는 뜻입니다. 브라우저 권한, API 지원 여부, SSR에 따라 fallback 값을 반환할 수 있습니다. fallback 값이 네이티브 기능을 제공하지는 않습니다.
 
-iOS의 카메라 감지와 기기 인증 구현은 v1.9.0부터 사용할 수 있습니다. v1.8.3까지의 핵심 패키지 릴리스에도 이름은 있지만 iOS에서는 상수를 반환합니다. 별도 device attestation 패키지도 2026-10-10 기준 npm 배포 이력이 없습니다.
+iOS의 카메라 감지와 기기 인증 구현은 v1.9.0부터 사용할 수 있습니다. v1.8.3까지의 핵심 패키지 릴리스에도 이름은 있지만 iOS에서는 상수를 반환합니다.
 
 ### 버전 근거 {#version-evidence}
 

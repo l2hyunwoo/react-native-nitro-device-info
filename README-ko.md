@@ -193,7 +193,7 @@ Android MAC 주소 getter는 5초 캐시를 공유하며 접근이 제한되거�
 
 Android 헤드폰 감지는 유선·USB 헤드셋(API 26 이상 USB 지원)과 Bluetooth를 구별합니다. 비동기·동기 getter가 같은 감지를 사용합니다.
 
-> **서버에서 검증하는 device attestation이 필요한가요?** 위 로컬 검사는 우회할 수 있습니다. 하드웨어 기반의 서버 검증(Play Integrity / App Attest / DeviceCheck)에는 선택 패키지 [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity/README-ko.md)를 사용하세요. 패키지가 발급한 토큰은 백엔드에서 검증해야 합니다. 이 패키지는 2026-10-10 기준 미배포 상태이며 npm 설치는 배포 후에 가능합니다.
+> **서버에서 검증하는 device attestation이 필요한가요?** 위 로컬 검사는 우회할 수 있습니다. 하드웨어 기반의 서버 검증(Play Integrity / App Attest / DeviceCheck)에는 선택 패키지 [`react-native-nitro-device-integrity`](packages/react-native-nitro-device-integrity/README-ko.md)를 사용하세요. 패키지가 발급한 토큰은 백엔드에서 검증해야 합니다.
 
 ## API 레퍼런스
 

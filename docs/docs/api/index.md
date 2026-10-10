@@ -10,7 +10,7 @@ Choose the API entry point before copying an example. The root API and `/compat`
 | `DeviceInfo` from `react-native-nitro-device-info/compat` | `react-native-device-info` 15.x-style functions | `DeviceInfo.getModel()` |
 | `{ useBatteryLevel }` from `react-native-nitro-device-info` | React hook returning a value | `number \| null` |
 | `{ useIsHeadphonesConnected }` from `react-native-nitro-device-info/compat` | Compatibility hook result | `{ loading, result }` |
-| `{ DeviceIntegrityModule }` from `react-native-nitro-device-integrity` | Unreleased attestation package | See [Device Attestation](/api/device-attestation) |
+| `{ DeviceIntegrityModule }` from `react-native-nitro-device-integrity` | Device attestation with backend verification | See [Device Attestation](/api/device-attestation) |
 
 `DeviceInfo` from the root is a TypeScript type. It is not a default runtime object. See [Migration](/api/migration) for compatibility caveats.
 
@@ -28,7 +28,7 @@ Each API section shows its introduction version and current platform behavior. G
 
 Web entry points and their fallback values are available from **v1.8.0**. A `Web: limited` badge identifies browser-derived values. Browser permissions, API availability, and SSR can still produce fallbacks. A fallback does not provide the native feature.
 
-The iOS camera and device-authentication implementations are available from v1.9.0. Core releases through v1.8.3 expose those names but return constants on iOS. The separate attestation package also has no published npm release as of 2026-10-10.
+The iOS camera and device-authentication implementations are available from v1.9.0. Core releases through v1.8.3 expose those names but return constants on iOS.
 
 ### Version evidence
 
