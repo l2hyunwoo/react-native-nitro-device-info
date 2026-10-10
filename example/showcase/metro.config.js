@@ -16,4 +16,6 @@ const baseConfig = withMetroConfig(getDefaultConfig(__dirname), {
   dirname: __dirname,
 });
 
+baseConfig.resolver.nodeModulesPaths = [path.join(__dirname, 'node_modules')];
+
 module.exports = withRnHarness(baseConfig);
