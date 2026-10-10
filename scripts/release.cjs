@@ -299,7 +299,9 @@ async function verifyOidc(
       assert.ok(body.token_type === 'oidc', 'Unexpected npm token type');
       if (body.expires !== undefined) {
         log(`${pkg.name}: npm expiry metadata type ${typeof body.expires}`);
-        const expiresAt = new Date(body.expires).getTime();
+        const expiresAt = new Date(
+          typeof body.expires === 'number' ? body.expires * 1000 : body.expires
+        ).getTime();
         assert.ok(
           Number.isFinite(expiresAt),
           'npm returned unsupported expiry metadata'
