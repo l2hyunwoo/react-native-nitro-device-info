@@ -1,5 +1,7 @@
 # Showcase App
 
+[English](README.md) | [한국어](README-ko.md)
+
 Comprehensive demonstration app showcasing all 80+ device properties from react-native-nitro-device-info, organized into 10 logical categories with a clean, collapsible interface.
 
 ## Features
@@ -62,6 +64,8 @@ cd example/showcase
 yarn ios      # iOS
 yarn android  # Android
 ```
+
+> **Version availability (2026-10-10)**: Privacy manifest bundling is unreleased and is not included in `1.8.3`. The following describes `main` after [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144).
 
 On iOS, `pod install` includes the library's privacy manifest as `NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy` in the built app. The showcase's app-level manifest remains separate. See [iOS Privacy Manifest](../../docs/docs/guide/getting-started.md#ios-privacy-manifest) for the declared reasons and usage limits.
 

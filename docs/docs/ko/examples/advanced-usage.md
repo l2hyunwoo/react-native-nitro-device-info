@@ -1,10 +1,15 @@
-# Advanced Usage Examples
+---
+translationOf: examples/advanced-usage.md
+sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
+---
 
-Advanced patterns and techniques for using `react-native-nitro-device-info`.
+# 고급 사용 예제 {#advanced-usage-examples}
 
-## Platform-Specific Code
+`react-native-nitro-device-info`의 고급 패턴과 활용 방법입니다.
 
-### Conditional Logic Based on Platform
+## 플랫폼별 코드 {#platform-specific-code}
+
+### 플랫폼에 따른 조건 분기 {#conditional-logic-based-on-platform}
 
 ```typescript
 import { Platform } from 'react-native';
@@ -29,7 +34,7 @@ function getDeviceDetails() {
 }
 ```
 
-### Android-Specific Features
+### Android 전용 기능 {#android-specific-features}
 
 ```typescript
 import { Platform } from 'react-native';
@@ -72,7 +77,7 @@ function getAndroidDetails() {
 }
 ```
 
-### iOS-Specific Features
+### iOS 전용 기능 {#ios-specific-features}
 
 ```typescript
 import { Platform } from 'react-native';
@@ -101,9 +106,9 @@ async function getIOSDetails() {
 }
 ```
 
-## Performance Optimization
+## 성능 최적화 {#performance-optimization}
 
-### Caching Expensive Operations
+### 비용이 큰 작업의 결과 캐시 {#caching-expensive-operations}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -147,7 +152,7 @@ class DeviceInfoCache {
 }
 ```
 
-### Batch Async Calls
+### 비동기 호출 묶기 {#batch-async-calls}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -173,7 +178,7 @@ async function fetchAllNetworkInfo() {
 }
 ```
 
-### Use Synchronous Variants
+### 동기 API 사용 {#use-synchronous-variants}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -197,11 +202,11 @@ function getNetworkInfoFast() {
 }
 ```
 
-## React Hooks
+## React 훅 {#react-hooks}
 
-### Built-in Hooks (Recommended)
+### 내장 훅(권장) {#built-in-hooks-recommended}
 
-The library provides built-in React hooks for common reactive state monitoring. These are the recommended way to monitor device state:
+일반적인 상태 관찰에는 내장 React 훅을 권장합니다.
 
 ```typescript
 import {
@@ -239,13 +244,13 @@ function DeviceMonitor() {
 }
 ```
 
-For complete documentation, see the [React Hooks Guide](/guide/react-hooks).
+전체 문서는 [React 훅 가이드](/guide/react-hooks)를 참고하세요.
 
-### Custom Hooks for Extended Functionality
+### 커스텀 훅으로 기능 확장 {#custom-hooks-for-extended-functionality}
 
-For use cases not covered by the built-in hooks, you can create custom hooks:
+내장 훅에 없는 기능이 필요하면 커스텀 훅을 만들 수 있습니다.
 
-#### Custom Device Info Hook
+#### 커스텀 기기 정보 훅 {#custom-device-info-hook}
 
 ```typescript
 import { useEffect, useState } from 'react';
@@ -300,9 +305,9 @@ function MyComponent() {
 }
 ```
 
-#### Custom Battery Monitoring Hook
+#### 커스텀 배터리 관찰 훅 {#custom-battery-monitoring-hook}
 
-For custom polling intervals or additional logic, you can extend the built-in hooks:
+다른 폴링 간격이나 추가 로직이 필요하면 내장 훅을 확장할 수 있습니다.
 
 ```typescript
 import { useEffect, useState } from 'react';
@@ -340,7 +345,7 @@ function BatteryMonitor() {
 }
 ```
 
-#### Memory Monitoring Hook
+#### 메모리 관찰 훅 {#memory-monitoring-hook}
 
 ```typescript
 import { useEffect, useState } from 'react';
@@ -394,9 +399,9 @@ function MemoryMonitor() {
 }
 ```
 
-## Adaptive UI Based on Device
+## 기기에 맞춘 UI {#adaptive-ui-based-on-device}
 
-### Responsive Layout
+### 반응형 레이아웃 {#responsive-layout}
 
 ```typescript
 import React from 'react';
@@ -434,7 +439,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-### Feature Detection UI
+### 기능 감지 UI {#feature-detection-ui}
 
 ```typescript
 import React from 'react';
@@ -462,9 +467,9 @@ function FeatureAwareUI() {
 }
 ```
 
-## Error Handling
+## 오류 처리 {#error-handling}
 
-### Graceful Async Error Handling
+### 비동기 오류 처리 {#graceful-async-error-handling}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -507,7 +512,7 @@ async function getDeviceInfoSafely() {
 }
 ```
 
-### TypeScript Type Guards
+### TypeScript 타입 가드 {#typescript-type-guards}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -537,9 +542,9 @@ function checkBattery() {
 }
 ```
 
-## Advanced Android Features
+## 고급 Android 기능 {#advanced-android-features}
 
-### Check System Features
+### 시스템 기능 확인 {#check-system-features}
 
 ```typescript
 import { Platform } from 'react-native';
@@ -562,7 +567,7 @@ function getAndroidCapabilities() {
 }
 ```
 
-### Location Providers
+### 위치 정보 provider 확인 {#location-providers}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -578,7 +583,7 @@ function getLocationCapabilities() {
 }
 ```
 
-## Complete Advanced Example
+## 전체 고급 예제 {#complete-advanced-example}
 
 ```typescript
 import React, { useEffect, useState } from 'react';
@@ -731,9 +736,9 @@ const styles = StyleSheet.create({
 });
 ```
 
-## Next Steps
+## 다음 단계 {#next-steps}
 
-- Learn about [React Hooks](/guide/react-hooks) for reactive state monitoring
-- Check the [API Reference](/api/device-info) for all available methods
-- View [Type Definitions](/api/types) for TypeScript types
-- Read the [Migration Guide](/api/migration) for upgrading from other libraries
+- [React 훅](/guide/react-hooks): 상태 변화 관찰
+- [API 레퍼런스](/api/device-info): 사용 가능한 전체 메서드
+- [타입 정의](/api/types): TypeScript 타입
+- [마이그레이션 가이드](/api/migration): 다른 라이브러리에서 전환

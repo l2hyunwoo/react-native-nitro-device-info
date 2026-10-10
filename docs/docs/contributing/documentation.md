@@ -65,7 +65,7 @@ When a platform replaces a constant fallback with a real implementation, update 
 5. Update related examples and both READMEs if the change affects them.
 6. Build and preview the site. Check changed links and search results.
 
-Korean site pages are planned but are not configured yet. The repository's [Korean documentation plan](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/docs/I18N_PLAN.ko.md) describes the rollout and translation review.
+English is the source language. Keep a Korean counterpart for every page under `docs/docs/ko/`, and update both locale menus when adding a page. Record `translationOf` and `sourceCommit` in Korean frontmatter. Preserve API names, commands, types, numbers, units, return values, permissions, requirements, exceptions, and explicit heading IDs. The language selector changes the path without checking for a translation; missing counterparts cause 404s. See [Korean translation maintenance](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/docs/I18N_PLAN.ko.md).
 
 ## AI-readable documentation
 

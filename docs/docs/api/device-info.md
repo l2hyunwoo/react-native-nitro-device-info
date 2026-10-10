@@ -482,7 +482,9 @@ level is `-1`, charging is `false`, battery state is `"unknown"`, and
 
 ```typescript
 const batteryLevel = DeviceInfoModule.getBatteryLevel();
-console.log(`Battery: ${(batteryLevel * 100).toFixed(0)}%`);
+console.log(batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${(batteryLevel * 100).toFixed(0)}%`);
 // Output: "Battery: 75%"
 ```
 
@@ -496,7 +498,9 @@ Get comprehensive power state information.
 
 ```typescript
 const powerState = DeviceInfoModule.getPowerState();
-console.log(`Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
+console.log(powerState.batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${(powerState.batteryLevel * 100).toFixed(0)}%`);
 console.log(`Status: ${powerState.batteryState}`);
 console.log(`Low Power Mode: ${powerState.lowPowerMode}`); // iOS only
 ```
@@ -630,7 +634,7 @@ console.log(`Last Updated: ${updateDate.toLocaleDateString()}`);
 
 On iOS, this caches the Documents directory creation time on first access. It returns `0` when unavailable.
 
-Synchronous variant (uses cached value from module initialization).
+Synchronous version of `getFirstInstallTime()`.
 
 ```typescript
 const firstInstallTimeSync = DeviceInfoModule.firstInstallTimeSync;
@@ -1291,7 +1295,7 @@ if (canSideload) {
 **Platform behavior difference**:
 - **Android 7 and below**: Returns whether the device allows unknown sources globally (checks `Settings.Global.INSTALL_NON_MARKET_APPS`)
 - **Android 8.0+**: Returns whether THIS APP has permission to install other apps (per-app permission via `canRequestPackageInstalls()`)
-- **iOS**: Always returns `false` (sideloading not possible without jailbreak)
+- **iOS**: This API always returns `false`; it does not detect sideloading.
 
 **Important**: On Android 8.0+, even if the user has enabled "Install unknown apps" for other apps, this will return `false` unless they specifically granted permission to this app.
 

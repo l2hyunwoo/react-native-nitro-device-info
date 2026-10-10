@@ -1,5 +1,7 @@
 # Integrity Demo App
 
+[English](README.md) | [한국어](README-ko.md)
+
 Demonstration app for [`react-native-nitro-device-integrity`](../../packages/react-native-nitro-device-integrity) —
 opt-in, hardware-backed device attestation (Play Integrity on Android, App
 Attest + DeviceCheck on iOS).

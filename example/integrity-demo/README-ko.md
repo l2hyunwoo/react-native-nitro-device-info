@@ -1,35 +1,30 @@
-# Integrity 데모 앱
+# Integrity Demo 앱
 
-opt-in [`react-native-nitro-device-integrity`](../../packages/react-native-nitro-device-integrity)
-패키지의 데모 앱입니다 — 하드웨어 기반 디바이스 attestation(Android의 Play
-Integrity, iOS의 App Attest + DeviceCheck).
+[English](README.md) | **한국어**
 
-이 앱은 attestation 토큰을 **발급**해 화면에 표시(축약)합니다. 토큰을 **검증하지는
-않습니다** — 검증은 여러분의 서버 책임입니다. 서버 검증 방법은
-[패키지 README](../../packages/react-native-nitro-device-integrity/README.md)를 참고하세요.
+선택적으로 설치하는 하드웨어 기반 device attestation 패키지 [`react-native-nitro-device-integrity`](../../packages/react-native-nitro-device-integrity/README-ko.md)의 예제입니다. Android는 Play Integrity, iOS는 App Attest + DeviceCheck를 사용합니다.
 
-## 무엇을 보여주나요
+앱은 device attestation 토큰을 **발급**하고 일부를 화면에 표시합니다. 발급한 토큰은 서버에서 검증해야 합니다. [패키지 README](../../packages/react-native-nitro-device-integrity/README-ko.md)의 서버 검증 안내를 참고하세요.
 
-- 현재 디바이스의 `providerType` / `isSupported`
-- **Android**: Cloud 프로젝트 번호 입력 → *Prepare provider* → *Request integrity
-  token* (Play Integrity Standard)
-- **iOS**: *Generate key* → *Attest key* → *Generate assertion* (App Attest),
-  그리고 *DeviceCheck token* 버튼
-- 미지원/미설정 환경(예: iOS 시뮬레이터)에서의 graceful 에러 처리
+## 표시하는 기능
 
-`clientDataHash` / `requestHash`는 앱 내에서 자체 SHA-256(`src/utils/hash.ts`)으로
-계산합니다 — 네이티브 crypto 의존성이 없습니다.
+- 현재 기기의 `providerType` / `isSupported`
+- **Android**: Cloud 프로젝트 번호 입력 → *Prepare provider* → *Request integrity token*(Play Integrity Standard)
+- **iOS**: *Generate key* → *Attest key* → *Generate assertion*(App Attest), 별도 *DeviceCheck token* 버튼
+- 기기나 설정이 지원 조건을 충족하지 않을 때의 오류(iOS 시뮬레이터 등)
 
-## 앱 실행 방법
+`clientDataHash` / `requestHash`는 자체 SHA-256 구현(`src/utils/hash.ts`)으로 앱 안에서 계산합니다. 네이티브 암호화 의존성은 없습니다.
 
-저장소 루트에서:
+## 앱 실행
+
+레포지터리 루트에서:
 
 ```bash
-yarn integrity-demo ios      # iOS (App Attest는 실기기 필요)
-yarn integrity-demo android  # Android (Google Play Services 필요)
+yarn integrity-demo ios      # iOS (real device required for App Attest)
+yarn integrity-demo android  # Android (needs Google Play Services)
 ```
 
-이 디렉토리에서:
+이 디렉터리에서:
 
 ```bash
 yarn pod    # iOS: pod install
@@ -37,34 +32,26 @@ yarn ios
 yarn android
 ```
 
-패키지의 `.nitro.ts` API를 변경한 뒤에는 저장소 루트에서 `yarn nitrogen:integrity`를
-실행하세요.
+패키지의 `.nitro.ts` API를 바꾸면 레포지터리 루트에서 `yarn nitrogen:integrity`를 실행하세요.
 
-## 실제 토큰 발급을 위한 설정
+## 실제 토큰에 필요한 설정
 
-attestation은 provider가 설정된 경우에만 실제 토큰을 반환합니다. 설정 전에는 버튼이
-설명이 담긴 에러로 reject됩니다(이것 자체도 확인할 가치가 있습니다).
+provider를 설정해야 실제 토큰을 받을 수 있습니다. 설정하지 않은 채 버튼을 누르면 요청이 실패하고 원인을 설명하는 오류가 표시됩니다.
 
-### iOS (App Attest)
+### iOS(App Attest)
 
-- `ios/NitroDeviceIntegrityDemo.xcworkspace`를 열고 타깃 → *Signing &
-  Capabilities*로 이동
-- **Development Team**과 **본인 소유의 bundle identifier**를 설정(App Attest는
-  placeholder bundle ID로는 동작하지 않습니다)
-- **App Attest** capability는 `NitroDeviceIntegrityDemo.entitlements`
-  (`com.apple.developer.devicecheck.appattest-environment = development`)로
-  미리 배선되어 있습니다
-- **실기기**에서 실행 — App Attest는 시뮬레이터를 지원하지 않습니다
+- `ios/NitroDeviceIntegrityDemo.xcworkspace`를 열고 타깃 → *Signing & Capabilities*를 선택하세요.
+- **Development Team**과 **소유한 번들 식별자**를 설정하세요. App Attest는 임시 번들 ID로 동작하지 않습니다.
+- **App Attest** 기능은 `NitroDeviceIntegrityDemo.entitlements`에 미리 설정되어 있습니다(`com.apple.developer.devicecheck.appattest-environment = development`).
+- **실제 기기**에서 실행하세요. 시뮬레이터는 App Attest를 지원하지 않습니다.
 
-### Android (Play Integrity)
+### Android(Play Integrity)
 
-- **Google Cloud** 프로젝트를 만들고 Play Integrity API를 활성화
-- **Play Console** → *Play Integrity API*에서 링크
-- 해당 **Cloud 프로젝트 번호**를 앱 입력 필드에 입력
-- **Google Play Services**가 있는 기기에서 실행(대부분의 실기기, Play Store가 있는
-  에뮬레이터)
+- **Google Cloud** 프로젝트를 만들거나 선택하고 Play Integrity API를 켜세요.
+- **Play Console** → *Play Integrity API*에서 연결하세요.
+- 앱 입력란에 **Cloud 프로젝트 번호**를 입력하세요.
+- **Google Play Services**가 있는 기기에서 실행하세요(대부분의 실기기 또는 Play Store가 있는 에뮬레이터).
 
-## 포함되지 않은 것 (의도적)
+## 포함하지 않는 기능
 
-서버 측 토큰 검증. 이 데모는 토큰 발급까지만 다루며, 검증은 여러분의 백엔드가
-수행합니다. 방법은 패키지 README를 참고하세요.
+서버 토큰 검증은 포함하지 않습니다. 이 예제는 발급까지만 담당하며 복호화·검증은 백엔드에서 합니다. 방법은 패키지 README를 참고하세요.

@@ -20,11 +20,13 @@ These APIs perform **local detection only** (file system checks, package detecti
 - Apps with DRM requirements
 
 :::warning Limitations
+
 **All detection methods are local-only and can be bypassed** by sophisticated tools (Magisk + Shamiko, RootHide, PlayIntegrityFix, etc.).
 
 - **"Not detected" does NOT guarantee a secure device**
 - These APIs do NOT use Play Integrity API or iOS App Attest
 - Use as one layer of defense-in-depth, not as sole security measure
+
 :::
 
 Read the [availability badge definitions](/api/#availability-badges). Both APIs belong to the core package; web only returns fallback values.

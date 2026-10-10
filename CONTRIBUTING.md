@@ -1,5 +1,7 @@
 # Contributing
 
+[English](CONTRIBUTING.md) | [한국어](CONTRIBUTING-ko.md)
+
 Contributions are always welcome, no matter how large or small!
 
 We want this community to be friendly and respectful to each other. Please follow it in all your interactions with the project. Before contributing, please read the [code of conduct](./CODE_OF_CONDUCT.md).
@@ -8,10 +10,9 @@ We want this community to be friendly and respectful to each other. Please follo
 
 This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/features/workspaces). It contains the following packages:
 
-- The library package in the root directory.
-- Two example apps in the `example/` directory:
-  - **Showcase app** (`example/showcase/`) - Demonstrates API usage and displays device information
-  - **Benchmark app** (`example/benchmark/`) - Performance testing and benchmarking
+- Core library, optional attestation library, and MCP server in `packages/`.
+- Showcase, benchmark, and integrity demo apps in `example/`.
+- The documentation site in `docs/`, with its own dependency installation.
 
 To get started with the project, make sure you have the correct version of [Node.js](https://nodejs.org/) installed. See the [`.nvmrc`](./.nvmrc) file for the version used in this project.
 
@@ -38,7 +39,7 @@ To invoke **Nitrogen**, use the following command:
 yarn nitrogen
 ```
 
-The example apps ([showcase](/example/showcase/) and [benchmark](/example/benchmark/)) demonstrate usage of the library. You need to run one of them to test any changes you make.
+The example apps ([showcase](example/showcase/README.md) and [benchmark](example/benchmark/README.md)) demonstrate usage of the library. You need to run one of them to test any changes you make.
 
 Both apps are configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example apps. Changes to the library's JavaScript code will be reflected in the example apps without a rebuild, but native code changes will require a rebuild.
 
@@ -89,14 +90,14 @@ Running "NitroDeviceInfoShowcase" with {"fabric":true,"initialProps":{"concurren
 
 Note the `"fabric":true` and `"concurrentRoot":true` properties.
 
-Make sure your code passes TypeScript and ESLint. Run the following to verify:
+Make sure your code passes TypeScript and oxlint. Run the following to verify:
 
 ```sh
 yarn typecheck
 yarn lint
 ```
 
-To fix formatting errors, run the following:
+To apply supported lint fixes, run the following:
 
 ```sh
 yarn lint --fix
@@ -129,19 +130,13 @@ Our pre-commit hooks verify that your commit message matches this format when co
 
 [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
 
-We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
+We use TypeScript for type checking, oxlint for the lint gate, Prettier for formatting, and Jest for unit tests. `yarn lint:eslint` is an auxiliary command; see `AGENTS.md` for its known configuration limitations.
 
-Our pre-commit hooks verify that the linter and tests pass when committing.
+The pre-commit hook lints staged JavaScript and TypeScript files. The commit-msg hook checks the commit subject. Run the relevant tests separately before submitting a change.
 
 ### Publishing to npm
 
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
-
-To publish new versions, run the following:
-
-```sh
-yarn release
-```
+Maintainers publish through the manually dispatched [core library workflow](.github/workflows/publish.yml) and [MCP server workflow](.github/workflows/publish-mcp.yml). Supply the target `version` and use `dry_run` for validation without publishing. The root package does not define a `yarn release` script.
 
 ### Scripts
 
@@ -153,7 +148,9 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn lint:eslint`: lint files with ESLint (alternative linter).
 - `yarn test`: run unit tests with Jest.
 - `yarn nitrogen`: generate native bindings from `.nitro.ts` files.
-- `yarn prepare`: build the library (runs automatically after install).
+- `yarn prepare`: build the core library.
+- `yarn workspace react-native-nitro-device-integrity prepare`: build the attestation library.
+- `yarn integrity-demo <command>`: run integrity demo commands (start/ios/android).
 - `yarn showcase <command>`: run showcase app commands (start/ios/android).
 - `yarn benchmark <command>`: run benchmark app commands (start/ios/android).
 
@@ -168,3 +165,7 @@ When you're sending a pull request:
 - Review the documentation to make sure it looks good.
 - Follow the pull request template when opening a pull request.
 - For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
+
+## Documentation and translations
+
+English site pages in `docs/docs/` have Korean counterparts under `docs/docs/ko/`. Update both when behavior changes, preserving API names, units, permissions, and exceptions. Keep `translationOf`, `sourceCommit`, and explicit heading IDs current. For new pages, update both locale menus in `docs/rspress.config.ts`. See [documentation development](docs/README.md) and [Korean translation maintenance](docs/I18N_PLAN.ko.md).

@@ -174,9 +174,10 @@ Attests a key (**once** per key, per install). Makes a network call to Apple.
 generateAssertion(keyId: string, clientDataHash: string): Promise<string>
 ```
 
-Generates an assertion for a subsequent request (offline). Returns base64 of the
-opaque CBOR assertion object. Your server checks its monotonic counter to detect
-replays.
+Generates an assertion for a subsequent request (offline). Hash client data that
+contains a fresh one-time server challenge and the request payload. Returns base64
+of the opaque CBOR assertion object. Your server checks the issued challenge and
+monotonic counter to detect replays.
 
 ---
 
@@ -214,10 +215,16 @@ if (integrity.providerType === 'playIntegrity') {
   const attestation = await integrity.attestKey(keyId, clientDataHash); // once
   await postToYourServer({ keyId, attestation });           // one-time validation
   // ...per request:
-  const assertion = await integrity.generateAssertion(keyId, base64Sha256(payload));
-  await postToYourServer({ keyId, assertion });
+  const challenge = await fetchChallengeFromYourServer(); // fresh, one-time
+  const clientData = JSON.stringify({ challenge, payload });
+  const assertion = await integrity.generateAssertion(keyId, base64Sha256(clientData));
+  await postToYourServer({ keyId, assertion, clientData });
 }
 ```
+
+The example assumes your app supplies the hashing and backend helpers. Send the
+exact `clientData` string you hashed so the server can verify the same bytes and
+compare its embedded challenge with the one it issued for that request.
 
 ## Server verification (your responsibility)
 
@@ -243,8 +250,9 @@ See [Play Integrity verdicts](https://developer.android.com/google/play/integrit
 
 1. Validate the **attestation** once per key against Apple's App Attest Root CA
    (cert chain, nonce, app-ID hash, counter = 0). Store the public key + counter.
-2. For each **assertion**, verify its signature with the stored public key and
-   that the counter strictly increased.
+2. For each **assertion**, hash the exact client data received and verify the
+   signature with the stored public key. Check that its challenge matches an
+   unused server-issued value and that the counter strictly increased.
 
 See [Validating apps that connect to your server](https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server).
 
@@ -275,6 +283,7 @@ cannot set it up — it only issues tokens once your app is configured.
 ## Limitations
 
 :::warning Be honest about what attestation can and cannot do
+
 - **App Attest is not a jailbreak detector.** It proves a genuine, unmodified
   app on genuine Apple hardware — use it as a *positive* signal.
 - **Simulators / emulators**: `isSupported` is `false` on the iOS Simulator;
@@ -287,4 +296,5 @@ cannot set it up — it only issues tokens once your app is configured.
   rejects — handle the rejection; don't treat it as "safe".
 - **App Attest throttling**: Apple rate-limits `attestKey`. Control call
   frequency in your app; the library adds no retry/timer (it stays stateless).
+
 :::

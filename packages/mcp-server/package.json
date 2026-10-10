@@ -10,7 +10,8 @@
   "files": [
     "dist",
     "data",
-    "README.md"
+    "README.md",
+    "README-ko.md"
   ],
   "scripts": {
     "build": "tsc && node scripts/copy-docs.cjs",

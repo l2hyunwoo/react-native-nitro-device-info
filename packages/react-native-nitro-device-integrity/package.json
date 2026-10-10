@@ -13,6 +13,7 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "README-ko.md",
     "src",
     "lib",
     "android",

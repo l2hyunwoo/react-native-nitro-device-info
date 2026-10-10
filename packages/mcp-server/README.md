@@ -1,5 +1,7 @@
 # @react-native-nitro-device-info/mcp-server
 
+[English](README.md) | [한국어](README-ko.md)
+
 MCP (Model Context Protocol) server for react-native-nitro-device-info that enables AI tools like Claude, Cursor, and Copilot to accurately access library documentation and API information.
 
 ## Prerequisites
@@ -149,7 +151,9 @@ const deviceInfo = NitroModules.createHybridObject<DeviceInfo>('DeviceInfo');
 
 // Get battery level (0.0 to 1.0)
 const batteryLevel = deviceInfo.getBatteryLevel();
-console.log(`Battery: ${Math.round(batteryLevel * 100)}%`);
+console.log(batteryLevel < 0
+  ? 'Battery: unavailable'
+  : `Battery: ${Math.round(batteryLevel * 100)}%`);
 ```
 
 ### API Discovery

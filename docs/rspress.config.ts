@@ -8,6 +8,17 @@ export default defineConfig({
     'Get comprehensive device information for React Native using Nitro Modules',
   base: '/react-native-nitro-device-info/',
   llms: true,
+  lang: 'en',
+  locales: [
+    { lang: 'en', label: 'English' },
+    {
+      lang: 'ko',
+      label: '한국어',
+      description:
+        'Nitro Modules로 React Native 기기 정보를 읽는 방법과 API 레퍼런스',
+    },
+  ],
+  route: { localeRedirect: 'never' },
   icon: '/logo.png',
   logo: {
     light: '/logo.png',
@@ -15,14 +26,6 @@ export default defineConfig({
   },
 
   themeConfig: {
-    socialLinks: [
-      {
-        icon: 'github',
-        mode: 'link',
-        content: 'https://github.com/l2hyunwoo/react-native-nitro-device-info',
-      },
-    ],
-
     nav: [
       {
         text: 'Guide',
@@ -118,6 +121,112 @@ export default defineConfig({
         },
       ],
     },
+
+    locales: [
+      {
+        lang: 'ko',
+        label: '한국어',
+        nav: [
+          {
+            text: '가이드',
+            items: [
+              { text: '소개', link: '/guide/introduction' },
+              {
+                text: 'Nitro Module을 사용하는 이유',
+                link: '/guide/why-nitro-module',
+              },
+              { text: '시작하기', link: '/guide/getting-started' },
+              { text: 'Expo 설정', link: '/guide/expo-setup' },
+              { text: '빠른 시작', link: '/guide/quick-start' },
+              { text: 'React 훅', link: '/guide/react-hooks' },
+              { text: '웹 지원', link: '/guide/web-support' },
+              { text: 'MCP 연동', link: '/guide/mcp-integration' },
+            ],
+          },
+          {
+            text: 'API 레퍼런스',
+            items: [
+              { text: '개요', link: '/api/' },
+              { text: 'DeviceInfo 모듈', link: '/api/device-info' },
+              { text: '기기 무결성(로컬)', link: '/api/device-integrity' },
+              { text: 'Device Attestation', link: '/api/device-attestation' },
+              { text: 'React 훅', link: '/api/hooks' },
+              { text: '타입 정의', link: '/api/types' },
+              { text: '마이그레이션 가이드', link: '/api/migration' },
+            ],
+          },
+          {
+            text: '예제',
+            items: [
+              { text: '기본 사용법', link: '/examples/basic-usage' },
+              { text: '고급 사용법', link: '/examples/advanced-usage' },
+            ],
+          },
+          {
+            text: '기여하기',
+            items: [{ text: '문서', link: '/contributing/documentation' }],
+          },
+          {
+            text: 'GitHub',
+            link: 'https://github.com/l2hyunwoo/react-native-nitro-device-info',
+          },
+        ],
+
+        sidebar: {
+          '/ko/guide/': [
+            {
+              text: '가이드',
+              collapsible: false,
+              items: [
+                { text: '소개', link: '/guide/introduction' },
+                {
+                  text: 'Nitro Module을 사용하는 이유',
+                  link: '/guide/why-nitro-module',
+                },
+                { text: '시작하기', link: '/guide/getting-started' },
+                { text: 'Expo 설정', link: '/guide/expo-setup' },
+                { text: '빠른 시작', link: '/guide/quick-start' },
+                { text: 'React 훅', link: '/guide/react-hooks' },
+                { text: '웹 지원', link: '/guide/web-support' },
+                { text: 'MCP 연동', link: '/guide/mcp-integration' },
+              ],
+            },
+          ],
+          '/ko/api/': [
+            {
+              text: 'API 레퍼런스',
+              collapsible: false,
+              items: [
+                { text: '개요', link: '/api/' },
+                { text: 'DeviceInfo 모듈', link: '/api/device-info' },
+                { text: '기기 무결성(로컬)', link: '/api/device-integrity' },
+                { text: 'Device Attestation', link: '/api/device-attestation' },
+                { text: 'React 훅', link: '/api/hooks' },
+                { text: '타입 정의', link: '/api/types' },
+                { text: '마이그레이션 가이드', link: '/api/migration' },
+              ],
+            },
+          ],
+          '/ko/examples/': [
+            {
+              text: '예제',
+              collapsible: false,
+              items: [
+                { text: '기본 사용법', link: '/examples/basic-usage' },
+                { text: '고급 사용법', link: '/examples/advanced-usage' },
+              ],
+            },
+          ],
+          '/ko/contributing/': [
+            {
+              text: '기여하기',
+              collapsible: false,
+              items: [{ text: '문서', link: '/contributing/documentation' }],
+            },
+          ],
+        },
+      },
+    ],
 
     search: true,
     lastUpdated: true,

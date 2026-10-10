@@ -1,136 +1,76 @@
-# 한국어 문서 도입 계획
+# 한국어 문서 운영 안내
 
-2026-10-10 기준 조사입니다. 적용 대상은 `docs/yarn.lock`에 고정된 `@rspress/core@2.0.23`입니다. 이 문서는 도입 제안이며, 현재 사이트에 한국어 언어 선택기를 추가한 상태는 아닙니다.
+문서 사이트의 모든 영어 페이지에 한국어 번역을 제공합니다. 영어 원문을 기준으로 번역을 갱신합니다. 문서 사이트에서 사용하는 버전은 `docs/yarn.lock`의 `@rspress/core@2.0.23`입니다.
 
-## 권장안
+## 파일과 URL
 
-기존 영어 페이지와 URL을 유지하고, 콘텐츠 루트인 `docs/docs/` 아래에 `ko/`를 추가합니다. Rspress의 기본 언어 선택기를 사용합니다. 별도의 문서 도구나 번역 플러그인은 필요하지 않습니다.
+영어는 `docs/docs/`에, 한국어는 `docs/docs/ko/` 아래의 같은 경로에 둡니다. 정적 자산은 `docs/docs/public/`을 공유합니다. 영어 URL과 배포 `base`는 유지합니다.
 
-먼저 홈, 설치, Expo 설정, 빠른 시작, React Hooks, 마이그레이션을 번역합니다. API 전체를 번역하기 전에는 나머지 경로에 짧은 한국어 안내 페이지와 정확한 영어 원문 링크를 제공합니다.
+| 항목 | 영어 | 한국어 |
+| --- | --- | --- |
+| 홈 | `/react-native-nitro-device-info/` | `/react-native-nitro-device-info/ko/` |
+| 설치 | `/react-native-nitro-device-info/guide/getting-started.html` | `/react-native-nitro-device-info/ko/guide/getting-started.html` |
+| AI 문서 목록 | `/react-native-nitro-device-info/llms.txt` | `/react-native-nitro-device-info/ko/llms.txt` |
+| 전체 AI 문서 | `/react-native-nitro-device-info/llms-full.txt` | `/react-native-nitro-device-info/ko/llms-full.txt` |
 
-기본 언어 선택기는 현재 경로의 언어 부분을 바꾸며 대응 문서의 존재 여부를 검사하지 않습니다. 따라서 **한국어 메뉴에 번역된 페이지만 넣어도 영어 페이지에서 언어를 바꾸면 404가 생길 수 있습니다.** 언어 선택기를 공개할 때는 모든 영어 경로에 한국어 번역 또는 안내 페이지가 있어야 합니다. [언어 전환 구현](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/theme/components/Nav/hooks.tsx#L11)
+기본 언어는 `en`입니다. `route.localeRedirect: 'never'`로 브라우저 언어에 따른 자동 이동을 막습니다. 언어 선택기에서 직접 언어를 바꿀 수 있습니다.
 
-## 파일 배치와 URL
+Rspress 2.0.23의 기본 언어 선택기는 키보드 포커스를 받지 못합니다. `docs/theme/index.tsx`는 상단 메뉴에 대응 페이지로 이동하는 일반 언어 링크를 추가합니다. 키보드로 이 링크에 포커스를 옮겨 Enter로 전환할 수 있습니다.
 
-```text
-docs/
-├── rspress.config.ts
-└── docs/
-    ├── index.md                 # 영어 홈: 기존 파일 유지
-    ├── guide/
-    ├── api/
-    ├── examples/
-    ├── contributing/
-    ├── public/                  # 공통 이미지
-    └── ko/
-        ├── index.md
-        ├── guide/
-        ├── api/
-        ├── examples/
-        └── contributing/
+## 추가와 갱신
+
+1. 영어 페이지와 `ko/`의 같은 경로에 대응 페이지를 작성합니다.
+2. `rspress.config.ts`의 두 언어 상단 메뉴와 사이드바를 갱신합니다.
+3. 한국어 frontmatter에 원문과 번역 기준 커밋을 기록합니다.
+
+```yaml
+translationOf: guide/getting-started.md
+sourceCommit: <번역에 사용한 영어 원문의 커밋 SHA>
 ```
 
-| 콘텐츠 | 배포 경로 |
-| --- | --- |
-| 기존 영어 설치 문서 | `/react-native-nitro-device-info/guide/getting-started.html` |
-| 한국어 설치 문서 | `/react-native-nitro-device-info/ko/guide/getting-started.html` |
-| 영어 AI 문서 목록 | `/react-native-nitro-device-info/llms.txt` |
-| 한국어 AI 문서 목록 | `/react-native-nitro-device-info/ko/llms.txt` |
+`translationOf`는 `docs/docs/` 기준 경로입니다. `sourceCommit`에는 번역할 때 확인한 원문의 커밋을 기록합니다. 이 값만으로 번역이 자동 갱신되지는 않습니다. 같은 PR에서 원문과 번역을 바꾸면 PR diff도 함께 대조합니다.
 
-기존 `base`와 `route.cleanUrls` 설정을 유지합니다. 내부 링크에 배포 base를 중복해서 넣지 않습니다.
+API 이름, import 경로, 명령, 타입, 수치, 단위, 반환값, 권한 이름은 유지합니다. 필수 조건, 금지 사항, 예외, 미배포 상태도 보존합니다. 실행할 코드는 영어 예제와 같게 유지하며 코드 주석은 영어를 사용합니다.
 
-공식 가이드는 언어별 `en/`, `ko/` 구조를 설명합니다. 현재처럼 탐색을 설정 파일에서 직접 정의하면 기존 영어 루트와 `ko/`를 함께 쓸 수 있습니다. 영어 페이지가 기본 언어로 판정되는 동작을 2.0.23 소스에서 확인했습니다. 향후 자동 메뉴 생성이나 `languageParity` 검사를 도입한다면 공식 언어별 디렉터리 구조를 다시 검토해야 합니다. [경로 정규화](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/route/normalizeRoutePath.ts#L47), [자동 탐색 생략 조건](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/auto-nav-sidebar/index.ts#L65)
+한국어 제목에는 대응 영어 제목의 ID를 `{#original-heading-id}`로 지정합니다. 링크의 `#...` 부분은 두 언어에서 같게 유지합니다. 제목을 번역하면서 명시적 ID를 삭제하지 마세요.
 
-## 설정 초안
+언어 선택기는 대응 파일 존재 여부를 확인하지 않습니다. 메뉴에서 제외한 페이지도 한국어 파일이 필요합니다. 빠뜨리면 언어 전환 시 404가 발생합니다. [언어 전환 구현](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/theme/components/Nav/hooks.tsx#L11)
 
-다음은 기존 설정에 병합할 최소 예시입니다. 한국어 전체 메뉴와 대응 페이지를 준비한 뒤 적용합니다.
+## 한국어 문장과 기술 용어
 
-```typescript
-lang: 'en',
-locales: [
-  { lang: 'en', label: 'English' },
-  { lang: 'ko', label: '한국어' },
-],
-route: {
-  localeRedirect: 'never',
-},
-themeConfig: {
-  // Keep the existing English nav, sidebar, and shared settings.
-  locales: [
-    {
-      lang: 'ko',
-      label: '한국어',
-      nav: [
-        { text: '시작하기', link: '/guide/getting-started' },
-        { text: '빠른 시작', link: '/guide/quick-start' },
-      ],
-      sidebar: {
-        '/ko/guide/': [
-          {
-            text: '가이드',
-            items: [
-              { text: '시작하기', link: '/guide/getting-started' },
-              { text: '빠른 시작', link: '/guide/quick-start' },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-},
-```
+영어 문장의 어순과 명사구를 그대로 옮기지 않습니다. 제목은 독자가 궁금해할 내용이나 수행할 작업을 드러내고 본문은 누가 무엇을 하는지 분명하게 씁니다. 예를 들어 “호출이 네이티브 코드에 도달하는 과정”은 “JS 함수 호출로 네이티브 모듈 함수를 어떻게 호출할 수 있을까?”로 쓸 수 있습니다. 모든 제목을 질문형으로 바꿀 필요는 없습니다.
 
-- `lang: 'en'`은 영어 URL의 `/en/` 접두사를 생략하게 합니다.
-- 최상위 `locales`는 지원 언어를, `themeConfig.locales`는 언어별 메뉴를 정의합니다.
+개발자에게 익숙한 기술 용어는 원문을 씁니다. 모듈을 불러오거나 공개하는 동작은 `import 문`, `import 경로`, `export`로 쓰고 Promise 관련 설명에는 `resolve`와 `reject`를 씁니다. 기술 문맥의 `fallback`, `entry point`, `provider`, `device attestation`도 그대로 사용하되 처음 읽는 데 필요한 설명을 덧붙입니다. `toolchain`, `peer dependencies`, `privacy info manifest`도 원문을 쓰고 소스 코드를 관리하는 repository는 “레포지터리”로 씁니다. `approved reason`은 처음 나올 때 “Apple이 허용한 API 사용 목적”으로 설명합니다. 같은 문서 안에서는 용어를 통일합니다.
+
+속성, 메서드, 반환값, 동기·비동기, 타입, 훅, 캐시, 폴링처럼 널리 쓰는 한국어 표현은 유지합니다. 용어의 뜻을 살펴 문맥에 맞게 선택하세요. OS에서 값을 가져오는 동작을 `import`로 쓰거나, 권한 거부를 Promise의 `reject`와 혼동하지 않도록 합니다.
+
+문체를 다듬을 때도 기술적 의미를 우선합니다. 조건·예외·금지의 범위를 바꾸지 말고 문장을 나누면서 동작 순서나 보장 수준이 달라지지 않았는지 확인합니다.
+
+## 링크와 검색
+
 - 한국어 메뉴의 `link: '/guide/...'`에는 `/ko`가 자동으로 붙습니다.
-- **sidebar 객체의 키는 자동 변환되지 않습니다.** `'/ko/guide/'`처럼 한국어 경로를 명시합니다.
-- `route.localeRedirect: 'never'`는 브라우저 언어에 따른 첫 방문 자동 이동을 막습니다. 부분 번역 단계에서 영어 링크가 미번역 한국어 경로로 이동하지 않게 합니다.
+- 홈 frontmatter의 `hero.actions` 링크에는 `/ko/guide/getting-started`처럼 언어 접두사를 직접 넣습니다.
+- 사이드바 키에는 `/ko/guide/`, `/ko/api/`처럼 접두사를 직접 넣습니다. 키는 자동 변환되지 않습니다.
+- 본문은 `/guide/quick-start` 같은 콘텐츠 루트 링크 또는 상대 Markdown 링크를 사용합니다. 배포 base를 반복하지 않습니다.
+- 영어 원문을 명시적으로 연결할 때는 영어 페이지의 완전한 `https://...` URL을 사용합니다.
 
-[언어별 테마와 링크 처리](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/runtimeModule/siteData/normalizeThemeConfig.ts#L37), [언어 이동 설정](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/constants.ts#L50)
+[언어별 메뉴 정규화](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/runtimeModule/siteData/normalizeThemeConfig.ts#L37)
 
-## 번역되지 않은 페이지
+사이트 검색은 언어별로 동작합니다. 한국어 사이트의 검색 결과에 영어 페이지가 자동으로 포함되지는 않습니다. 설명에 API 이름도 남겨 한국어 설명과 API 이름 모두로 검색할 수 있게 합니다.
 
-Rspress의 영어 대체 처리는 UI 문구에 적용됩니다. **본문을 영어로 자동 대체하지는 않습니다.** 한국어 기본 UI 문구는 내장돼 있습니다. [UI 번역 처리](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/runtimeModule/i18n.ts#L88)
+`llms: true`는 언어별 페이지 Markdown, `llms.txt`, `llms-full.txt`를 생성합니다. Rspress에서 experimental로 안내하므로 버전을 올리면 결과를 다시 확인합니다. [언어별 AI 출력 구현](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/ssg-md/llms/emitLlmsTxt.ts#L131)
 
-미번역 경로의 안내 페이지에는 다음 세 가지를 표시합니다.
+MCP를 빌드하면 `ko/`를 포함한 사이트 Markdown을 하위 디렉터리까지 복사하고 색인에 추가합니다. 한국어 검색어를 그대로 사용하며 검색어 번역이나 조사·띄어쓰기 변형을 처리하는 형태소 분석은 지원하지 않습니다. 문서를 바꾸면 MCP도 다시 빌드해야 합니다. 설치한 클라이언트에서 갱신된 문서를 사용하려면 새 릴리스를 배포해야 합니다. 사이트 배포만으로 기존 MCP 패키지가 바뀌지는 않습니다.
 
-1. 아직 한국어 본문을 제공하지 않는다는 설명
-2. 같은 API를 다루는 정확한 영어 페이지 링크
-3. 한국어 설치·빠른 시작 문서 링크
+## 검증
 
-영어 페이지를 한국어 메뉴나 안내 페이지에서 연결할 때는 배포 사이트의 완전한 `https://...` URL을 사용합니다. 내부 경로 `/api/device-info`는 한국어 접두사가 붙으므로 영어 원문 링크로 사용할 수 없습니다. 기본 테마는 완전한 외부 URL을 새 탭으로 엽니다. [링크 정규화](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/runtimeModule/siteData/normalizeThemeConfig.ts#L37)
+`docs/`에서 `yarn install --immutable`, `yarn build`, `yarn preview`를 실행합니다.
 
-안내 페이지를 두기 싫다면 대응 번역이 없을 때 한국어 홈으로 보내는 언어 선택기를 직접 구현해야 합니다. 현재 규모에서는 기본 선택기와 안내 페이지 조합이 유지보수하기 쉽습니다.
+- 모든 영어·한국어 경로와 제목 링크를 확인합니다.
+- 언어를 양방향으로 바꿔 같은 페이지에 도달하는지 확인합니다.
+- 기존 영어 URL, 로고, 모바일 메뉴, 키보드 언어 선택을 확인합니다.
+- 설치·배터리·호환 API·Expo의 한국어 검색을 확인합니다.
+- `doc_build/`와 `doc_build/ko/`의 AI 문서 출력을 확인합니다.
+- MCP를 빌드하고 npm tarball만 설치한 환경에서도 한국어 문서 검색을 확인합니다.
 
-## 번역 검수와 갱신
-
-영어를 기준 문서로 유지합니다. API 이름, 가져오기 경로, 명령, 타입, 숫자, 단위, 반환값, 권한 이름은 번역하지 않습니다.
-
-각 한국어 페이지의 frontmatter에 `translationOf`와 `sourceCommit`을 기록하는 방식을 제안합니다. 원문 경로와 번역 시점의 커밋을 확인하기 위한 메타데이터이며, 자동 최신화나 Rspress 내장 검사를 뜻하지 않습니다.
-
-API를 수정하는 PR에서는 다음을 함께 확인합니다.
-
-- 영어 본문과 코드가 현재 구현과 일치하는지
-- 한국어 대응 페이지의 필수 조건·예외·오류 처리도 갱신했는지
-- 아직 검수하지 못한 번역을 오래된 채로 노출하지 않는지
-
-초기에는 PR 검수 항목으로 운영합니다. 번역 규모가 커지고 누락이 반복될 때 원문 변경 감지 스크립트를 검토합니다. 기계 번역은 초안으로 쓰고 코드 예제와 플랫폼 조건을 사람이 대조합니다.
-
-## 검색과 AI 연동
-
-사이트 검색은 언어별로 나뉩니다. 한국어 검색에서 영어 API 문서가 자동으로 나오지 않습니다. 한국어 안내 페이지에도 원래 API 이름과 짧은 한국어 용도를 넣어 검색 진입점을 제공합니다. [검색 인덱스 생성](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/runtimeModule/pageData/createPageData.ts#L64)
-
-현재 변경의 `llms: true`는 영어 AI 문서 출력을 활성화합니다. 한국어 locale을 도입하면 언어별 `llms.txt`와 `llms-full.txt`를 생성합니다. 이 기능은 Rspress에서 experimental로 안내하므로 버전을 올릴 때 결과를 다시 확인합니다. [공식 Markdown 출력 안내](https://github.com/web-infra-dev/rspress/blob/v2.0.23/website/docs/en/guide/basic/ssg-md.mdx#L180), [언어별 출력 구현](https://github.com/web-infra-dev/rspress/blob/v2.0.23/packages/core/src/node/ssg-md/llms/emitLlmsTxt.ts#L131)
-
-MCP 서버의 Unicode 검색 수정은 한글 단어를 보존합니다. 영어 문서만 있는 상태에서 한국어 질의를 번역해 주지는 않으며, 한국어 조사·띄어쓰기 변형을 처리하는 형태소 검색도 아닙니다. 한국어 문서 추가 후 대표 질의로 품질을 확인하고 MCP 패키지를 새로 빌드·배포해야 합니다.
-
-## 공개 전 검증
-
-- `yarn build`로 영어·한국어 경로와 AI 문서 파일을 확인합니다.
-- 모든 영어 페이지에서 한국어로, 다시 영어로 전환해 대응 페이지를 확인합니다.
-- 기존 영어 URL, base 경로, 로고, 내부 링크, 검색을 확인합니다.
-- 설치·배터리·호환 API·Expo 관련 한국어 검색을 확인합니다.
-- 모바일 메뉴와 키보드 언어 선택을 Aside에서 확인합니다.
-- npm tarball만 설치한 MCP 서버에서도 API와 번역 문서를 찾는지 확인합니다.
-
-이번 작업은 한국어 도입 방안 조사까지입니다. 실제 한국어 본문 번역, 언어 선택기 배포, 번역 자동화는 후속 적용 범위입니다.
+브라우저 검증에는 Aside CLI/REPL을 사용합니다.

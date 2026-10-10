@@ -1,20 +1,25 @@
-# Basic Usage Examples
+---
+translationOf: examples/basic-usage.md
+sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
+---
 
-Learn how to use `react-native-nitro-device-info` with practical examples.
+# 기본 사용 예제 {#basic-usage-examples}
 
-## Getting Started
+실제 예제로 `react-native-nitro-device-info` 사용법을 설명합니다.
 
-Import the module in your component:
+## 시작하기 {#getting-started}
+
+컴포넌트에서 모듈을 import하세요.
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 ```
 
-## Simple Device Information
+## 간단한 기기 정보 {#simple-device-information}
 
-### Accessing Device Properties
+### 기기 속성 읽기 {#accessing-device-properties}
 
-The simplest way to get device information is through direct property access:
+속성에 직접 접근하면 간단하게 기기 정보를 읽을 수 있습니다.
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -36,7 +41,7 @@ showDeviceInfo();
 // OS Version: 15.0
 ```
 
-### Basic React Component
+### 기본 React 컴포넌트 {#basic-react-component}
 
 ```typescript
 import React from 'react';
@@ -69,9 +74,9 @@ const styles = StyleSheet.create({
 });
 ```
 
-## Device Capabilities
+## 기기 기능 {#device-capabilities}
 
-### Check Device Type
+### 기기 유형 확인 {#check-device-type}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -87,7 +92,7 @@ function getDeviceCategory(): string {
 console.log(getDeviceCategory());
 ```
 
-### Check for Specific Features
+### 특정 기능 확인 {#check-for-specific-features}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -113,9 +118,9 @@ if (DeviceInfoModule.isEmulator) {
 }
 ```
 
-## Battery Information
+## 배터리 정보 {#battery-information}
 
-### Simple Battery Display
+### 간단한 배터리 표시 {#simple-battery-display}
 
 ```typescript
 import React from 'react';
@@ -137,7 +142,7 @@ export default function BatteryIndicator() {
 }
 ```
 
-### Battery Level Warning
+### 배터리 잔량 경고 {#battery-level-warning}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -163,7 +168,7 @@ function checkBatteryStatus() {
 }
 ```
 
-### Complete Power State
+### 전체 전원 상태 {#complete-power-state}
 
 ```typescript
 import React from 'react';
@@ -186,9 +191,9 @@ export default function PowerStateDisplay() {
 }
 ```
 
-## System Resources
+## 시스템 리소스 {#system-resources}
 
-### Memory Usage Display
+### 메모리 사용량 표시 {#memory-usage-display}
 
 ```typescript
 import React from 'react';
@@ -211,7 +216,7 @@ export default function MemoryInfo() {
 }
 ```
 
-### Storage Information
+### 저장 공간 정보 {#storage-information}
 
 ```typescript
 import React from 'react';
@@ -234,9 +239,9 @@ export default function StorageInfo() {
 }
 ```
 
-## Application Information
+## 앱 정보 {#application-information}
 
-### App Version Display
+### 앱 버전 표시 {#app-version-display}
 
 ```typescript
 import React from 'react';
@@ -260,7 +265,7 @@ export default function AppVersionInfo() {
 }
 ```
 
-### Readable Version String
+### 읽기 쉬운 버전 문자열 {#readable-version-string}
 
 ```typescript
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -270,9 +275,9 @@ const version = DeviceInfoModule.readableVersion;
 console.log(`App version: ${version}`); // "1.2.3.42"
 ```
 
-## Network Information (Async)
+## 네트워크 정보(비동기) {#network-information-async}
 
-### Get IP Address
+### IP 주소 읽기 {#get-ip-address}
 
 ```typescript
 import React, { useEffect, useState } from 'react';
@@ -296,7 +301,7 @@ export default function NetworkInfo() {
 }
 ```
 
-### Get Carrier Information
+### 통신사 정보 읽기 {#get-carrier-information}
 
 ```typescript
 import React, { useEffect, useState } from 'react';
@@ -320,7 +325,7 @@ export default function CarrierInfo() {
 }
 ```
 
-### Multiple Async Calls
+### 여러 비동기 호출 {#multiple-async-calls}
 
 ```typescript
 import React, { useEffect, useState } from 'react';
@@ -369,9 +374,9 @@ export default function CompleteNetworkInfo() {
 }
 ```
 
-## Complete Example App
+## 전체 예제 앱 {#complete-example-app}
 
-Here's a complete example combining multiple features:
+여러 기능을 함께 사용하는 전체 예제입니다.
 
 ```typescript
 import React, { useEffect, useState } from 'react';
@@ -443,9 +448,9 @@ const styles = StyleSheet.create({
 });
 ```
 
-## Next Steps
+## 다음 단계 {#next-steps}
 
-- Explore [Advanced Usage](/examples/advanced-usage) for more complex patterns
-- Learn about [React Hooks](/guide/react-hooks) for reactive state monitoring
-- Check the [API Reference](/api/device-info) for all available methods
-- View [Type Definitions](/api/types) for TypeScript support
+- [고급 사용법](/examples/advanced-usage): 복잡한 사용 패턴
+- [React 훅](/guide/react-hooks): 상태 변화 관찰
+- [API 레퍼런스](/api/device-info): 사용 가능한 전체 메서드
+- [타입 정의](/api/types): TypeScript 지원
