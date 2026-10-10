@@ -43,7 +43,7 @@
   "bugs": {
     "url": "https://github.com/l2hyunwoo/react-native-nitro-device-info/issues"
   },
-  "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info#readme",
+  "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/mcp-server#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

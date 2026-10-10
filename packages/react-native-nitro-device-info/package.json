@@ -20,6 +20,7 @@
   },
   "bin": "./bin/migrate.js",
   "files": [
+    "README-ko.md",
     "src",
     "lib",
     "bin",
@@ -58,16 +59,18 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/l2hyunwoo/react-native-nitro-device-info.git"
+    "url": "git+https://github.com/l2hyunwoo/react-native-nitro-device-info.git",
+    "directory": "packages/react-native-nitro-device-info"
   },
   "author": "HyunWoo Lee <l2hyunwoo@gmail.com> (https://github.com/l2hyunwoo)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/l2hyunwoo/react-native-nitro-device-info/issues"
   },
-  "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info#readme",
+  "homepage": "https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/react-native-nitro-device-info#readme",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "peerDependencies": {
     "react": "*",
