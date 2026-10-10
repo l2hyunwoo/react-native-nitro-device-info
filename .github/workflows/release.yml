@@ -102,6 +102,7 @@ jobs:
         with:
           name: release-${{ github.sha }}-${{ github.run_attempt }}
           path: .release/*
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
