@@ -50,7 +50,7 @@ class DeviceIntegrity : HybridDeviceIntegritySpec() {
     @Volatile
     private var preparedCloudProjectNumber: Long? = null
 
-    /** Serializes prepare/request so a provider is prepared at most once at a time. */
+    /** Serializes provider preparation and snapshots. */
     private val providerMutex = Mutex()
 
     // MARK: - Availability
@@ -87,27 +87,29 @@ class DeviceIntegrity : HybridDeviceIntegritySpec() {
 
     override fun requestIntegrityToken(requestHash: String): Promise<String> {
         return Promise.async {
+            val provider = providerMutex.withLock { requireStandardProvider() }
             try {
-                requestStandardToken(requestHash)
+                requestStandardToken(provider, requestHash)
             } catch (e: StandardIntegrityException) {
                 // Provider expired -> re-prepare once and retry.
                 if (e.errorCode == EXPIRED_PROVIDER_ERROR_CODE) {
-                    val expiredProvider = standardProvider
-                    val number =
-                        preparedCloudProjectNumber
-                            ?: throw integrityError(
-                                "PROVIDER_NOT_PREPARED",
-                                "Call prepareStandardProvider() before requestIntegrityToken().",
-                                e,
-                            )
-                    providerMutex.withLock {
-                        // Skip re-prepare if another coroutine already refreshed it.
-                        if (standardProvider === expiredProvider) {
-                            prepareLocked(number)
+                    val refreshedProvider =
+                        providerMutex.withLock {
+                            // Skip re-prepare if another coroutine already refreshed it.
+                            if (standardProvider === provider) {
+                                val number =
+                                    preparedCloudProjectNumber
+                                        ?: throw integrityError(
+                                            "PROVIDER_NOT_PREPARED",
+                                            "Call prepareStandardProvider() before requestIntegrityToken().",
+                                            e,
+                                        )
+                                prepareLocked(number)
+                            }
+                            requireStandardProvider()
                         }
-                    }
                     try {
-                        requestStandardToken(requestHash)
+                        requestStandardToken(refreshedProvider, requestHash)
                     } catch (retry: StandardIntegrityException) {
                         throw mapStandardException(retry)
                     }
@@ -134,13 +136,17 @@ class DeviceIntegrity : HybridDeviceIntegritySpec() {
         preparedCloudProjectNumber = cloudProjectNumber
     }
 
-    private suspend fun requestStandardToken(requestHash: String): String {
-        val provider =
-            standardProvider
-                ?: throw integrityError(
-                    "PROVIDER_NOT_PREPARED",
-                    "Call prepareStandardProvider() before requestIntegrityToken().",
-                )
+    private fun requireStandardProvider(): StandardIntegrityTokenProvider =
+        standardProvider
+            ?: throw integrityError(
+                "PROVIDER_NOT_PREPARED",
+                "Call prepareStandardProvider() before requestIntegrityToken().",
+            )
+
+    private suspend fun requestStandardToken(
+        provider: StandardIntegrityTokenProvider,
+        requestHash: String,
+    ): String {
         val request =
             StandardIntegrityTokenRequest.builder()
                 .setRequestHash(requestHash)

@@ -49,10 +49,10 @@ class DeviceIntegrity: HybridDeviceIntegritySpec {
 
   func attestKey(keyId: String, clientDataHash: String) throws -> Promise<String> {
     return Promise.async {
+      let hash = try self.decodeClientDataHash(clientDataHash)
       guard DCAppAttestService.shared.isSupported else {
         throw self.unsupportedError("App Attest")
       }
-      let hash = try self.decodeBase64(clientDataHash, field: "clientDataHash")
       return try await withCheckedThrowingContinuation { continuation in
         DCAppAttestService.shared.attestKey(keyId, clientDataHash: hash) { attestation, error in
           if let attestation = attestation {
@@ -67,10 +67,10 @@ class DeviceIntegrity: HybridDeviceIntegritySpec {
 
   func generateAssertion(keyId: String, clientDataHash: String) throws -> Promise<String> {
     return Promise.async {
+      let hash = try self.decodeClientDataHash(clientDataHash)
       guard DCAppAttestService.shared.isSupported else {
         throw self.unsupportedError("App Attest")
       }
-      let hash = try self.decodeBase64(clientDataHash, field: "clientDataHash")
       return try await withCheckedThrowingContinuation { continuation in
         DCAppAttestService.shared.generateAssertion(keyId, clientDataHash: hash) { assertion, error in
           if let assertion = assertion {
@@ -118,12 +118,19 @@ class DeviceIntegrity: HybridDeviceIntegritySpec {
 
   // MARK: - Helpers
 
-  private func decodeBase64(_ value: String, field: String) throws -> Data {
+  private func decodeClientDataHash(_ value: String) throws -> Data {
     guard let data = Data(base64Encoded: value) else {
       throw NSError(
         domain: "DeviceIntegrity",
         code: 1001,
-        userInfo: [NSLocalizedDescriptionKey: "INVALID_BASE64: \(field) is not valid base64"]
+        userInfo: [NSLocalizedDescriptionKey: "INVALID_BASE64: clientDataHash is not valid base64"]
+      )
+    }
+    guard data.count == 32 else {
+      throw NSError(
+        domain: "DeviceIntegrity",
+        code: 1003,
+        userInfo: [NSLocalizedDescriptionKey: "INVALID_INPUT: clientDataHash must decode to a 32-byte SHA-256 digest, got \(data.count) bytes"]
       )
     }
     return data

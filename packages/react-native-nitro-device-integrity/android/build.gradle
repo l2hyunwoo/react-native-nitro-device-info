@@ -136,7 +136,7 @@ dependencies {
   implementation "com.google.android.play:integrity:1.6.0"
 
   // Google Play Services availability check (isSupported / providerType)
-  compileOnly "com.google.android.gms:play-services-base:18.5.0"
+  implementation "com.google.android.gms:play-services-base:18.5.0"
 }
 
 // ktlint configuration

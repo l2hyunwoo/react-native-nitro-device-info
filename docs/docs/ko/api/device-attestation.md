@@ -1,6 +1,6 @@
 ---
 translationOf: api/device-attestation.md
-sourceCommit: 3d53f125a194764ed27ccee3131d5dbc8abaf0ec
+sourceCommit: 238a195ce4b3bfd8535a6c32775d42fce658731d
 ---
 
 # Device attestation API {#device-attestation-api}
@@ -95,7 +95,7 @@ prepareStandardProvider(cloudProjectNumber: string): Promise<void>
 
 Play Integrity **Standard** 토큰 provider를 준비합니다. 네이티브에서 provider를 캐시하므로 세션마다 한 번 호출하세요. JavaScript 숫자 정밀도 손실을 막기 위해 `cloudProjectNumber`는 문자열로 전달합니다.
 
-**reject 시 오류 메시지**: `CLOUD_PROJECT_NUMBER_IS_INVALID`, `PLAY_STORE_NOT_FOUND`, `NETWORK_ERROR` 등. iOS에서는 `UNSUPPORTED_PLATFORM`입니다.
+프로젝트 번호가 잘못되면 오류 메시지는 `CLOUD_PROJECT_NUMBER_IS_INVALID`로 시작합니다. SDK 오류는 `STANDARD_INTEGRITY_ERROR_<숫자 코드>`로 시작합니다. 예를 들어 네트워크 오류는 `STANDARD_INTEGRITY_ERROR_-3`입니다. iOS에서는 `UNSUPPORTED_PLATFORM`입니다.
 
 #### `requestIntegrityToken()` {#requestintegritytoken}
 
@@ -145,7 +145,7 @@ Secure Enclave에서 App Attest 키 쌍을 만들고 `keyId`를 반환합니다.
 attestKey(keyId: string, clientDataHash: string): Promise<string>
 ```
 
-키 attestation을 수행하며 Apple에 네트워크 요청을 보냅니다(설치마다 키당 **한 번**). `clientDataHash`는 `SHA-256(server challenge)`의 base64 값입니다. 라이브러리는 해시를 계산하지 않습니다. 불투명한 CBOR attestation 객체를 base64로 인코딩해 반환합니다.
+키 attestation을 수행하며 Apple에 네트워크 요청을 보냅니다(설치마다 키당 **한 번**). `clientDataHash`는 `SHA-256(server challenge)`의 base64 값이며, 해독한 길이가 정확히 **32바이트**여야 합니다. 라이브러리는 해시를 계산하지 않습니다. 잘못된 base64는 `INVALID_BASE64`, 해독한 길이가 다르면 `INVALID_INPUT`으로 reject됩니다. 이 검사는 iOS 기기 지원 여부보다 먼저 수행합니다. 불투명한 CBOR attestation 객체를 base64로 인코딩해 반환합니다.
 
 #### `generateAssertion()` {#generateassertion}
 
@@ -155,7 +155,7 @@ attestKey(keyId: string, clientDataHash: string): Promise<string>
 generateAssertion(keyId: string, clientDataHash: string): Promise<string>
 ```
 
-후속 요청용 assertion을 오프라인으로 생성합니다. 요청마다 서버에서 새 일회용 challenge를 받아 요청 payload와 함께 구성한 client data를 해시하세요. 불투명한 CBOR assertion 객체를 base64로 인코딩해 반환합니다. 서버는 발급한 challenge와 단조 증가 카운터를 확인해 재전송 공격을 탐지합니다.
+후속 요청용 assertion을 오프라인으로 생성합니다. 요청마다 서버에서 새 일회용 challenge를 받아 요청 payload와 함께 구성한 client data를 해시하세요. 32바이트 SHA-256 해시를 base64로 전달하며, `attestKey`와 같은 입력 검사를 적용합니다. 불투명한 CBOR assertion 객체를 base64로 인코딩해 반환합니다. 서버는 발급한 challenge와 단조 증가 카운터를 확인해 재전송 공격을 탐지합니다.
 
 ---
 
@@ -170,6 +170,23 @@ getDeviceCheckToken(): Promise<string>
 ```
 
 Apple DeviceCheck 토큰을 생성합니다(기기 수준이며 App Attest보다 가벼움). 서버는 Apple DeviceCheck API로 기기의 2비트 상태를 조회·갱신합니다.
+
+## 오류 {#errors}
+
+reject 시 `Error.message` 앞부분에 오류 코드를 포함합니다. JavaScript `error.code` 속성은 별도로 보장하지 않습니다.
+
+| 메시지 앞부분 | 의미 |
+| --- | --- |
+| `UNSUPPORTED_PLATFORM` | 다른 플랫폼 전용 메서드를 호출했거나 iOS 하드웨어가 지원하지 않음. |
+| `CLOUD_PROJECT_NUMBER_IS_INVALID` | 프로젝트 번호가 양의 부호 있는 64비트 정수 문자열이 아님. |
+| `PROVIDER_NOT_PREPARED` | Standard 토큰 요청 전에 `prepareStandardProvider`를 호출해야 함. |
+| `STANDARD_INTEGRITY_ERROR_<숫자 코드>` | Standard SDK 오류. Provider 무효화(`-19`)는 한 번 새로 준비하고 재시도하며, 다른 오류는 그대로 반환함. |
+| `CLASSIC_INTEGRITY_ERROR_<숫자 코드>` | Classic SDK 오류. 자동 재시도하지 않음. |
+| `INVALID_BASE64` | iOS `clientDataHash`가 올바른 base64가 아님. |
+| `INVALID_INPUT` | 해독한 iOS 해시가 32바이트가 아니거나 Apple이 잘못된 입력으로 처리함. |
+| `INVALID_KEY`, `SERVER_UNAVAILABLE`, `FEATURE_UNSUPPORTED`, `UNKNOWN_SYSTEM_FAILURE`, `UNKNOWN` | Apple DeviceCheck / App Attest 오류를 변환한 코드. 다른 네이티브 오류는 원래 메시지를 유지함. |
+
+SDK 숫자 코드를 `NETWORK_ERROR` 같은 이름으로 변환하지 않고 유지합니다. [Standard SDK 오류 코드](https://developer.android.com/google/play/integrity/reference/com/google/android/play/core/integrity/model/StandardIntegrityErrorCode)를 참고하세요. reject를 처리하고 이를 신뢰할 수 있는 판정으로 간주하지 마세요.
 
 ## 사용법 {#usage}
 
@@ -247,6 +264,8 @@ POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 :::
 
 ## 제한 사항 {#limitations}
+
+소스 레포지터리에는 반복 실행할 수 있는 검사(`yarn test:integrity`, `yarn test:integrity:native`)와 시뮬레이터 하네스 검사가 있습니다. 패키지의 [검증 안내](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/react-native-nitro-device-integrity#validation-from-the-source-repository)를 참고하세요. 이 검사는 클라이언트 동작을 확인하며 실제 토큰 발급이나 백엔드 검증 성공을 확인하지는 않습니다. 데모는 고정된 테스트 challenge를 사용하고 토큰 발급까지만 수행합니다. 실제 앱은 서버에서 새 challenge를 받고 결과를 백엔드에서 검증해야 합니다.
 
 :::warning Device attestation의 범위와 한계
 

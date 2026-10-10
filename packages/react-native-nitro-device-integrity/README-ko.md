@@ -74,6 +74,22 @@ if (integrity.providerType === 'playIntegrity') {
 ### `clientDataHash`(iOS)
 
 App Attest에는 **이미 해시한** 32바이트 값을 base64로 전달해야 합니다. 키 attestation에는 서버의 일회용 challenge를 해시하세요. 각 assertion에는 서버에서 새로 받은 challenge와 요청 payload를 포함한 client data를 해시하세요. 해시한 문자열을 그대로 서버에 보내 검증해야 합니다. 예제의 해시 함수와 백엔드 통신 함수는 앱에서 구현해야 하며 라이브러리는 해시를 계산하지 않습니다.
+잘못된 base64는 iOS에서 `INVALID_BASE64`로 reject됩니다. 해독한 길이가 32바이트가 아니면 시뮬레이터를 포함해 `INVALID_INPUT`으로 reject됩니다.
+
+### 오류
+
+오류 코드는 `Error.message` 앞부분에 포함됩니다. JavaScript `error.code` 속성은 별도로 보장하지 않습니다.
+
+| 메시지 앞부분 | 의미 |
+| --- | --- |
+| `CLOUD_PROJECT_NUMBER_IS_INVALID` | 프로젝트 번호는 양의 부호 있는 64비트 정수 문자열이어야 함. |
+| `PROVIDER_NOT_PREPARED` | 토큰 요청 전에 Standard provider를 준비해야 함. |
+| `STANDARD_INTEGRITY_ERROR_<숫자 코드>` | Standard SDK 오류. 무효화된 provider(`-19`)는 한 번 새로 준비하고 재시도함. |
+| `CLASSIC_INTEGRITY_ERROR_<숫자 코드>` | Classic SDK 오류. |
+| `INVALID_BASE64`, `INVALID_INPUT` | iOS 해시 인코딩·해독 길이 오류 또는 Apple의 잘못된 입력 오류. |
+| `UNSUPPORTED_PLATFORM` | 다른 플랫폼의 메서드를 호출했거나 iOS 하드웨어가 지원하지 않음. |
+
+Apple 오류는 `INVALID_KEY`, `SERVER_UNAVAILABLE`, `FEATURE_UNSUPPORTED`, `UNKNOWN_SYSTEM_FAILURE`, `UNKNOWN`으로 시작할 수도 있습니다. 다른 네이티브 오류는 원래 메시지를 유지합니다. Google SDK 오류는 숫자 코드를 유지하므로 네트워크 오류는 `NETWORK_ERROR`가 아니라 `STANDARD_INTEGRITY_ERROR_-3`입니다. [Standard SDK 오류 코드](https://developer.android.com/google/play/integrity/reference/com/google/android/play/core/integrity/model/StandardIntegrityErrorCode)를 참고하세요.
 
 ## 서버 검증(개발자 책임)
 
@@ -108,6 +124,28 @@ POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 2. DeviceCheck 서버 조회용 `.p8` 키를 Apple Developer 포털에서 만드세요.
 
 > 이 설정은 개발자 계정과 앱 타깃에서 관리합니다. 라이브러리가 대신 설정할 수는 없습니다.
+
+## 소스 레포지터리에서 검증하기
+
+워크스페이스 의존성을 설치한 뒤 레포지터리 루트에서 실행하세요.
+
+```sh
+yarn test:integrity
+yarn test:integrity:native
+```
+
+첫 번째 검사는 Android 런타임 의존성, Expo 플러그인의 반복 적용, 데모 SHA-256 테스트 벡터를 확인합니다. 네이티브 검사는 실제 Kotlin·Swift 구현을 작은 플랫폼 대역과 컴파일합니다. Provider 갱신 경쟁 조건, 재시도 횟수 제한, 해독한 해시 길이를 확인합니다. JDK, 코루틴 JAR를 포함한 `kotlinc`, Foundation을 제공하는 `swiftc`가 필요합니다. 컴파일러가 없으면 건너뛴 이유를 표시합니다. Google·Apple 서버는 호출하지 않습니다.
+
+네이티브 오류가 JavaScript까지 전달되는지 확인하려면 선택한 시뮬레이터에 데모의 **Debug** 앱을 먼저 설치하세요. 설치된 iPhone 17 Pro 런타임 버전에 맞춰 하네스를 실행하세요.
+
+```sh
+yarn workspace react-native-nitro-device-integrity-demo ios --simulator 'iPhone 17 Pro' --no-packager
+INTEGRITY_IOS_VERSION=26.5 yarn workspace react-native-nitro-device-integrity-demo test:e2e:ios
+```
+
+하네스가 Metro를 시작합니다. 시뮬레이터에서는 지원 여부, 해시 입력 오류, 플랫폼 전용 메서드의 reject를 검사합니다. Release 앱은 번들에 포함된 JavaScript를 사용하므로 이 하네스 검사를 실행할 수 없습니다. Android 검사는 `example/integrity-demo/rn-harness.config.mjs`에서 선택한 기기가 연결돼 있어야 합니다.
+
+데모는 고정된 테스트 challenge를 사용하며 발급한 토큰을 검증하지 않습니다. 실제 attestation에는 계정 설정과 실기기가 필요합니다. 보호할 작업을 허용하기 전에 백엔드에서 발급한 토큰을 검증하세요. 시뮬레이터, 대역, 빌드, 클라이언트 검사만으로 서버 검증 성공을 확인할 수는 없습니다.
 
 ## 제한 사항
 

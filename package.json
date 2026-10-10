@@ -19,7 +19,9 @@
     "nitrogen": "yarn workspace react-native-nitro-device-info nitrogen",
     "nitrogen:integrity": "yarn workspace react-native-nitro-device-integrity nitrogen",
     "test:security": "node --test scripts/security-regressions.cjs",
-    "test:web": "node --test scripts/web-package-regressions.cjs"
+    "test:web": "node --test scripts/web-package-regressions.cjs",
+    "test:integrity": "node --test packages/react-native-nitro-device-integrity/__tests__/regressions.cjs",
+    "test:integrity:native": "node --test packages/react-native-nitro-device-integrity/__tests__/native-regressions.cjs"
   },
   "repository": {
     "type": "git",

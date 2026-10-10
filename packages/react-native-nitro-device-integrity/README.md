@@ -93,6 +93,27 @@ attestation, hash the one-time server challenge. For each assertion, hash client
 data containing a fresh server challenge and the request payload. Send the exact
 string you hashed to your server for verification. The example assumes your app
 supplies the hashing and backend helpers. This library does **not** hash for you.
+On iOS, malformed base64 rejects with `INVALID_BASE64`. A decoded length other
+than 32 bytes rejects with `INVALID_INPUT`, including on the simulator.
+
+### Errors
+
+Codes are prefixes in `Error.message`, not a separate JavaScript `error.code` property.
+
+| Prefix | Meaning |
+|---|---|
+| `CLOUD_PROJECT_NUMBER_IS_INVALID` | Project number must be a positive signed 64-bit integer string. |
+| `PROVIDER_NOT_PREPARED` | Prepare the Standard provider before requesting a token. |
+| `STANDARD_INTEGRITY_ERROR_<numeric code>` | Standard SDK failure. An invalid provider (`-19`) is refreshed and retried once. |
+| `CLASSIC_INTEGRITY_ERROR_<numeric code>` | Classic SDK failure. |
+| `INVALID_BASE64`, `INVALID_INPUT` | Invalid iOS hash encoding / decoded length, or Apple's invalid-input error. |
+| `UNSUPPORTED_PLATFORM` | Wrong platform or unavailable iOS hardware. |
+
+Apple errors can also start with `INVALID_KEY`, `SERVER_UNAVAILABLE`,
+`FEATURE_UNSUPPORTED`, `UNKNOWN_SYSTEM_FAILURE`, or `UNKNOWN`. Other native
+errors retain their native message. Google SDK failures preserve their numeric
+code: a network failure is `STANDARD_INTEGRITY_ERROR_-3`, not `NETWORK_ERROR`.
+See the [Standard SDK error codes](https://developer.android.com/google/play/integrity/reference/com/google/android/play/core/integrity/model/StandardIntegrityErrorCode).
 
 ## Server verification (your responsibility)
 
@@ -140,6 +161,41 @@ challenge in the client data matches an unused value issued by your server. See
 
 > The library does not (and cannot) perform any of this setup — it is configured
 > on your developer accounts and app target.
+
+## Validation from the source repository
+
+After installing workspace dependencies, run these commands from the repository root:
+
+```sh
+yarn test:integrity
+yarn test:integrity:native
+```
+
+The first suite checks the Android runtime dependency, Expo plugin idempotence,
+and demo SHA-256 vectors. The native suite compiles production Kotlin and Swift
+against small platform doubles. It checks provider refresh races, bounded
+retries, and decoded hash validation. It requires a JDK, `kotlinc` with its
+bundled coroutines JAR, and `swiftc` with Foundation. Missing compilers produce
+explicit skips. These tests do not call Google or Apple servers.
+
+For native-to-JavaScript rejection checks, install the demo's **Debug** app on
+the selected simulator, then run the harness. Match the version to an installed
+iPhone 17 Pro runtime:
+
+```sh
+yarn workspace react-native-nitro-device-integrity-demo ios --simulator 'iPhone 17 Pro' --no-packager
+INTEGRITY_IOS_VERSION=26.5 yarn workspace react-native-nitro-device-integrity-demo test:e2e:ios
+```
+
+The harness starts Metro itself. Simulator tests cover availability, hash input
+errors, and platform rejection. A Release app uses its bundled JavaScript and
+cannot run these harness tests. Android harness tests need the connected device
+selected in `example/integrity-demo/rn-harness.config.mjs`.
+
+The demo uses fixed sample challenges and does not verify issued tokens. Real
+attestation requires configured accounts and physical hardware. Validate each
+issued token on your backend before accepting a protected action. No simulator,
+mock, build, or client-only test proves server verification succeeded.
 
 ## Honest limitations
 

@@ -21,8 +21,8 @@
  * The library never returns a boolean "is this device safe?" judgement — that
  * decision belongs to your server.
  *
- * @platform ios 14.0+ (App Attest), 11.0+ (DeviceCheck)
- * @platform android API 23+ (Play Integrity)
+ * @platform ios 14.0+ (dependencies may require a higher minimum)
+ * @platform android API 24+ (dependencies may require a higher minimum)
  */
 
 import { type HybridObject } from 'react-native-nitro-modules';
@@ -32,7 +32,7 @@ import { type HybridObject } from 'react-native-nitro-modules';
  *
  * - `playIntegrity` — Android with Google Play Services (Play Integrity API)
  * - `appAttest` — iOS 14.0+ with Secure Enclave (DCAppAttestService)
- * - `unsupported` — simulator/emulator, no Play Services, or iOS < 14
+ * - `unsupported` — iOS simulator or Android without available Play Services
  */
 export type IntegrityProviderType = 'playIntegrity' | 'appAttest' | 'unsupported';
 
@@ -94,8 +94,8 @@ export interface DeviceIntegrity
    * @param cloudProjectNumber Your Google Cloud project number, passed as a
    *   string to avoid JS number precision loss. Parsed to a Long natively.
    * @platform android (rejects on iOS with an unsupported-platform error)
-   * @throws Rejects with a Play Integrity error code on failure, e.g.
-   *   `CLOUD_PROJECT_NUMBER_IS_INVALID`, `PLAY_STORE_NOT_FOUND`, `NETWORK_ERROR`.
+   * @throws Error messages start with `CLOUD_PROJECT_NUMBER_IS_INVALID` for
+   *   invalid input or `STANDARD_INTEGRITY_ERROR_<numeric code>` for SDK errors.
    */
   prepareStandardProvider(cloudProjectNumber: string): Promise<void>;
 
@@ -123,6 +123,8 @@ export interface DeviceIntegrity
    *   16–500 bytes. Must not contain PII.
    * @param cloudProjectNumber Google Cloud project number as a string.
    * @returns An opaque, encrypted token string (forward to your server).
+   * @throws Error messages start with `CLOUD_PROJECT_NUMBER_IS_INVALID` for
+   *   invalid project numbers or `CLASSIC_INTEGRITY_ERROR_<numeric code>` for SDK errors.
    * @platform android (rejects on iOS)
    */
   requestClassicIntegrityToken(
@@ -155,7 +157,9 @@ export interface DeviceIntegrity
    * @param keyId A keyId returned by `generateKey`.
    * @param clientDataHash base64 of the SHA-256 of your server challenge
    *   (plus any client data). The library does NOT hash — you provide the
-   *   already-hashed value, matching Apple's `clientDataHash` parameter.
+   *   already-hashed value, which must decode to exactly 32 bytes.
+   * @throws `INVALID_BASE64` for malformed base64, `INVALID_INPUT` for a
+   *   decoded length other than 32 bytes. Validated before iOS availability.
    * @returns base64 of the opaque CBOR attestation object (validate server-side).
    * @platform ios 14.0+ (rejects on Android)
    */
@@ -166,7 +170,10 @@ export interface DeviceIntegrity
    * Call once per protected request after the key has been attested.
    *
    * @param keyId The attested keyId.
-   * @param clientDataHash base64 SHA-256 of `(challenge + request payload)`.
+   * @param clientDataHash base64 SHA-256 of `(challenge + request payload)`,
+   *   decoding to exactly 32 bytes.
+   * @throws `INVALID_BASE64` for malformed base64, `INVALID_INPUT` for a
+   *   decoded length other than 32 bytes. Validated before iOS availability.
    * @returns base64 of the opaque CBOR assertion object (validate server-side;
    *   the server checks the monotonic counter to detect replays).
    * @platform ios 14.0+ (rejects on Android)
@@ -183,7 +190,7 @@ export interface DeviceIntegrity
    * Apple's DeviceCheck server API.
    *
    * @returns base64-encoded DeviceCheck token (validate/use server-side).
-   * @platform ios 11.0+ (rejects on Android or unsupported devices)
+   * @platform ios 14.0+ (rejects on Android or unsupported devices)
    */
   getDeviceCheckToken(): Promise<string>;
 }

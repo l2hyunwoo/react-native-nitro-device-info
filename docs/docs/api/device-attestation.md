@@ -103,8 +103,10 @@ Warms up the Play Integrity **Standard** token provider. Call once per session;
 the provider is cached natively. `cloudProjectNumber` is passed as a string to
 avoid JS number-precision loss.
 
-**Rejects with** (in the error message): `CLOUD_PROJECT_NUMBER_IS_INVALID`,
-`PLAY_STORE_NOT_FOUND`, `NETWORK_ERROR`, etc. On iOS: `UNSUPPORTED_PLATFORM`.
+Error messages start with `CLOUD_PROJECT_NUMBER_IS_INVALID` for invalid project
+numbers or `STANDARD_INTEGRITY_ERROR_<numeric code>` for SDK failures. For
+example, a network failure is `STANDARD_INTEGRITY_ERROR_-3`. On iOS:
+`UNSUPPORTED_PLATFORM`.
 
 #### `requestIntegrityToken()`
 
@@ -163,8 +165,11 @@ attestKey(keyId: string, clientDataHash: string): Promise<string>
 ```
 
 Attests a key (**once** per key, per install). Makes a network call to Apple.
-`clientDataHash` is base64 of `SHA-256(server challenge)` — the library does
-**not** hash for you. Returns base64 of the opaque CBOR attestation object.
+`clientDataHash` is base64 of `SHA-256(server challenge)` and must decode to
+exactly **32 bytes**. The library does **not** hash for you. Malformed base64
+rejects with `INVALID_BASE64`; any other decoded length rejects with
+`INVALID_INPUT`, before checking iOS device support. Returns base64 of the
+opaque CBOR attestation object.
 
 #### `generateAssertion()`
 
@@ -175,7 +180,8 @@ generateAssertion(keyId: string, clientDataHash: string): Promise<string>
 ```
 
 Generates an assertion for a subsequent request (offline). Hash client data that
-contains a fresh one-time server challenge and the request payload. Returns base64
+contains a fresh one-time server challenge and the request payload. Pass its
+32-byte SHA-256 digest as base64; the same validation as `attestKey` applies. Returns base64
 of the opaque CBOR assertion object. Your server checks the issued challenge and
 monotonic counter to detect replays.
 
@@ -194,6 +200,26 @@ getDeviceCheckToken(): Promise<string>
 Generates an Apple DeviceCheck token (device-level, lighter than App Attest).
 Your server queries/updates the device's 2 bits of state via Apple's DeviceCheck
 API.
+
+## Errors
+
+Rejections include a code prefix in `Error.message`; there is no separate
+JavaScript `error.code` contract.
+
+| Message prefix | Meaning |
+|---|---|
+| `UNSUPPORTED_PLATFORM` | Platform-specific method called on the wrong platform, or unavailable iOS hardware. |
+| `CLOUD_PROJECT_NUMBER_IS_INVALID` | Project number is not a positive signed 64-bit integer string. |
+| `PROVIDER_NOT_PREPARED` | Call `prepareStandardProvider` before requesting a Standard token. |
+| `STANDARD_INTEGRITY_ERROR_<numeric code>` | Standard SDK failure. Provider invalidation (`-19`) is refreshed and retried once; other failures are returned directly. |
+| `CLASSIC_INTEGRITY_ERROR_<numeric code>` | Classic SDK failure; no automatic retry. |
+| `INVALID_BASE64` | iOS `clientDataHash` is not valid base64. |
+| `INVALID_INPUT` | iOS hash does not decode to 32 bytes, or Apple reports invalid input. |
+| `INVALID_KEY`, `SERVER_UNAVAILABLE`, `FEATURE_UNSUPPORTED`, `UNKNOWN_SYSTEM_FAILURE`, `UNKNOWN` | Mapped Apple DeviceCheck / App Attest failures. Other native errors retain their native message. |
+
+Numeric SDK codes are preserved, rather than translated to symbolic names such
+as `NETWORK_ERROR`. See the [Standard SDK error codes](https://developer.android.com/google/play/integrity/reference/com/google/android/play/core/integrity/model/StandardIntegrityErrorCode).
+Handle the rejection without treating it as a trusted verdict.
 
 ## Usage
 
@@ -281,6 +307,13 @@ cannot set it up — it only issues tokens once your app is configured.
 :::
 
 ## Limitations
+
+The source repository includes deterministic checks (`yarn test:integrity` and
+`yarn test:integrity:native`) and simulator harness tests. See the package
+[validation guide](https://github.com/l2hyunwoo/react-native-nitro-device-info/tree/main/packages/react-native-nitro-device-integrity#validation-from-the-source-repository).
+These validate client behavior, not real token issuance or backend verification.
+The demo uses fixed sample challenges and stops at issuance. Production apps
+must use fresh server challenges and verify results on their backend.
 
 :::warning Be honest about what attestation can and cannot do
 
