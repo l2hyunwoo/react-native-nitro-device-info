@@ -16,8 +16,6 @@ Install it when your app needs tokens that your backend can verify. It adds nati
 
 ## Installation
 
-**Unreleased:** this package is available in the source repository. The npm commands below apply after its first publication.
-
 ```sh
 yarn add react-native-nitro-device-integrity react-native-nitro-modules
 cd ios && pod install
