@@ -105,6 +105,26 @@ yarn test
 
 device attestation 패키지나 예제를 바꿨다면 린트, `yarn workspace react-native-nitro-device-integrity typecheck`, `yarn workspace react-native-nitro-device-integrity prepare`를 실행한 뒤 iOS·Android 예제를 빌드합니다. 루트 `yarn prepare`는 핵심 라이브러리만 빌드합니다. 의존성이나 CI 워크플로를 바꿨다면 두 라이브러리를 모두 검사합니다. `actionlint .github/workflows/ci.yml`로 문법을 검사하고 경로 필터가 바꾼 패키지와 설정을 포함하는지 확인하세요.
 
+### Integrity 테스트
+
+workspace 의존성을 설치한 뒤 레포지터리 루트에서 integrity 패키지를 빌드하세요.
+
+```sh
+yarn workspace react-native-nitro-device-integrity prepare
+```
+
+로컬에서 사용할 수 있는 플랫폼의 검사를 실행하세요.
+
+| 명령 | 검사 범위 | 필요 환경 |
+| --- | --- | --- |
+| `yarn test:integrity` | Android 런타임 의존성, Expo plugin 반복 적용, 데모 SHA-256 벡터 | workspace 의존성 |
+| `yarn test:integrity:android` | provider 갱신 경쟁 조건, 재시도 횟수 제한, 잘못된 프로젝트 번호 | JDK 17과 데모의 Android SDK 설정 |
+| `yarn test:integrity:ios` | base64 해독과 32바이트 해시 검증 | macOS와 Foundation을 제공하는 Xcode의 `swiftc` |
+
+Android 테스트는 `android/src/test`에 있으며 데모의 Gradle 프로젝트에서 JUnit과 Google SDK mock으로 실행합니다. Kotlin은 Gradle이 제공합니다. iOS 검사는 실제 Swift 구현을 작은 플랫폼 대역과 함께 컴파일합니다. CI는 각 네이티브 검사를 해당 플랫폼 job에서 실행합니다. 이 검사들은 Google·Apple 서버를 호출하지 않습니다.
+
+네이티브 오류가 JavaScript로 전달되는지 확인하는 검사와 기기 선택은 [Integrity Demo 하네스 안내](example/integrity-demo/README-ko.md#기기-테스트)를 참고하세요.
+
 ### 커밋 메시지 규칙
 
 [Conventional Commits](https://www.conventionalcommits.org/en)를 따릅니다.
@@ -126,51 +146,19 @@ pre-commit 훅은 stage한 JavaScript·TypeScript를 린트하고 commit-msg 훅
 
 ### npm 배포
 
-공개 패키지 3개는 [Changesets](.changeset/config.json)로 버전을 독립적으로 관리합니다. 예제와 private 루트 패키지는 배포 대상에서 제외합니다.
+공개 패키지 3개는 [Changesets](.changeset/config.json)로 버전을 독립적으로 관리합니다. 예제와 private 루트는 배포 대상에서 제외합니다.
 
-| 패키지                                       | 릴리스 기준                                            |
-| -------------------------------------------- | ------------------------------------------------------ |
-| `react-native-nitro-device-info`             | API·구현·패키지 내용이 바뀌면 changeset 추가           |
-| `react-native-nitro-device-integrity`        | 최초 배포는 `0.1.0`, 이후 변경부터 changeset 추가      |
-| `@react-native-nitro-device-info/mcp-server` | MCP 코드 또는 포함된 명세·문서가 바뀌면 changeset 추가 |
+배포된 패키지를 변경할 때 `yarn changeset`을 실행하세요. 영향을 받는 패키지와 SemVer 변경 수준을 선택하고 사용자가 확인할 수 있는 변경 내용을 작성합니다.
 
-MCP는 빌드할 때 핵심 라이브러리의 `.nitro.ts` 명세, `docs/docs/`, 루트 README를 복사합니다. 이 내용이 바뀌면 MCP changeset도 추가하세요. 빌드 시점에만 필요한 관계이므로 런타임 의존성을 추가하거나 패키지 버전을 맞출 필요는 없습니다.
+| 패키지 | changeset을 추가하는 경우 |
+| --- | --- |
+| `react-native-nitro-device-info` | API·구현·패키지 내용 변경 |
+| `react-native-nitro-device-integrity` | 최초 배포 이후 API·구현·패키지 내용 변경 |
+| `@react-native-nitro-device-info/mcp-server` | MCP 코드 또는 포함된 명세·문서 변경 |
 
-1. 구현을 바꿀 때 `yarn changeset`을 실행합니다. 영향을 받는 패키지와 SemVer 변경 수준을 선택합니다.
-2. 변경을 병합하면 [Release workflow](.github/workflows/release.yml)가 `main`에서 **chore(release): version packages** PR을 만들거나 갱신합니다.
-3. PR에서 생성된 패키지 버전과 패키지별 changelog를 검토하고, 검증 후 병합합니다.
-4. `main`에서 **Release**를 기본값인 `publish: false`로 수동 실행합니다. CI 결과, 레지스트리 비교 결과, 검증된 tarball artifact를 확인합니다.
-5. 배포가 승인되면 `publish: true`로 수동 실행합니다. `npm` environment에 보호 규칙이 있으면 승인합니다.
+MCP는 빌드할 때 두 라이브러리의 `.nitro.ts` 명세, `docs/docs/`, 영어 루트 README를 포함합니다. 이 입력이 바뀌면 MCP changeset도 추가하세요. 빌드 시점에 필요한 관계이므로 런타임 의존성을 추가하거나 버전을 맞출 필요는 없습니다.
 
-push 이벤트는 버전 PR만 관리하며 npm에 배포하지 않습니다. 수동 workflow는 선택한 커밋을 검사하고 각 패키지를 빌드한 뒤 실제 workspace를 패킹합니다. 패킹할 때 lifecycle script는 실행하지 않습니다.
-메타데이터, 진입점, 네이티브 바인딩, Expo plugin, MCP 데이터를 검사하고 SHA-512 해시와 함께 archive를 업로드합니다. publish job은 다운로드한 파일을 다시 검사한 뒤 같은 파일을 npm provenance와 함께 배포합니다.
-외부 쓰기는 npm 배포와 그 이후의 패키지별 태그·GitHub Release 생성으로 한정합니다. 태그는 scope가 있는 MCP를 포함해 `<package-name>@<version>` 형식입니다. 기존 태그는 유지합니다.
-
-이미 배포된 정확한 버전은 건너뛰고, 레지스트리 조회에 실패하면 작업을 중단합니다. 일부 패키지만 배포된 상태로 실패했다면 같은 실행의 **Re-run failed jobs**를 사용하세요. 원래 artifact와 커밋을 유지하며 레지스트리의 archive 해시가 일치하는지 확인한 뒤 누락된 태그나 GitHub Release를 만듭니다.
-이미 배포한 버전의 릴리스 정보를 복구하려고 새 workflow를 실행하지 마세요.
-
-실제 배포를 활성화하기 전에 다음을 설정합니다.
-
-- 저장소 설정에서 GitHub Actions의 PR 생성을 허용합니다. 버전 PR을 병합하기 전에 검증 상태를 확인합니다.
-- 각 npm 패키지의 trusted publisher에 owner `l2hyunwoo`, repository `react-native-nitro-device-info`, workflow `release.yml`, environment `npm`을 지정합니다.
-- npm이 staged publishing을 기본값으로 설정했다면 이 workflow의 직접 배포를 명시적으로 허용합니다. 새 publisher 설정은 npm의 만료 기간 안에 활성화합니다.
-- hosted publish runner는 Node 22.14 이상과 npm 11.5.1 이상을 사용합니다. `id-token: write` 권한이 필요하며 장기 `NPM_TOKEN`은 사용하지 않습니다.
-- 미배포 상태인 integrity는 인증된 관리자가 최초 실제 버전을 배포해야 trusted publisher를 설정할 수 있습니다.
-  검토한 `0.1.0` tarball을 `npm publish <checked-tarball.tgz> --access public --ignore-scripts`로 한 번 배포한 뒤 publisher를 설정합니다.
-  해당 실행의 artifact를 보존하고 publish job을 재실행해 같은 archive인지 확인한 뒤 릴리스 정보를 완성합니다.
-
-이 전환 작업은 버전 PR을 병합하기 전까지 manifest 버전을 바꾸지 않습니다. integrity는 최초 배포를 명시적으로 실행할 때까지 미배포 상태로 유지합니다. 실기기 attestation과 백엔드 검증은 배포 전에 확인해야 합니다.
-integrity만 beta로 배포하려고 모노레포 전체에 적용되는 `changeset pre enter`를 사용하지 마세요.
-
-로컬에서 배포 없이 검증하려면 Node 22.14 이상과 npm 11.5.1 이상을 준비한 뒤 다음을 실행합니다.
-
-```sh
-yarn release:prepare
-yarn release:verify
-```
-
-두 명령은 공개 레지스트리를 읽고 git에서 제외한 `.release/`에 검증된 archive를 만듭니다. npm 배포, 태그 생성, GitHub Release 생성은 하지 않습니다. 변경사항이 있는 로컬 checkout에서는 배포할 수 없는 초안 artifact를 만듭니다.
-`release:publish`는 수동 Actions publish job, 변경사항 없는 checkout의 artifact, 적용을 마친 changeset을 요구합니다.
+Release workflow가 `main`에서 버전 PR을 만들면 관리자가 검토하고 배포를 명시적으로 실행합니다. 설정, dry run, integrity 최초 배포, 실패 복구는 [관리자 릴리스 안내](.github/RELEASING-ko.md)를 참고하세요.
 
 ### 스크립트
 
@@ -182,9 +170,9 @@ yarn release:verify
 - `yarn nitrogen`: 핵심 `.nitro.ts` 네이티브 바인딩 생성
 - `yarn prepare`: 핵심 라이브러리 빌드
 - `yarn workspace react-native-nitro-device-integrity prepare`: device attestation 라이브러리 빌드
-- `yarn test:integrity`: integrity 빌드 후 해시 벡터·Expo plugin·Android 런타임 의존성 검사
-- `yarn test:integrity:android`: integrity 데모의 Gradle 프로젝트에서 Google SDK mock을 사용하는 JUnit provider 회귀 테스트 실행(JDK 17·Android SDK 필요)
-- `yarn test:integrity:ios`: Swift 구현과 플랫폼 대역으로 해시 검증 검사(macOS·Xcode 필요)
+- `yarn test:integrity`: integrity 소스 회귀 검사
+- `yarn test:integrity:android`: Gradle로 Android JUnit 회귀 검사
+- `yarn test:integrity:ios`: Swift 해시 검증 회귀 검사
 - `yarn test:release`: 패키지 3개 빌드 후 릴리스 로직과 패킹 결과 검사(npm 11.5.1 이상 필요)
 - `yarn changeset`: 영향받는 패키지와 버전 변경 수준 기록
 - `yarn version-packages`: 대기 중인 changeset을 로컬에 적용해 검토

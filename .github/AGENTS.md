@@ -12,6 +12,7 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
 |------|-------------|
 | `workflows/ci.yml` | Main CI: lint, typecheck, build, build-ios, build-android, validate-package, mcp-server (path-based change detection) |
 | `workflows/release.yml` | Changesets version PRs on main push; manual dry run or verified archive publication for all public packages |
+| `RELEASING.md` / `RELEASING-ko.md` | Maintainer setup, publication, first integrity release, and recovery |
 | `workflows/docs-deploy.yml` | Docs deployment to GitHub Pages on push to main (`docs/**` path filter) |
 | `workflows/docs-validation.yml` | Docs build validation on PRs (`docs/**` path filter) |
 | `CODEOWNERS` | Default reviewer: @l2hyunwoo (all files) |
@@ -42,7 +43,7 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
 - Verify workflow syntax with `actionlint`; do not trigger a workflow or publish unless explicitly authorized
 - Test path filters match actual monorepo directory structure (`packages/react-native-nitro-device-info/`, `packages/mcp-server/`, `docs/`, `example/`)
 - `yarn test:release` requires built public packages and covers archive validation and injected release failure/retry cases without publishing.
-- npm trusted publishers must authorize `release.yml`, the `npm` environment, and direct `npm publish` for each existing package. See the contribution guide for the first integrity publication.
+- npm trusted publishers must authorize `release.yml`, the `npm` environment, and direct `npm publish` for each existing package. See [RELEASING.md](RELEASING.md) for the first integrity publication and recovery procedure.
 - Dirty local dry runs are marked as drafts and cannot be published. Release archives use `--ignore-scripts`; actual npm publication also uses `--provenance --access public`.
 
 ### Common Patterns
