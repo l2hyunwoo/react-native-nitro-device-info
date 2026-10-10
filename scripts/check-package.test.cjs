@@ -226,6 +226,8 @@ for (const field of ['name', 'version']) {
 for (const file of [
   'android/build/intermediates/output.o',
   'android/local.properties',
+  'android/src/test/java/NativeRegression.kt',
+  'android/src/androidTest/java/NativeRegression.kt',
   'src/__tests__/unpublished.test.ts',
   'node_modules/unwanted/index.js',
   'lib/previous.tgz',

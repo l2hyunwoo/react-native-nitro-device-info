@@ -27,6 +27,7 @@
     "plugin/build/**",
     "!ios/build",
     "!android/build",
+    "!android/src/test",
     "!android/gradle",
     "!android/gradlew",
     "!android/gradlew.bat",
