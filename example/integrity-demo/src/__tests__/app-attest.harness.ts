@@ -78,7 +78,11 @@ describe('App Attest / DeviceCheck (iOS-only)', () => {
   test('valid hash on unsupported iOS rejects with UNSUPPORTED_PLATFORM', async () => {
     if (Platform.OS !== 'ios' || integrity.isSupported) return;
     const hash = `${'A'.repeat(43)}=`;
-    expect(await expectRejection(integrity.attestKey('key', hash))).toContain('UNSUPPORTED_PLATFORM');
-    expect(await expectRejection(integrity.generateAssertion('key', hash))).toContain('UNSUPPORTED_PLATFORM');
+    expect(await expectRejection(integrity.attestKey('key', hash))).toContain(
+      'UNSUPPORTED_PLATFORM'
+    );
+    expect(
+      await expectRejection(integrity.generateAssertion('key', hash))
+    ).toContain('UNSUPPORTED_PLATFORM');
   });
 });

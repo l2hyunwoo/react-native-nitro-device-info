@@ -131,7 +131,7 @@ Run the suites for the platforms available on your machine:
 
 | Command | Coverage | Requirements |
 | --- | --- | --- |
-| `yarn test:integrity` | Android runtime dependency, Expo plugin idempotence, demo SHA-256 vectors | Workspace dependencies |
+| `yarn test:integrity` | Android runtime dependency, Expo plugin idempotence, demo SHA-256 vectors and stale key results | Workspace dependencies |
 | `yarn test:integrity:android` | Provider refresh races, retry limits, invalid project numbers | JDK 17 and the demo's Android SDK setup |
 | `yarn test:integrity:ios` | Base64 decoding and 32-byte hash validation | macOS and Xcode's `swiftc` with Foundation |
 

@@ -117,7 +117,7 @@ yarn workspace react-native-nitro-device-integrity prepare
 
 | 명령 | 검사 범위 | 필요 환경 |
 | --- | --- | --- |
-| `yarn test:integrity` | Android 런타임 의존성, Expo plugin 반복 적용, 데모 SHA-256 벡터 | workspace 의존성 |
+| `yarn test:integrity` | Android 런타임 의존성, Expo plugin 반복 적용, 데모 SHA-256 벡터와 이전 키의 지연 결과 | workspace 의존성 |
 | `yarn test:integrity:android` | provider 갱신 경쟁 조건, 재시도 횟수 제한, 잘못된 프로젝트 번호 | JDK 17과 데모의 Android SDK 설정 |
 | `yarn test:integrity:ios` | base64 해독과 32바이트 해시 검증 | macOS와 Foundation을 제공하는 Xcode의 `swiftc` |
 
