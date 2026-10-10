@@ -20,7 +20,7 @@
 gh workflow run release.yml --ref main -f publish=false -f verify_oidc=true
 ```
 
-선택한 커밋을 검토한 뒤 `npm` environment를 승인합니다. 이 모드는 GitHub OIDC 토큰을 요청하고 공개 패키지 3개의 npm 인증 토큰으로 교환합니다. 저장소, workflow, 브랜치, environment, 토큰 종류와 만료 시간을 검사합니다. 토큰 값은 마스킹하며 파일에 저장하지 않습니다. job 요약에는 패키지 이름, HTTP 결과, 만료 시간만 기록합니다.
+선택한 커밋을 검토한 뒤 `npm` environment를 승인합니다. 이 모드는 GitHub OIDC 토큰을 요청하고 공개 패키지 3개의 npm 인증 토큰으로 교환합니다. 저장소, workflow, 브랜치, environment, 토큰 종류를 검사합니다. npm이 만료 정보를 반환하면 만료 시간도 검사합니다. 토큰 값은 마스킹하며 파일에 저장하지 않습니다. job 요약에는 패키지 이름, HTTP 결과, 반환된 만료 시간만 기록합니다.
 
 이 모드에서는 릴리스 빌드와 배포를 건너뜁니다. 패키지 버전, dist-tag, Git 태그, GitHub Release를 변경하지 않습니다. 두 입력을 모두 `true`로 지정하면 검증에 실패하며 publish job은 실행되지 않습니다.
 

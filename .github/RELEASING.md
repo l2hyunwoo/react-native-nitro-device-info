@@ -20,7 +20,7 @@ Dispatch **Release** on `main` with `publish: false` and `verify_oidc: true`:
 gh workflow run release.yml --ref main -f publish=false -f verify_oidc=true
 ```
 
-Approve the `npm` environment after reviewing the selected commit. This mode requests a GitHub OIDC identity and exchanges it for npm credentials for all three public packages. It checks the repository, workflow, branch, environment, token type, and expiry. Token values are masked and are not saved to files. The job summary contains only package names, HTTP results, and expiry times.
+Approve the `npm` environment after reviewing the selected commit. This mode requests a GitHub OIDC identity and exchanges it for npm credentials for all three public packages. It checks the repository, workflow, branch, environment, and token type. It validates expiry metadata when npm returns it. Token values are masked and are not saved to files. The job summary contains only package names, HTTP results, and any expiry times returned.
 
 This mode skips release builds and publication. It does not change package versions, dist-tags, Git tags, or GitHub Releases. Setting both inputs to `true` fails verification and cannot run the publish job.
 
