@@ -26,14 +26,6 @@ export default defineConfig({
   },
 
   themeConfig: {
-    socialLinks: [
-      {
-        icon: 'github',
-        mode: 'link',
-        content: 'https://github.com/l2hyunwoo/react-native-nitro-device-info',
-      },
-    ],
-
     nav: [
       {
         text: 'Guide',
