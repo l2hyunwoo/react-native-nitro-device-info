@@ -297,14 +297,21 @@ async function verifyOidc(
       );
       log(`::add-mask::${body.token}`);
       assert.ok(body.token_type === 'oidc', 'Unexpected npm token type');
-      assert.ok(
-        Date.parse(body.expires) > Date.now(),
-        'npm exchange token is expired'
-      );
+      if (body.expires !== undefined) {
+        const expiresAt = Date.parse(body.expires);
+        assert.ok(
+          Number.isFinite(expiresAt),
+          'npm returned unsupported expiry metadata'
+        );
+        assert.ok(
+          expiresAt > Date.now(),
+          `npm exchange token expired at ${new Date(expiresAt).toISOString()}`
+        );
+      }
       results.push({
         name: pkg.name,
         status: response.status,
-        expires: body.expires,
+        ...(body.expires !== undefined && { expires: body.expires }),
       });
       log(`${pkg.name}: OIDC exchange succeeded (HTTP ${response.status})`);
     } catch (error) {
@@ -320,7 +327,7 @@ async function verifyOidc(
         '',
         ...results.map(
           (result) =>
-            `- ${result.name}: ${result.error || `HTTP ${result.status}, expires ${result.expires}`}`
+            `- ${result.name}: ${result.error || `HTTP ${result.status}${result.expires ? `, expires ${result.expires}` : ''}`}`
         ),
         '',
         'Only token exchange was requested. No packages, dist-tags, Git tags, or GitHub Releases were changed.',

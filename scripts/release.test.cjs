@@ -642,3 +642,22 @@ test('an empty or expired npm credential cannot pass OIDC verification', async (
     );
   }
 });
+
+test('a successful npm exchange does not require optional expiry metadata', async (t) => {
+  const f = oidcFixture(t);
+  const request = async (url, options) => {
+    const response = await f.request(url, options);
+    if (f.requests.length === 1) return response;
+    const body = await response.json();
+    delete body.expires;
+    return { ok: true, status: 201, json: async () => body };
+  };
+  const results = await verifyOidc(f.root, { ...f, request });
+  assert.equal(results.length, 3);
+  assert.ok(
+    results.every((result) => result.status === 201 && !('expires' in result))
+  );
+  const summary = fs.readFileSync(f.summary, 'utf8');
+  assert.ok(!summary.includes('undefined'));
+  assert.ok(!summary.includes('test-exchange-token'));
+});
