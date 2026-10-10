@@ -1,5 +1,20 @@
 # react-native-nitro-device-info
 
+## 1.9.0 (Unreleased)
+
+Changes since v1.8.3:
+
+- Bundle the iOS privacy manifest and document timing API usage limits.
+- Implement iOS camera-hardware and configured device-authentication checks.
+- Correct Android wired/Bluetooth headphone detection and reuse the cached MAC lookup.
+- Preserve unavailable battery readings as `-1`; `useBatteryLevel()` and `useBatteryLevelIsLow()` return `null` for unavailable readings and low-battery checks exclude them.
+- Keep web battery readings current, return the unsupported airplane-mode fallback, and fix browser resolution of hooks and `/compat` imports.
+- Add packed-package web regression tests and complete Korean documentation.
+
+Upgrade note: iOS previously returned `0` for an unavailable battery. Handle `-1` in core and compat getters before displaying percentages, and handle `null` in `useBatteryLevel()` and `useBatteryLevelIsLow()`. Reinstall pods and rebuild native apps to include native fixes and `NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy`.
+
+See the [full release notes](https://github.com/l2hyunwoo/react-native-nitro-device-info/blob/main/CHANGELOG.md) for migration details and package scope.
+
 ## 1.4.3
 
 ### Patch Changes

@@ -44,7 +44,7 @@ Rebuild the iOS app after installing the pods. Restarting Metro alone does not i
 
 ### iOS Privacy Manifest
 
-> **Version availability (2026-10-10)**: Privacy manifest bundling is unreleased and is not included in `1.8.3`. The following describes `main` after [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144).
+> **Planned for v1.9.0**: Privacy manifest bundling is not included in `1.8.3`. The following applies to the upcoming release or a build from `main` after [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144).
 
 The pod packages `ios/PrivacyInfo.xcprivacy` in `NitroDeviceInfo_privacy.bundle`. CocoaPods copies this resource bundle into the app, including when Expo prebuild or EAS Build installs the pod. No privacy-specific config plugin option or manual copy into the app target is needed.
 

@@ -41,9 +41,11 @@ pnpm add react-native-nitro-device-info react-native-nitro-modules
 cd ios && pod install && cd ..
 ```
 
-> **버전 안내(2026-10-10)**: privacy info manifest 자동 포함은 아직 배포되지 않았습니다. `1.8.3`에는 포함되지 않으며, 아래 설명은 [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144)가 반영된 `main` 브랜치 기준입니다.
+> **v1.9.0 출시 예정**: privacy info manifest 자동 포함은 `1.8.3`에 없습니다. 아래 설명은 출시 예정인 v1.9.0 또는 [PR #144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144)가 반영된 `main` 빌드에 적용됩니다.
 
 Pod는 `PrivacyInfo.xcprivacy`를 `NitroDeviceInfo_privacy.bundle`에 포함합니다. Expo prebuild / EAS Build에도 같은 번들이 포함됩니다. 개인정보 보호 전용 config plugin 옵션은 필요하지 않습니다. 선언한 `approved reason`(API 사용 목적)과 사용 제한은 [iOS privacy info manifest](https://l2hyunwoo.github.io/react-native-nitro-device-info/ko/guide/getting-started#ios-privacy-manifest)를 참고하세요.
+
+> **v1.9.0 업그레이드 안내**: iOS에서 읽을 수 없는 배터리 잔량은 기존 `0` 대신 `-1`을 반환합니다. 실제 잔량이 0%이면 계속 `0`을 반환하며, `useBatteryLevel()`과 `useBatteryLevelIsLow()`는 잔량을 읽을 수 없을 때 `null`을 반환합니다. iOS 기능 감지·privacy info manifest·Android 오디오 수정사항을 적용하려면 Pod를 다시 설치하고 네이티브 앱을 다시 빌드하세요. [출시 예정 변경사항](CHANGELOG.md)을 참고하세요.
 
 ### Android 설정
 

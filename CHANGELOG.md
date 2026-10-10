@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - Unreleased
+
+Planned core library release; changes since v1.8.3.
+
+### Fixed
+
+- **iOS privacy manifest**: Bundle `PrivacyInfo.xcprivacy` in `NitroDeviceInfo_privacy.bundle`, including Expo prebuild / EAS builds. Document the permitted uses of timing and disk-space APIs. ([#144](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/144))
+- **iOS capabilities**: Detect camera hardware instead of always returning `true`, and check configured device-owner authentication instead of always returning `false`. Neither check requests permission or shows an authentication prompt. ([#149](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/149), [#150](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/150))
+- **Android audio**: Detect wired and Bluetooth output devices across supported API levels; guard USB headset detection on API 26+. ([#147](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/147))
+- **Android MAC lookup**: Reuse the synchronous getter's cached result in the async getter. Platform MAC-address restrictions still apply. ([#148](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/148))
+- **Battery readings**: Preserve the unavailable sentinel `-1` across platforms and exclude it from low-battery checks. The compat device test now accepts this sentinel. ([#153](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/153))
+- **Web**: Read current values from the BatteryManager and return `false` for unsupported airplane-mode detection. Route internal hook and `/compat` imports to the web implementation in browser bundles. ([#151](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/151), [#152](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/152))
+
+### Documentation and validation
+
+- Clarify API contracts, platform availability, SSR limitations, and AI documentation retrieval; add complete Korean documentation. ([#154](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/154), [#155](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/155))
+- Expand core tests and native CI coverage, update development dependencies, and check hooks and compat against the packed npm artifact. ([#143](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/143), [#145](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/145), [#146](https://github.com/l2hyunwoo/react-native-nitro-device-info/pull/146))
+
+### Upgrading from v1.8.3
+
+- On iOS, an unavailable battery reading changes from `0` to `-1`. A known empty battery remains `0`. Handle `-1` before displaying a percentage. This also applies to `getPowerState().batteryLevel` and compat async/sync getters.
+- `useBatteryLevel()` returns `null` while loading or when unavailable. `useBatteryLevelIsLow()` returns `null` for unavailable readings; `isLowBatteryLevel()` returns `false`.
+- iOS `isCameraPresent` can now return `false` on a simulator. `isPinOrFingerprintSet` can now return `true` when device-owner authentication is configured. Neither result grants a permission or authenticates a user.
+- Run `pod install` and rebuild native apps after upgrading. For Expo, create a new development or EAS build. Verify `NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy` in the built iOS app and follow the [privacy-manifest usage limits](https://l2hyunwoo.github.io/react-native-nitro-device-info/guide/getting-started#ios-privacy-manifest).
+- The Nitro peer requirement remains `>=0.35.0 <1.0.0`. The optional `react-native-nitro-device-integrity` package is still unreleased; the MCP server has its own v1.1.0 release and is not versioned with this core release.
+
 ## [1.4.2] - 2025-12-04
 
 ### Added
