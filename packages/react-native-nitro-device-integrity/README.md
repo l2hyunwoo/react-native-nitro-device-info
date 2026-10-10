@@ -168,15 +168,21 @@ After installing workspace dependencies, run these commands from the repository 
 
 ```sh
 yarn test:integrity
-yarn test:integrity:native
+yarn test:integrity:android
+yarn test:integrity:ios
 ```
 
 The first suite checks the Android runtime dependency, Expo plugin idempotence,
-and demo SHA-256 vectors. The native suite compiles production Kotlin and Swift
-against small platform doubles. It checks provider refresh races, bounded
-retries, and decoded hash validation. It requires a JDK, `kotlinc` with its
-bundled coroutines JAR, and `swiftc` with Foundation. Missing compilers produce
-explicit skips. These tests do not call Google or Apple servers.
+and demo SHA-256 vectors. Android JUnit tests in `android/src/test` run through
+the demo's Gradle project. They check provider refresh races, bounded retries,
+and invalid project numbers using production code and mocked Google SDK types.
+Use JDK 17 and the Android SDK configured for the demo. Gradle provides the
+Kotlin compiler; no separate installation is needed.
+
+The iOS suite compiles production Swift against small platform doubles and
+checks decoded hash validation. It requires macOS and Xcode's `swiftc` with
+Foundation. CI runs each native suite in its corresponding platform job.
+These tests do not call Google or Apple servers.
 
 For native-to-JavaScript rejection checks, install the demo's **Debug** app on
 the selected simulator, then run the harness. Match the version to an installed

@@ -131,10 +131,13 @@ POST https://playintegrity.googleapis.com/v1/{packageName}:decodeIntegrityToken
 
 ```sh
 yarn test:integrity
-yarn test:integrity:native
+yarn test:integrity:android
+yarn test:integrity:ios
 ```
 
-첫 번째 검사는 Android 런타임 의존성, Expo 플러그인의 반복 적용, 데모 SHA-256 테스트 벡터를 확인합니다. 네이티브 검사는 실제 Kotlin·Swift 구현을 작은 플랫폼 대역과 컴파일합니다. Provider 갱신 경쟁 조건, 재시도 횟수 제한, 해독한 해시 길이를 확인합니다. JDK, 코루틴 JAR를 포함한 `kotlinc`, Foundation을 제공하는 `swiftc`가 필요합니다. 컴파일러가 없으면 건너뛴 이유를 표시합니다. Google·Apple 서버는 호출하지 않습니다.
+첫 번째 검사는 Android 런타임 의존성, Expo 플러그인의 반복 적용, 데모 SHA-256 테스트 벡터를 확인합니다. `android/src/test`의 Android JUnit 테스트는 데모의 Gradle 프로젝트에서 실행합니다. 실제 구현과 mock한 Google SDK 타입으로 provider 갱신 경쟁 조건, 재시도 횟수 제한, 잘못된 프로젝트 번호를 검사합니다. JDK 17과 데모에서 사용하는 Android SDK가 필요합니다. Kotlin 컴파일러는 Gradle이 제공하므로 별도로 설치하지 않습니다.
+
+iOS 검사는 실제 Swift 구현을 작은 플랫폼 대역과 컴파일해 해독한 해시를 검사합니다. macOS와 Xcode의 `swiftc`, Foundation이 필요합니다. CI는 각 플랫폼 job에서 해당 네이티브 테스트를 실행합니다. Google·Apple 서버는 호출하지 않습니다.
 
 네이티브 오류가 JavaScript까지 전달되는지 확인하려면 선택한 시뮬레이터에 데모의 **Debug** 앱을 먼저 설치하세요. 설치된 iPhone 17 Pro 런타임 버전에 맞춰 하네스를 실행하세요.
 

@@ -287,6 +287,7 @@ jobs:
           cache: 'yarn'
 
       - name: Setup Java
+        if: matrix.platform == 'android'
         uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
         with:
           distribution: 'temurin'
@@ -314,17 +315,13 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Install Kotlin compiler for native regressions
+      - name: Run Swift native regression tests
         if: matrix.platform == 'ios'
-        run: |
-          curl --fail --location --silent --show-error https://github.com/JetBrains/kotlin/releases/download/v2.4.21/kotlin-compiler-2.4.21.zip -o "$RUNNER_TEMP/kotlin.zip"
-          echo "7cc140e76daf416a0424a5557f99afd7ca89ebd463ea1101261e3e01c33e75cd  $RUNNER_TEMP/kotlin.zip" | shasum -a 256 -c -
-          unzip -q "$RUNNER_TEMP/kotlin.zip" -d "$RUNNER_TEMP/kotlin"
-          echo "$RUNNER_TEMP/kotlin/kotlinc/bin" >> "$GITHUB_PATH"
+        run: yarn test:integrity:ios
 
-      - name: Run Swift and Kotlin native regression tests
-        if: matrix.platform == 'ios'
-        run: yarn test:integrity:native
+      - name: Run Android native regression tests
+        if: matrix.platform == 'android'
+        run: yarn test:integrity:android
 
       - name: Build integrity library
         run: yarn workspace react-native-nitro-device-integrity prepare

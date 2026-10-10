@@ -183,7 +183,8 @@ yarn release:verify
 - `yarn prepare`: 핵심 라이브러리 빌드
 - `yarn workspace react-native-nitro-device-integrity prepare`: device attestation 라이브러리 빌드
 - `yarn test:integrity`: integrity 빌드 후 해시 벡터·Expo plugin·Android 런타임 의존성 검사
-- `yarn test:integrity:native`: Kotlin·Swift 테스트 대역으로 네이티브 입력 검증과 provider 재시도 검사
+- `yarn test:integrity:android`: integrity 데모의 Gradle 프로젝트에서 Google SDK mock을 사용하는 JUnit provider 회귀 테스트 실행(JDK 17·Android SDK 필요)
+- `yarn test:integrity:ios`: Swift 구현과 플랫폼 대역으로 해시 검증 검사(macOS·Xcode 필요)
 - `yarn test:release`: 패키지 3개 빌드 후 릴리스 로직과 패킹 결과 검사(npm 11.5.1 이상 필요)
 - `yarn changeset`: 영향받는 패키지와 버전 변경 수준 기록
 - `yarn version-packages`: 대기 중인 changeset을 로컬에 적용해 검토

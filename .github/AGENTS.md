@@ -30,7 +30,7 @@ GitHub-specific configuration: CI/CD workflows, issue templates, and repository 
   - **build-ios**: CocoaPods install + xcodebuild on `macos-15` (showcase app, Release config, iphonesimulator)
   - **build-android**: ktlint check + Gradle assembleDebug on `ubuntu-26.04` (Java 17 temurin)
   - **validate-package**: build and pack all three public packages; run release/checker tests, archive validation, isolated Expo/MCP smoke checks, and web package regressions
-  - **build-integrity**: native iOS/Android example builds; Swift/Kotlin regression suite on macOS with a checksum-verified Kotlin compiler
+  - **build-integrity**: native iOS/Android example builds; Swift regressions in the iOS job and Gradle JUnit provider regressions in the Android job. Gradle supplies Kotlin; no standalone compiler installation is needed.
   - **mcp-server**: typecheck + build + test when the server or its bundled source/documentation inputs change
 - Main pushes only create or update a Changesets version PR; they never publish. The version command refreshes the Yarn lockfile before the action commits.
 - Manual `release.yml` dispatch defaults `publish` to false. It validates CI, selects unpublished exact versions of device-info, device-integrity, and MCP, then uploads verified archives with their commit SHA and SHA512 digests.

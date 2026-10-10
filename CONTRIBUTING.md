@@ -205,7 +205,8 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn prepare`: build the core library.
 - `yarn workspace react-native-nitro-device-integrity prepare`: build the attestation library.
 - `yarn test:integrity`: check hash vectors, Expo plugin behavior, and Android runtime dependencies after the integrity build.
-- `yarn test:integrity:native`: compile and test native validation and provider retries with Kotlin/Swift test doubles.
+- `yarn test:integrity:android`: run JUnit provider regressions with Google SDK mocks through the integrity demo's Gradle project (JDK 17 and Android SDK required).
+- `yarn test:integrity:ios`: compile and test Swift hash validation with platform doubles (macOS and Xcode required).
 - `yarn test:release`: test release logic and packed artifacts after all three package builds (npm 11.5.1+ required).
 - `yarn changeset`: describe the affected packages and version bumps.
 - `yarn version-packages`: apply pending changesets locally for review.

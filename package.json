@@ -27,7 +27,8 @@
     "release:publish": "node scripts/release.cjs publish",
     "test:release": "node --test scripts/release.test.cjs scripts/check-package.test.cjs",
     "test:integrity": "node --test packages/react-native-nitro-device-integrity/__tests__/regressions.cjs",
-    "test:integrity:native": "node --test packages/react-native-nitro-device-integrity/__tests__/native-regressions.cjs"
+    "test:integrity:android": "cd example/integrity-demo/android && ./gradlew :react-native-nitro-device-integrity:testDebugUnitTest --no-daemon",
+    "test:integrity:ios": "node --test packages/react-native-nitro-device-integrity/__tests__/swift-regressions.cjs"
   },
   "repository": {
     "type": "git",
