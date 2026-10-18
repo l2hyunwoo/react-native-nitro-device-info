@@ -142,7 +142,6 @@ dependencies {
   implementation "com.android.installreferrer:installreferrer:2.2"
 }
 
-// ktlint configuration
 ktlint {
   version = "1.0.1"
   android = false

@@ -1,14 +1,3 @@
-/**
- * DeviceInfo.swift
- * React Native Nitro Device Info - iOS Implementation
- *
- * Implements the DeviceInfo HybridObject for iOS devices.
- * Provides comprehensive device information through Nitro's JSI bindings.
- *
- * @author HyunWoo Lee
- * @version 0.1.0
- */
-
 import Foundation
 import UIKit
 import NitroModules
@@ -21,17 +10,10 @@ import CryptoKit
 import DeviceCheck
 import WebKit
 
-/**
- * Main implementation of DeviceInfo for iOS
- *
- * This class provides all device information methods for iOS devices,
- * using UIDevice, UIScreen, Bundle, and other iOS frameworks.
- */
 class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Private Properties & Caches
 
-  /// Cached device model identifier to avoid repeated syscall overhead
   private lazy var cachedDeviceModelIdentifier: String = {
     return getDeviceModelIdentifier()
   }()
@@ -41,10 +23,8 @@ class DeviceInfo: HybridDeviceInfoSpec {
     UIDevice.current.isBatteryMonitoringEnabled = true
   }()
 
-  /// Logger for error and diagnostic logging
   private let logger = OSLog(subsystem: "com.nitro.deviceinfo", category: "DeviceInfo")
 
-  /// Network info caches with periodic refresh (5 second cache)
   private var cachedUserAgent: String?
   private var cachedIpAddress: String = "unknown"
   private var ipAddressCacheTime: TimeInterval = 0
@@ -53,7 +33,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
   private let IP_CACHE_DURATION: TimeInterval = 5.0
   private let CARRIER_CACHE_DURATION: TimeInterval = 5.0
 
-  /// Cached first install time (computed once)
   private lazy var cachedFirstInstallTime: Double = {
     if let documentsURL = FileManager.default.urls(
       for: .documentDirectory,
@@ -67,13 +46,11 @@ class DeviceInfo: HybridDeviceInfoSpec {
           return creationDate.timeIntervalSince1970 * 1000
         }
       } catch {
-        // Handle error silently
       }
     }
     return 0.0
   }()
 
-  /// Cached device year class based on RAM
   private lazy var cachedDeviceYearClass: Double = {
     let totalRam = Double(ProcessInfo.processInfo.physicalMemory)
     let MB: Double = 1024 * 1024
@@ -97,7 +74,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }()
 
-  /// Get the key window using modern scene-based API (iOS 13+)
   private var keyWindow: UIWindow? {
     if #available(iOS 13.0, *) {
       return UIApplication.shared.connectedScenes
@@ -109,7 +85,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Cached CTCarrier for carrier info APIs
   private var cachedCarrierObject: CTCarrier? {
     let networkInfo = CTTelephonyNetworkInfo()
     if let providers = networkInfo.serviceSubscriberCellularProviders {
@@ -120,17 +95,14 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Core Device Information
 
-  /// Device model identifier (e.g., "iPhone14,2")
   public var deviceId: String {
     return cachedDeviceModelIdentifier
   }
 
-  /// Device brand (always "Apple" on iOS)
   public var brand: String {
     return "Apple"
   }
 
-  /// Device model marketing name (e.g., "iPhone 15 Pro", "iPad Air")
   public var model: String {
     let id = cachedDeviceModelIdentifier
 
@@ -150,7 +122,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Device Model Mapping
 
-  /// Hardware identifier to marketing name mapping
   private static let deviceNamesByCode: [String: String] = [
     // MARK: iPhone
     "iPhone1,1": "iPhone",
@@ -352,17 +323,14 @@ class DeviceInfo: HybridDeviceInfoSpec {
     "RealityDevice17,1": "Apple Vision Pro (M5)",
   ]
 
-  /// Operating system name (e.g., "iOS" or "iPadOS")
   public var systemName: String {
     return UIDevice.current.systemName
   }
 
-  /// Operating system version (e.g., "15.0")
   public var systemVersion: String {
     return UIDevice.current.systemVersion
   }
 
-  /// Device type category
   public var deviceType: DeviceType {
     switch UIDevice.current.userInterfaceIdiom {
     case .phone:
@@ -378,29 +346,24 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Get unique device identifier (IDFV)
   public var uniqueId: String {
     return UIDevice.current.identifierForVendor?.uuidString ?? ""
   }
 
-  /// Get device manufacturer (always "Apple" on iOS)
   public var manufacturer: String {
     return "Apple"
   }
 
-  /// Get device name
   var deviceName: String {
     return UIDevice.current.name
   }
 
   // MARK: - Device Capabilities
 
-  /// Check if device is a tablet (iPad)
   public var isTablet: Bool {
     return UIDevice.current.userInterfaceIdiom == .pad
   }
 
-  /// Check if running in simulator
   public var isEmulator: Bool {
     #if targetEnvironment(simulator)
       return true
@@ -409,12 +372,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
     #endif
   }
 
-  /// Get estimated device year class based on hardware specifications
   var deviceYearClass: Double {
     return cachedDeviceYearClass
   }
 
-  /// Check if camera is present
   public var isCameraPresent: Bool {
     #if targetEnvironment(simulator)
       return false
@@ -423,12 +384,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
     #endif
   }
 
-  /// Check if PIN or biometric authentication is set
   public var isPinOrFingerprintSet: Bool {
     return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
   }
 
-  /// Check if hardware-backed key storage (Secure Enclave) is available
   var isHardwareKeyStoreAvailable: Bool {
     #if targetEnvironment(simulator)
       return false
@@ -437,7 +396,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     #endif
   }
 
-  /// Check if device is low RAM device (iOS doesn't have equivalent - returns false)
   var isLowRamDevice: Bool {
     return false
   }
@@ -457,7 +415,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /// Check if device has Dynamic Island
   public func getHasDynamicIsland() -> Bool {
     guard #available(iOS 16.0, *) else {
       return false
@@ -476,31 +433,26 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return maxInset >= 51
   }
 
-  /// Check if Display Zoom is enabled
   var isDisplayZoomed: Bool {
     let screen = UIScreen.main
     return screen.scale < screen.nativeScale
   }
 
-  /// Check if device is in landscape orientation
   func getIsLandscape() -> Bool {
     let orientation = UIDevice.current.orientation
     return orientation == .landscapeLeft || orientation == .landscapeRight
   }
 
-  /// Get screen brightness (0.0 to 1.0)
   func getBrightness() -> Double {
     return Double(UIScreen.main.brightness)
   }
 
-  /// Get system font scale
   func getFontScale() -> Double {
     let preferredFont = UIFont.preferredFont(forTextStyle: .body)
     let defaultSize: CGFloat = 17.0
     return Double(preferredFont.pointSize / defaultSize)
   }
 
-  /// Check if liquid glass effect is available
   var isLiquidGlassAvailable: Bool {
     #if compiler(>=6.2)
     if #available(iOS 26.0, *) {
@@ -516,12 +468,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - System Resources
 
-  /// Get total device RAM in bytes
   public var totalMemory: Double {
     return Double(ProcessInfo.processInfo.physicalMemory)
   }
 
-  /// Get current app memory usage in bytes
   public func getUsedMemory() -> Double {
     var info = mach_task_basic_info()
     var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
@@ -541,12 +491,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return 0.0
   }
 
-  /// Get maximum memory (not available on iOS in same way as Android)
   var maxMemory: Double {
     return -1
   }
 
-  /// Get total disk storage capacity in bytes
   public var totalDiskCapacity: Double {
     do {
       let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
@@ -558,7 +506,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Get free disk storage in bytes
   public func getFreeDiskStorage() -> Double {
     do {
       let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory())
@@ -584,14 +531,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Battery & Power
 
-  /// Get current battery level (0.0 to 1.0)
   public func getBatteryLevel() -> Double {
     _ = batteryMonitoringInitializer
     let level = UIDevice.current.batteryLevel
     return level >= 0 && level <= 1 ? Double(level) : -1
   }
 
-  /// Get comprehensive power state information
   public func getPowerState() -> PowerState {
     _ = batteryMonitoringInitializer
 
@@ -610,13 +555,11 @@ class DeviceInfo: HybridDeviceInfoSpec {
     )
   }
 
-  /// Check if battery is currently charging
   public func getIsBatteryCharging() -> Bool {
     _ = batteryMonitoringInitializer
     return UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
   }
 
-  /// Check if battery level is below threshold
   func isLowBatteryLevel(threshold: Double) -> Bool {
     let level = getBatteryLevel()
     return level >= 0 && level <= 1 && level < threshold
@@ -624,33 +567,27 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Application Metadata
 
-  /// Get application version string
   public var version: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
   }
 
-  /// Get application build number
   public var buildNumber: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
   }
 
-  /// Get bundle identifier
   public var bundleId: String {
     return Bundle.main.bundleIdentifier ?? ""
   }
 
-  /// Get application display name
   public var applicationName: String {
     return Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ??
            Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
   }
 
-  /// Readable version string (version.build)
   var readableVersion: String {
     return "\(version).\(buildNumber)"
   }
 
-  /// Get first install timestamp (milliseconds since epoch)
   public func getFirstInstallTime() throws -> Promise<Double> {
     return Promise.async {
       if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -665,7 +602,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Get last update timestamp (milliseconds since epoch)
   public func getLastUpdateTime() throws -> Promise<Double> {
     return Promise.async {
       if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -680,19 +616,16 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// First install time in milliseconds since epoch
   var firstInstallTimeSync: Double {
     return cachedFirstInstallTime
   }
 
-  /// Last update time (not available on iOS, returns -1)
   var lastUpdateTimeSync: Double {
     return -1
   }
 
   // MARK: - Network
 
-  /// Get device IP address
   public func getIpAddress() throws -> Promise<String> {
     return Promise.async {
       var ipv4Address: String?
@@ -732,7 +665,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Get IP address with 5-second cache
   func getIpAddressSync() -> String {
     let now = Date().timeIntervalSince1970
     if now - ipAddressCacheTime > IP_CACHE_DURATION {
@@ -754,7 +686,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return "02:00:00:00:00:00"
   }
 
-  /// Get WebView user agent string (cached after first call)
   func getUserAgent() throws -> Promise<String> {
     return Promise.async { [weak self] in
       if let cached = self?.cachedUserAgent {
@@ -777,14 +708,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Check if airplane mode is enabled (not available on iOS - returns false)
   func getIsAirplaneMode() -> Bool {
     return false
   }
 
   // MARK: - Carrier Information
 
-  /// Get cellular carrier name
   public func getCarrier() throws -> Promise<String> {
     // Delegate to the sync query (5s cache) so async matches sync and Android's
     // real carrier name; resolved avoids the Promise.async Task-schedule delay
@@ -792,7 +721,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return Promise.resolved(withResult: getCarrierSync())
   }
 
-  /// Get carrier name with 5-second cache
   func getCarrierSync() -> String {
     let now = Date().timeIntervalSince1970
     if now - carrierCacheTime > CARRIER_CACHE_DURATION {
@@ -808,27 +736,22 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return cachedCarrier
   }
 
-  /// Check if carrier allows VoIP calls on its network
   var carrierAllowsVOIP: Bool {
     return cachedCarrierObject?.allowsVOIP ?? true
   }
 
-  /// ISO 3166-1 country code for the carrier
   var carrierIsoCountryCode: String {
     return cachedCarrierObject?.isoCountryCode ?? ""
   }
 
-  /// Mobile Country Code (MCC)
   var mobileCountryCode: String {
     return cachedCarrierObject?.mobileCountryCode ?? ""
   }
 
-  /// Mobile Network Code (MNC)
   var mobileNetworkCode: String {
     return cachedCarrierObject?.mobileNetworkCode ?? ""
   }
 
-  /// Mobile Network Operator (MCC + MNC combined)
   var mobileNetworkOperator: String {
     let mcc = mobileCountryCode
     let mnc = mobileNetworkCode
@@ -840,7 +763,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Audio Accessories
 
-  /// Check if headphones are connected
   public func isHeadphonesConnected() throws -> Promise<Bool> {
     // Delegate to the sync AVAudioSession query so async matches sync (was
     // hardcoded false); resolved avoids the Promise.async Task-schedule delay
@@ -848,12 +770,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return Promise.resolved(withResult: getIsHeadphonesConnected())
   }
 
-  /// Check if any headphones are connected
   func getIsHeadphonesConnected() -> Bool {
     return getIsWiredHeadphonesConnected() || getIsBluetoothHeadphonesConnected()
   }
 
-  /// Check if wired headphones are connected
   func getIsWiredHeadphonesConnected() -> Bool {
     let route = AVAudioSession.sharedInstance().currentRoute
     return route.outputs.contains { output in
@@ -861,7 +781,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Check if Bluetooth headphones are connected
   func getIsBluetoothHeadphonesConnected() -> Bool {
     let route = AVAudioSession.sharedInstance().currentRoute
     return route.outputs.contains { output in
@@ -873,7 +792,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Location Services
 
-  /// Check if location services are enabled
   public func isLocationEnabled() throws -> Promise<Bool> {
     // Stays on Promise.async (not resolved): CLLocationManager
     // .locationServicesEnabled() can block and warns when called on the main
@@ -884,12 +802,10 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Check if location services are enabled
   func getIsLocationEnabled() -> Bool {
     return CLLocationManager.locationServicesEnabled()
   }
 
-  /// Get list of enabled location providers
   func getAvailableLocationProviders() -> [String] {
     let enabled = CLLocationManager.locationServicesEnabled()
     if enabled {
@@ -901,14 +817,12 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Localization
 
-  /// Get device system language in BCP 47 format
   var systemLanguage: String {
     return Locale.preferredLanguages.first ?? "en"
   }
 
   // MARK: - CPU & Architecture
 
-  /// Get supported CPU architectures
   public var supportedAbis: [String] {
     #if arch(arm64)
       return ["arm64"]
@@ -924,7 +838,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return []
   }
 
-  /// Get supported 64-bit ABIs
   var supported64BitAbis: [String] {
     var arch: String = "arm64"
 
@@ -941,103 +854,76 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Android Platform (Cross-Platform Defaults for iOS)
 
-  /// Get Android API level (returns -1 on iOS)
   public var apiLevel: Double {
     return -1.0
   }
 
-  /// Get navigation mode (iOS always returns "unknown")
   var navigationMode: NavigationMode {
     return .unknown
   }
 
-  /// Check if Google Mobile Services is available (always false on iOS)
   public func getHasGms() -> Bool {
     return false
   }
 
-  /// Check if Huawei Mobile Services is available (always false on iOS)
   public func getHasHms() -> Bool {
     return false
   }
 
-  /// Check if system has a feature (Android-specific, not available on iOS)
   func hasSystemFeature(feature: String) -> Bool {
     return false
   }
 
-  /// Get system available features (Android-specific, not available on iOS)
   var systemAvailableFeatures: [String] {
     return []
   }
 
-  /// Get supported media types (Android-specific, returns empty on iOS)
   var supportedMediaTypeList: [String] {
     return []
   }
 
   // Android Build Information
 
-  /// Android device serial number (iOS returns "unknown")
   var serialNumber: String { "unknown" }
 
-  /// Android ID (iOS returns "unknown")
   var androidId: String { "unknown" }
 
-  /// Preview SDK version (iOS returns 0)
   var previewSdkInt: Double { 0.0 }
 
-  /// Android security patch level (iOS returns "unknown")
   var securityPatch: String { "unknown" }
 
-  /// Android OS version codename (iOS returns "unknown")
   var codename: String { "unknown" }
 
-  /// Incremental version (iOS returns "unknown")
   var incremental: String { "unknown" }
 
-  /// Device board/platform name (iOS returns "unknown")
   var board: String { "unknown" }
 
-  /// Device bootloader version (iOS returns "unknown")
   var bootloader: String { "unknown" }
 
-  /// Device codename (iOS returns "unknown")
   var device: String { "unknown" }
 
-  /// Build display ID (iOS returns "unknown")
   var display: String { "unknown" }
 
-  /// Build fingerprint (iOS returns "unknown")
   var fingerprint: String { "unknown" }
 
-  /// Hardware name (iOS returns "unknown")
   var hardware: String { "unknown" }
 
-  /// Build host (iOS returns "unknown")
   var host: String { "unknown" }
 
-  /// Product name (iOS returns "unknown")
   var product: String { "unknown" }
 
-  /// Build tags (iOS returns "unknown")
   var tags: String { "unknown" }
 
-  /// Build type (iOS returns "unknown")
   var type: String { "unknown" }
 
-  /// Base OS version (iOS returns empty string)
   var baseOs: String { "" }
 
-  /// Radio/baseband version (iOS returns "unknown")
   var radioVersion: String { "unknown" }
 
-  /// Build ID (iOS returns "unknown")
   var buildId: String { "unknown" }
 
   // MARK: - iOS Platform
 
-  /// Get device token from DeviceCheck
   func getDeviceToken() throws -> Promise<String> {
     return Promise.async {
       if #available(iOS 11.0, *) {
@@ -1067,7 +953,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Get unique ID and sync to Keychain for persistence
   func syncUniqueId() throws -> Promise<String> {
     return Promise.async {
       let uniqueId = self.uniqueId
@@ -1099,7 +984,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Installation & Distribution
 
-  /// Installer package name (App Store, TestFlight, or unknown)
   var installerPackageName: String {
     if let receiptURL = Bundle.main.appStoreReceiptURL {
       let receiptPath = receiptURL.path
@@ -1112,33 +996,28 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return "unknown"
   }
 
-  /// Get install referrer (Android-specific, returns "unknown" on iOS)
   func getInstallReferrer() throws -> Promise<String> {
     return Promise.async {
       return "unknown"
     }
   }
 
-  /// Check if sideloading is enabled (always false on iOS)
   func isSideLoadingEnabled() -> Bool {
     return false
   }
 
   // MARK: - Legacy Compatibility
 
-  /// Get total disk capacity using old API (alias to main method on iOS)
   var totalDiskCapacityOld: Double {
     return totalDiskCapacity
   }
 
-  /// Get free disk storage using old API (alias to main method on iOS)
   func getFreeDiskStorageOld() -> Double {
     return getFreeDiskStorage()
   }
 
   // MARK: - Device Integrity / Security
 
-  /// Synchronously checks for jailbreak status
   func isDeviceCompromised() -> Bool {
     #if targetEnvironment(simulator)
       return false
@@ -1151,7 +1030,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     #endif
   }
 
-  /// Asynchronous integrity verification
   func verifyDeviceIntegrity() throws -> Promise<Bool> {
     return Promise.async {
       #if targetEnvironment(simulator)
@@ -1169,29 +1047,24 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Windows Platform (Unsupported)
 
-  /// Check if mouse is connected (Windows-specific, returns false on iOS)
   var isMouseConnected: Bool {
     return false
   }
 
-  /// Check if keyboard is connected (Windows-specific, returns false on iOS)
   var isKeyboardConnected: Bool {
     return false
   }
 
-  /// Get host names (Windows-specific, not available on iOS)
   var hostNames: [String] {
     return []
   }
 
-  /// Check if device is in tablet mode (Windows-specific, returns false on iOS)
   var isTabletMode: Bool {
     return false
   }
 
   // MARK: - Helper Methods
 
-  /// Get device model identifier using sysctlbyname
   private func getDeviceModelIdentifier() -> String {
     // resolve deviceId on simulators correctly, i.e iPhone17,1 instead of arm64 or any other architecture
     if(isEmulator){
@@ -1207,7 +1080,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return identifier
   }
 
-  /// Convert UIDevice.BatteryState to BatteryState enum
   private func getBatteryStateEnum(_ state: UIDevice.BatteryState) -> BatteryState {
     switch state {
     case .unknown:
@@ -1223,7 +1095,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     }
   }
 
-  /// Query IP address from network interfaces
   private func queryIpAddressInternal() -> String {
     var ipv4Address: String?
     var ipv6Address: String?
@@ -1268,7 +1139,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
 
   // MARK: - Jailbreak Detection Helpers
 
-  /// Checks for jailbreak-related apps and files
   private func checkJailbreakFiles() -> Bool {
     let jailbreakPaths = [
       "/Applications/Cydia.app",
@@ -1318,7 +1188,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /// Checks for jailbreak-related URL schemes
   private func checkJailbreakUrlSchemes() -> Bool {
     let jailbreakSchemes = [
       "cydia://",
@@ -1336,7 +1205,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /// Checks if system files are writable
   private func checkSystemFileWritable() -> Bool {
     let testPaths = [
       "/private/jailbreak.txt",
@@ -1358,7 +1226,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /// Detects suspicious DYLD injections
   private func checkSuspiciousDylibs() -> Bool {
     let suspiciousDylibs = [
       "MobileSubstrate",
@@ -1436,7 +1303,6 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return false
   }
 
-  /// Checks if local port is connectable using poll()
   private func canConnectToPort(port: Int) -> Bool {
     var addr = sockaddr_in()
     addr.sin_family = sa_family_t(AF_INET)

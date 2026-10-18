@@ -1,11 +1,3 @@
-/**
- * DeviceInfo.kt React Native Nitro Device Info - Android Implementation
- *
- * Implements the DeviceInfo HybridObject for Android devices. Provides comprehensive device
- * information through Nitro's JSI bindings.
- *
- * @author HyunWoo Lee
- */
 package com.margelo.nitro.nitrodeviceinfo
 
 import android.annotation.SuppressLint
@@ -47,7 +39,6 @@ import java.security.KeyStore
 import java.util.Locale
 import kotlin.coroutines.resume
 
-/** Build information cache to avoid repeated Build.* lookups */
 private data class BuildInfoCache(
     val securityPatch: String,
     val bootloader: String,
@@ -66,33 +57,23 @@ private data class BuildInfoCache(
     val buildId: String,
 )
 
-/**
- * Main implementation of DeviceInfo for Android
- *
- * This class provides all device information methods for Android devices, using Android SDK APIs
- * like Build, PackageManager, ActivityManager, etc.
- */
 @SuppressLint("HardwareIds")
 @DoNotStrip
 class DeviceInfo : HybridDeviceInfoSpec() {
-    // MARK: - Private Properties & Caches
+    // Private Properties & Caches
 
-    /** Get the React Application Context */
     private val context: Context
         get() {
             return NitroModules.applicationContext
                 ?: throw RuntimeException("React context not available")
         }
 
-    /** Cached activity manager to avoid repeated system service lookups */
     private val activityManager: ActivityManager by lazy {
         context.getSystemService<ActivityManager>() as ActivityManager
     }
 
-    /** Cached package manager to avoid repeated lookups */
     private val packageManager: PackageManager by lazy { context.packageManager }
 
-    /** Cached package info to avoid repeated queries */
     private val packageInfo: PackageInfo by lazy {
         try {
             packageManager.getPackageInfo(context.packageName, 0)
@@ -101,22 +82,18 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Cached battery manager to avoid repeated system service lookups */
     private val batteryManager: BatteryManager by lazy {
         context.getSystemService<BatteryManager>() as BatteryManager
     }
 
-    /** Cached audio manager for headphone detection */
     private val audioManager: AudioManager by lazy {
         context.getSystemService<AudioManager>() as AudioManager
     }
 
-    /** Cached TelephonyManager for carrier info APIs */
     private val carrierTelephonyManager: TelephonyManager? by lazy {
         context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
     }
 
-    /** Get serial number with permission check */
     @SuppressLint("MissingPermission")
     private fun getSerialNumberInternal(): String {
         return try {
@@ -144,7 +121,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: "unknown"
     }
 
-    /** Build information cache - initialized once at first access */
     private val buildInfoCache: BuildInfoCache by lazy {
         BuildInfoCache(
             securityPatch = Build.VERSION.SECURITY_PATCH,
@@ -165,12 +141,10 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         )
     }
 
-    /** Cached system features list */
     private val systemFeatures: List<String> by lazy {
         context.packageManager.systemAvailableFeatures.mapNotNull { it.name }.sorted()
     }
 
-    /** Cached supported media types */
     private val supportedMediaTypes: List<String> by lazy {
         try {
             val codecList = MediaCodecList(MediaCodecList.ALL_CODECS)
@@ -184,7 +158,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Cached network info with periodic refresh (5 second cache) */
     private val ipCacheDurationMs = 5000L
     private var cachedIpAddress: String = "unknown"
     private var ipAddressCacheTime: Long = 0
@@ -193,34 +166,27 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     private var cachedCarrier: String = "unknown"
     private var carrierCacheTime: Long = 0
 
-    /** Cached device year class */
     override val deviceYearClass: Double by lazy {
         calculateYearClass().toDouble()
     }
 
-    // MARK: - Core Device Information
+    // Core Device Information
 
-    /** Device model identifier (e.g., "SM-G998B") */
     override val deviceId: String
         get() = Build.MODEL
 
-    /** Device brand/manufacturer name (e.g., "Samsung", "Google") */
     override val brand: String
         get() = Build.BRAND
 
-    /** Device model name (e.g., "Galaxy S21", "Pixel 7") */
     override val model: String
         get() = Build.DEVICE
 
-    /** Operating system name (always "Android") */
     override val systemName: String
         get() = "Android"
 
-    /** Operating system version (e.g., "12", "13") */
     override val systemVersion: String
         get() = Build.VERSION.RELEASE
 
-    /** Device type category */
     override val deviceType: DeviceType
         get() {
             val uiMode = context.resources.configuration.uiMode
@@ -239,15 +205,12 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
-    /** Get unique device identifier (ANDROID_ID) */
     override val uniqueId: String
         get() = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
 
-    /** Get device manufacturer name */
     override val manufacturer: String
         get() = Build.MANUFACTURER
 
-    /** Get device name */
     override val deviceName: String
         get() {
             return try {
@@ -264,16 +227,14 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
-    // MARK: - Device Capabilities
+    // Device Capabilities
 
-    /** Check if device is a tablet */
     override val isTablet: Boolean
         get() {
             val smallestScreenWidthDp = context.resources.configuration.smallestScreenWidthDp
             return smallestScreenWidthDp >= 600
         }
 
-    /** Check if running in emulator */
     override val isEmulator: Boolean
         get() {
             return (
@@ -288,18 +249,15 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             )
         }
 
-    /** Check if camera is present */
     override val isCameraPresent: Boolean
         get() = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
-    /** Check if PIN or biometric authentication is set */
     override val isPinOrFingerprintSet: Boolean
         get() {
             val keyguardManager = context.getSystemService<KeyguardManager>()
             return keyguardManager?.isKeyguardSecure == true
         }
 
-    /** Check if hardware-backed key storage is available */
     override val isHardwareKeyStoreAvailable: Boolean
         get() {
             return try {
@@ -311,40 +269,31 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
-    /** Check if device is low RAM device */
     override val isLowRamDevice: Boolean
         get() = activityManager.isLowRamDevice
 
-    // MARK: - Display & Screen
+    // Display & Screen
 
-    /** Check if device has a display notch (not implemented on Android) */
     override fun getHasNotch(): Boolean = false
 
-    /** Check if device has Dynamic Island (iOS-only feature) */
     override fun getHasDynamicIsland(): Boolean = false
 
-    /** Check if display is zoomed (iOS-specific) */
     override val isDisplayZoomed: Boolean
         get() = false
 
-    /** Check if device is in landscape orientation */
     override fun getIsLandscape(): Boolean {
         val orientation = context.resources.configuration.orientation
         return orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
-    /** Get screen brightness (iOS-specific, returns -1 on Android) */
     override fun getBrightness(): Double = -1.0
 
-    /** Get system font scale */
     override fun getFontScale(): Double = context.resources.configuration.fontScale.toDouble()
 
-    /** Check if liquid glass is available (iOS-only) */
     override val isLiquidGlassAvailable: Boolean = false
 
-    // MARK: - System Resources
+    // System Resources
 
-    /** Get total device RAM in bytes */
     override val totalMemory: Double
         get() {
             val memInfo = ActivityManager.MemoryInfo()
@@ -352,18 +301,15 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             return memInfo.totalMem.toDouble()
         }
 
-    /** Get current app memory usage in bytes */
     override fun getUsedMemory(): Double {
         val memInfo = Debug.MemoryInfo()
         Debug.getMemoryInfo(memInfo)
         return (memInfo.totalPss * 1024).toDouble()
     }
 
-    /** Get maximum memory available to the app */
     override val maxMemory: Double
         get() = Runtime.getRuntime().maxMemory().toDouble()
 
-    /** Get total disk storage capacity in bytes */
     override val totalDiskCapacity: Double
         get() {
             val path = Environment.getDataDirectory()
@@ -371,34 +317,29 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             return (stat.blockCountLong * stat.blockSizeLong).toDouble()
         }
 
-    /** Get free disk storage in bytes */
     override fun getFreeDiskStorage(): Double {
         val path = Environment.getDataDirectory()
         val stat = StatFs(path.path)
         return (stat.availableBlocksLong * stat.blockSizeLong).toDouble()
     }
 
-    /** Get device uptime since boot in milliseconds */
     override fun getUptime(): Double {
         return SystemClock.uptimeMillis().toDouble()
     }
 
-    /** Device boot time in milliseconds since epoch */
     override val startupTime: Double
         get() {
             val bootTime = System.currentTimeMillis() - SystemClock.elapsedRealtime()
             return bootTime.toDouble()
         }
 
-    // MARK: - Battery & Power
+    // Battery & Power
 
-    /** Get current battery level (0.0 to 1.0) */
     override fun getBatteryLevel(): Double {
         val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
         return if (level in 0..100) level / 100.0 else -1.0
     }
 
-    /** Get comprehensive power state information */
     override fun getPowerState(): PowerState {
         val level = getBatteryLevel()
         val isCharging = batteryManager.isCharging
@@ -418,24 +359,20 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         )
     }
 
-    /** Check if battery is currently charging */
     override fun getIsBatteryCharging(): Boolean {
         return batteryManager.isCharging
     }
 
-    /** Check if battery level is below threshold */
     override fun isLowBatteryLevel(threshold: Double): Boolean {
         val level = getBatteryLevel()
         return level >= 0 && level <= 1 && level < threshold
     }
 
-    // MARK: - Application Metadata
+    // Application Metadata
 
-    /** Get application version string */
     override val version: String
         get() = packageInfo.versionName ?: ""
 
-    /** Get application build number */
     override val buildNumber: String
         get() {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -446,46 +383,38 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
-    /** Get package name */
     override val bundleId: String
         get() = context.packageName
 
-    /** Get application display name */
     override val applicationName: String
         get() {
             val appInfo = context.applicationInfo
             return packageManager.getApplicationLabel(appInfo).toString()
         }
 
-    /** Readable version string (version.build) */
     override val readableVersion: String
         get() = "$version.$buildNumber"
 
-    /** Get first install timestamp (milliseconds since epoch) */
     override fun getFirstInstallTime(): Promise<Double> {
         return Promise.async {
             packageInfo.firstInstallTime.toDouble()
         }
     }
 
-    /** Get last update timestamp (milliseconds since epoch) */
     override fun getLastUpdateTime(): Promise<Double> {
         return Promise.async {
             packageInfo.lastUpdateTime.toDouble()
         }
     }
 
-    /** First install time in milliseconds since epoch */
     override val firstInstallTimeSync: Double
         get() = packageInfo.firstInstallTime.toDouble()
 
-    /** Last update time in milliseconds since epoch */
     override val lastUpdateTimeSync: Double
         get() = packageInfo.lastUpdateTime.toDouble()
 
-    // MARK: - Network
+    // Network
 
-    /** Get device IP address */
     override fun getIpAddress(): Promise<String> {
         return Promise.async {
             try {
@@ -508,7 +437,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Get IP address with 5-second cache */
     override fun getIpAddressSync(): String {
         val now = System.currentTimeMillis()
         if (now - ipAddressCacheTime > ipCacheDurationMs) {
@@ -518,12 +446,10 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return cachedIpAddress
     }
 
-    /** Get MAC address */
     override fun getMacAddress(): Promise<String> {
         return Promise.async { getMacAddressSync() }
     }
 
-    /** Get MAC address with 5-second cache */
     override fun getMacAddressSync(): String {
         val now = System.currentTimeMillis()
         if (now - macAddressCacheTime > ipCacheDurationMs) {
@@ -533,7 +459,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return cachedMacAddress
     }
 
-    /** Get WebView user agent string */
     override fun getUserAgent(): Promise<String> {
         return Promise.async {
             return@async try {
@@ -544,7 +469,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Check if airplane mode is enabled */
     override fun getIsAirplaneMode(): Boolean {
         return try {
             Settings.Global.getInt(
@@ -557,9 +481,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    // MARK: - Carrier Information
+    // Carrier Information
 
-    /** Get cellular carrier name */
     override fun getCarrier(): Promise<String> {
         return Promise.async {
             val telephonyManager = context.getSystemService<TelephonyManager>()
@@ -567,7 +490,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Get carrier name with 5-second cache */
     override fun getCarrierSync(): String {
         val now = System.currentTimeMillis()
         if (now - carrierCacheTime > ipCacheDurationMs) {
@@ -579,15 +501,12 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return cachedCarrier
     }
 
-    /** Check if carrier allows VoIP calls (always true on Android) */
     override val carrierAllowsVOIP: Boolean
         get() = true
 
-    /** ISO 3166-1 country code for the carrier */
     override val carrierIsoCountryCode: String
         get() = carrierTelephonyManager?.simCountryIso?.uppercase() ?: ""
 
-    /** Mobile Country Code (MCC) */
     override val mobileCountryCode: String
         get() {
             val operator = carrierTelephonyManager?.simOperator
@@ -597,7 +516,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             return operator.substring(0, 3)
         }
 
-    /** Mobile Network Code (MNC) */
     override val mobileNetworkCode: String
         get() {
             val operator = carrierTelephonyManager?.simOperator
@@ -607,21 +525,17 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             return operator.substring(3)
         }
 
-    /** Mobile Network Operator (MCC + MNC combined) */
     override val mobileNetworkOperator: String
         get() = carrierTelephonyManager?.simOperator ?: ""
 
-    // MARK: - Audio Accessories
+    // Audio Accessories
 
-    /** Check if headphones are connected */
     override fun isHeadphonesConnected(): Promise<Boolean> {
         return Promise.async { getIsHeadphonesConnected() }
     }
 
-    /** Check if any headphones are connected */
     override fun getIsHeadphonesConnected(): Boolean = getIsWiredHeadphonesConnected() || getIsBluetoothHeadphonesConnected()
 
-    /** Check if wired headphones are connected */
     override fun getIsWiredHeadphonesConnected(): Boolean {
         return try {
             val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
@@ -638,7 +552,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Check if Bluetooth headphones are connected */
     override fun getIsBluetoothHeadphonesConnected(): Boolean {
         return try {
             val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
@@ -651,9 +564,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    // MARK: - Location Services
+    // Location Services
 
-    /** Check if location services are enabled */
     override fun isLocationEnabled(): Promise<Boolean> {
         return Promise.async {
             val locationManager = context.getSystemService<LocationManager>()
@@ -662,7 +574,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Check if location services are enabled */
     override fun getIsLocationEnabled(): Boolean {
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -683,7 +594,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Get list of enabled location providers */
     override fun getAvailableLocationProviders(): Array<String> {
         return try {
             val locationManager =
@@ -698,33 +608,27 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    // MARK: - Localization
+    // Localization
 
-    /** Get device system language in BCP 47 format */
     override val systemLanguage: String
         get() = Locale.getDefault().toLanguageTag()
 
-    // MARK: - CPU & Architecture
+    // CPU & Architecture
 
-    /** Get supported CPU architectures (ABIs) */
     override val supportedAbis: Array<String>
         get() = Build.SUPPORTED_ABIS
 
-    /** Get supported 32-bit ABIs */
     override val supported32BitAbis: Array<String>
         get() = Build.SUPPORTED_32_BIT_ABIS.toList().toTypedArray()
 
-    /** Get supported 64-bit ABIs */
     override val supported64BitAbis: Array<String>
         get() = Build.SUPPORTED_64_BIT_ABIS.toList().toTypedArray()
 
-    // MARK: - Android Platform
+    // Android Platform
 
-    /** Get Android API level */
     override val apiLevel: Double
         get() = Build.VERSION.SDK_INT.toDouble()
 
-    /** Get Android navigation mode */
     override val navigationMode: NavigationMode
         get() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -743,7 +647,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
-    /** Check if Google Mobile Services (GMS) is available */
     override fun getHasGms(): Boolean {
         return try {
             val result =
@@ -758,7 +661,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Check if Huawei Mobile Services (HMS) is available */
     override fun getHasHms(): Boolean {
         return try {
             val hmsPackageInfo = packageManager.getPackageInfo("com.huawei.hwid", 0)
@@ -769,7 +671,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Check if system has a specific feature */
     override fun hasSystemFeature(feature: String): Boolean {
         return try {
             context.packageManager.hasSystemFeature(feature)
@@ -778,17 +679,14 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Get list of all system features */
     override val systemAvailableFeatures: Array<String>
         get() = systemFeatures.toTypedArray()
 
-    /** Get list of supported media types/codecs */
     override val supportedMediaTypeList: Array<String>
         get() = supportedMediaTypes.toTypedArray()
 
     // Android Build Information
 
-    /** Android device serial number */
     override val serialNumber: String
         get() = cachedSerialNumber
 
@@ -796,91 +694,71 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val androidId: String
         get() = cachedAndroidId
 
-    /** Preview SDK version */
     override val previewSdkInt: Double
         get() = buildInfoCache.previewSdkInt
 
-    /** Android security patch level */
     override val securityPatch: String
         get() = buildInfoCache.securityPatch
 
-    /** Android OS version codename */
     override val codename: String
         get() = buildInfoCache.codename
 
-    /** Incremental version */
     override val incremental: String
         get() = buildInfoCache.incremental
 
-    /** Device board/platform name */
     override val board: String
         get() = Build.BOARD
 
-    /** Device bootloader version */
     override val bootloader: String
         get() = buildInfoCache.bootloader
 
-    /** Device codename */
     override val device: String
         get() = buildInfoCache.device
 
-    /** Build display ID */
     override val display: String
         get() = buildInfoCache.display
 
-    /** Build fingerprint */
     override val fingerprint: String
         get() = buildInfoCache.fingerprint
 
-    /** Hardware name */
     override val hardware: String
         get() = buildInfoCache.hardware
 
-    /** Build host */
     override val host: String
         get() = buildInfoCache.host
 
-    /** Product name */
     override val product: String
         get() = buildInfoCache.product
 
-    /** Build tags */
     override val tags: String
         get() = buildInfoCache.tags
 
-    /** Build type */
     override val type: String
         get() = buildInfoCache.type
 
-    /** Base OS version */
     override val baseOs: String
         get() = buildInfoCache.baseOs
 
-    /** Radio/baseband version */
     override val radioVersion: String
         get() = Build.getRadioVersion() ?: "unknown"
 
-    /** Build ID */
     override val buildId: String
         get() = buildInfoCache.buildId
 
-    // MARK: - iOS Platform
+    // iOS Platform
 
-    /** Get device token (iOS-specific, throws error on Android) */
     override fun getDeviceToken(): Promise<String> {
         return Promise.async { throw Exception("getDeviceToken() is only available on iOS") }
     }
 
-    /** Get unique ID from Keychain (iOS-specific, returns device ID on Android) */
     override fun syncUniqueId(): Promise<String> {
         return Promise.async {
             return@async uniqueId
         }
     }
 
-    // MARK: - Installation & Distribution
+    // Installation & Distribution
 
-    /** Installer package name (e.g., "com.android.vending" for Play Store) */
     override val installerPackageName: String
         get() {
             return try {
@@ -897,7 +775,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
-    /** Get install referrer from Google Play */
     override fun getInstallReferrer(): Promise<String> {
         return Promise.async {
             return@async suspendCancellableCoroutine { continuation ->
@@ -948,7 +825,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Check if sideloading is enabled */
     override fun isSideLoadingEnabled(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.packageManager.canRequestPackageInstalls()
@@ -964,9 +840,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    // MARK: - Legacy Compatibility
+    // Legacy Compatibility
 
-    /** Get total disk capacity using old API */
     override val totalDiskCapacityOld: Double
         get() {
             return try {
@@ -977,7 +852,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             }
         }
 
-    /** Get free disk storage using old API */
     override fun getFreeDiskStorageOld(): Double {
         return try {
             val stat = StatFs(Environment.getDataDirectory().path)
@@ -987,9 +861,8 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    // MARK: - Device Integrity / Security
+    // Device Integrity / Security
 
-    /** Synchronously checks for root status */
     override fun isDeviceCompromised(): Boolean {
         if (isEmulator) {
             return false
@@ -1004,34 +877,28 @@ class DeviceInfo : HybridDeviceInfoSpec() {
             checkSuperuserApps()
     }
 
-    /** Asynchronous wrapper for device integrity verification */
     override fun verifyDeviceIntegrity(): Promise<Boolean> {
         return Promise.async {
             isDeviceCompromised()
         }
     }
 
-    // MARK: - Windows Platform (Unsupported)
+    // Windows Platform (Unsupported)
 
-    /** Check if mouse is connected (Windows-specific) */
     override val isMouseConnected: Boolean
         get() = false
 
-    /** Check if keyboard is connected (Windows-specific) */
     override val isKeyboardConnected: Boolean
         get() = false
 
-    /** Get host names (Windows-specific) */
     override val hostNames: Array<String>
         get() = arrayOf()
 
-    /** Check if device is in tablet mode (Windows-specific) */
     override val isTabletMode: Boolean
         get() = false
 
-    // MARK: - Helper Methods
+    // Helper Methods
 
-    /** Query IP address from network interfaces */
     private fun queryIpAddressInternal(): String {
         return try {
             val interfaces = NetworkInterface.getNetworkInterfaces()
@@ -1049,7 +916,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Query MAC address from network interfaces */
     private fun queryMacAddressInternal(): String {
         return try {
             val interfaces = NetworkInterface.getNetworkInterfaces()
@@ -1065,7 +931,7 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    // MARK: - Year Class Calculation
+    // Year Class Calculation
 
     /** Calculate year class using extended 2025 algorithm */
     private fun calculateYearClass(): Int {
@@ -1108,7 +974,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Get CPU core count with robust fallback */
     private fun getCpuCoreCount(): Int {
         val runtimeCores = Runtime.getRuntime().availableProcessors()
         if (runtimeCores > 0) return runtimeCores
@@ -1125,7 +990,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }.getOrElse { runtimeCores.coerceAtLeast(1) }
     }
 
-    /** Get max CPU frequency with safe fallback */
     private fun getCpuMaxFreqKHzSafe(): Int {
         return runCatching {
             var maxFreq = -1
@@ -1144,7 +1008,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }.getOrElse { -1 }
     }
 
-    /** Get total memory using ActivityManager */
     private fun getTotalMemoryBytes(): Long {
         return runCatching {
             val memInfo = ActivityManager.MemoryInfo()
@@ -1201,16 +1064,14 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    // MARK: - Root Detection Helpers
+    // Root Detection Helpers
 
-    /** Checks su binary paths */
     private fun checkSuBinaries(): Boolean {
         return SU_PATHS.any { path ->
             java.io.File(path).exists()
         }
     }
 
-    /** Detects Magisk */
     private fun checkMagisk(): Boolean {
         if (MAGISK_PATHS.any { java.io.File(it).exists() }) {
             return true
@@ -1218,7 +1079,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return isAnyPackageInstalled(MAGISK_PACKAGES)
     }
 
-    /** Detects KernelSU */
     private fun checkKernelSU(): Boolean {
         if (KERNELSU_PATHS.any { java.io.File(it).exists() }) {
             return true
@@ -1226,7 +1086,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return isAnyPackageInstalled(KERNELSU_PACKAGES)
     }
 
-    /** Detects APatch */
     private fun checkAPatch(): Boolean {
         if (APATCH_PATHS.any { java.io.File(it).exists() }) {
             return true
@@ -1234,12 +1093,10 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return isAnyPackageInstalled(APATCH_PACKAGES)
     }
 
-    /** Checks for Busybox */
     private fun checkBusybox(): Boolean {
         return BUSYBOX_PATHS.any { java.io.File(it).exists() }
     }
 
-    /** Helper to check if any package from a list is installed */
     private fun isAnyPackageInstalled(packages: List<String>): Boolean {
         return packages.any { pkg ->
             try {
@@ -1251,7 +1108,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Checks build props */
     private fun checkBuildProps(): Boolean {
         val debuggable = getSystemProp("ro.debuggable") == "1"
         val notSecure = getSystemProp("ro.secure") == "0"
@@ -1260,7 +1116,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         return debuggable || notSecure || testKeys
     }
 
-    /** Gets system property via getprop command */
     private fun getSystemProp(key: String): String? {
         var process: Process? = null
         return try {
@@ -1275,7 +1130,6 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
-    /** Checks for Superuser apps (legacy) */
     private fun checkSuperuserApps(): Boolean {
         return SUPERUSER_PATHS.any { java.io.File(it).exists() }
     }

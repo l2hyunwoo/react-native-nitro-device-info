@@ -1,12 +1,3 @@
-/**
- * React Hooks for Device Info Monitoring
- *
- * These hooks provide reactive access to runtime device properties,
- * automatically updating your components when device state changes.
- *
- * @module react-native-nitro-device-info/hooks
- */
-
 // Battery Hooks
 export { useBatteryLevel } from './useBatteryLevel';
 export { useBatteryLevelIsLow } from './useBatteryLevelIsLow';

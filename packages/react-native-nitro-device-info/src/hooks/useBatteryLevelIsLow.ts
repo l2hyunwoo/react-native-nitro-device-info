@@ -1,11 +1,3 @@
-/**
- * useBatteryLevelIsLow Hook
- *
- * Monitor for low battery conditions.
- *
- * @module react-native-nitro-device-info/hooks
- */
-
 import { useState, useEffect } from 'react';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import { isLowBatteryLevel } from './utils';
@@ -48,14 +40,12 @@ export function useBatteryLevelIsLow(): number | null {
   );
 
   useEffect(() => {
-    // Check initial value
     const checkBatteryLevel = () => {
       const level = DeviceInfoModule.getBatteryLevel();
       const newValue = isLowBatteryLevel(level) ? level : null;
       setBatteryLevelIsLow(prev => prev === newValue ? prev : newValue);
     };
 
-    // Set initial state
     checkBatteryLevel();
 
     // Poll for changes (no throttle for low battery alerts - important to detect quickly)

@@ -1,11 +1,3 @@
-/**
- * useBrightness Hook
- *
- * Monitor screen brightness changes (iOS only).
- *
- * @module react-native-nitro-device-info/hooks
- */
-
 import { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
@@ -55,7 +47,6 @@ export function useBrightness(): number | null {
       setBrightness(currentBrightness);
     };
 
-    // Get initial state
     updateBrightness();
 
     // Poll for changes (brightness changes can be frequent with auto-brightness)

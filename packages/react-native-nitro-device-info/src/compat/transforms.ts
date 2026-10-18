@@ -1,12 +1,3 @@
-/**
- * Transform helpers for the `react-native-device-info` (RNDI) compatibility layer.
- *
- * These keep `index.ts` terse: most RNDI getters are thin wrappers over a
- * synchronous value on the core `DeviceInfoModule` singleton.
- *
- * @module react-native-nitro-device-info/compat
- */
-
 import type { PowerState } from '../DeviceInfo.nitro';
 
 /**

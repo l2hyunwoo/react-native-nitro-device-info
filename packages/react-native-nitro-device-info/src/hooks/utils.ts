@@ -1,9 +1,3 @@
-/**
- * Utility functions for React hooks
- *
- * @module react-native-nitro-device-info/hooks/utils
- */
-
 import { Platform } from 'react-native';
 
 /**

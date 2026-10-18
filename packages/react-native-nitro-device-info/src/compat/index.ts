@@ -10,8 +10,6 @@
  * 1. Named function exports — `import { getModel } from '.../compat'`
  * 2. Default object        — `import DeviceInfo from '.../compat'`
  * 3. Named hook exports     — `import { useBatteryLevel } from '.../compat'`
- *
- * @module react-native-nitro-device-info/compat
  */
 
 import { useEffect, useState } from 'react';
@@ -39,9 +37,7 @@ import type {
   PowerState,
 } from './transforms';
 
-// ============================================================================
 // 1. Device identity & model
-// ============================================================================
 
 export const getUniqueId = asyncProp(() => DeviceInfoModule.uniqueId);
 export const getUniqueIdSync = syncProp(() => DeviceInfoModule.uniqueId);
@@ -98,9 +94,7 @@ export const getInstanceIdSync = syncProp((): string => 'unknown');
 export const getAppSetId = (): Promise<AppSetIdInfo> =>
   Promise.resolve({ id: 'unknown', scope: -1 });
 
-// ============================================================================
 // 2. OS / system
-// ============================================================================
 
 export const getSystemName = (): string => DeviceInfoModule.systemName;
 export const getSystemVersion = (): string => DeviceInfoModule.systemVersion;
@@ -160,9 +154,7 @@ export const getPreviewSdkIntSync = syncProp(
 export const getHostNames = asyncProp(() => DeviceInfoModule.hostNames);
 export const getHostNamesSync = syncProp(() => DeviceInfoModule.hostNames);
 
-// ============================================================================
 // 3. App metadata
-// ============================================================================
 
 export const getVersion = (): string => DeviceInfoModule.version;
 export const getBuildNumber = (): string => DeviceInfoModule.buildNumber;
@@ -210,9 +202,7 @@ export const getStartupTime = asyncProp(() => DeviceInfoModule.startupTime);
 /** See {@link getStartupTime} for the iOS usage restriction. */
 export const getStartupTimeSync = syncProp(() => DeviceInfoModule.startupTime);
 
-// ============================================================================
 // 4. Capabilities & flags
-// ============================================================================
 
 export const isEmulator = asyncProp(() => DeviceInfoModule.isEmulator);
 export const isEmulatorSync = syncProp(() => DeviceInfoModule.isEmulator);
@@ -285,9 +275,7 @@ export const isKeyboardConnectedSync = syncProp(
   () => DeviceInfoModule.isKeyboardConnected
 );
 
-// ============================================================================
 // 5. CPU / ABIs
-// ============================================================================
 
 export const supportedAbis = asyncProp(() => DeviceInfoModule.supportedAbis);
 export const supportedAbisSync = syncProp(
@@ -308,9 +296,7 @@ export const supported64BitAbisSync = syncProp(
   () => DeviceInfoModule.supported64BitAbis
 );
 
-// ============================================================================
 // 6. Memory & storage
-// ============================================================================
 
 export const getTotalMemory = asyncProp(() => DeviceInfoModule.totalMemory);
 export const getTotalMemorySync = syncProp(() => DeviceInfoModule.totalMemory);
@@ -361,9 +347,7 @@ export const getFreeDiskStorageOldSync = syncProp(() =>
   DeviceInfoModule.getFreeDiskStorageOld()
 );
 
-// ============================================================================
 // 7. Battery & power
-// ============================================================================
 
 export const getBatteryLevel = asyncProp(() =>
   DeviceInfoModule.getBatteryLevel()
@@ -389,9 +373,7 @@ export const isBatteryChargingSync = syncProp(() =>
 export const isLowBatteryLevel = (level: number): boolean =>
   DeviceInfoModule.isLowBatteryLevel(level);
 
-// ============================================================================
 // 8. Network & carrier
-// ============================================================================
 
 export const getIpAddress = (): Promise<string> =>
   DeviceInfoModule.getIpAddress();
@@ -418,9 +400,7 @@ export const getUserAgent = (): Promise<string> =>
  */
 export const getUserAgentSync = syncProp((): string => '');
 
-// ============================================================================
 // 9. Audio accessories
-// ============================================================================
 
 export const isHeadphonesConnected = (): Promise<boolean> =>
   DeviceInfoModule.isHeadphonesConnected();
@@ -442,9 +422,7 @@ export const isBluetoothHeadphonesConnectedSync = syncProp(() =>
   DeviceInfoModule.getIsBluetoothHeadphonesConnected()
 );
 
-// ============================================================================
 // 10. Location & display
-// ============================================================================
 
 export const isLocationEnabled = (): Promise<boolean> =>
   DeviceInfoModule.isLocationEnabled();
@@ -469,16 +447,12 @@ export const getBrightnessSync = syncProp(() =>
   DeviceInfoModule.getBrightness()
 );
 
-// ============================================================================
 // 11. iOS-specific
-// ============================================================================
 
 export const getDeviceToken = (): Promise<string> =>
   DeviceInfoModule.getDeviceToken();
 
-// ============================================================================
 // 12. Hooks
-// ============================================================================
 
 export {
   useBatteryLevel,
@@ -606,10 +580,6 @@ export function useManufacturer(): AsyncHookResult<string> {
 
   return state;
 }
-
-// ============================================================================
-// Default export — RNDI's `DeviceInfo` aggregate object
-// ============================================================================
 
 /**
  * Aggregate object matching RNDI's default `DeviceInfo` export. Every named
