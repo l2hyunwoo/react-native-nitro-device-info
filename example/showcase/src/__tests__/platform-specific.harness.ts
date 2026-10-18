@@ -68,6 +68,13 @@ describeAndroid('Android-Specific APIs', () => {
     expect(isValidNavigationMode(navMode)).toBe(true);
     expect(VALID_NAVIGATION_MODES).toContain(navMode);
   });
+
+  test('identifiers keep their values after build info is read first', () => {
+    expect(DeviceInfoModule.fingerprint.length).toBeGreaterThan(0);
+    expect(DeviceInfoModule.androidId).not.toBe('unknown');
+    expect(DeviceInfoModule.androidId).toBe(DeviceInfoModule.uniqueId);
+    expect(typeof DeviceInfoModule.serialNumber).toBe('string');
+  });
 });
 
 describe('Cross-Platform Dynamic APIs', () => {
