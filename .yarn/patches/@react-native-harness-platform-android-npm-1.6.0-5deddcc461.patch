@@ -1,0 +1,85 @@
+diff --git a/dist/instance.js b/dist/instance.js
+index 7a479dd3d50e7b39928a77f82415d611634795be..649c0c8473c7325073803cade82cdb7763952b53 100644
+--- a/dist/instance.js
++++ b/dist/instance.js
+@@ -33,11 +33,17 @@ const getOptionalHarnessAppPath = () => {
+     }
+     return appPath;
+ };
+-const configureAndroidRuntime = async (adbId, config, harnessConfig) => {
+-    const metroPort = harnessConfig.metroPort;
++/** Restore device-side tunnels that an ADB reconnect can remove between launches. */
++const restorePortForwarding = async (adbId, metroPort) => {
+     await Promise.all([
+         adbModule.reversePort(adbId, metroPort),
+         adbModule.reversePort(adbId, 8080),
++    ]);
++};
++const configureAndroidRuntime = async (adbId, config, harnessConfig) => {
++    const metroPort = harnessConfig.metroPort;
++    await Promise.all([
++        restorePortForwarding(adbId, metroPort),
+         adbModule.setHideErrorDialogs(adbId, true),
+         applyHarnessDebugHttpHost(adbId, config.bundleId, `localhost:${metroPort}`),
+     ]);
+@@ -163,6 +169,7 @@ export const getAndroidEmulatorPlatformInstance = async (config, harnessConfig,
+     return {
+         createAppSession: async (options) => {
+             await adb.stopApp(adbId, config.bundleId);
++            await restorePortForwarding(adbId, harnessConfig.metroPort);
+             const launchOptions = options ??
+                 config.appLaunchOptions;
+             return await createAndroidAppSession({
+@@ -208,6 +215,7 @@ export const getAndroidPhysicalDevicePlatformInstance = async (config, harnessCo
+     return {
+         createAppSession: async (options) => {
+             await adb.stopApp(adbId, config.bundleId);
++            await restorePortForwarding(adbId, harnessConfig.metroPort);
+             const launchOptions = options ??
+                 config.appLaunchOptions;
+             return await createAndroidAppSession({
+diff --git a/src/instance.ts b/src/instance.ts
+index 9e2fa3627ebab1029122e7eb08509e6cb3505cca..a1a27926918f0caf2370a3626769818c486853ac 100644
+--- a/src/instance.ts
++++ b/src/instance.ts
+@@ -64,6 +64,14 @@ const getOptionalHarnessAppPath = (): string | undefined => {
+   return appPath;
+ };
+ 
++/** Restore device-side tunnels that an ADB reconnect can remove between launches. */
++const restorePortForwarding = async (adbId: string, metroPort: number): Promise<void> => {
++  await Promise.all([
++    adbModule.reversePort(adbId, metroPort),
++    adbModule.reversePort(adbId, 8080),
++  ]);
++};
++
+ const configureAndroidRuntime = async (
+   adbId: string,
+   config: AndroidPlatformConfig,
+@@ -72,8 +80,7 @@ const configureAndroidRuntime = async (
+   const metroPort = harnessConfig.metroPort;
+ 
+   await Promise.all([
+-    adbModule.reversePort(adbId, metroPort),
+-    adbModule.reversePort(adbId, 8080),
++    restorePortForwarding(adbId, metroPort),
+     adbModule.setHideErrorDialogs(adbId, true),
+     applyHarnessDebugHttpHost(adbId, config.bundleId, `localhost:${metroPort}`),
+   ]);
+@@ -280,6 +287,7 @@ export const getAndroidEmulatorPlatformInstance = async (
+   return {
+     createAppSession: async (options) => {
+       await adb.stopApp(adbId, config.bundleId);
++      await restorePortForwarding(adbId, harnessConfig.metroPort);
+       const launchOptions =
+         (options as typeof config.appLaunchOptions | undefined) ??
+         config.appLaunchOptions;
+@@ -353,6 +361,7 @@ export const getAndroidPhysicalDevicePlatformInstance = async (
+   return {
+     createAppSession: async (options) => {
+       await adb.stopApp(adbId, config.bundleId);
++      await restorePortForwarding(adbId, harnessConfig.metroPort);
+       const launchOptions =
+         (options as typeof config.appLaunchOptions | undefined) ??
+         config.appLaunchOptions;
