@@ -8,8 +8,6 @@
  * This package is a **token-issuing client only**. Tokens are opaque and must
  * be verified by your own backend — see the package README for the server-side
  * verification guide.
- *
- * @module react-native-nitro-device-integrity
  */
 
 import { NitroModules } from 'react-native-nitro-modules';

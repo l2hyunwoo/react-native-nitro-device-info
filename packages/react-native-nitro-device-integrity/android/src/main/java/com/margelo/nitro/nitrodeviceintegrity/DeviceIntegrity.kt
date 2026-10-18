@@ -1,12 +1,8 @@
 /**
- * DeviceIntegrity.kt - Android implementation (Play Integrity API)
- *
- * Implements the DeviceIntegrity HybridObject. Issues Play Integrity tokens
- * (Standard and Classic). This is a token-issuing client only: the returned
- * tokens are opaque, encrypted JWTs that MUST be verified by the developer's
- * server (Google `:decodeIntegrityToken` or self-managed keys).
- *
- * @author HyunWoo Lee
+ * Issues Play Integrity tokens (Standard and Classic). This is a token-issuing
+ * client only: the returned tokens are opaque, encrypted JWTs that MUST be
+ * verified by the developer's server (Google `:decodeIntegrityToken` or
+ * self-managed keys).
  */
 package com.margelo.nitro.nitrodeviceintegrity
 
@@ -20,12 +16,8 @@ import com.google.android.play.core.integrity.IntegrityTokenRequest
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
 
-/**
- * Android implementation of DeviceIntegrity backed by the Play Integrity API.
- */
 @DoNotStrip
 class DeviceIntegrity : HybridDeviceIntegritySpec() {
-    /** React application context. */
     private val context: Context
         get() =
             NitroModules.applicationContext
@@ -33,7 +25,7 @@ class DeviceIntegrity : HybridDeviceIntegritySpec() {
 
     private val standardIntegrity = StandardIntegrityProvider { IntegrityManagerFactory.createStandard(context) }
 
-    // MARK: - Availability
+    // Availability
 
     /**
      * Best-effort availability hint: whether Google Play Services is present.
@@ -54,14 +46,14 @@ class DeviceIntegrity : HybridDeviceIntegritySpec() {
                 IntegrityProviderType.UNSUPPORTED
             }
 
-    // MARK: - Play Integrity (Standard)
+    // Play Integrity (Standard)
 
     override fun prepareStandardProvider(cloudProjectNumber: String): Promise<Unit> =
         Promise.async { standardIntegrity.prepare(cloudProjectNumber) }
 
     override fun requestIntegrityToken(requestHash: String): Promise<String> = Promise.async { standardIntegrity.request(requestHash) }
 
-    // MARK: - Play Integrity (Classic)
+    // Play Integrity (Classic)
 
     override fun requestClassicIntegrityToken(
         nonce: String,
@@ -87,7 +79,7 @@ class DeviceIntegrity : HybridDeviceIntegritySpec() {
         }
     }
 
-    // MARK: - iOS-only methods (rejected on Android)
+    // iOS-only methods (rejected on Android)
 
     override fun generateKey(): Promise<String> = rejectIosOnly("generateKey")
 
@@ -103,7 +95,7 @@ class DeviceIntegrity : HybridDeviceIntegritySpec() {
 
     override fun getDeviceCheckToken(): Promise<String> = rejectIosOnly("getDeviceCheckToken")
 
-    // MARK: - Helpers
+    // Helpers
 
     private fun <T> rejectIosOnly(method: String): Promise<T> =
         Promise.rejected(

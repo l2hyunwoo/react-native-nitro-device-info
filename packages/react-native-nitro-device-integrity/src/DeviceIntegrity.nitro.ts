@@ -61,9 +61,7 @@ export type IntegrityProviderType = 'playIntegrity' | 'appAttest' | 'unsupported
  */
 export interface DeviceIntegrity
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  // ============================================
   // AVAILABILITY
-  // ============================================
 
   /**
    * Best-effort synchronous check of attestation availability.
@@ -84,9 +82,7 @@ export interface DeviceIntegrity
    */
   readonly providerType: IntegrityProviderType;
 
-  // ============================================
   // ANDROID — PLAY INTEGRITY
-  // ============================================
 
   /**
    * Warm up the Play Integrity **Standard** token provider. Call once per app
@@ -134,9 +130,7 @@ export interface DeviceIntegrity
     cloudProjectNumber: string
   ): Promise<string>;
 
-  // ============================================
   // iOS — APP ATTEST
-  // ============================================
 
   /**
    * Generate a new App Attest key pair in the Secure Enclave.
@@ -182,9 +176,7 @@ export interface DeviceIntegrity
    */
   generateAssertion(keyId: string, clientDataHash: string): Promise<string>;
 
-  // ============================================
   // iOS — DEVICECHECK
-  // ============================================
 
   /**
    * Generate an Apple DeviceCheck token (device-level, lighter than App
