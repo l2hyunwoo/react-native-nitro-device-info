@@ -31,5 +31,15 @@ target 'NitroDeviceInfoBenchmark' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # RNDeviceInfo's privacy resource bundle keeps iOS 9.0, which Xcode 27 rejects.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |build_config|
+        deployment_target = build_config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+        if deployment_target && deployment_target.to_f < min_ios_version_supported.to_f
+          build_config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = min_ios_version_supported
+        end
+      end
+    end
   end
 end
