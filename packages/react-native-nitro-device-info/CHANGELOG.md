@@ -2,6 +2,15 @@
 
 Release dates for v1.5.0–v1.8.3 use npm publication timestamps (UTC).
 
+## 1.9.1
+
+### Patch Changes
+
+- 3d7b31e: Include core package READMEs and package-specific repository metadata in npm archives. Preserve the MCP server's bundled specifications and documentation, including the updated attestation API reference.
+- b49b108: Read the Android serial number and `ANDROID_ID` only when the app reads `serialNumber` or `androidId`. Reading other build properties, such as `fingerprint`, no longer reads these device identifiers. The returned values do not change.
+- 1f5c630: Rebuild the native bindings with Nitro 0.37.1 and verify support for React Native 0.88. The `react-native-nitro-modules` requirement stays at `>=0.35.0 <1.0.0`. Android builds also no longer fail when the host app enables AGP 9 built-in Kotlin.
+- 251d344: Update the example apps to React Native Harness 1.6.0.
+
 ## 1.9.0
 
 Changes since v1.8.3:
