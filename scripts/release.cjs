@@ -414,8 +414,10 @@ async function publish(
         ],
         { cwd: root, stdio: 'inherit' }
       );
-      for (let attempt = 0; attempt < 6; attempt++) {
-        if (attempt > 0) await wait(1_000 * 2 ** (attempt - 1));
+      // npm can take minutes to expose a new version after publish succeeds.
+      for (let attempt = 0; attempt < 12; attempt++) {
+        if (attempt > 0)
+          await wait(Math.min(1_000 * 2 ** (attempt - 1), 30_000));
         published = (await registry(pkg.name))?.versions[pkg.version];
         if (published) break;
       }

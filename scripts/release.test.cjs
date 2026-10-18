@@ -350,8 +350,14 @@ test('bounds registry polling and recovers later without republishing the archiv
     }),
     /publication is not visible/
   );
-  assert.equal(reads, 7);
-  assert.deepEqual(waits, [1_000, 2_000, 4_000, 8_000, 16_000]);
+  assert.equal(reads, 13);
+  assert.deepEqual(
+    waits,
+    [
+      1_000, 2_000, 4_000, 8_000, 16_000, 30_000, 30_000, 30_000, 30_000,
+      30_000, 30_000,
+    ]
+  );
   assert.equal(f.tags.size, 0);
   assert.equal(f.releases.size, 0);
   await publish(f.root, f.output, { ...f, env });
