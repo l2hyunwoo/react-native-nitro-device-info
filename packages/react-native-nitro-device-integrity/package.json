@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-device-integrity",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "React Native device attestation with Play Integrity, App Attest, and DeviceCheck using Nitro Modules",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
