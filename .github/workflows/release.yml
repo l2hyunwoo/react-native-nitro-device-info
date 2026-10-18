@@ -32,6 +32,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      release: ${{ steps.unpublished.outputs.release }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -49,6 +51,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Create or update version PR
+        id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           github-token: ${{ github.token }}
@@ -61,9 +64,24 @@ jobs:
       - name: Verify versioned lockfile
         run: yarn install --immutable
 
+      - name: Check for unpublished versions
+        id: unpublished
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: |
+          for manifest in packages/*/package.json; do
+            read -r name version private < <(node -p "const p = require('./$manifest'); [p.name, p.version, p.private === true].join(' ')")
+            [ "$private" = true ] && continue
+            if [ -z "$(npm view "$name@$version" version 2>/dev/null)" ]; then
+              echo "Unpublished: $name@$version"
+              echo 'release=true' >> "$GITHUB_OUTPUT"
+            fi
+          done
+
   validate:
     name: Validate Release
-    if: github.event_name == 'workflow_dispatch' && !inputs.verify_oidc
+    needs: version
+    # Merging the version PR leaves no changesets and unpublished versions, which releases automatically.
+    if: ${{ !cancelled() && (needs.version.outputs.release == 'true' || (github.event_name == 'workflow_dispatch' && !inputs.verify_oidc)) }}
     uses: ./.github/workflows/ci.yml
     with:
       full_validation: true
@@ -73,7 +91,7 @@ jobs:
 
   prepare:
     name: Prepare Release Archives
-    if: github.event_name == 'workflow_dispatch' && !inputs.verify_oidc
+    if: ${{ !cancelled() && needs.validate.result == 'success' }}
     needs: validate
     runs-on: ubuntu-26.04
     timeout-minutes: 30
@@ -113,7 +131,7 @@ jobs:
           compression-level: 0
 
       - name: Record dry run result
-        if: ${{ !inputs.publish }}
+        if: github.event_name == 'workflow_dispatch' && !inputs.publish
         run: echo 'Dry run completed. Verified archives are attached to this run; npm publication, tags, and GitHub Releases were skipped.' >> "$GITHUB_STEP_SUMMARY"
 
   verify-oidc:
@@ -145,7 +163,7 @@ jobs:
 
   publish:
     name: Publish Verified Archives
-    if: github.event_name == 'workflow_dispatch' && inputs.publish && !inputs.verify_oidc && github.ref == 'refs/heads/main'
+    if: ${{ !cancelled() && needs.prepare.result == 'success' && (github.event_name == 'push' || inputs.publish) && github.ref == 'refs/heads/main' }}
     needs: prepare
     runs-on: ubuntu-26.04
     timeout-minutes: 20
@@ -178,6 +196,6 @@ jobs:
 
       - name: Revalidate and publish archives, then create package releases
         env:
-          RELEASE_PUBLISH: ${{ inputs.publish }}
+          RELEASE_PUBLISH: ${{ github.event_name == 'push' || inputs.publish }}
           GH_TOKEN: ${{ github.token }}
         run: node scripts/release.cjs publish

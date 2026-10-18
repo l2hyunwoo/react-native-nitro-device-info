@@ -360,10 +360,9 @@ async function publish(
     'true',
     'Publish only runs in GitHub Actions'
   );
-  assert.equal(
-    env.GITHUB_EVENT_NAME,
-    'workflow_dispatch',
-    'Publish requires manual dispatch'
+  assert.ok(
+    ['push', 'workflow_dispatch'].includes(env.GITHUB_EVENT_NAME),
+    'Publish requires a push to main or manual dispatch'
   );
   assert.equal(
     env.GITHUB_REF,
