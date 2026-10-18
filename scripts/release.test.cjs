@@ -229,14 +229,14 @@ test('tampered archive or commit is rejected before any publish', async (t) => {
   );
 });
 
-test('publish refuses ordinary pushes and disabled publish input', async (t) => {
+test('publish refuses pull requests and disabled publish input', async (t) => {
   const f = fixture(t);
   await assert.rejects(
     publish(f.root, f.output, {
       ...f,
-      env: { ...env, GITHUB_EVENT_NAME: 'push' },
+      env: { ...env, GITHUB_EVENT_NAME: 'pull_request' },
     }),
-    /manual dispatch/
+    /push to main or manual dispatch/
   );
   await assert.rejects(
     publish(f.root, f.output, {
