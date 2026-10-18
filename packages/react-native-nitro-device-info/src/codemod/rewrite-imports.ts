@@ -5,8 +5,6 @@
  * Stage 1 — import-rewrite only. ES imports (default, named, namespace),
  * re-exports, and CommonJS `require(...)` are retargeted. Call sites
  * (e.g. `DeviceInfo.getModel()`) are intentionally left untouched.
- *
- * @module react-native-nitro-device-info/codemod
  */
 
 import type {

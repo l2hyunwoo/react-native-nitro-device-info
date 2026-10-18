@@ -1,8 +1,3 @@
-/**
- * PerformanceMultiplier Component
- * Displays speedup multiplier with visual indication of significance
- */
-
 import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 

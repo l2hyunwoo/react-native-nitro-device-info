@@ -1,5 +1,5 @@
 /**
- * E2E Tests: Edge Cases and Tier 3 Type-Only Tests
+ * E2E Tests: Edge Cases and Type-Only Tests
  *
  * Tests for APIs that may have environment-dependent behavior.
  * These tests verify type correctness without asserting specific values.
@@ -10,7 +10,6 @@ import { Platform } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
 describe('Edge Cases - No SIM Card', () => {
-  // Carrier should return a string without crashing
   test('getCarrier returns string without crashing', async () => {
     const carrier = await DeviceInfoModule.getCarrier();
     expect(typeof carrier).toBe('string');
@@ -24,7 +23,6 @@ describe('Edge Cases - No SIM Card', () => {
 });
 
 describe('Edge Cases - Location Services', () => {
-  // Location enabled check should not throw
   test('isLocationEnabled returns boolean without throwing', async () => {
     const isEnabled = await DeviceInfoModule.isLocationEnabled();
     expect(typeof isEnabled).toBe('boolean');
@@ -39,7 +37,6 @@ describe('Edge Cases - Location Services', () => {
     const providers = DeviceInfoModule.getAvailableLocationProviders();
     expect(Array.isArray(providers)).toBe(true);
 
-    // All elements should be strings
     providers.forEach((provider) => {
       expect(typeof provider).toBe('string');
     });
@@ -47,7 +44,6 @@ describe('Edge Cases - Location Services', () => {
 });
 
 describe('Edge Cases - Simulator/Emulator Battery', () => {
-  // Simulator battery behavior
   test('battery level handles simulator correctly', () => {
     const level = DeviceInfoModule.getBatteryLevel();
     expect(typeof level).toBe('number');
@@ -65,7 +61,6 @@ describe('Edge Cases - Simulator/Emulator Battery', () => {
     // Test with 1 threshold (should always be true unless battery is full)
     expect(typeof DeviceInfoModule.isLowBatteryLevel(1)).toBe('boolean');
 
-    // Test with normal threshold
     expect(typeof DeviceInfoModule.isLowBatteryLevel(0.2)).toBe('boolean');
   });
 });
@@ -165,7 +160,6 @@ describe('Tier 3 - Airplane Mode (Android Only)', () => {
     expect(typeof isAirplaneMode).toBe('boolean');
 
     if (Platform.OS === 'ios') {
-      // iOS: always returns false
       expect(isAirplaneMode).toBe(false);
     }
   });

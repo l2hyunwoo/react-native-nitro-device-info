@@ -8,7 +8,7 @@
  */
 
 const fakeDeviceInfo = {
-  // ---- readonly properties ----
+  // readonly properties
   deviceId: 'iPhone14,2',
   brand: 'Apple',
   model: 'iPhone 13 Pro',
@@ -77,7 +77,7 @@ const fakeDeviceInfo = {
   hostNames: [],
   isTabletMode: false,
 
-  // ---- sync methods ----
+  // sync methods
   getHasNotch: () => true,
   getHasDynamicIsland: () => true,
   getIsLandscape: () => false,
@@ -110,7 +110,7 @@ const fakeDeviceInfo = {
   isSideLoadingEnabled: () => false,
   isDeviceCompromised: () => false,
 
-  // ---- async methods ----
+  // async methods
   getFirstInstallTime: () => Promise.resolve(1698249600000),
   getLastUpdateTime: () => Promise.resolve(1698336000000),
   getIpAddress: () => Promise.resolve('192.168.1.100'),

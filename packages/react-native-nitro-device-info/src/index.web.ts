@@ -9,8 +9,6 @@
  * `DeviceInfoModule` differs — here it is the pure-JS web fallback that never
  * touches Nitro's native bindings, so importing the package on web/SSR does not
  * crash.
- *
- * @module react-native-nitro-device-info
  */
 
 import { createDeviceInfo } from './DeviceInfo.web';
@@ -30,7 +28,6 @@ export { createDeviceInfo };
  */
 export const DeviceInfoModule: DeviceInfo = createDeviceInfo();
 
-// Re-export types for convenience (identical to the native entry).
 export type { DeviceInfo, PowerState, DeviceType, BatteryState, NavigationMode };
 
 // Re-export React hooks. They read from `DeviceInfoModule` (this module's web

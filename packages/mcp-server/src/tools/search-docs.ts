@@ -1,16 +1,7 @@
-/**
- * search_docs MCP Tool
- *
- * Search documentation using natural language queries with BM25 ranking.
- */
-
 import { z } from 'zod';
 import type { SearchIndex, ApiDefinition, DocumentationChunk } from '../types/index.js';
 import { search } from '../indexer/search.js';
 
-/**
- * Input schema for search_docs tool
- */
 export const searchDocsInputSchema = z.object({
   query: z
     .string()
@@ -32,9 +23,6 @@ export const searchDocsInputSchema = z.object({
 
 export type SearchDocsInput = z.infer<typeof searchDocsInputSchema>;
 
-/**
- * Format platform info for display
- */
 function formatPlatform(api: ApiDefinition): string {
   const platform = api.platform;
   switch (platform.type) {
@@ -53,9 +41,6 @@ function formatPlatform(api: ApiDefinition): string {
   }
 }
 
-/**
- * Format a single API search result
- */
 function formatApiResult(api: ApiDefinition, score: number, index: number): string {
   const lines: string[] = [];
 
@@ -67,7 +52,6 @@ function formatApiResult(api: ApiDefinition, score: number, index: number): stri
   lines.push(api.description);
   lines.push('');
 
-  // Add signature
   lines.push('```typescript');
   lines.push(api.signature);
   lines.push('```');
@@ -75,9 +59,6 @@ function formatApiResult(api: ApiDefinition, score: number, index: number): stri
   return lines.join('\n');
 }
 
-/**
- * Format a single documentation chunk search result
- */
 function formatDocResult(chunk: DocumentationChunk, score: number, index: number): string {
   const lines: string[] = [];
 
@@ -91,7 +72,6 @@ function formatDocResult(chunk: DocumentationChunk, score: number, index: number
 
   lines.push('');
 
-  // Truncate content for display
   const excerpt = chunk.content.length > 300
     ? chunk.content.slice(0, 300) + '...'
     : chunk.content;
@@ -101,9 +81,6 @@ function formatDocResult(chunk: DocumentationChunk, score: number, index: number
   return lines.join('\n');
 }
 
-/**
- * Get suggested search terms when no results found
- */
 function getSuggestions(): string {
   return `Try searching for:
 - Battery: getBatteryLevel, isCharging, powerState
@@ -113,9 +90,6 @@ function getSuggestions(): string {
 - Storage: diskCapacity, freeDiskStorage`;
 }
 
-/**
- * Execute search_docs tool
- */
 export function executeSearchDocs(
   index: SearchIndex,
   input: SearchDocsInput
@@ -123,12 +97,10 @@ export function executeSearchDocs(
   try {
     const { query, limit, type } = input;
 
-    // Perform search
     const results = search(index, query, limit, {
       type: type === 'api' ? 'api' : type === 'guide' ? 'guide' : 'all',
     });
 
-    // Handle no results
     if (results.length === 0) {
       return {
         content: `No results found for "${query}".\n\n${getSuggestions()}`,
@@ -136,7 +108,6 @@ export function executeSearchDocs(
       };
     }
 
-    // Format results
     const lines: string[] = [];
     lines.push(`## Search Results for "${query}"`);
     lines.push('');

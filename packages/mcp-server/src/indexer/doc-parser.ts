@@ -1,17 +1,7 @@
-/**
- * Documentation Parser
- *
- * Parses markdown documentation files with heading-based chunking
- * for searchable documentation sections.
- */
-
 import * as fs from 'fs';
 import * as path from 'path';
 import type { DocumentationChunk, DocumentType } from '../types/index.js';
 
-/**
- * Determine document type from file path and content
- */
 function determineDocType(filePath: string, content: string): DocumentType {
   const fileNameLower = filePath.toLowerCase();
   const contentLower = content.toLowerCase();
@@ -43,14 +33,10 @@ function determineDocType(filePath: string, content: string): DocumentType {
   return 'guide';
 }
 
-/**
- * Extract platform mentions from content
- */
 function extractPlatforms(content: string): ('ios' | 'android')[] {
   const platforms: ('ios' | 'android')[] = [];
   const contentLower = content.toLowerCase();
 
-  // Check for platform-specific indicators
   const iosIndicators = [
     'ios',
     'iphone',
@@ -81,19 +67,14 @@ function extractPlatforms(content: string): ('ios' | 'android')[] {
   return platforms;
 }
 
-/**
- * Extract API names mentioned in content
- */
 function extractMentionedApis(content: string): string[] {
   // Match camelCase or PascalCase API-like names
   const apiPattern =
     /\b(get[A-Z]\w+|is[A-Z]\w+|has[A-Z]\w+|sync[A-Z]\w+|[a-z]+[A-Z]\w*)\b/g;
   const matches = content.match(apiPattern) || [];
 
-  // Filter to unique, likely API names
   const uniqueApis = new Set(
     matches.filter((m) => {
-      // Filter out common non-API words
       const lower = m.toLowerCase();
       return (
         !['true', 'false', 'null', 'undefined', 'return', 'import', 'export', 'const', 'let', 'var', 'function', 'async', 'await', 'typeof', 'instanceof'].includes(lower) &&
@@ -105,17 +86,11 @@ function extractMentionedApis(content: string): string[] {
   return Array.from(uniqueApis);
 }
 
-/**
- * Parse a single markdown file into documentation chunks
- */
 export function parseMarkdownFile(filePath: string): DocumentationChunk[] {
   const content = fs.readFileSync(filePath, 'utf-8');
   return parseMarkdownContent(content, filePath);
 }
 
-/**
- * Parse markdown content string into documentation chunks
- */
 export function parseMarkdownContent(
   content: string,
   source: string = 'unknown'
@@ -123,7 +98,6 @@ export function parseMarkdownContent(
   const chunks: DocumentationChunk[] = [];
   const docType = determineDocType(source, content);
 
-  // Split content by headings
   const lines = content.split('\n');
   let currentChunk: {
     title: string;
@@ -150,11 +124,9 @@ export function parseMarkdownContent(
         fence = undefined;
       }
     }
-    // Check for heading
     const headingMatch = !fence && !fenceMatch && line.match(/^(#{1,6})\s+(.+)$/);
 
     if (headingMatch) {
-      // Save previous chunk
       if (currentChunk && currentChunk.content.length > 0) {
         const chunkContent = currentChunk.content.join('\n').trim();
         if (chunkContent.length > 0) {
@@ -176,7 +148,6 @@ export function parseMarkdownContent(
       const level = headingMatch[1].length;
       const title = headingMatch[2].trim();
 
-      // Update parent stack
       while (parentStack.length > 0 && parentStack[parentStack.length - 1].level >= level) {
         parentStack.pop();
       }
@@ -193,18 +164,15 @@ export function parseMarkdownContent(
         parentId,
       };
 
-      // Add current heading to parent stack
       parentStack.push({
         id: `${source}-${chunkIndex}`,
         level,
       });
     } else if (currentChunk) {
-      // Add line to current chunk
       currentChunk.content.push(line);
     }
   }
 
-  // Save last chunk
   if (currentChunk && currentChunk.content.length > 0) {
     const chunkContent = currentChunk.content.join('\n').trim();
     if (chunkContent.length > 0) {
@@ -225,9 +193,6 @@ export function parseMarkdownContent(
   return chunks;
 }
 
-/**
- * Parse all markdown files in a directory
- */
 export function parseDocsDirectory(dirPath: string): DocumentationChunk[] {
   const chunks: DocumentationChunk[] = [];
 
@@ -243,7 +208,6 @@ export function parseDocsDirectory(dirPath: string): DocumentationChunk[] {
     const stat = fs.statSync(filePath);
 
     if (stat.isDirectory()) {
-      // Recursively parse subdirectories
       chunks.push(...parseDocsDirectory(filePath));
     } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
       try {
@@ -258,8 +222,6 @@ export function parseDocsDirectory(dirPath: string): DocumentationChunk[] {
 }
 
 /**
- * Get documentation paths relative to package root
- *
  * When running from dist (packages/mcp-server/dist), we need to go up 3 levels
  * to reach the repository root where docs/ lives.
  */
@@ -283,8 +245,6 @@ export function getDocsPaths(packageRoot: string): string[] {
 }
 
 /**
- * Parse README file for quick reference content
- *
  * When running from dist (packages/mcp-server/dist), we need to go up 3 levels
  * to reach the repository root where README.md lives.
  */
@@ -314,9 +274,6 @@ export function parseReadme(packageRoot: string): DocumentationChunk[] {
   return [];
 }
 
-/**
- * Create platform limitation documentation chunks
- */
 export function createPlatformLimitationChunks(): DocumentationChunk[] {
   return [
     {

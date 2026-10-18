@@ -1,11 +1,3 @@
-/**
- * useIsHeadphonesConnected Hook
- *
- * Monitor headphone connection state (wired or Bluetooth).
- *
- * @module react-native-nitro-device-info/hooks
- */
-
 import { useState, useEffect } from 'react';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
@@ -38,13 +30,11 @@ export function useIsHeadphonesConnected(): boolean {
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    // Set initial value from sync property
     const updateStatus = () => {
       const connected = DeviceInfoModule.getIsHeadphonesConnected();
       setIsConnected(prev => prev === connected ? prev : connected);
     };
 
-    // Get initial state
     updateStatus();
 
     // Poll for changes (headphone events are instant, but polling is fallback)

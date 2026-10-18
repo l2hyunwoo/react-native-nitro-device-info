@@ -1,9 +1,3 @@
-/**
- * Search Index Builder
- *
- * Combines API and documentation parsers to build a complete search index.
- */
-
 import type { SearchIndex, ApiDefinition, DocumentationChunk } from '../types/index.js';
 import {
   parseDeviceInfoFile,
@@ -28,9 +22,6 @@ export {
 } from './api-parser.js';
 export { parseMarkdownFile, parseMarkdownContent, parseDocsDirectory } from './doc-parser.js';
 
-/**
- * Index building options
- */
 export interface IndexOptions {
   /** Path to DeviceInfo.nitro.ts (auto-detected if not provided) */
   deviceInfoPath?: string;
@@ -38,10 +29,8 @@ export interface IndexOptions {
   /** Paths to documentation directories (auto-detected if not provided) */
   docsPaths?: string[];
 
-  /** Include README in index */
   includeReadme?: boolean;
 
-  /** Include platform limitation documentation */
   includePlatformLimitations?: boolean;
 
   /** DeviceInfo content string (for testing without file access) */
@@ -57,9 +46,6 @@ export interface IndexOptions {
   documentationChunks?: DocumentationChunk[];
 }
 
-/**
- * Build a complete search index from source files
- */
 export function buildIndex(
   packageRoot: string = process.cwd(),
   options: IndexOptions = {}
@@ -67,9 +53,7 @@ export function buildIndex(
   const apis: ApiDefinition[] = [];
   const chunks: DocumentationChunk[] = [];
 
-  // Parse DeviceInfo.nitro.ts (core)
   if (options.deviceInfoContent) {
-    // Use provided content (for testing)
     apis.push(...parseDeviceInfoContent(options.deviceInfoContent));
   } else {
     try {
@@ -114,9 +98,7 @@ export function buildIndex(
     }
   }
 
-  // Parse documentation
   if (options.documentationChunks) {
-    // Use provided chunks (for testing)
     chunks.push(...options.documentationChunks);
   } else {
     const docsPaths = options.docsPaths || getDocsPaths(packageRoot);
@@ -131,7 +113,6 @@ export function buildIndex(
     }
   }
 
-  // Parse README
   if (options.includeReadme !== false && !options.documentationChunks) {
     try {
       const readmeChunks = parseReadme(packageRoot);
@@ -142,18 +123,13 @@ export function buildIndex(
     }
   }
 
-  // Add platform limitation documentation
   if (options.includePlatformLimitations !== false) {
     chunks.push(...createPlatformLimitationChunks());
   }
 
-  // Build and return search index
   return buildSearchIndex(apis, chunks);
 }
 
-/**
- * Get index statistics
- */
 export function getIndexStats(index: SearchIndex): {
   apiCount: number;
   chunkCount: number;
@@ -177,9 +153,6 @@ export function getIndexStats(index: SearchIndex): {
   };
 }
 
-/**
- * Validate index meets minimum requirements
- */
 export function validateIndex(index: SearchIndex): {
   valid: boolean;
   errors: string[];
@@ -188,19 +161,16 @@ export function validateIndex(index: SearchIndex): {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // Check minimum API count (spec requires 80+)
   if (index.apis.size < 80) {
     errors.push(
       `API count (${index.apis.size}) is below minimum requirement (80)`
     );
   }
 
-  // Check for empty index
   if (index.documentCount === 0) {
     errors.push('Index is empty - no documents indexed');
   }
 
-  // Check for missing categories
   const expectedCategories = [
     'core-device-info',
     'battery-power',
@@ -218,7 +188,6 @@ export function validateIndex(index: SearchIndex): {
     }
   }
 
-  // Check for APIs without descriptions
   for (const [name, api] of index.apis) {
     if (!api.description || api.description.length < 10) {
       warnings.push(`API '${name}' has missing or short description`);

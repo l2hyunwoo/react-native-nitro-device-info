@@ -1,8 +1,3 @@
-/**
- * CategorySection Component
- * Collapsible section for a category of device properties
- */
-
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { PropertyCategory } from '../types';

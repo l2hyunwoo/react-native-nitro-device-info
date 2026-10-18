@@ -1,11 +1,3 @@
-/**
- * usePowerState Hook
- *
- * Monitor comprehensive power state including battery level, charging status, and low power mode.
- *
- * @module react-native-nitro-device-info/hooks
- */
-
 import { useState, useEffect } from 'react';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import type { PowerState } from '../DeviceInfo.nitro';
@@ -45,7 +37,6 @@ export function usePowerState(): Partial<PowerState> {
   const [powerState, setPowerState] = useState<Partial<PowerState>>({});
 
   useEffect(() => {
-    // Set initial value from sync property
     const updatePowerState = () => {
       const state = DeviceInfoModule.getPowerState();
       // Only update state if values have changed to prevent unnecessary re-renders
@@ -61,10 +52,8 @@ export function usePowerState(): Partial<PowerState> {
       });
     };
 
-    // Get initial state
     updatePowerState();
 
-    // Poll for changes
     const intervalId = setInterval(updatePowerState, 5000);
 
     return () => {

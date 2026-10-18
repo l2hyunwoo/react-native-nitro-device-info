@@ -1,10 +1,3 @@
-/**
- * Codemod transform tests.
- *
- * Applies `rewrite-imports` to each `*.input.*` fixture and compares the result
- * with the matching `*.output.*` fixture, plus explicit call-site assertions.
- */
-
 import fs from 'fs';
 import path from 'path';
 import jscodeshift from 'jscodeshift';

@@ -1,10 +1,3 @@
-/**
- * Nitro Device Info Module - Complete TypeScript Interface Contract
- *
- * It will be processed by Nitrogen to generate native bindings.
- *
- */
-
 import { type HybridObject } from 'react-native-nitro-modules';
 
 /**
@@ -82,9 +75,7 @@ export type NavigationMode = 'gesture' | 'buttons' | 'twobuttons' | 'unknown';
  */
 export interface DeviceInfo
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  // ============================================
   // CORE DEVICE INFORMATION
-  // ============================================
 
   /**
    * Get device model identifier
@@ -181,9 +172,7 @@ export interface DeviceInfo
    */
   readonly deviceName: string;
 
-  // ============================================
   // DEVICE CAPABILITIES
-  // ============================================
 
   /**
    * Check if device is a tablet
@@ -292,9 +281,7 @@ export interface DeviceInfo
    */
   readonly isLowRamDevice: boolean;
 
-  // ============================================
   // DISPLAY & SCREEN
-  // ============================================
 
   /**
    * Check if device has a display notch
@@ -373,9 +360,7 @@ export interface DeviceInfo
    */
   readonly isLiquidGlassAvailable: boolean;
 
-  // ============================================
   // SYSTEM RESOURCES
-  // ============================================
 
   /**
    * Get total device RAM in bytes
@@ -474,9 +459,7 @@ export interface DeviceInfo
    */
   readonly startupTime: number;
 
-  // ============================================
   // BATTERY & POWER
-  // ============================================
 
   /**
    * Get current battery level
@@ -523,9 +506,7 @@ export interface DeviceInfo
    */
   isLowBatteryLevel(threshold: number): boolean;
 
-  // ============================================
   // APPLICATION METADATA
-  // ============================================
 
   /**
    * Get application version string
@@ -607,9 +588,7 @@ export interface DeviceInfo
    */
   readonly lastUpdateTimeSync: number;
 
-  // ============================================
   // NETWORK
-  // ============================================
 
   /**
    * Get device IP address
@@ -676,9 +655,7 @@ export interface DeviceInfo
    */
   getIsAirplaneMode(): boolean;
 
-  // ============================================
   // CARRIER INFORMATION
-  // ============================================
 
   /**
    * Get cellular carrier name
@@ -778,9 +755,7 @@ export interface DeviceInfo
    */
   readonly mobileNetworkOperator: string;
 
-  // ============================================
   // AUDIO ACCESSORIES
-  // ============================================
 
   /**
    * Check if headphones are connected
@@ -821,9 +796,7 @@ export interface DeviceInfo
    */
   getIsBluetoothHeadphonesConnected(): boolean;
 
-  // ============================================
   // LOCATION SERVICES
-  // ============================================
 
   /**
    * Check if location services are enabled
@@ -852,9 +825,7 @@ export interface DeviceInfo
    */
   getAvailableLocationProviders(): string[];
 
-  // ============================================
   // LOCALIZATION
-  // ============================================
 
   /**
    * Get device system language in BCP 47 format
@@ -871,9 +842,7 @@ export interface DeviceInfo
    */
   readonly systemLanguage: string;
 
-  // ============================================
   // CPU & ARCHITECTURE
-  // ============================================
 
   /**
    * Get supported CPU architectures (ABIs)
@@ -903,9 +872,7 @@ export interface DeviceInfo
    */
   readonly supported64BitAbis: string[];
 
-  // ============================================
   // ANDROID PLATFORM
-  // ============================================
 
   /**
    * Get Android API level
@@ -1153,9 +1120,7 @@ export interface DeviceInfo
    */
   readonly buildId: string;
 
-  // ============================================
   // iOS PLATFORM
-  // ============================================
 
   /**
    * Get Apple DeviceCheck token.
@@ -1175,9 +1140,7 @@ export interface DeviceInfo
    */
   syncUniqueId(): Promise<string>;
 
-  // ============================================
   // INSTALLATION & DISTRIBUTION
-  // ============================================
 
   /**
    * Get the package name of the app store that installed this app.
@@ -1229,9 +1192,7 @@ export interface DeviceInfo
    */
   isSideLoadingEnabled(): boolean;
 
-  // ============================================
   // LEGACY COMPATIBILITY
-  // ============================================
 
   /**
    * Get total disk capacity using legacy Android API.
@@ -1254,9 +1215,7 @@ export interface DeviceInfo
    */
   getFreeDiskStorageOld(): number;
 
-  // ============================================
   // DEVICE INTEGRITY / SECURITY
-  // ============================================
 
   /**
    * Synchronously detects rooted (Android) or jailbroken (iOS) device status
@@ -1323,9 +1282,7 @@ export interface DeviceInfo
    */
   verifyDeviceIntegrity(): Promise<boolean>;
 
-  // ============================================
   // WINDOWS PLATFORM (Unsupported)
-  // ============================================
 
   /**
    * Check if a mouse is currently connected.

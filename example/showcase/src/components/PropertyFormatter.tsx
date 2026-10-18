@@ -1,8 +1,3 @@
-/**
- * PropertyFormatter Component
- * Formats and displays property values based on their type
- */
-
 import React from 'react';
 import { Text, StyleSheet, Platform } from 'react-native';
 import { PropertyType } from '../types';
@@ -15,15 +10,12 @@ interface Props {
 }
 
 export const PropertyFormatter: React.FC<Props> = ({ value, type, error }) => {
-  // Display error state if present
   if (error) {
     return <Text style={styles.error}>Error: {error}</Text>;
   }
 
-  // Format value based on type
   const formattedValue = formatPropertyValue(value, type);
 
-  // Apply different styles based on type
   const getValueStyle = () => {
     switch (type) {
       case PropertyType.BOOLEAN:

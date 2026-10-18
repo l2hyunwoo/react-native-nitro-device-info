@@ -1,8 +1,3 @@
-/**
- * Benchmark Comparison Calculator
- * Compares Nitro vs react-native-device-info performance and generates metrics
- */
-
 import type {
   ComparisonResult,
   BenchmarkResult,
@@ -10,26 +5,16 @@ import type {
 } from '../types';
 import { ComparisonStatus } from '../types';
 
-/**
- * Create a comparison result from two benchmark results
- *
- * @param nitro - Benchmark result for Nitro implementation
- * @param deviceInfo - Benchmark result for react-native-device-info
- * @returns Comparison with speedup multiplier and status
- */
 export function createComparison(
   nitro: BenchmarkResult,
   deviceInfo: BenchmarkResult
 ): ComparisonResult {
-  // Calculate speedup multiplier (how many times faster Nitro is)
   const speedupMultiplier =
     nitro.avgTime > 0 ? deviceInfo.avgTime / nitro.avgTime : 1;
 
-  // Consider significant if 2x or better AND both completed successfully
   const isSignificant =
     speedupMultiplier >= 2.0 && !nitro.error && !deviceInfo.error;
 
-  // Determine comparison status
   let status: ComparisonStatus;
   if (nitro.error || deviceInfo.error) {
     status = ComparisonStatus.ERROR;
@@ -53,37 +38,26 @@ export function createComparison(
   };
 }
 
-/**
- * Calculate aggregate performance metrics from all comparisons
- *
- * @param comparisons - Array of comparison results
- * @returns Performance metrics including averages and marketing catchphrase
- */
 export function calculateMetrics(
   comparisons: ComparisonResult[]
 ): PerformanceMetrics {
-  // Filter out error comparisons for calculations
   const validComparisons = comparisons.filter(
     (c) => c.status !== ComparisonStatus.ERROR
   );
 
-  // Filter significant improvements (>2x) for average calculation
   const significantComparisons = comparisons.filter((c) => c.isSignificant);
 
-  // Calculate average speedup (only from significant improvements)
   const avgSpeedupMultiplier =
     significantComparisons.length > 0
       ? significantComparisons.reduce((sum, c) => sum + c.speedupMultiplier, 0) /
         significantComparisons.length
       : 1.0;
 
-  // Calculate maximum speedup across all methods
   const maxSpeedupMultiplier =
     validComparisons.length > 0
       ? Math.max(...validComparisons.map((c) => c.speedupMultiplier))
       : 1.0;
 
-  // Calculate pass rates
   const nitroPassCount = comparisons.filter((c) => c.nitroBenchmark.passed).length;
   const deviceInfoPassCount = comparisons.filter(
     (c) => c.deviceInfoBenchmark.passed
@@ -94,7 +68,6 @@ export function calculateMetrics(
   const deviceInfoPassRate =
     comparisons.length > 0 ? (deviceInfoPassCount / comparisons.length) * 100 : 0;
 
-  // Generate marketing catchphrase
   const marketingCatchphrase = generateMarketingCatchphrase(
     avgSpeedupMultiplier,
     maxSpeedupMultiplier,
@@ -114,14 +87,6 @@ export function calculateMetrics(
   };
 }
 
-/**
- * Generate marketing-ready catchphrase based on performance data
- *
- * @param avgSpeedup - Average speedup multiplier
- * @param maxSpeedup - Maximum speedup multiplier
- * @param significantCount - Number of methods with significant improvements
- * @returns Marketing catchphrase string
- */
 function generateMarketingCatchphrase(
   avgSpeedup: number,
   maxSpeedup: number,
@@ -136,35 +101,23 @@ function generateMarketingCatchphrase(
   }
 }
 
-/**
- * Get comparison status color for UI display
- *
- * @param status - Comparison status enum
- * @returns Color string for UI (#hex format)
- */
 export function getStatusColor(status: ComparisonStatus): string {
   switch (status) {
     case ComparisonStatus.BOTH_PASSED:
-      return '#34C759'; // Green
+      return '#34C759';
     case ComparisonStatus.NITRO_ONLY_PASSED:
-      return '#007AFF'; // Blue
+      return '#007AFF';
     case ComparisonStatus.DEVICE_INFO_ONLY_PASSED:
-      return '#FF9500'; // Orange
+      return '#FF9500';
     case ComparisonStatus.BOTH_FAILED:
-      return '#FF3B30'; // Red
+      return '#FF3B30';
     case ComparisonStatus.ERROR:
-      return '#8E8E93'; // Gray
+      return '#8E8E93';
     default:
       return '#8E8E93';
   }
 }
 
-/**
- * Get comparison status label for UI display
- *
- * @param status - Comparison status enum
- * @returns Human-readable label
- */
 export function getStatusLabel(status: ComparisonStatus): string {
   switch (status) {
     case ComparisonStatus.BOTH_PASSED:

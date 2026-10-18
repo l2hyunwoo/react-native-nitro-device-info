@@ -1,11 +1,3 @@
-/**
- * React Native Nitro Device Info
- *
- * Provides comprehensive device information through Nitro's zero-overhead JSI bindings.
- *
- * @module react-native-nitro-device-info
- */
-
 import { NitroModules } from 'react-native-nitro-modules';
 import type {
   DeviceInfo,
@@ -92,7 +84,6 @@ export const DeviceInfoModule: DeviceInfo = new Proxy({} as DeviceInfo, {
   },
 });
 
-// Re-export types for convenience
 export type { DeviceInfo, PowerState, DeviceType, BatteryState, NavigationMode };
 
 // Re-export React hooks for runtime monitoring

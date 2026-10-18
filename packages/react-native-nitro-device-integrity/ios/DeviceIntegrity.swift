@@ -1,21 +1,14 @@
 /**
- * DeviceIntegrity.swift
- * React Native Nitro Device Integrity - iOS Implementation
- *
- * Implements the DeviceIntegrity HybridObject. Issues App Attest
- * (DCAppAttestService) attestations/assertions and DeviceCheck (DCDevice)
- * tokens. This is a token-issuing client only: every returned value is an
- * opaque blob (base64) that MUST be validated by the developer's server
- * against Apple's root CA / DeviceCheck API.
- *
- * @author HyunWoo Lee
+ * Issues App Attest (DCAppAttestService) attestations/assertions and
+ * DeviceCheck (DCDevice) tokens. This is a token-issuing client only: every
+ * returned value is an opaque blob (base64) that MUST be validated by the
+ * developer's server against Apple's root CA / DeviceCheck API.
  */
 
 import Foundation
 import NitroModules
 import DeviceCheck
 
-/// iOS implementation of DeviceIntegrity backed by App Attest + DeviceCheck.
 class DeviceIntegrity: HybridDeviceIntegritySpec {
 
   // MARK: - Availability

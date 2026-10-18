@@ -14,8 +14,6 @@
  * - Otherwise we return the same honest constants the native side uses for an
  *   unsupported platform ("unknown" / -1 / false / [] / 0). We deliberately do
  *   NOT fabricate plausible-looking device values.
- *
- * @module react-native-nitro-device-info/DeviceInfo.web
  */
 
 import type {
@@ -80,7 +78,6 @@ let batteryCache: BatteryManagerLike | null = null;
 
 function primeBatteryCache(): void {
   const nav = safeNavigator();
-  // Guard the function's existence before calling.
   const getBattery = nav?.getBattery;
   if (typeof getBattery !== 'function' || nav === undefined) {
     return;
@@ -146,7 +143,7 @@ function deriveTotalMemory(): number {
  * mistyped member is a `tsc` error, which is the exhaustiveness guarantee.
  */
 const webDeviceInfo: DeviceInfo = {
-  // ---- HybridObject base members ----
+  // HybridObject base members
   name: 'DeviceInfo',
   toString: () => '[HybridObject DeviceInfo]',
   equals: (other) => other === webDeviceInfo,
@@ -154,7 +151,7 @@ const webDeviceInfo: DeviceInfo = {
     // No native resources to release on web.
   },
 
-  // ---- Core device information ----
+  // Core device information
   deviceId: 'unknown',
   brand: safeNavigator()?.vendor || 'unknown',
   model: 'unknown',
@@ -167,7 +164,7 @@ const webDeviceInfo: DeviceInfo = {
   manufacturer: safeNavigator()?.vendor || 'unknown',
   deviceName: 'unknown',
 
-  // ---- Device capabilities ----
+  // Device capabilities
   isTablet: false,
   isEmulator: false,
   deviceYearClass: -1,
@@ -176,7 +173,7 @@ const webDeviceInfo: DeviceInfo = {
   isHardwareKeyStoreAvailable: false,
   isLowRamDevice: false,
 
-  // ---- Display & screen ----
+  // Display & screen
   getHasNotch: () => false,
   getHasDynamicIsland: () => false,
   isDisplayZoomed: false,
@@ -188,7 +185,7 @@ const webDeviceInfo: DeviceInfo = {
   getFontScale: () => 1,
   isLiquidGlassAvailable: false,
 
-  // ---- System resources ----
+  // System resources
   get totalMemory(): number {
     return deriveTotalMemory();
   },
@@ -199,7 +196,7 @@ const webDeviceInfo: DeviceInfo = {
   getUptime: () => -1,
   startupTime: -1,
 
-  // ---- Battery & power ----
+  // Battery & power
   getBatteryLevel: () => (batteryCache !== null ? batteryCache.level : -1),
   getPowerState: (): PowerState => ({
     batteryLevel: batteryCache !== null ? batteryCache.level : -1,
@@ -213,7 +210,7 @@ const webDeviceInfo: DeviceInfo = {
     return level >= 0 && level <= 1 && level < threshold;
   },
 
-  // ---- Application metadata ----
+  // Application metadata
   version: 'unknown',
   buildNumber: 'unknown',
   bundleId: 'unknown',
@@ -224,7 +221,7 @@ const webDeviceInfo: DeviceInfo = {
   firstInstallTimeSync: -1,
   lastUpdateTimeSync: -1,
 
-  // ---- Network ----
+  // Network
   getIpAddress: () => Promise.resolve('unknown'),
   getIpAddressSync: () => 'unknown',
   getMacAddress: () => Promise.resolve('02:00:00:00:00:00'),
@@ -232,7 +229,7 @@ const webDeviceInfo: DeviceInfo = {
   getUserAgent: () => Promise.resolve(safeNavigator()?.userAgent ?? 'unknown'),
   getIsAirplaneMode: () => false,
 
-  // ---- Carrier information ----
+  // Carrier information
   getCarrier: () => Promise.resolve('unknown'),
   getCarrierSync: () => 'unknown',
   carrierAllowsVOIP: false,
@@ -241,26 +238,26 @@ const webDeviceInfo: DeviceInfo = {
   mobileNetworkCode: 'unknown',
   mobileNetworkOperator: 'unknown',
 
-  // ---- Audio accessories ----
+  // Audio accessories
   isHeadphonesConnected: () => Promise.resolve(false),
   getIsHeadphonesConnected: () => false,
   getIsWiredHeadphonesConnected: () => false,
   getIsBluetoothHeadphonesConnected: () => false,
 
-  // ---- Location services ----
+  // Location services
   isLocationEnabled: () => Promise.resolve(false),
   getIsLocationEnabled: () => false,
   getAvailableLocationProviders: () => [],
 
-  // ---- Localization ----
+  // Localization
   systemLanguage: safeNavigator()?.language || 'unknown',
 
-  // ---- CPU & architecture ----
+  // CPU & architecture
   supportedAbis: [],
   supported32BitAbis: [],
   supported64BitAbis: [],
 
-  // ---- Android platform ----
+  // Android platform
   apiLevel: -1,
   navigationMode: 'unknown',
   getHasGms: () => false,
@@ -288,25 +285,25 @@ const webDeviceInfo: DeviceInfo = {
   radioVersion: 'unknown',
   buildId: 'unknown',
 
-  // ---- iOS platform ----
+  // iOS platform
   getDeviceToken: () =>
     Promise.reject(new Error('getDeviceToken is not available on web')),
   syncUniqueId: () => Promise.resolve('unknown'),
 
-  // ---- Installation & distribution ----
+  // Installation & distribution
   installerPackageName: 'unknown',
   getInstallReferrer: () => Promise.resolve('unknown'),
   isSideLoadingEnabled: () => false,
 
-  // ---- Legacy compatibility ----
+  // Legacy compatibility
   totalDiskCapacityOld: -1,
   getFreeDiskStorageOld: () => -1,
 
-  // ---- Device integrity / security ----
+  // Device integrity / security
   isDeviceCompromised: () => false,
   verifyDeviceIntegrity: () => Promise.resolve(false),
 
-  // ---- Windows platform (unsupported) ----
+  // Windows platform (unsupported)
   isMouseConnected: false,
   isKeyboardConnected: false,
   hostNames: [],

@@ -15,7 +15,6 @@ import kotlin.coroutines.resumeWithException
 
 /** Keeps provider recovery independent of the JNI-backed Nitro Promise. */
 internal class StandardIntegrityProvider(private val createManager: () -> StandardIntegrityManager) {
-    /** Cached Standard token provider, prepared once and reused. */
     @Volatile
     private var standardProvider: StandardIntegrityTokenProvider? = null
 
@@ -123,7 +122,6 @@ internal fun integrityError(
     cause: Throwable? = null,
 ): Throwable = RuntimeException("$code: $message", cause)
 
-/** Bridges a Play Services [Task] into a coroutine. */
 internal suspend fun <T> Task<T>.await(): T =
     suspendCancellableCoroutine { continuation ->
         addOnSuccessListener { result -> continuation.resume(result) }

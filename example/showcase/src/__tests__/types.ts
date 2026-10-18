@@ -1,7 +1,3 @@
-/**
- * Type definitions for E2E test helpers
- */
-
 import type {
   DeviceType,
   BatteryState,
@@ -11,9 +7,6 @@ import type {
 
 export type { DeviceType, BatteryState, NavigationMode, PowerState };
 
-/**
- * Valid device types for assertions
- */
 export const VALID_DEVICE_TYPES: DeviceType[] = [
   'Handset',
   'Tablet',
@@ -23,9 +16,6 @@ export const VALID_DEVICE_TYPES: DeviceType[] = [
   'unknown',
 ];
 
-/**
- * Valid battery states for assertions
- */
 export const VALID_BATTERY_STATES: BatteryState[] = [
   'unknown',
   'unplugged',
@@ -33,9 +23,6 @@ export const VALID_BATTERY_STATES: BatteryState[] = [
   'full',
 ];
 
-/**
- * Valid navigation modes for assertions
- */
 export const VALID_NAVIGATION_MODES: NavigationMode[] = [
   'gesture',
   'buttons',
@@ -43,30 +30,18 @@ export const VALID_NAVIGATION_MODES: NavigationMode[] = [
   'unknown',
 ];
 
-/**
- * Helper to check if a value is a valid device type
- */
 export function isValidDeviceType(value: unknown): value is DeviceType {
   return VALID_DEVICE_TYPES.includes(value as DeviceType);
 }
 
-/**
- * Helper to check if a value is a valid battery state
- */
 export function isValidBatteryState(value: unknown): value is BatteryState {
   return VALID_BATTERY_STATES.includes(value as BatteryState);
 }
 
-/**
- * Helper to check if a value is a valid navigation mode
- */
 export function isValidNavigationMode(value: unknown): value is NavigationMode {
   return VALID_NAVIGATION_MODES.includes(value as NavigationMode);
 }
 
-/**
- * Helper to validate PowerState object structure
- */
 export function isValidPowerState(value: unknown): value is PowerState {
   if (typeof value !== 'object' || value === null) {
     return false;
@@ -88,9 +63,6 @@ export function isValidPowerState(value: unknown): value is PowerState {
  */
 export const BCP47_PATTERN = /^[a-z]{2,3}(-[A-Za-z]{2,8})*$/;
 
-/**
- * Helper to validate BCP 47 language tag format
- */
 export function isValidBcp47(value: string): boolean {
   return BCP47_PATTERN.test(value);
 }

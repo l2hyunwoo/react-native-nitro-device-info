@@ -1,8 +1,3 @@
-/**
- * Enhanced DeviceInfoScreen
- * Displays all 80+ device properties organized by category with collapsible sections
- */
-
 import { useEffect, useState } from 'react';
 import {
   ScrollView,
@@ -28,34 +23,23 @@ export default function DeviceInfoScreen() {
     loadAllProperties();
   }, []);
 
-  /**
-   * Load all device properties (sync and async)
-   * Fetches values for all 80+ properties from DeviceInfo interface
-   */
   const loadAllProperties = async () => {
     try {
       setLoading(true);
       const deviceInfo = createDeviceInfo();
       const loadedProperties: DeviceProperty[] = [];
 
-      // Filter properties for current platform
       const platformProperties = PROPERTY_CONFIGS.filter(isPlatformSupported);
 
-      // Load all properties
       for (const config of platformProperties) {
         try {
           let value: any;
 
-          // Access property based on whether it's sync or async
-          // Note: Some sync methods start with 'get' prefix (e.g., getBatteryLevel)
           if (config.isSync && !config.key.startsWith('get')) {
-            // Synchronous property - direct access
             value = (deviceInfo as any)[config.key];
           } else if (config.isSync && config.key.startsWith('get')) {
-            // Synchronous method - call as function without await
             value = (deviceInfo as any)[config.key]();
           } else {
-            // Asynchronous method - call as function with await
             value = await (deviceInfo as any)[config.key]();
           }
 
@@ -65,7 +49,6 @@ export default function DeviceInfoScreen() {
             errorState: undefined,
           });
         } catch (error) {
-          // Handle individual property errors gracefully
           loadedProperties.push({
             ...config,
             value: null,
@@ -83,17 +66,11 @@ export default function DeviceInfoScreen() {
     }
   };
 
-  /**
-   * Handle pull-to-refresh
-   */
   const handleRefresh = () => {
     setRefreshing(true);
     loadAllProperties();
   };
 
-  /**
-   * Group properties by category for display
-   */
   const getPropertiesByCategory = (): Record<PropertyCategory, DeviceProperty[]> => {
     const grouped: Record<string, DeviceProperty[]> = {};
 
@@ -108,7 +85,6 @@ export default function DeviceInfoScreen() {
     return grouped as Record<PropertyCategory, DeviceProperty[]>;
   };
 
-  // Show loading indicator on initial load
   if (loading && !refreshing) {
     return (
       <SafeAreaView style={styles.container}>
@@ -152,7 +128,7 @@ export default function DeviceInfoScreen() {
           </Text>
         </View>
 
-        {/* Category Sections - All collapsed by default per clarification */}
+        {/* Category sections are collapsed by default */}
         {categoryKeys.map((category) => (
           <CategorySection
             key={category}

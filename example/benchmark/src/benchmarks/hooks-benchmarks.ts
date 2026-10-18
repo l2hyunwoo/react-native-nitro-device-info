@@ -1,17 +1,5 @@
-/**
- * Hooks Benchmarks
- *
- * Performance validation for React hooks:
- * - Hook registration time
- * - Hook cleanup validation (no memory leaks)
- * - Callback latency (p95)
- */
-
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 
-/**
- * Benchmark result for hooks performance tests
- */
 export interface HookBenchmarkResult {
   name: string;
   value: number;
@@ -22,8 +10,6 @@ export interface HookBenchmarkResult {
 }
 
 /**
- * Benchmark hook registration time
- *
  * Measures the time to get initial value from native module
  */
 export async function benchmarkHookRegistration(): Promise<HookBenchmarkResult> {
@@ -64,8 +50,6 @@ export async function benchmarkHookRegistration(): Promise<HookBenchmarkResult> 
 }
 
 /**
- * Benchmark hook cleanup validation
- *
  * Note: Actual memory measurement is limited in React Native JS context
  * This test validates that repeated getter calls don't leak memory
  */
@@ -73,7 +57,6 @@ export async function benchmarkHookCleanup(): Promise<HookBenchmarkResult> {
   const cycles = 1000;
 
   try {
-    // Run many cycles of hook-like behavior
     for (let i = 0; i < cycles; i++) {
       // Simulate hook mount/unmount cycle
       DeviceInfoModule.getBatteryLevel();
@@ -104,8 +87,6 @@ export async function benchmarkHookCleanup(): Promise<HookBenchmarkResult> {
 }
 
 /**
- * Benchmark callback latency
- *
  * Measures the p95 latency for sync getter calls
  */
 export async function benchmarkCallbackLatency(): Promise<HookBenchmarkResult> {
@@ -120,10 +101,8 @@ export async function benchmarkCallbackLatency(): Promise<HookBenchmarkResult> {
       latencies.push(latency);
     }
 
-    // Sort for percentile calculation
     latencies.sort((a, b) => a - b);
 
-    // Calculate p95
     const p95Index = Math.floor(iterations * 0.95);
     const p95Latency = latencies[p95Index] ?? 0;
     const threshold = 500;
@@ -147,9 +126,6 @@ export async function benchmarkCallbackLatency(): Promise<HookBenchmarkResult> {
   }
 }
 
-/**
- * Run all hook benchmarks
- */
 export async function runAllHookBenchmarks(): Promise<HookBenchmarkResult[]> {
   const results: HookBenchmarkResult[] = [];
 

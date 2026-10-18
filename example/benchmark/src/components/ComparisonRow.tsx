@@ -1,8 +1,3 @@
-/**
- * ComparisonRow Component
- * Displays side-by-side performance comparison for a single method
- */
-
 import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import type { ComparisonResult } from '../types';
@@ -22,7 +17,7 @@ export const ComparisonRow: React.FC<Props> = ({ comparison }) => {
 
   // Determine if method is async based on target (1ms = sync, 100ms = async)
   const isAsync = nitroBenchmark.target >= 100;
-  const methodTypeBadgeColor = isAsync ? '#FF9500' : '#5856D6'; // Orange for async, Purple for sync
+  const methodTypeBadgeColor = isAsync ? '#FF9500' : '#5856D6';
 
   return (
     <View style={styles.row}>

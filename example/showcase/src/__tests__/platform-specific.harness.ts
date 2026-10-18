@@ -10,12 +10,10 @@ import { Platform } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import { isValidNavigationMode, VALID_NAVIGATION_MODES } from './types';
 
-// Platform-conditional describe blocks
 const describeIOS = Platform.OS === 'ios' ? describe : describe.skip;
 const describeAndroid = Platform.OS === 'android' ? describe : describe.skip;
 
 describeIOS('iOS-Specific APIs', () => {
-  // T036: getBrightness test
   test('getBrightness returns value between 0.0 and 1.0', () => {
     const brightness = DeviceInfoModule.getBrightness();
     expect(typeof brightness).toBe('number');
@@ -23,13 +21,11 @@ describeIOS('iOS-Specific APIs', () => {
     expect(brightness).toBeLessThanOrEqual(1);
   });
 
-  // T037: getHasNotch test
   test('getHasNotch returns boolean', () => {
     const hasNotch = DeviceInfoModule.getHasNotch();
     expect(typeof hasNotch).toBe('boolean');
   });
 
-  // T038: getHasDynamicIsland test
   test('getHasDynamicIsland returns boolean', () => {
     const hasDynamicIsland = DeviceInfoModule.getHasDynamicIsland();
     expect(typeof hasDynamicIsland).toBe('boolean');
@@ -37,7 +33,6 @@ describeIOS('iOS-Specific APIs', () => {
 });
 
 describeAndroid('Android-Specific APIs', () => {
-  // T039: getHasGms test
   test('getHasGms returns boolean or throws on emulator without GMS', () => {
     // May throw if Play Services library not available (e.g., on emulators without GMS)
     try {
@@ -48,20 +43,17 @@ describeAndroid('Android-Specific APIs', () => {
     }
   });
 
-  // T040: getHasHms test
   test('getHasHms returns boolean', () => {
     const hasHms = DeviceInfoModule.getHasHms();
     expect(typeof hasHms).toBe('boolean');
   });
 
-  // T041: apiLevel test
   test('apiLevel returns API level >= 21', () => {
     const apiLevel = DeviceInfoModule.apiLevel;
     expect(typeof apiLevel).toBe('number');
     expect(apiLevel).toBeGreaterThanOrEqual(21);
   });
 
-  // T042: navigationMode test
   test('navigationMode returns valid mode', () => {
     const navMode = DeviceInfoModule.navigationMode;
     expect(typeof navMode).toBe('string');
@@ -78,7 +70,6 @@ describeAndroid('Android-Specific APIs', () => {
 });
 
 describe('Cross-Platform Dynamic APIs', () => {
-  // T043: getFontScale test
   test('getFontScale returns valid scale value', () => {
     const fontScale = DeviceInfoModule.getFontScale();
     expect(typeof fontScale).toBe('number');
@@ -89,13 +80,11 @@ describe('Cross-Platform Dynamic APIs', () => {
     expect(fontScale).toBeLessThanOrEqual(3);
   });
 
-  // T043: getIsLandscape test
   test('getIsLandscape returns boolean value', () => {
     const isLandscape = DeviceInfoModule.getIsLandscape();
     expect(typeof isLandscape).toBe('boolean');
   });
 
-  // T043: getIsBatteryCharging test
   test('getIsBatteryCharging returns boolean value', () => {
     const isCharging = DeviceInfoModule.getIsBatteryCharging();
     expect(typeof isCharging).toBe('boolean');
@@ -103,7 +92,6 @@ describe('Cross-Platform Dynamic APIs', () => {
 });
 
 describe('Time-Based APIs', () => {
-  // T044: getFirstInstallTime test
   test('getFirstInstallTime returns valid timestamp', async () => {
     const installTime = await DeviceInfoModule.getFirstInstallTime();
     expect(typeof installTime).toBe('number');
@@ -112,11 +100,9 @@ describe('Time-Based APIs', () => {
     const year2020 = new Date('2020-01-01').getTime();
     expect(installTime).toBeGreaterThan(year2020);
 
-    // Should be in the past or now
     expect(installTime).toBeLessThanOrEqual(Date.now() + 60000); // Allow 1 minute buffer
   });
 
-  // T044: getLastUpdateTime test
   test('getLastUpdateTime returns valid timestamp', async () => {
     const updateTime = await DeviceInfoModule.getLastUpdateTime();
     expect(typeof updateTime).toBe('number');
