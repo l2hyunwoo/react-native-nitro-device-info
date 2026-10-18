@@ -1,15 +1,6 @@
-/**
- * list_apis MCP Tool
- *
- * List all available API methods and properties with optional filtering.
- */
-
 import { z } from 'zod';
 import type { SearchIndex, ApiDefinition, ApiCategory } from '../types/index.js';
 
-/**
- * Input schema for list_apis tool
- */
 export const listApisInputSchema = z.object({
   category: z
     .enum([
@@ -46,9 +37,6 @@ export const listApisInputSchema = z.object({
 
 export type ListApisInput = z.infer<typeof listApisInputSchema>;
 
-/**
- * Category display names (16-category structure)
- */
 const CATEGORY_NAMES: Record<ApiCategory, string> = {
   'core-device-info': 'Core Device Information',
   'device-capabilities': 'Device Capabilities',
@@ -69,9 +57,6 @@ const CATEGORY_NAMES: Record<ApiCategory, string> = {
   'device-integrity': 'Device Integrity',
 };
 
-/**
- * Format platform info for table
- */
 function formatPlatformShort(api: ApiDefinition): string {
   const platform = api.platform;
   switch (platform.type) {
@@ -90,9 +75,6 @@ function formatPlatformShort(api: ApiDefinition): string {
   }
 }
 
-/**
- * Check if API matches platform filter
- */
 function matchesPlatform(api: ApiDefinition, filter: string): boolean {
   const platformType = api.platform.type;
 
@@ -110,9 +92,6 @@ function matchesPlatform(api: ApiDefinition, filter: string): boolean {
   }
 }
 
-/**
- * Format API list by category
- */
 function formatApisByCategory(
   apis: ApiDefinition[],
   category: string
@@ -139,9 +118,6 @@ function formatApisByCategory(
   return lines.join('\n');
 }
 
-/**
- * Execute list_apis tool
- */
 export function executeListApis(
   index: SearchIndex,
   input: ListApisInput
@@ -149,20 +125,16 @@ export function executeListApis(
   try {
     const { category, platform, kind } = input;
 
-    // Filter APIs
     const filteredApis: ApiDefinition[] = [];
     for (const [, api] of index.apis) {
-      // Category filter
       if (category !== 'all' && api.category !== category) {
         continue;
       }
 
-      // Platform filter
       if (!matchesPlatform(api, platform)) {
         continue;
       }
 
-      // Kind filter
       if (kind !== 'all' && api.kind !== kind) {
         continue;
       }
@@ -170,7 +142,6 @@ export function executeListApis(
       filteredApis.push(api);
     }
 
-    // Handle no results
     if (filteredApis.length === 0) {
       const lines: string[] = [];
       lines.push('No APIs found matching filters:');
@@ -186,7 +157,6 @@ export function executeListApis(
       };
     }
 
-    // Group by category
     const byCategory = new Map<string, ApiDefinition[]>();
     for (const api of filteredApis) {
       const cat = api.category;
@@ -196,12 +166,10 @@ export function executeListApis(
       byCategory.get(cat)!.push(api);
     }
 
-    // Sort APIs within each category
     for (const [, apis] of byCategory) {
       apis.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    // Format output
     const lines: string[] = [];
     lines.push('# Available APIs');
     lines.push('');
@@ -209,7 +177,6 @@ export function executeListApis(
     lines.push(`**Total**: ${filteredApis.length} APIs`);
     lines.push('');
 
-    // Define category order (16-category structure)
     const categoryOrder: ApiCategory[] = [
       'core-device-info',
       'device-capabilities',
@@ -230,7 +197,6 @@ export function executeListApis(
       'device-integrity',
     ];
 
-    // Output categories in order
     for (const cat of categoryOrder) {
       const apis = byCategory.get(cat);
       if (apis && apis.length > 0) {

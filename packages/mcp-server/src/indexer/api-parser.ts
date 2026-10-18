@@ -1,17 +1,7 @@
-/**
- * API Parser for DeviceInfo.nitro.ts
- *
- * Extracts method signatures, JSDoc comments, and platform tags
- * from the TypeScript interface definition.
- */
-
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ApiDefinition, ApiCategory, Platform, Parameter } from '../types/index.js';
 
-/**
- * Category keywords mapping for automatic categorization (16-category structure)
- */
 const CATEGORY_KEYWORDS: Record<string, ApiCategory> = {
   // Core Device Information
   deviceid: 'core-device-info',
@@ -172,7 +162,6 @@ function parseJsDoc(comment: string): {
   let currentExample = '';
 
   for (const line of lines) {
-    // Check for @tags
     if (line.startsWith('@platform')) {
       const platformText = line.replace('@platform', '').trim().toLowerCase();
       if (platformText.includes('android') && platformText.includes('ios')) {
@@ -237,12 +226,10 @@ function parseJsDoc(comment: string): {
     }
 
     if (line.startsWith('@')) {
-      // Skip other tags
       currentSection = 'other';
       continue;
     }
 
-    // Accumulate content based on current section
     if (currentSection === 'description' && line && !line.startsWith('```')) {
       description += (description ? ' ' : '') + line;
     } else if (currentSection === 'example') {
@@ -289,19 +276,15 @@ function determineCategory(name: string, description: string): ApiCategory {
     }
   }
 
-  return 'core-device-info'; // Default category
+  return 'core-device-info';
 }
 
-/**
- * Parse a single API member (method or property)
- */
 function parseApiMember(
   memberText: string,
   jsDocComment: string
 ): ApiDefinition | null {
   const jsDoc = parseJsDoc(jsDocComment);
 
-  // Check if it's a readonly property
   const propertyMatch = memberText.match(
     /readonly\s+(\w+):\s*([^;]+)/
   );
@@ -322,14 +305,12 @@ function parseApiMember(
     };
   }
 
-  // Check if it's a method
   const methodMatch = memberText.match(
     /(\w+)\s*\(([^)]*)\)\s*:\s*([^;]+)/
   );
   if (methodMatch) {
     const [, name, paramsStr, returnType] = methodMatch;
 
-    // Parse parameters
     const parameters: Parameter[] = [];
     if (paramsStr.trim()) {
       const paramParts = paramsStr.split(',');
@@ -370,14 +351,10 @@ function parseApiMember(
   return null;
 }
 
-/**
- * Find related APIs based on naming patterns
- */
 function findRelatedApis(name: string): string[] {
   const related: string[] = [];
   const nameLower = name.toLowerCase();
 
-  // Battery-related
   if (nameLower.includes('battery') || nameLower.includes('power') || nameLower.includes('charging')) {
     if (!nameLower.includes('getbatterylevel')) related.push('getBatteryLevel');
     if (!nameLower.includes('getpowerstate')) related.push('getPowerState');
@@ -385,27 +362,23 @@ function findRelatedApis(name: string): string[] {
     if (!nameLower.includes('islowbatterylevel')) related.push('isLowBatteryLevel');
   }
 
-  // Memory-related
   if (nameLower.includes('memory')) {
     if (!nameLower.includes('totalmemory')) related.push('totalMemory');
     if (!nameLower.includes('getusedmemory')) related.push('getUsedMemory');
     if (!nameLower.includes('maxmemory')) related.push('maxMemory');
   }
 
-  // Storage-related
   if (nameLower.includes('disk') || nameLower.includes('storage')) {
     if (!nameLower.includes('totaldiskcapacity')) related.push('totalDiskCapacity');
     if (!nameLower.includes('getfreediskstorage')) related.push('getFreeDiskStorage');
   }
 
-  // Headphones-related
   if (nameLower.includes('headphone')) {
     if (!nameLower.includes('isheadphonesconnected')) related.push('isHeadphonesConnected');
     if (!nameLower.includes('iswiredheadphones')) related.push('getIsWiredHeadphonesConnected');
     if (!nameLower.includes('isbluetoothheadphones')) related.push('getIsBluetoothHeadphonesConnected');
   }
 
-  // Limit to 3 related APIs
   return related.filter((r) => r.toLowerCase() !== nameLower).slice(0, 3);
 }
 
@@ -454,7 +427,6 @@ export function parseDeviceInfoContent(
   }
 
   for (const match of matches) {
-    // Split into JSDoc and member
     const jsDocMatch = match.match(/\/\*\*([\s\S]*?)\*\//);
     const memberMatch = match.match(/\*\/\s*([\s\S]+)/);
 
@@ -511,9 +483,6 @@ function resolveNitroPath(
   );
 }
 
-/**
- * Get the path to the core `DeviceInfo.nitro.ts`.
- */
 export function getDeviceInfoPath(packageRoot: string): string {
   return resolveNitroPath(
     packageRoot,

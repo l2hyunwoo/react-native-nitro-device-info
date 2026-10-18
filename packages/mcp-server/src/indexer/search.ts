@@ -1,10 +1,3 @@
-/**
- * BM25 Search Implementation
- *
- * Implements the BM25 (Best Matching 25) ranking function for
- * document retrieval with term frequency and document length normalization.
- */
-
 import type {
   SearchIndex,
   SearchResult,
@@ -17,7 +10,6 @@ import type {
 const K1 = 1.2; // Term frequency saturation
 const B = 0.75; // Document length normalization
 
-// Stopwords to filter from queries
 const STOPWORDS = new Set([
   'the',
   'a',
@@ -134,9 +126,6 @@ const STOPWORDS = new Set([
   'getting',
 ]);
 
-/**
- * Tokenize text into normalized terms
- */
 export function tokenize(text: string): string[] {
   return text
     .toLowerCase()
@@ -149,7 +138,6 @@ export function tokenize(text: string): string[] {
  * Apply simple stemming (suffix stripping)
  */
 export function stem(word: string): string {
-  // Simple suffix stripping for common English suffixes
   if (word.endsWith('ing') && word.length > 5) {
     return word.slice(0, -3);
   }
@@ -168,16 +156,10 @@ export function stem(word: string): string {
   return word;
 }
 
-/**
- * Tokenize and stem text
- */
 export function processText(text: string): string[] {
   return tokenize(text).map(stem);
 }
 
-/**
- * Get document ID for an item
- */
 function getDocumentId(
   item: ApiDefinition | DocumentationChunk,
   type: 'api' | 'documentation'
@@ -188,9 +170,6 @@ function getDocumentId(
   return `doc:${(item as DocumentationChunk).id}`;
 }
 
-/**
- * Get searchable text from an API definition
- */
 function getApiSearchText(api: ApiDefinition): string {
   return [
     api.name,
@@ -203,9 +182,6 @@ function getApiSearchText(api: ApiDefinition): string {
   ].join(' ');
 }
 
-/**
- * Get searchable text from a documentation chunk
- */
 function getChunkSearchText(chunk: DocumentationChunk): string {
   return [chunk.title, chunk.content, ...chunk.mentionedApis].join(' ');
 }
@@ -222,9 +198,6 @@ function calculateIdf(
   );
 }
 
-/**
- * Calculate BM25 score for a document
- */
 function calculateBm25Score(
   termFrequencies: Map<string, number>,
   queryTerms: string[],
@@ -252,9 +225,6 @@ function calculateBm25Score(
   return score;
 }
 
-/**
- * Search the index with BM25 ranking
- */
 export function search(
   index: SearchIndex,
   query: string,
@@ -269,10 +239,8 @@ export function search(
 
   const results: SearchResult[] = [];
 
-  // Search APIs
   if (filters.type === 'all' || filters.type === 'api' || !filters.type) {
     for (const [, api] of index.apis) {
-      // Apply filters
       if (filters.category && filters.category !== 'all') {
         if (api.category !== filters.category) continue;
       }
@@ -300,7 +268,6 @@ export function search(
       const searchText = getApiSearchText(api);
       const terms = processText(searchText);
 
-      // Calculate term frequencies for this document
       const termFreqs = new Map<string, number>();
       for (const term of terms) {
         termFreqs.set(term, (termFreqs.get(term) || 0) + 1);
@@ -337,10 +304,8 @@ export function search(
     }
   }
 
-  // Search documentation chunks
   if (filters.type === 'all' || filters.type === 'guide' || !filters.type) {
     for (const chunk of index.chunks) {
-      // Apply platform filter for documentation
       if (filters.platform && filters.platform !== 'all') {
         if (chunk.platforms.length > 0) {
           if (filters.platform === 'ios' && !chunk.platforms.includes('ios')) {
@@ -395,7 +360,6 @@ export function search(
     }
   }
 
-  // Sort by score descending and limit
   results.sort((a, b) => b.score - a.score);
 
   // Normalize scores to 0-100 range
@@ -407,28 +371,20 @@ export function search(
   return results.slice(0, limit);
 }
 
-/**
- * Check if query mentions a term (case-insensitive)
- */
 function queryLower(query: string, term: string): boolean {
   return query.toLowerCase().includes(term.toLowerCase());
 }
 
-/**
- * Generate highlights for API search results
- */
 function generateHighlights(
   api: ApiDefinition,
   queryTerms: string[]
 ): { field: string; excerpt: string }[] {
   const highlights: { field: string; excerpt: string }[] = [];
 
-  // Check name
   if (queryTerms.some((term) => api.name.toLowerCase().includes(term))) {
     highlights.push({ field: 'name', excerpt: api.name });
   }
 
-  // Check description
   const descTerms = processText(api.description);
   if (queryTerms.some((term) => descTerms.includes(term))) {
     highlights.push({
@@ -443,16 +399,12 @@ function generateHighlights(
   return highlights;
 }
 
-/**
- * Generate highlights for documentation chunk search results
- */
 function generateChunkHighlights(
   chunk: DocumentationChunk,
   queryTerms: string[]
 ): { field: string; excerpt: string }[] {
   const highlights: { field: string; excerpt: string }[] = [];
 
-  // Check title
   if (
     queryTerms.some((term) =>
       processText(chunk.title).includes(term)
@@ -477,9 +429,6 @@ function generateChunkHighlights(
   return highlights;
 }
 
-/**
- * Build search index from APIs and documentation chunks
- */
 export function buildSearchIndex(
   apis: ApiDefinition[],
   chunks: DocumentationChunk[]
@@ -496,7 +445,6 @@ export function buildSearchIndex(
 
   let totalLength = 0;
 
-  // Index APIs
   for (const api of apis) {
     const docId = `api:${api.name}`;
     index.apis.set(api.name, api);
@@ -508,7 +456,6 @@ export function buildSearchIndex(
     totalLength += terms.length;
     index.documentCount++;
 
-    // Build inverted index
     const uniqueTerms = new Set(terms);
     for (const term of uniqueTerms) {
       if (!index.invertedIndex.has(term)) {
@@ -516,7 +463,6 @@ export function buildSearchIndex(
       }
       index.invertedIndex.get(term)!.add(docId);
 
-      // Update document frequency
       index.termDocumentFrequencies.set(
         term,
         (index.termDocumentFrequencies.get(term) || 0) + 1
@@ -524,7 +470,6 @@ export function buildSearchIndex(
     }
   }
 
-  // Index documentation chunks
   for (const chunk of chunks) {
     const docId = `doc:${chunk.id}`;
     index.chunks.push(chunk);
@@ -536,7 +481,6 @@ export function buildSearchIndex(
     totalLength += terms.length;
     index.documentCount++;
 
-    // Build inverted index
     const uniqueTerms = new Set(terms);
     for (const term of uniqueTerms) {
       if (!index.invertedIndex.has(term)) {
@@ -557,9 +501,6 @@ export function buildSearchIndex(
   return index;
 }
 
-/**
- * Calculate Levenshtein distance between two strings
- */
 export function levenshteinDistance(a: string, b: string): number {
   const matrix: number[][] = [];
 
@@ -588,9 +529,6 @@ export function levenshteinDistance(a: string, b: string): number {
   return matrix[b.length][a.length];
 }
 
-/**
- * Find similar API names using fuzzy matching
- */
 export function findSimilarApis(
   query: string,
   apis: Map<string, ApiDefinition>,
@@ -603,31 +541,26 @@ export function findSimilarApis(
   for (const [name, api] of apis) {
     const nameLower = name.toLowerCase();
 
-    // Exact match (case-insensitive)
     if (nameLower === queryLower) {
       return [api];
     }
 
-    // Prefix match
     if (nameLower.startsWith(queryLower) || queryLower.startsWith(nameLower)) {
       candidates.push({ api, distance: 0 });
       continue;
     }
 
-    // Substring match
     if (nameLower.includes(queryLower) || queryLower.includes(nameLower)) {
       candidates.push({ api, distance: 1 });
       continue;
     }
 
-    // Levenshtein distance
     const distance = levenshteinDistance(nameLower, queryLower);
     if (distance <= maxDistance) {
       candidates.push({ api, distance });
     }
   }
 
-  // Sort by distance and return top matches
   candidates.sort((a, b) => a.distance - b.distance);
   return candidates.slice(0, limit).map((c) => c.api);
 }

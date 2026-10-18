@@ -1,14 +1,9 @@
-/**
- * Unit tests for get_api tool
- */
-
 import { executeGetApi, getApiInputSchema } from '../../src/tools/get-api';
 import { buildSearchIndex } from '../../src/indexer/search';
 import { parseDeviceInfoContent } from '../../src/indexer/api-parser';
 import { SAMPLE_DEVICE_INFO_CONTENT } from '../fixtures/sample-device-info';
 
 describe('get_api tool', () => {
-  // Build a test index from sample content
   const apis = parseDeviceInfoContent(SAMPLE_DEVICE_INFO_CONTENT);
   const index = buildSearchIndex(apis, []);
 

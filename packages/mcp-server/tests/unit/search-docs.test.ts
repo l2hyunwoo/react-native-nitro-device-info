@@ -1,14 +1,9 @@
-/**
- * Unit tests for search_docs tool
- */
-
 import { executeSearchDocs, searchDocsInputSchema } from '../../src/tools/search-docs';
 import { buildSearchIndex } from '../../src/indexer/search';
 import { parseDeviceInfoContent } from '../../src/indexer/api-parser';
 import { SAMPLE_DEVICE_INFO_CONTENT } from '../fixtures/sample-device-info';
 
 describe('search_docs tool', () => {
-  // Build a test index from sample content
   const apis = parseDeviceInfoContent(SAMPLE_DEVICE_INFO_CONTENT);
   const index = buildSearchIndex(apis, []);
 
@@ -91,7 +86,6 @@ describe('search_docs tool', () => {
       });
 
       expect(result.isError).toBe(false);
-      // Should only have API results, no Guide results
       expect(result.content).not.toContain('(Guide)');
     });
 

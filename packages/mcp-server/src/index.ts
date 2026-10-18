@@ -36,12 +36,8 @@ import {
   type ListApisInput,
 } from './tools/list-apis.js';
 
-// Tool timeout in milliseconds (2 seconds per spec)
 const TOOL_TIMEOUT_MS = 2000;
 
-/**
- * Create and configure the MCP server
- */
 async function createServer(): Promise<Server> {
   const server = new Server(
     {
@@ -55,7 +51,6 @@ async function createServer(): Promise<Server> {
     }
   );
 
-  // Build search index
   let index: SearchIndex;
   try {
     console.error('Building documentation index...');
@@ -69,7 +64,6 @@ async function createServer(): Promise<Server> {
     console.error(`  - Documentation chunks: ${stats.chunkCount}`);
     console.error(`  - Total documents: ${stats.totalDocuments}`);
 
-    // Validate index
     const validation = validateIndex(index);
     if (!validation.valid) {
       console.error('Index validation warnings:');
@@ -98,7 +92,6 @@ async function createServer(): Promise<Server> {
     };
   }
 
-  // Register tool list handler
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
       tools: [
@@ -187,11 +180,9 @@ async function createServer(): Promise<Server> {
     };
   });
 
-  // Register tool call handler
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
 
-    // Wrap execution with timeout
     const executeWithTimeout = async <T>(
       fn: () => T,
       timeoutMs: number
@@ -213,7 +204,6 @@ async function createServer(): Promise<Server> {
     };
 
     try {
-      // Check if index is empty
       if (index.apis.size === 0 || index.documentCount === 0) {
         return {
           content: [
@@ -317,7 +307,6 @@ async function createServer(): Promise<Server> {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
 
-      // Handle timeout specifically
       if (errorMessage.includes('timed out')) {
         return {
           content: [
@@ -345,9 +334,6 @@ async function createServer(): Promise<Server> {
   return server;
 }
 
-/**
- * Show help message
- */
 function showHelp(): void {
   console.log(`
 @react-native-nitro-device-info/mcp-server
@@ -373,14 +359,10 @@ Examples:
 `);
 }
 
-/**
- * Main entry point
- */
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  // Handle CLI commands
   if (command === 'init') {
     await runInit();
     return;
@@ -397,7 +379,6 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Default: start MCP server
   try {
     const server = await createServer();
     const transport = new StdioServerTransport();
@@ -409,7 +390,6 @@ async function main(): Promise<void> {
   }
 }
 
-// Handle uncaught errors
 process.on('uncaughtException', (error) => {
   console.error('Uncaught exception:', error);
   process.exit(1);
@@ -420,7 +400,6 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1);
 });
 
-// Run the server
 main().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);

@@ -25,9 +25,6 @@ const MCP_SERVER_CONFIG = {
 
 const SERVER_NAME = 'nitro-device-info';
 
-/**
- * Merge MCP server config into existing config
- */
 function mergeConfig(existing: McpConfig | null): McpConfig {
   if (!existing) {
     return {
@@ -46,9 +43,6 @@ function mergeConfig(existing: McpConfig | null): McpConfig {
   };
 }
 
-/**
- * Read existing JSON config file
- */
 function readJsonFile(filePath: string): McpConfig | null {
   try {
     if (fs.existsSync(filePath)) {
@@ -61,9 +55,6 @@ function readJsonFile(filePath: string): McpConfig | null {
   return null;
 }
 
-/**
- * Write JSON config file
- */
 function writeJsonFile(filePath: string, config: McpConfig): void {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
@@ -72,15 +63,11 @@ function writeJsonFile(filePath: string, config: McpConfig): void {
   fs.writeFileSync(filePath, JSON.stringify(config, null, 2) + '\n');
 }
 
-/**
- * Initialize Cursor MCP configuration
- */
 function initCursor(projectRoot: string): { created: boolean; path: string } {
   const configPath = path.join(projectRoot, '.cursor', 'mcp.json');
   const existing = readJsonFile(configPath);
   const merged = mergeConfig(existing);
 
-  // Check if already configured
   if (existing?.mcpServers?.[SERVER_NAME]) {
     return { created: false, path: configPath };
   }
@@ -89,9 +76,6 @@ function initCursor(projectRoot: string): { created: boolean; path: string } {
   return { created: true, path: configPath };
 }
 
-/**
- * Initialize Claude Code MCP configuration (.mcp.json)
- */
 function initClaudeCode(projectRoot: string): {
   created: boolean;
   path: string;
@@ -100,7 +84,6 @@ function initClaudeCode(projectRoot: string): {
   const existing = readJsonFile(configPath);
   const merged = mergeConfig(existing);
 
-  // Check if already configured
   if (existing?.mcpServers?.[SERVER_NAME]) {
     return { created: false, path: configPath };
   }
@@ -109,15 +92,11 @@ function initClaudeCode(projectRoot: string): {
   return { created: true, path: configPath };
 }
 
-/**
- * Run the init command
- */
 export async function runInit(): Promise<void> {
   const projectRoot = process.cwd();
 
   console.log('Initializing MCP configuration for react-native-nitro-device-info...\n');
 
-  // Initialize Cursor
   const cursorResult = initCursor(projectRoot);
   if (cursorResult.created) {
     console.log(`✓ Created ${path.relative(projectRoot, cursorResult.path)}`);
@@ -127,7 +106,6 @@ export async function runInit(): Promise<void> {
     );
   }
 
-  // Initialize Claude Code
   const claudeResult = initClaudeCode(projectRoot);
   if (claudeResult.created) {
     console.log(`✓ Created ${path.relative(projectRoot, claudeResult.path)}`);

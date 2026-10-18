@@ -1,16 +1,7 @@
-/**
- * get_api MCP Tool
- *
- * Retrieve detailed information about a specific API method or property.
- */
-
 import { z } from 'zod';
 import type { SearchIndex, ApiDefinition, Platform } from '../types/index.js';
 import { findSimilarApis } from '../indexer/search.js';
 
-/**
- * Input schema for get_api tool
- */
 export const getApiInputSchema = z.object({
   name: z
     .string()
@@ -21,9 +12,6 @@ export const getApiInputSchema = z.object({
 
 export type GetApiInput = z.infer<typeof getApiInputSchema>;
 
-/**
- * Format platform support table
- */
 function formatPlatformSupport(platform: Platform): string {
   const lines: string[] = [];
   lines.push('| Platform | Support |');
@@ -55,9 +43,6 @@ function formatPlatformSupport(platform: Platform): string {
   return lines.join('\n');
 }
 
-/**
- * Format parameters table
- */
 function formatParameters(api: ApiDefinition): string {
   if (api.parameters.length === 0) {
     return '*No parameters.*';
@@ -75,9 +60,6 @@ function formatParameters(api: ApiDefinition): string {
   return lines.join('\n');
 }
 
-/**
- * Format related APIs section
- */
 function formatRelatedApis(relatedApis: string[]): string {
   if (relatedApis.length === 0) {
     return '';
@@ -92,9 +74,6 @@ function formatRelatedApis(relatedApis: string[]): string {
   return lines.join('\n');
 }
 
-/**
- * Format examples section
- */
 function formatExamples(examples: string[]): string {
   if (examples.length === 0) {
     return '*No examples documented.*';
@@ -102,7 +81,6 @@ function formatExamples(examples: string[]): string {
 
   const lines: string[] = [];
   for (const example of examples) {
-    // Check if example already has code fence
     if (example.includes('```')) {
       lines.push(example);
     } else {
@@ -114,21 +92,15 @@ function formatExamples(examples: string[]): string {
   return lines.join('\n');
 }
 
-/**
- * Format complete API documentation
- */
 function formatApiDocumentation(api: ApiDefinition): string {
   const lines: string[] = [];
 
-  // Title
   lines.push(`# ${api.name}`);
   lines.push('');
 
-  // Description
   lines.push(api.description);
   lines.push('');
 
-  // Signature
   lines.push('## Signature');
   lines.push('');
   lines.push('```typescript');
@@ -136,13 +108,11 @@ function formatApiDocumentation(api: ApiDefinition): string {
   lines.push('```');
   lines.push('');
 
-  // Parameters
   lines.push('## Parameters');
   lines.push('');
   lines.push(formatParameters(api));
   lines.push('');
 
-  // Returns
   lines.push('## Returns');
   lines.push('');
   lines.push(`\`${api.returnType}\``);
@@ -152,19 +122,16 @@ function formatApiDocumentation(api: ApiDefinition): string {
     lines.push('');
   }
 
-  // Platform Support
   lines.push('## Platform Support');
   lines.push('');
   lines.push(formatPlatformSupport(api.platform));
   lines.push('');
 
-  // Example
   lines.push('## Example');
   lines.push('');
   lines.push(formatExamples(api.examples));
   lines.push('');
 
-  // Import suggestion
   lines.push('## Import');
   lines.push('');
   lines.push('```typescript');
@@ -185,7 +152,6 @@ function formatApiDocumentation(api: ApiDefinition): string {
   lines.push('```');
   lines.push('');
 
-  // Related APIs
   const relatedSection = formatRelatedApis(api.relatedApis);
   if (relatedSection) {
     lines.push(relatedSection);
@@ -194,9 +160,6 @@ function formatApiDocumentation(api: ApiDefinition): string {
   return lines.join('\n').trim();
 }
 
-/**
- * Format error response with suggestions
- */
 function formatNotFoundError(name: string, suggestions: ApiDefinition[]): string {
   const lines: string[] = [];
   lines.push(`Error: API '${name}' not found.`);
@@ -215,9 +178,6 @@ function formatNotFoundError(name: string, suggestions: ApiDefinition[]): string
   return lines.join('\n');
 }
 
-/**
- * Execute get_api tool
- */
 export function executeGetApi(
   index: SearchIndex,
   input: GetApiInput
@@ -226,7 +186,6 @@ export function executeGetApi(
     const { name } = input;
     const nameLower = name.toLowerCase();
 
-    // Try case-insensitive lookup
     let api: ApiDefinition | undefined;
     for (const [apiName, apiDef] of index.apis) {
       if (apiName.toLowerCase() === nameLower) {
@@ -235,7 +194,6 @@ export function executeGetApi(
       }
     }
 
-    // If found, return documentation
     if (api) {
       return {
         content: formatApiDocumentation(api),
@@ -243,7 +201,6 @@ export function executeGetApi(
       };
     }
 
-    // Not found - try fuzzy matching
     const suggestions = findSimilarApis(name, index.apis, 3, 3);
 
     return {

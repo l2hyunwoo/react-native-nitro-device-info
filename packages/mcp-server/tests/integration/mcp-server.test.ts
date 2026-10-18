@@ -1,7 +1,3 @@
-/**
- * Integration tests for MCP server - Platform-specific queries
- */
-
 import { buildSearchIndex } from '../../src/indexer/search';
 import { parseDeviceInfoContent } from '../../src/indexer/api-parser';
 import { createPlatformLimitationChunks } from '../../src/indexer/doc-parser';

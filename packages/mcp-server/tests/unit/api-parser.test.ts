@@ -1,7 +1,3 @@
-/**
- * Unit tests for API parser - TypeScript signature extraction
- */
-
 import { parseDeviceInfoContent } from '../../src/indexer/api-parser';
 import { SAMPLE_DEVICE_INFO_CONTENT, EXPECTED_API_COUNT, EXPECTED_API_NAMES } from '../fixtures/sample-device-info';
 

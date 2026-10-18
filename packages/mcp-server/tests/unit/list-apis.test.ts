@@ -1,14 +1,9 @@
-/**
- * Unit tests for list_apis tool
- */
-
 import { executeListApis, listApisInputSchema } from '../../src/tools/list-apis';
 import { buildSearchIndex } from '../../src/indexer/search';
 import { parseDeviceInfoContent } from '../../src/indexer/api-parser';
 import { SAMPLE_DEVICE_INFO_CONTENT } from '../fixtures/sample-device-info';
 
 describe('list_apis tool', () => {
-  // Build a test index from sample content
   const apis = parseDeviceInfoContent(SAMPLE_DEVICE_INFO_CONTENT);
   const index = buildSearchIndex(apis, []);
 
@@ -62,7 +57,6 @@ describe('list_apis tool', () => {
 
       expect(result.isError).toBe(false);
       expect(result.content).toContain('Battery');
-      // Should include battery-related APIs
       expect(result.content.toLowerCase()).toContain('battery');
     });
 
@@ -105,7 +99,6 @@ describe('list_apis tool', () => {
       });
 
       expect(result.isError).toBe(false);
-      // Should include Android APIs
     });
 
     it('should filter for APIs supporting both platforms', () => {
@@ -116,7 +109,6 @@ describe('list_apis tool', () => {
       });
 
       expect(result.isError).toBe(false);
-      // APIs that support both platforms should be included
     });
   });
 
@@ -141,7 +133,6 @@ describe('list_apis tool', () => {
       });
 
       expect(result.isError).toBe(false);
-      // Should only include properties
       expect(result.content).toContain('property');
     });
   });
@@ -155,7 +146,6 @@ describe('list_apis tool', () => {
       });
 
       expect(result.isError).toBe(false);
-      // Should only include battery methods
     });
   });
 
@@ -202,7 +192,6 @@ describe('list_apis tool', () => {
       });
 
       expect(result.isError).toBe(false);
-      // Should have category headers
       expect(result.content).toContain('##');
     });
   });
