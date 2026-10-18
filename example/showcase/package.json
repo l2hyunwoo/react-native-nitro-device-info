@@ -27,7 +27,7 @@
     "@react-native-community/cli": "20.2.0",
     "@react-native-community/cli-platform-android": "20.2.0",
     "@react-native-community/cli-platform-ios": "20.2.0",
-    "@react-native-harness/platform-android": "^1.6.0",
+    "@react-native-harness/platform-android": "patch:@react-native-harness/platform-android@npm%3A1.6.0#~/.yarn/patches/@react-native-harness-platform-android-npm-1.6.0-5deddcc461.patch",
     "@react-native-harness/platform-apple": "^1.6.0",
     "@react-native/babel-preset": "0.88.0",
     "@react-native/metro-config": "0.88.0",

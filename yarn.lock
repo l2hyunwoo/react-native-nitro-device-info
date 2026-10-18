@@ -5017,7 +5017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-android@npm:^1.6.0":
+"@react-native-harness/platform-android@npm:1.6.0":
   version: 1.6.0
   resolution: "@react-native-harness/platform-android@npm:1.6.0"
   dependencies:
@@ -5028,6 +5028,20 @@ __metadata:
     vite: "npm:^7.2.2"
     zod: "npm:^3.25.67"
   checksum: 10c0/9975e33e8fc94799d9b9e9ad29e69ebfea2b0d5533b9c8f0a092c469928158bdfa4c61475ed43ff855cbbae166bc6ccedd9c975a6465d404e5e2774d61940078
+  languageName: node
+  linkType: hard
+
+"@react-native-harness/platform-android@patch:@react-native-harness/platform-android@npm%3A1.6.0#~/.yarn/patches/@react-native-harness-platform-android-npm-1.6.0-5deddcc461.patch":
+  version: 1.6.0
+  resolution: "@react-native-harness/platform-android@patch:@react-native-harness/platform-android@npm%3A1.6.0#~/.yarn/patches/@react-native-harness-platform-android-npm-1.6.0-5deddcc461.patch::version=1.6.0&hash=0764e9"
+  dependencies:
+    "@react-native-harness/config": "npm:1.6.0"
+    "@react-native-harness/platforms": "npm:1.6.0"
+    "@react-native-harness/tools": "npm:1.6.0"
+    tslib: "npm:^2.3.0"
+    vite: "npm:^7.2.2"
+    zod: "npm:^3.25.67"
+  checksum: 10c0/2ef4a28042fd9b46ce269a73865dc1e4a1052813258a282cc024ff84241b8495511c17b181c6f29e633bf6231711fe873573704c3323b620755bc4a96f58d4a5
   languageName: node
   linkType: hard
 
@@ -13728,7 +13742,7 @@ __metadata:
     "@react-native-community/cli": "npm:20.2.0"
     "@react-native-community/cli-platform-android": "npm:20.2.0"
     "@react-native-community/cli-platform-ios": "npm:20.2.0"
-    "@react-native-harness/platform-android": "npm:^1.6.0"
+    "@react-native-harness/platform-android": "patch:@react-native-harness/platform-android@npm%3A1.6.0#~/.yarn/patches/@react-native-harness-platform-android-npm-1.6.0-5deddcc461.patch"
     "@react-native-harness/platform-apple": "npm:^1.6.0"
     "@react-native/babel-preset": "npm:0.88.0"
     "@react-native/metro-config": "npm:0.88.0"
@@ -13817,7 +13831,7 @@ __metadata:
     "@react-native-community/cli": "npm:20.2.0"
     "@react-native-community/cli-platform-android": "npm:20.2.0"
     "@react-native-community/cli-platform-ios": "npm:20.2.0"
-    "@react-native-harness/platform-android": "npm:^1.6.0"
+    "@react-native-harness/platform-android": "patch:@react-native-harness/platform-android@npm%3A1.6.0#~/.yarn/patches/@react-native-harness-platform-android-npm-1.6.0-5deddcc461.patch"
     "@react-native-harness/platform-apple": "npm:^1.6.0"
     "@react-native/babel-preset": "npm:0.88.0"
     "@react-native/metro-config": "npm:0.88.0"

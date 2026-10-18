@@ -119,6 +119,28 @@ After `yarn prepare`, run `npm pack` in `packages/react-native-nitro-device-info
 
 Integrity package or demo changes run lint, `yarn workspace react-native-nitro-device-integrity typecheck`, and `yarn workspace react-native-nitro-device-integrity prepare`, followed by iOS and Android demo builds. Root `yarn prepare` builds only the core library. Dependency and CI workflow changes run both libraries' checks. Validate workflow syntax with `actionlint .github/workflows/ci.yml` and check that path filters cover the affected packages and configuration.
 
+### Android Harness port recovery
+
+The example apps patch Harness 1.6 to restore ADB reverse tunnels before each app launch, including retries.
+An ADB reconnect can remove these tunnels while Metro remains healthy.
+Without restoration, restarting the app can fail with "The app did not request its Metro bundle after 3 launch attempts".
+The deprecated `withRnHarness` Metro wrapper does not restore these connections.
+
+Build and install the example debug APKs on a running Android emulator before running this regression:
+
+```sh
+yarn test:harness:android:reconnect integrity-demo emulator-5554
+yarn test:harness:android:reconnect showcase emulator-5554
+```
+
+Replace `emulator-5554` with the serial from `adb devices`.
+The regression removes only that emulator's Metro tunnel after the first passing test file.
+It then runs the remaining files with process resets enabled.
+It does not restart the shared ADB server or select a physical device.
+Keep other tools from stopping the ADB server during tests: a shutdown can still interrupt an active ADB command.
+Remove the Yarn patch when an upstream version restores the tunnels on every launch and passes this regression.
+CI does not run these device suites.
+
 ### Integrity tests
 
 After installing workspace dependencies, build the integrity package from the repository root:
