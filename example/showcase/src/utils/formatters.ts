@@ -1,18 +1,6 @@
-/**
- * Property Value Formatters
- * Handles formatting of different property types for display
- */
-
 import { PropertyType } from '../types';
 
-/**
- * Format a property value based on its type
- * @param value - The raw value to format
- * @param type - The PropertyType enum indicating how to format
- * @returns Formatted string for display
- */
 export function formatPropertyValue(value: any, type: PropertyType): string {
-  // Handle null/undefined
   if (value === null || value === undefined) {
     return 'N/A';
   }
@@ -42,11 +30,6 @@ export function formatPropertyValue(value: any, type: PropertyType): string {
   }
 }
 
-/**
- * Format bytes to human-readable format (GB with 2 decimal places)
- * @param bytes - Number of bytes
- * @returns Formatted string like "8.00 GB"
- */
 export function formatBytes(bytes: number | string): string {
   const numBytes = typeof bytes === 'string' ? parseFloat(bytes) : bytes;
 
@@ -58,11 +41,6 @@ export function formatBytes(bytes: number | string): string {
   return `${gb.toFixed(2)} GB`;
 }
 
-/**
- * Format timestamp (milliseconds since epoch) to readable date/time
- * @param timestamp - Milliseconds since epoch
- * @returns Formatted date string
- */
 export function formatTimestamp(timestamp: number | string): string {
   const numTimestamp = typeof timestamp === 'string' ? parseInt(timestamp, 10) : timestamp;
 
@@ -78,11 +56,6 @@ export function formatTimestamp(timestamp: number | string): string {
   }
 }
 
-/**
- * Format array values
- * @param arr - Array to format
- * @returns Comma-separated string or JSON for complex arrays
- */
 export function formatArray(arr: any): string {
   if (!Array.isArray(arr)) {
     return String(arr);
@@ -92,20 +65,13 @@ export function formatArray(arr: any): string {
     return '[]';
   }
 
-  // For simple arrays (strings, numbers), join with commas
   if (arr.every((item) => typeof item === 'string' || typeof item === 'number')) {
     return arr.join(', ');
   }
 
-  // For complex arrays, use JSON
   return JSON.stringify(arr, null, 2);
 }
 
-/**
- * Format object values
- * @param obj - Object to format
- * @returns Pretty-printed JSON
- */
 export function formatObject(obj: any): string {
   if (typeof obj !== 'object' || obj === null) {
     return String(obj);
@@ -118,11 +84,6 @@ export function formatObject(obj: any): string {
   }
 }
 
-/**
- * Format string values with truncation for very long strings
- * @param str - String to format
- * @returns Formatted string with ellipsis if too long
- */
 export function formatString(str: any): string {
   const strValue = String(str);
   const MAX_LENGTH = 100;
@@ -134,13 +95,7 @@ export function formatString(str: any): string {
   return strValue.substring(0, MAX_LENGTH) + '...';
 }
 
-/**
- * Get a short display name for a category
- * @param category - Full category name
- * @returns Shortened name for headers
- */
 export function shortenCategoryName(category: string): string {
-  // Remove common prefixes/suffixes
   return category
     .replace(' Information', '')
     .replace('Device ', '')

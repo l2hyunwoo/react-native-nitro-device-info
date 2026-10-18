@@ -1,10 +1,3 @@
-/**
- * HooksDemo Screen
- *
- * Demonstrates all React hooks for device info monitoring with real-time updates.
- * Shows battery, headphone, and brightness status with last update timestamps.
- */
-
 import { useState, useEffect } from 'react';
 import {
   ScrollView,
@@ -57,7 +50,6 @@ function formatPercent(value: number | null): string {
   return `${Math.round(value * 100)}%`;
 }
 
-// Card component for sections
 function Card({
   title,
   children,
@@ -73,7 +65,6 @@ function Card({
   );
 }
 
-// Row component for displaying values
 function Row({
   label,
   value,
@@ -96,7 +87,6 @@ function Row({
   );
 }
 
-// Alert component for warnings
 function Alert({ text }: { text: string }) {
   return (
     <View style={styles.alert}>
@@ -105,7 +95,6 @@ function Alert({ text }: { text: string }) {
   );
 }
 
-// Progress bar component for brightness
 function ProgressBar({ value }: { value: number }) {
   const percentage = Math.max(0, Math.min(100, value * 100));
   return (
@@ -116,20 +105,16 @@ function ProgressBar({ value }: { value: number }) {
 }
 
 export default function HooksDemo() {
-  // Battery hooks
   const batteryLevel = useBatteryLevel();
   const lowBattery = useBatteryLevelIsLow();
   const powerState = usePowerState();
 
-  // Headphone hooks
   const headphones = useIsHeadphonesConnected();
   const wiredHeadphones = useIsWiredHeadphonesConnected();
   const bluetoothHeadphones = useIsBluetoothHeadphonesConnected();
 
-  // Display hooks
   const brightness = useBrightness();
 
-  // Track timestamps
   const batteryTs = useTimestampedValue(batteryLevel);
   const powerStateTs = useTimestampedValue(powerState);
   const headphonesTs = useTimestampedValue(headphones);

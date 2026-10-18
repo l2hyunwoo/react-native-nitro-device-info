@@ -10,14 +10,12 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import { isValidPowerState, isValidBcp47 } from './types';
 
 describe('Dynamic State APIs - Battery', () => {
-  // T019: getBatteryLevel test
   test('getBatteryLevel returns a valid reading or the unavailable sentinel', () => {
     const level = DeviceInfoModule.getBatteryLevel();
     expect(typeof level).toBe('number');
     expect(level === -1 || (level >= 0 && level <= 1)).toBe(true);
   });
 
-  // T022: getPowerState test
   test('getPowerState returns valid PowerState object', () => {
     const state = DeviceInfoModule.getPowerState();
 
@@ -25,7 +23,6 @@ describe('Dynamic State APIs - Battery', () => {
     expect(typeof state).toBe('object');
     expect(isValidPowerState(state)).toBe(true);
 
-    // Explicit property checks
     expect(typeof state.batteryLevel).toBe('number');
     expect(
       state.batteryLevel === -1 ||
@@ -41,7 +38,6 @@ describe('Dynamic State APIs - Battery', () => {
 });
 
 describe('Dynamic State APIs - Memory', () => {
-  // T020: getUsedMemory test
   test('getUsedMemory returns positive number', () => {
     const memory = DeviceInfoModule.getUsedMemory();
     expect(typeof memory).toBe('number');
@@ -51,7 +47,6 @@ describe('Dynamic State APIs - Memory', () => {
     expect(memory).toBeGreaterThan(1024 * 1024);
   });
 
-  // T023: totalMemory test
   test('totalMemory returns positive number', () => {
     const totalMemory = DeviceInfoModule.totalMemory;
     expect(typeof totalMemory).toBe('number');
@@ -70,7 +65,6 @@ describe('Dynamic State APIs - Memory', () => {
 });
 
 describe('Dynamic State APIs - Storage', () => {
-  // T021: getFreeDiskStorage test
   test('getFreeDiskStorage returns positive number', () => {
     const freeStorage = DeviceInfoModule.getFreeDiskStorage();
     expect(typeof freeStorage).toBe('number');
@@ -80,7 +74,6 @@ describe('Dynamic State APIs - Storage', () => {
     expect(freeStorage).toBeGreaterThan(100 * 1024 * 1024);
   });
 
-  // T024: totalDiskCapacity test
   test('totalDiskCapacity returns positive number', () => {
     const totalCapacity = DeviceInfoModule.totalDiskCapacity;
     expect(typeof totalCapacity).toBe('number');
@@ -99,7 +92,6 @@ describe('Dynamic State APIs - Storage', () => {
 });
 
 describe('Dynamic State APIs - Localization', () => {
-  // T025: systemLanguage test
   test('systemLanguage returns BCP 47 format string', () => {
     const language = DeviceInfoModule.systemLanguage;
     expect(typeof language).toBe('string');

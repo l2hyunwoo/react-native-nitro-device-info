@@ -1,15 +1,7 @@
-/**
- * High-Precision Benchmark Timer
- * Uses performance.now() for microsecond-precision timing
- */
-
 import type { BenchmarkResult } from '../types';
 import { LibraryType } from '../types';
 import './performancePolyfill'; // Ensure performance.now() is available
 
-/**
- * Statistics for a set of timing measurements
- */
 interface TimingStats {
   avgTime: number;
   minTime: number;
@@ -17,17 +9,6 @@ interface TimingStats {
   stdDev: number;
 }
 
-/**
- * Run a benchmark with warmup iterations and multiple measurements
- *
- * @param methodName - Name of the method being benchmarked
- * @param fn - Function to benchmark (sync or async)
- * @param library - Which library is being benchmarked
- * @param iterations - Number of measurement iterations
- * @param target - Performance target in milliseconds
- * @param isAsync - Whether the function is asynchronous
- * @returns BenchmarkResult with timing statistics
- */
 export async function runBenchmark(
   methodName: string,
   fn: () => any | Promise<any>,
@@ -47,7 +28,6 @@ export async function runBenchmark(
       }
     }
 
-    // Measurement phase
     const times: number[] = [];
     for (let i = 0; i < iterations; i++) {
       const start = performance.now();
@@ -62,7 +42,6 @@ export async function runBenchmark(
       times.push(end - start);
     }
 
-    // Calculate statistics
     const stats = calculateStats(times);
 
     return {
@@ -77,7 +56,6 @@ export async function runBenchmark(
       passed: stats.avgTime < target,
     };
   } catch (error) {
-    // Return failed result on error
     return {
       methodName,
       library,
@@ -93,12 +71,6 @@ export async function runBenchmark(
   }
 }
 
-/**
- * Calculate statistical measures from timing measurements
- *
- * @param times - Array of timing measurements in milliseconds
- * @returns Statistical summary
- */
 function calculateStats(times: number[]): TimingStats {
   if (times.length === 0) {
     return { avgTime: 0, minTime: 0, maxTime: 0, stdDev: 0 };
@@ -108,7 +80,6 @@ function calculateStats(times: number[]): TimingStats {
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
 
-  // Calculate standard deviation
   const squareDiffs = times.map((time) => Math.pow(time - avgTime, 2));
   const avgSquareDiff = squareDiffs.reduce((sum, sq) => sum + sq, 0) / times.length;
   const stdDev = Math.sqrt(avgSquareDiff);
@@ -121,35 +92,14 @@ function calculateStats(times: number[]): TimingStats {
   };
 }
 
-/**
- * Format timing value for display
- *
- * @param ms - Time in milliseconds
- * @param precision - Number of decimal places (default: 2)
- * @returns Formatted string like "0.05ms" or "123.45ms"
- */
 export function formatTime(ms: number, precision: number = 2): string {
   return `${ms.toFixed(precision)}ms`;
 }
 
-/**
- * Determine if a timing result is considered "fast" based on target
- *
- * @param avgTime - Average execution time
- * @param target - Target threshold
- * @returns true if performance is good (well under target)
- */
 export function isFast(avgTime: number, target: number): boolean {
   return avgTime < target * 0.5; // Fast if under 50% of target
 }
 
-/**
- * Determine if a timing result is considered "acceptable" (passes target)
- *
- * @param avgTime - Average execution time
- * @param target - Target threshold
- * @returns true if performance meets target
- */
 export function isAcceptable(avgTime: number, target: number): boolean {
   return avgTime < target;
 }

@@ -117,12 +117,10 @@ describe('compat: location providers transform array -> map', () => {
     expect(Array.isArray(providers)).toBe(false);
     expect(typeof providers).toBe('object');
 
-    // Every key from the core array must be present and true.
     const coreArray = DeviceInfoModule.getAvailableLocationProviders();
     for (const name of coreArray) {
       expect(providers[name]).toBe(true);
     }
-    // Every value in the map must be a boolean true.
     Object.values(providers).forEach((v) => expect(v).toBe(true));
   });
 

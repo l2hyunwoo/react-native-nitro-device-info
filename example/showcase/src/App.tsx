@@ -1,8 +1,3 @@
-/**
- * Example App for react-native-nitro-device-info
- * Displays device information with tabs for static properties and live hooks demo
- */
-
 import { useState } from 'react';
 import {
   View,

@@ -1,8 +1,3 @@
-/**
- * PlatformBadge Component
- * Displays platform availability badge (iOS, Android, All)
- */
-
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { PlatformAvailability } from '../types';
@@ -12,12 +7,10 @@ interface Props {
 }
 
 export const PlatformBadge: React.FC<Props> = ({ platform }) => {
-  // Don't show badge if property is available on all platforms
   if (platform === PlatformAvailability.ALL) {
     return null;
   }
 
-  // Determine badge label and color
   const getBadgeInfo = () => {
     switch (platform) {
       case PlatformAvailability.IOS_ONLY:

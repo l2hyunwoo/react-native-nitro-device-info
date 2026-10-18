@@ -1,8 +1,3 @@
-/**
- * StatisticsPanel Component
- * Displays aggregate performance metrics and marketing catchphrase
- */
-
 import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import type { PerformanceMetrics } from '../types';

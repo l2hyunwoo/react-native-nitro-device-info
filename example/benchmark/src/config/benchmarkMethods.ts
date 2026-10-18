@@ -1,25 +1,14 @@
-/**
- * Benchmark Method Configuration
- * Defines which methods to benchmark and their parameters
- */
-
 import type { BenchmarkMethodConfig } from '../types';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 // @ts-ignore - react-native-device-info is a peer dependency that may not be installed during type checking
 import DeviceInfo from 'react-native-device-info';
 
-// Performance targets
 const SYNC_TARGET = 1; // <1ms for synchronous methods
 const ASYNC_TARGET = 100; // <100ms for asynchronous methods
 
-// Iteration counts
 const SYNC_ITERATIONS = 1000;
 const ASYNC_ITERATIONS = 10;
 
-/**
- * Complete list of methods to benchmark
- * Compares react-native-nitro-device-info with react-native-device-info
- */
 export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   // Synchronous Device Identity Methods
   {
@@ -254,23 +243,14 @@ export const BENCHMARK_METHODS: BenchmarkMethodConfig[] = [
   },
 ];
 
-/**
- * Get synchronous methods only
- */
 export function getSyncMethods(): BenchmarkMethodConfig[] {
   return BENCHMARK_METHODS.filter((m) => !m.isAsync);
 }
 
-/**
- * Get asynchronous methods only
- */
 export function getAsyncMethods(): BenchmarkMethodConfig[] {
   return BENCHMARK_METHODS.filter((m) => m.isAsync);
 }
 
-/**
- * Get total method count
- */
 export function getTotalMethodCount(): number {
   return BENCHMARK_METHODS.length;
 }

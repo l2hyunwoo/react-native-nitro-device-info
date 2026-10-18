@@ -1,8 +1,3 @@
-/**
- * PropertyRow Component
- * Displays a single device property with label, value, and platform badge
- */
-
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { DeviceProperty } from '../types';

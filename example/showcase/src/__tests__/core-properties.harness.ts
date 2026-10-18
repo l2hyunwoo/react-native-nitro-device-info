@@ -1,7 +1,7 @@
 /**
  * E2E Tests: Core Device Properties
  *
- * Tests for Tier 1 core device properties that return deterministic values
+ * Tests for core device properties that return deterministic values
  * on simulators/emulators. These properties are the most commonly used APIs.
  */
 
@@ -11,14 +11,12 @@ import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import { isValidDeviceType, VALID_DEVICE_TYPES } from './types';
 
 describe('Core Device Properties', () => {
-  // T008: deviceId test
   test('deviceId returns non-empty string', () => {
     const deviceId = DeviceInfoModule.deviceId;
     expect(typeof deviceId).toBe('string');
     expect(deviceId.length).toBeGreaterThan(0);
   });
 
-  // T009: brand test
   test('brand returns non-empty string, Apple on iOS', () => {
     const brand = DeviceInfoModule.brand;
     expect(typeof brand).toBe('string');
@@ -29,7 +27,6 @@ describe('Core Device Properties', () => {
     }
   });
 
-  // T010: systemName test
   test('systemName returns correct platform', () => {
     const systemName = DeviceInfoModule.systemName;
     expect(typeof systemName).toBe('string');
@@ -41,7 +38,6 @@ describe('Core Device Properties', () => {
     }
   });
 
-  // T011: systemVersion test
   test('systemVersion returns non-empty string', () => {
     const systemVersion = DeviceInfoModule.systemVersion;
     expect(typeof systemVersion).toBe('string');
@@ -51,14 +47,13 @@ describe('Core Device Properties', () => {
     expect(systemVersion).toMatch(/^\d+(\.\d+)*$/);
   });
 
-  // T012: model test
   test('model returns non-empty string', () => {
     const model = DeviceInfoModule.model;
     expect(typeof model).toBe('string');
     expect(model.length).toBeGreaterThan(0);
   });
 
-  // T012b: model returns marketing name on iOS when device identifier is mapped
+  // Model returns the marketing name on iOS when the device identifier is mapped.
   test('model returns marketing name or valid fallback', () => {
     const model = DeviceInfoModule.model;
     const deviceId = DeviceInfoModule.deviceId;
@@ -74,7 +69,6 @@ describe('Core Device Properties', () => {
     }
   });
 
-  // T013: deviceType test
   test('deviceType returns valid enum value', () => {
     const deviceType = DeviceInfoModule.deviceType;
     expect(typeof deviceType).toBe('string');
@@ -82,7 +76,6 @@ describe('Core Device Properties', () => {
     expect(VALID_DEVICE_TYPES).toContain(deviceType);
   });
 
-  // T014: isTablet test
   test('isTablet returns boolean value', () => {
     const isTablet = DeviceInfoModule.isTablet;
     expect(typeof isTablet).toBe('boolean');
@@ -94,14 +87,12 @@ describe('Core Device Properties', () => {
 });
 
 describe('Tier 1 Identifiers', () => {
-  // T015: uniqueId test
   test('uniqueId returns non-empty string', () => {
     const uniqueId = DeviceInfoModule.uniqueId;
     expect(typeof uniqueId).toBe('string');
     expect(uniqueId.length).toBeGreaterThan(0);
   });
 
-  // T015: manufacturer test
   test('manufacturer returns non-empty string', () => {
     const manufacturer = DeviceInfoModule.manufacturer;
     expect(typeof manufacturer).toBe('string');
@@ -114,31 +105,26 @@ describe('Tier 1 Identifiers', () => {
 });
 
 describe('Tier 1 App Metadata', () => {
-  // T016: version test
   test('version returns non-empty string', () => {
     const version = DeviceInfoModule.version;
     expect(typeof version).toBe('string');
     expect(version.length).toBeGreaterThan(0);
   });
 
-  // T016: buildNumber test
   test('buildNumber returns non-empty string', () => {
     const buildNumber = DeviceInfoModule.buildNumber;
     expect(typeof buildNumber).toBe('string');
     expect(buildNumber.length).toBeGreaterThan(0);
   });
 
-  // T016: bundleId test
   test('bundleId returns non-empty string', () => {
     const bundleId = DeviceInfoModule.bundleId;
     expect(typeof bundleId).toBe('string');
     expect(bundleId.length).toBeGreaterThan(0);
 
-    // Bundle ID should follow standard format
     expect(bundleId).toMatch(/^[\w.]+$/);
   });
 
-  // T016: applicationName test
   test('applicationName returns non-empty string', () => {
     const applicationName = DeviceInfoModule.applicationName;
     expect(typeof applicationName).toBe('string');
@@ -147,7 +133,6 @@ describe('Tier 1 App Metadata', () => {
 });
 
 describe('Tier 1 Platform Detection', () => {
-  // T017: isEmulator test
   test('isEmulator returns boolean value', () => {
     const isEmulator = DeviceInfoModule.isEmulator;
     expect(typeof isEmulator).toBe('boolean');
@@ -157,13 +142,11 @@ describe('Tier 1 Platform Detection', () => {
     // We only verify the type here to avoid flaky tests.
   });
 
-  // T017: supportedAbis test
   test('supportedAbis returns non-empty array', () => {
     const supportedAbis = DeviceInfoModule.supportedAbis;
     expect(Array.isArray(supportedAbis)).toBe(true);
     expect(supportedAbis.length).toBeGreaterThan(0);
 
-    // All elements should be strings
     supportedAbis.forEach((abi) => {
       expect(typeof abi).toBe('string');
       expect(abi.length).toBeGreaterThan(0);

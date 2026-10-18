@@ -1,20 +1,9 @@
-/**
- * Property Category Configuration
- * Maps DeviceInfo properties to organized categories for display
- */
-
 import { PropertyCategory, PropertyType, PlatformAvailability } from '../types';
 import type { DeviceProperty } from '../types';
 import { Platform } from 'react-native';
 
-/**
- * Complete mapping of all DeviceInfo properties organized by category
- * Excludes 'value' and 'errorState' which are populated at runtime
- */
 export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = [
-  // ==========================================================================
   // CATEGORY 1: Device Identity
-  // ==========================================================================
   {
     key: 'deviceId',
     label: 'Device ID',
@@ -64,9 +53,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 2: Device Capabilities
-  // ==========================================================================
   {
     key: 'isTablet',
     label: 'Is Tablet',
@@ -124,9 +111,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 3: Device Identification
-  // ==========================================================================
   {
     key: 'uniqueId',
     label: 'Unique ID',
@@ -160,9 +145,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 4: Battery & Power
-  // ==========================================================================
   {
     key: 'getBatteryLevel',
     label: 'Battery Level',
@@ -188,9 +171,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 5: System Resources
-  // ==========================================================================
   {
     key: 'totalMemory',
     label: 'Total Memory',
@@ -232,9 +213,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 6: Application Metadata
-  // ==========================================================================
   {
     key: 'version',
     label: 'App Version',
@@ -268,9 +247,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 7: Network & Connectivity
-  // ==========================================================================
   {
     key: 'getIpAddress',
     label: 'IP Address',
@@ -344,9 +321,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 8: Localization & Navigation
-  // ==========================================================================
   {
     key: 'systemLanguage',
     label: 'System Language',
@@ -364,9 +339,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 9: Platform Capabilities
-  // ==========================================================================
   {
     key: 'apiLevel',
     label: 'API Level',
@@ -408,9 +381,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 10: Android Build Information
-  // ==========================================================================
   {
     key: 'bootloader',
     label: 'Bootloader',
@@ -492,9 +463,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: true,
   },
 
-  // ==========================================================================
   // CATEGORY 11: Advanced Features
-  // ==========================================================================
   {
     key: 'getFirstInstallTime',
     label: 'First Install Time',
@@ -520,9 +489,7 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
     isSync: false,
   },
 
-  // ==========================================================================
   // CATEGORY 12: Device Integrity
-  // ==========================================================================
   {
     key: 'isDeviceCompromised',
     label: 'Device Compromised',
@@ -541,9 +508,6 @@ export const PROPERTY_CONFIGS: Omit<DeviceProperty, 'value' | 'errorState'>[] = 
   },
 ];
 
-/**
- * Helper function to check if a property is supported on the current platform
- */
 export function isPlatformSupported(property: Pick<DeviceProperty, 'platform'>): boolean {
   if (property.platform === PlatformAvailability.ALL) return true;
   if (property.platform === PlatformAvailability.IOS_ONLY) return Platform.OS === 'ios';
@@ -551,18 +515,12 @@ export function isPlatformSupported(property: Pick<DeviceProperty, 'platform'>):
   return false;
 }
 
-/**
- * Get all properties for a specific category, filtered by current platform
- */
 export function getPropertiesForCategory(category: PropertyCategory): Omit<DeviceProperty, 'value' | 'errorState'>[] {
   return PROPERTY_CONFIGS.filter(
     (prop) => prop.category === category && isPlatformSupported(prop)
   );
 }
 
-/**
- * Get unique list of all categories that have properties on current platform
- */
 export function getAvailableCategories(): PropertyCategory[] {
   const categories = new Set<PropertyCategory>();
   PROPERTY_CONFIGS.forEach((prop) => {

@@ -1,10 +1,3 @@
-/**
- * BenchmarkScreen.tsx
- * Performance comparison benchmarking between Nitro and react-native-device-info
- *
- * Displays side-by-side performance metrics with speedup multipliers
- */
-
 import React, { useState } from 'react';
 import {
   ScrollView,
@@ -36,7 +29,6 @@ export default function BenchmarkScreen() {
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [dependencyError, setDependencyError] = useState<string | null>(null);
 
-  // Check if react-native-device-info is available
   React.useEffect(() => {
     try {
       if (!DeviceInfo || typeof DeviceInfo.getDeviceId !== 'function') {
@@ -54,10 +46,6 @@ export default function BenchmarkScreen() {
     }
   }, []);
 
-  /**
-   * Run benchmarks for both Nitro and react-native-device-info
-   * Creates side-by-side comparisons with speedup metrics
-   */
   const runAllBenchmarks = async () => {
     setRunning(true);
     setProgress({ current: 0, total: BENCHMARK_METHODS.length * 2 });
@@ -73,7 +61,6 @@ export default function BenchmarkScreen() {
         console.log(`Benchmarking: ${method.name}`);
 
         try {
-          // Benchmark Nitro implementation
           setProgress({ current: i * 2 + 1, total: BENCHMARK_METHODS.length * 2 });
           const nitroBenchmark = await runBenchmark(
             method.name,
@@ -84,7 +71,6 @@ export default function BenchmarkScreen() {
             method.isAsync
           );
 
-          // Benchmark react-native-device-info implementation
           setProgress({ current: i * 2 + 2, total: BENCHMARK_METHODS.length * 2 });
           const deviceInfoBenchmark = await runBenchmark(
             method.name,
@@ -95,7 +81,6 @@ export default function BenchmarkScreen() {
             method.isAsync
           );
 
-          // Create comparison
           const comparison = createComparison(nitroBenchmark, deviceInfoBenchmark);
           comparisons.push(comparison);
 
@@ -104,7 +89,6 @@ export default function BenchmarkScreen() {
           );
         } catch (error) {
           console.error(`Error benchmarking ${method.name}:`, error);
-          // Create error comparison
           const errorBenchmark: BenchmarkResult = {
             methodName: method.name,
             library: LibraryType.NITRO,
@@ -123,7 +107,6 @@ export default function BenchmarkScreen() {
         }
       }
 
-      // Calculate aggregate metrics
       const performanceMetrics = calculateMetrics(comparisons);
       setMetrics(performanceMetrics);
 
@@ -139,10 +122,6 @@ export default function BenchmarkScreen() {
     }
   };
 
-  /**
-   * Run React hooks performance benchmarks
-   * Tests hook registration, cleanup, and callback latency
-   */
   const runHooksBenchmarks = async () => {
     setRunningHooks(true);
     try {
