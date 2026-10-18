@@ -66,7 +66,7 @@ jobs:
 
       - name: Check for unpublished versions
         id: unpublished
-        if: steps.changesets.outputs.hasChangesets == 'false'
+        if: steps.changesets.outputs.has-changesets == 'false'
         run: |
           for manifest in packages/*/package.json; do
             read -r name version private < <(node -p "const p = require('./$manifest'); [p.name, p.version, p.private === true].join(' ')")
