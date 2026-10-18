@@ -77,7 +77,7 @@
   "devDependencies": {
     "@expo/config-plugins": "~56.0.9",
     "del-cli": "7.0.0",
-    "nitrogen": "0.35.9",
+    "nitrogen": "0.37.1",
     "react-native-builder-bob": "0.41.0",
     "typescript": "5.9.3"
   },

@@ -141,7 +141,7 @@ override fun getNewInfo(): Promise<String> = Promise.async { "value" }
 
 **Runtime**: `react-native-nitro-modules >=0.35.0 <1.0.0` (peer dependency)
 
-**Development**: `yarn@4.17.0`, `node@22`, `typescript@5.9.3`, `nitrogen@0.35.9`, `turbo@2.9.18`, `oxlint@1.57.0`, `jest@29.7.0`, `commitlint@21.0.2`
+**Development**: `yarn@4.17.0`, `node@22`, `typescript@5.9.3`, `nitrogen@0.37.1`, `turbo@2.9.18`, `oxlint@1.57.0`, `jest@29.7.0`, `commitlint@21.0.2`
 
 **Native**: iOS Swift 5.9+ (UIKit, Foundation, Combine), Android Kotlin 1.9+ (kotlinx-coroutines 1.7.3)
 

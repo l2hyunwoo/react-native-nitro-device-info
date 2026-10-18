@@ -10,22 +10,22 @@
     "build:ios": "react-native build-ios --mode Debug"
   },
   "dependencies": {
-    "react": "19.2.3",
-    "react-native": "0.85.3",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
     "react-native-device-info": "^15.0.2",
     "react-native-nitro-device-info": "workspace:*",
-    "react-native-nitro-modules": "^0.35.9"
+    "react-native-nitro-modules": "^0.37.1"
   },
   "devDependencies": {
     "@babel/core": "^8.0.6",
     "@babel/preset-env": "^7.29.7",
     "@babel/runtime": "^7.29.7",
-    "@react-native-community/cli": "20.1.0",
-    "@react-native-community/cli-platform-android": "20.1.0",
-    "@react-native-community/cli-platform-ios": "20.1.0",
-    "@react-native/babel-preset": "0.85.3",
-    "@react-native/metro-config": "0.85.3",
-    "@react-native/typescript-config": "0.85.3",
+    "@react-native-community/cli": "20.2.0",
+    "@react-native-community/cli-platform-android": "20.2.0",
+    "@react-native-community/cli-platform-ios": "20.2.0",
+    "@react-native/babel-preset": "0.88.0",
+    "@react-native/metro-config": "0.88.0",
+    "@react-native/typescript-config": "0.88.0",
     "@types/react": "^19.2.0",
     "react-native-builder-bob": "^0.41.0",
     "react-native-monorepo-config": "^0.4.0"
