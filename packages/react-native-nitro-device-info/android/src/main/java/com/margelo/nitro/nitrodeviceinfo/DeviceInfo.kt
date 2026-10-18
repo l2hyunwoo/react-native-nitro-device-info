@@ -49,8 +49,6 @@ import kotlin.coroutines.resume
 
 /** Build information cache to avoid repeated Build.* lookups */
 private data class BuildInfoCache(
-    val serialNumber: String,
-    val androidId: String,
     val securityPatch: String,
     val bootloader: String,
     val codename: String,
@@ -139,16 +137,16 @@ class DeviceInfo : HybridDeviceInfoSpec() {
         }
     }
 
+    // Identifiers stay out of buildInfoCache so reading build fields never reads them.
+    private val cachedSerialNumber: String by lazy { getSerialNumberInternal() }
+
+    private val cachedAndroidId: String by lazy {
+        Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: "unknown"
+    }
+
     /** Build information cache - initialized once at first access */
     private val buildInfoCache: BuildInfoCache by lazy {
         BuildInfoCache(
-            serialNumber = getSerialNumberInternal(),
-            androidId =
-                Settings.Secure.getString(
-                    context.contentResolver,
-                    Settings.Secure.ANDROID_ID,
-                )
-                    ?: "unknown",
             securityPatch = Build.VERSION.SECURITY_PATCH,
             bootloader = Build.BOOTLOADER,
             codename = Build.VERSION.CODENAME,
@@ -792,11 +790,11 @@ class DeviceInfo : HybridDeviceInfoSpec() {
 
     /** Android device serial number */
     override val serialNumber: String
-        get() = buildInfoCache.serialNumber
+        get() = cachedSerialNumber
 
     /** Android ID (unique per device/app/user combination) */
     override val androidId: String
-        get() = buildInfoCache.androidId
+        get() = cachedAndroidId
 
     /** Preview SDK version */
     override val previewSdkInt: Double
