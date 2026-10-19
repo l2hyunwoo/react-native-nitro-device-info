@@ -473,26 +473,29 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   public func getUsedMemory() -> Double {
-    var info = mach_task_basic_info()
-    var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
+    return physFootprint() ?? 0.0
+  }
+
+  /// The app's jetsam limit: current footprint plus the headroom left before termination.
+  /// `os_proc_available_memory()` returns 0 when no limit applies (e.g. the Simulator) or the app exceeds its limit.
+  var maxMemory: Double {
+    let available = os_proc_available_memory()
+    guard available > 0, let footprint = physFootprint() else { return -1 }
+    return footprint + Double(available)
+  }
+
+  /// `phys_footprint` is the value jetsam and Xcode's memory gauge use; `resident_size` excludes compressed memory.
+  private func physFootprint() -> Double? {
+    var info = task_vm_info_data_t()
+    var count = mach_msg_type_number_t(MemoryLayout<task_vm_info_data_t>.size / MemoryLayout<integer_t>.size)
 
     let kerr: kern_return_t = withUnsafeMutablePointer(to: &info) {
-      $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
-        task_info(mach_task_self_,
-                 task_flavor_t(MACH_TASK_BASIC_INFO),
-                 $0,
-                 &count)
+      $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
+        task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
       }
     }
 
-    if kerr == KERN_SUCCESS {
-      return Double(info.resident_size)
-    }
-    return 0.0
-  }
-
-  var maxMemory: Double {
-    return -1
+    return kerr == KERN_SUCCESS ? Double(info.phys_footprint) : nil
   }
 
   public var totalDiskCapacity: Double {

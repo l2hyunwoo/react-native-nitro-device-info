@@ -379,7 +379,7 @@ console.log(`Total RAM: ${(totalMemory / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 <span class="rp-badge rp-badge--tip">Since v0.1.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
-Get current app memory usage in bytes.
+Get current app memory usage in bytes. On iOS this is `phys_footprint`, the value jetsam and Xcode's memory gauge use.
 
 ```typescript
 const usedMemory = DeviceInfoModule.getUsedMemory();
@@ -389,17 +389,20 @@ console.log(`Used Memory: ${(usedMemory / 1024 / 1024).toFixed(0)}MB`);
 
 ### `maxMemory: number`
 
-<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--warning">iOS: fallback</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
+<span class="rp-badge rp-badge--tip">Since v1.2.0</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">Web: fallback</span>
 
 Get maximum memory available to app (in bytes).
 
 ```typescript
 const maxMemory = DeviceInfoModule.maxMemory;
-// Android: max heap size
-// iOS: -1
+// Android: max Java heap size
+// iOS: memory limit before jetsam terminates the app
+//      (getUsedMemory() + os_proc_available_memory())
 ```
 
-**Platform**: Android only
+On iOS, `maxMemory` is `-1` when `os_proc_available_memory()` returns 0: no limit applies (e.g. the Simulator) or the app has already exceeded its limit.
+
+On Android, `maxMemory` and `getUsedMemory()` are not comparable: `maxMemory` is the Java heap limit, while `getUsedMemory()` is the PSS of the whole process, including native memory. `getUsedMemory() / maxMemory` is only meaningful on iOS.
 
 ### `totalDiskCapacity: number`
 

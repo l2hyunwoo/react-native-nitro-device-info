@@ -376,6 +376,7 @@ export interface DeviceInfo
    * Get current app memory usage in bytes
    *
    * Returns the current memory footprint of this app.
+   * iOS: `phys_footprint`, the value jetsam and Xcode's memory gauge use.
    * This value changes constantly with memory allocation.
    *
    * @returns Used memory in bytes, 0 if error
@@ -385,9 +386,13 @@ export interface DeviceInfo
 
   /**
    * Get maximum memory available to app (in bytes).
-   * Returns -1 on iOS.
    *
-   * @platform Android (returns -1 on iOS)
+   * - Android: maximum Java heap size (`Runtime.maxMemory()`). Not comparable
+   *   with `getUsedMemory()`, which is the PSS of the whole process.
+   * - iOS: memory limit before jetsam terminates the app
+   *   (`getUsedMemory()` + `os_proc_available_memory()`).
+   *   Returns -1 when `os_proc_available_memory()` returns 0: no limit applies
+   *   (e.g. the Simulator) or the app has already exceeded its limit.
    */
   readonly maxMemory: number;
 
