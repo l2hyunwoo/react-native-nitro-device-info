@@ -55,6 +55,8 @@ jobs:
           path: docs/doc_build
 
   deploy:
+    # Fork PRs get no OIDC token, and PRs must not publish the site.
+    if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-26.04
 
