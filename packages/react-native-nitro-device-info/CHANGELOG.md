@@ -2,6 +2,12 @@
 
 Release dates for v1.5.0–v1.8.3 use npm publication timestamps (UTC).
 
+## 1.9.2
+
+### Patch Changes
+
+- 2346bf5: iOS: `getUsedMemory()` now returns `phys_footprint` (what jetsam and Xcode's memory gauge use) instead of `resident_size`, and `maxMemory` returns the app's jetsam limit (`getUsedMemory()` + `os_proc_available_memory()`) instead of `-1`. `maxMemory` stays `-1` when `os_proc_available_memory()` returns 0: no limit applies (e.g. the Simulator) or the app has already exceeded its limit.
+
 ## 1.9.1
 
 ### Patch Changes
