@@ -384,7 +384,7 @@ console.log(`Total RAM: ${(totalMemory / 1024 / 1024 / 1024).toFixed(1)}GB`);
 
 <span class="rp-badge rp-badge--tip">v0.1.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
-현재 앱의 메모리 사용량을 바이트로 읽습니다.
+현재 앱의 메모리 사용량을 바이트로 읽습니다. iOS에서는 jetsam과 Xcode 메모리 게이지가 사용하는 `phys_footprint` 값입니다.
 
 ```typescript
 const usedMemory = DeviceInfoModule.getUsedMemory();
@@ -394,17 +394,16 @@ console.log(`Used Memory: ${(usedMemory / 1024 / 1024).toFixed(0)}MB`);
 
 ### `maxMemory: number` {#maxmemory-number}
 
-<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--warning">iOS: fallback 값</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
+<span class="rp-badge rp-badge--tip">v1.2.0부터</span> <span class="rp-badge rp-badge--info">iOS 15.1+</span> <span class="rp-badge rp-badge--info">Android API 24+</span> <span class="rp-badge rp-badge--warning">웹: fallback 값</span>
 
 앱이 사용할 수 있는 최대 메모리를 바이트로 읽습니다.
 
 ```typescript
 const maxMemory = DeviceInfoModule.maxMemory;
-// Android: max heap size
-// iOS: -1
+// Android: 최대 Java 힙 크기
+// iOS: jetsam이 앱을 종료하기 전까지의 메모리 한도
+//      (getUsedMemory() + os_proc_available_memory()), 시뮬레이터에서는 -1
 ```
-
-**플랫폼**: Android 전용
 
 ### `totalDiskCapacity: number` {#totaldiskcapacity-number}
 

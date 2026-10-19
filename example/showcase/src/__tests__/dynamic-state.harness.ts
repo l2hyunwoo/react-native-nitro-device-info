@@ -62,6 +62,14 @@ describe('Dynamic State APIs - Memory', () => {
 
     expect(usedMemory).toBeLessThanOrEqual(totalMemory);
   });
+
+  test('maxMemory is the unavailable sentinel or above usedMemory', () => {
+    const maxMemory = DeviceInfoModule.maxMemory;
+    expect(typeof maxMemory).toBe('number');
+    expect(
+      maxMemory === -1 || maxMemory > DeviceInfoModule.getUsedMemory()
+    ).toBe(true);
+  });
 });
 
 describe('Dynamic State APIs - Storage', () => {
