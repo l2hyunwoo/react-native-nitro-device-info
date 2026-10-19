@@ -402,8 +402,12 @@ console.log(`Used Memory: ${(usedMemory / 1024 / 1024).toFixed(0)}MB`);
 const maxMemory = DeviceInfoModule.maxMemory;
 // Android: 최대 Java 힙 크기
 // iOS: jetsam이 앱을 종료하기 전까지의 메모리 한도
-//      (getUsedMemory() + os_proc_available_memory()), 시뮬레이터에서는 -1
+//      (getUsedMemory() + os_proc_available_memory())
 ```
+
+iOS에서 `os_proc_available_memory()`가 0을 반환하면 `maxMemory`는 `-1`입니다. 메모리 한도가 적용되지 않는 환경(예: 시뮬레이터)이거나 앱이 이미 한도를 초과한 경우입니다.
+
+Android에서는 `maxMemory`와 `getUsedMemory()`를 비교할 수 없습니다. `maxMemory`는 Java 힙 한도이고, `getUsedMemory()`는 네이티브 메모리를 포함한 프로세스 전체의 PSS입니다. `getUsedMemory() / maxMemory`는 iOS에서만 의미가 있습니다.
 
 ### `totalDiskCapacity: number` {#totaldiskcapacity-number}
 

@@ -6,6 +6,7 @@
  */
 
 import { describe, test, expect } from 'react-native-harness';
+import { Platform } from 'react-native';
 import { DeviceInfoModule } from 'react-native-nitro-device-info';
 import { isValidPowerState, isValidBcp47 } from './types';
 
@@ -63,12 +64,19 @@ describe('Dynamic State APIs - Memory', () => {
     expect(usedMemory).toBeLessThanOrEqual(totalMemory);
   });
 
-  test('maxMemory is the unavailable sentinel or above usedMemory', () => {
+  test('maxMemory is a valid limit for the platform', () => {
     const maxMemory = DeviceInfoModule.maxMemory;
     expect(typeof maxMemory).toBe('number');
-    expect(
-      maxMemory === -1 || maxMemory > DeviceInfoModule.getUsedMemory()
-    ).toBe(true);
+
+    if (Platform.OS === 'ios') {
+      // Jetsam limit: footprint plus remaining headroom, or -1 when unavailable.
+      expect(
+        maxMemory === -1 || maxMemory > DeviceInfoModule.getUsedMemory()
+      ).toBe(true);
+    } else {
+      // Java heap limit; process PSS from getUsedMemory() can exceed it.
+      expect(maxMemory).toBeGreaterThan(0);
+    }
   });
 });
 

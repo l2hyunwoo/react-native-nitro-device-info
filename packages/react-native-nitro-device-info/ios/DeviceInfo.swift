@@ -477,7 +477,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
   }
 
   /// The app's jetsam limit: current footprint plus the headroom left before termination.
-  /// `os_proc_available_memory()` returns 0 where no limit applies, e.g. the Simulator.
+  /// `os_proc_available_memory()` returns 0 when no limit applies (e.g. the Simulator) or the app exceeds its limit.
   var maxMemory: Double {
     let available = os_proc_available_memory()
     guard available > 0, let footprint = physFootprint() else { return -1 }

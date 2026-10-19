@@ -397,8 +397,12 @@ Get maximum memory available to app (in bytes).
 const maxMemory = DeviceInfoModule.maxMemory;
 // Android: max Java heap size
 // iOS: memory limit before jetsam terminates the app
-//      (getUsedMemory() + os_proc_available_memory()); -1 on the Simulator
+//      (getUsedMemory() + os_proc_available_memory())
 ```
+
+On iOS, `maxMemory` is `-1` when `os_proc_available_memory()` returns 0: no limit applies (e.g. the Simulator) or the app has already exceeded its limit.
+
+On Android, `maxMemory` and `getUsedMemory()` are not comparable: `maxMemory` is the Java heap limit, while `getUsedMemory()` is the PSS of the whole process, including native memory. `getUsedMemory() / maxMemory` is only meaningful on iOS.
 
 ### `totalDiskCapacity: number`
 
