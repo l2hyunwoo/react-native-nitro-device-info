@@ -24,7 +24,7 @@ TypeScript source code for the library. Contains the Nitro interface contract (s
 ### Working In This Directory
 - `DeviceInfo.nitro.ts` defines the complete API contract
 - After editing `.nitro.ts`, run `yarn nitrogen` to regenerate native bindings
-- Types defined: `PowerState`, `DeviceType`, `BatteryState`, `NavigationMode`
+- Types defined: `PowerState`, `NitroDeviceType` (re-exported as `DeviceType` from `index.ts`; the Nitro name avoids a generated-header clash with other Nitro modules), `BatteryState`, `NavigationMode`
 - API categories: Core device info, Capabilities, Display, Resources, Battery, App metadata, Network, Carrier, Audio, Location, Localization, CPU, Android/iOS platform-specific, Integrity
 - `index.ts` exports `createDeviceInfo()` factory and `DeviceInfoModule` singleton pattern
 

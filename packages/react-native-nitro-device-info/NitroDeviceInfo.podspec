@@ -25,4 +25,11 @@ Pod::Spec.new do |s|
 
   load 'nitrogen/generated/ios/NitroDeviceInfo+autolinking.rb'
   add_nitrogen_files(s)
+
+  # Same React Native wiring as the Nitro template. Without it the pod links only
+  # NitroModules, and under `use_frameworks! :linkage => :dynamic` the JSI symbols
+  # (exported by hermesvm) stay undefined when NitroDeviceInfo.framework links.
+  s.dependency 'React-jsi'
+  s.dependency 'React-callinvoker'
+  install_modules_dependencies(s)
 end

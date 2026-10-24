@@ -112,9 +112,17 @@ jobs:
       - name: Run TypeScript type check
         run: yarn typecheck
 
+      - name: Build library
+        if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
+        run: yarn prepare
+
       - name: Run library tests
         if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
         run: yarn workspace react-native-nitro-device-info test --runInBand
+
+      - name: Check public DeviceType union
+        if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
+        run: yarn tsc --noEmit --strict --skipLibCheck --module esnext --moduleResolution bundler --target es2022 --jsx react-jsx packages/react-native-nitro-device-info/src/__tests__/device-type.typetest.ts
 
       - name: Run integrity regression tests
         if: ${{ needs.changes.outputs.integrity == 'true' || needs.changes.outputs.deps == 'true' }}
@@ -155,11 +163,15 @@ jobs:
           test -d packages/react-native-nitro-device-info/nitrogen/generated || exit 1
 
   build-ios:
-    name: Build iOS
+    name: Build iOS (${{ matrix.linkage }})
     runs-on: macos-15
     timeout-minutes: 60
     needs: changes
     if: ${{ needs.changes.outputs.library == 'true' || needs.changes.outputs.deps == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        linkage: [static, dynamic]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -174,7 +186,7 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/Library/Caches/CocoaPods
-          key: pods-download-${{ runner.os }}-${{ hashFiles('example/showcase/package.json') }}
+          key: pods-download-${{ runner.os }}-${{ matrix.linkage }}-${{ hashFiles('example/showcase/package.json') }}
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -188,7 +200,10 @@ jobs:
 
       - name: Install Pods
         working-directory: example/showcase/ios
-        run: pod install
+        # The Podfile treats any set USE_FRAMEWORKS as a linkage, so only export it for the dynamic leg.
+        run: |
+          if [ "${{ matrix.linkage }}" = "dynamic" ]; then export USE_FRAMEWORKS=dynamic; fi
+          pod install
 
       - name: Build iOS app
         working-directory: example/showcase
@@ -204,10 +219,13 @@ jobs:
 
       - name: Verify bundled privacy manifest
         working-directory: example/showcase
+        # Static linkage puts the bundle at the app root; dynamic linkage puts it inside NitroDeviceInfo.framework.
         run: |
-          privacy_manifest_path=ios/build/Build/Products/Release-iphonesimulator/NitroDeviceInfoExample.app/NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy
-          test -f "$privacy_manifest_path"
-          plutil -lint "$privacy_manifest_path"
+          app=ios/build/Build/Products/Release-iphonesimulator/NitroDeviceInfoExample.app
+          manifests=$(find "$app" -path '*/NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy')
+          echo "$manifests"
+          test "$(printf '%s\n' "$manifests" | grep -c .)" -eq 1
+          plutil -lint "$manifests"
 
   build-android:
     name: Build Android

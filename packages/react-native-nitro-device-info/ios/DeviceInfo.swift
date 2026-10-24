@@ -331,7 +331,7 @@ class DeviceInfo: HybridDeviceInfoSpec {
     return UIDevice.current.systemVersion
   }
 
-  public var deviceType: DeviceType {
+  public var deviceType: NitroDeviceType {
     switch UIDevice.current.userInterfaceIdiom {
     case .phone:
       return .handset

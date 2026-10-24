@@ -72,7 +72,7 @@ public var apiLevel: Double { return -1 }
 
 ### Internal
 - `nitrogen/generated/ios/swift/HybridDeviceInfoSpec.swift` - Protocol (auto-generated)
-- `nitrogen/generated/ios/swift/BatteryState.swift`, `PowerState.swift`, `DeviceType.swift`, `NavigationMode.swift`
+- `nitrogen/generated/ios/swift/BatteryState.swift`, `PowerState.swift`, `NitroDeviceType.swift`, `NavigationMode.swift`
 
 ### External
 - UIKit, Foundation, AVFoundation, CoreTelephony, CoreLocation, CryptoKit, DeviceCheck, WebKit

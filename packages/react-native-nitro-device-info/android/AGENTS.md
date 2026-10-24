@@ -71,7 +71,7 @@ override val carrierAllowsVOIP: Boolean get() = true
 
 ### Internal
 - `nitrogen/generated/android/kotlin/.../HybridDeviceInfoSpec.kt` - Abstract class (auto-generated)
-- `nitrogen/generated/android/kotlin/.../BatteryState.kt`, `PowerState.kt`, `DeviceType.kt`, `NavigationMode.kt`
+- `nitrogen/generated/android/kotlin/.../BatteryState.kt`, `PowerState.kt`, `NitroDeviceType.kt`, `NavigationMode.kt`
 
 ### External
 - Android SDK (Build, PackageManager, ActivityManager, BatteryManager, AudioManager, TelephonyManager)
