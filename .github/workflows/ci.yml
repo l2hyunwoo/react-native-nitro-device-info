@@ -219,10 +219,13 @@ jobs:
 
       - name: Verify bundled privacy manifest
         working-directory: example/showcase
+        # Static linkage puts the bundle at the app root; dynamic linkage puts it inside NitroDeviceInfo.framework.
         run: |
-          privacy_manifest_path=ios/build/Build/Products/Release-iphonesimulator/NitroDeviceInfoExample.app/NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy
-          test -f "$privacy_manifest_path"
-          plutil -lint "$privacy_manifest_path"
+          app=ios/build/Build/Products/Release-iphonesimulator/NitroDeviceInfoExample.app
+          manifests=$(find "$app" -path '*/NitroDeviceInfo_privacy.bundle/PrivacyInfo.xcprivacy')
+          echo "$manifests"
+          test "$(printf '%s\n' "$manifests" | grep -c .)" -eq 1
+          plutil -lint "$manifests"
 
   build-android:
     name: Build Android
