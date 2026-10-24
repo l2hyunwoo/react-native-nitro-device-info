@@ -2,10 +2,12 @@ import { NitroModules } from 'react-native-nitro-modules';
 import type {
   DeviceInfo,
   PowerState,
-  DeviceType,
+  NitroDeviceType,
   BatteryState,
   NavigationMode,
 } from './DeviceInfo.nitro';
+
+export type DeviceType = NitroDeviceType;
 
 /**
  * Create the DeviceInfo HybridObject instance
@@ -84,7 +86,7 @@ export const DeviceInfoModule: DeviceInfo = new Proxy({} as DeviceInfo, {
   },
 });
 
-export type { DeviceInfo, PowerState, DeviceType, BatteryState, NavigationMode };
+export type { DeviceInfo, PowerState, BatteryState, NavigationMode };
 
 // Re-export React hooks for runtime monitoring
 export {

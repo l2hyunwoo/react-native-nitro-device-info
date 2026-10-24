@@ -187,21 +187,21 @@ class DeviceInfo : HybridDeviceInfoSpec() {
     override val systemVersion: String
         get() = Build.VERSION.RELEASE
 
-    override val deviceType: DeviceType
+    override val deviceType: NitroDeviceType
         get() {
             val uiMode = context.resources.configuration.uiMode
 
             if ((uiMode and Configuration.UI_MODE_TYPE_MASK) ==
                 Configuration.UI_MODE_TYPE_TELEVISION
             ) {
-                return DeviceType.TV
+                return NitroDeviceType.TV
             }
 
             val smallestScreenWidthDp = context.resources.configuration.smallestScreenWidthDp
             return if (smallestScreenWidthDp >= 600) {
-                DeviceType.TABLET
+                NitroDeviceType.TABLET
             } else {
-                DeviceType.HANDSET
+                NitroDeviceType.HANDSET
             }
         }
 

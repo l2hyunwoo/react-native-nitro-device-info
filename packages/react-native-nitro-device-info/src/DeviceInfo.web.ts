@@ -20,7 +20,7 @@ import type {
   DeviceInfo,
   PowerState,
   BatteryState,
-  DeviceType,
+  NitroDeviceType,
 } from './DeviceInfo.nitro';
 
 /**
@@ -159,7 +159,7 @@ const webDeviceInfo: DeviceInfo = {
     return deriveSystemName();
   },
   systemVersion: 'unknown',
-  deviceType: 'unknown' as DeviceType,
+  deviceType: 'unknown' as NitroDeviceType,
   uniqueId: 'unknown',
   manufacturer: safeNavigator()?.vendor || 'unknown',
   deviceName: 'unknown',

@@ -15,10 +15,12 @@ import { createDeviceInfo } from './DeviceInfo.web';
 import type {
   DeviceInfo,
   PowerState,
-  DeviceType,
+  NitroDeviceType,
   BatteryState,
   NavigationMode,
 } from './DeviceInfo.nitro';
+
+export type DeviceType = NitroDeviceType;
 
 export { createDeviceInfo };
 
@@ -28,7 +30,7 @@ export { createDeviceInfo };
  */
 export const DeviceInfoModule: DeviceInfo = createDeviceInfo();
 
-export type { DeviceInfo, PowerState, DeviceType, BatteryState, NavigationMode };
+export type { DeviceInfo, PowerState, BatteryState, NavigationMode };
 
 // Re-export React hooks. They read from `DeviceInfoModule` (this module's web
 // fallback when bundled for web), so they run unchanged in the browser.
