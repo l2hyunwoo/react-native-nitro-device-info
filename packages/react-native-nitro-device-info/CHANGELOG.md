@@ -2,6 +2,12 @@
 
 Release dates for v1.5.0–v1.8.3 use npm publication timestamps (UTC).
 
+## 1.9.3
+
+### Patch Changes
+
+- 79b79c6: iOS: fix builds with `use_frameworks! :linkage => :dynamic`. The podspec now declares the React Native dependencies (`install_modules_dependencies`, `React-jsi`, `React-callinvoker`) like the Nitro template, so `NitroDeviceInfo.framework` links the JSI symbols instead of failing with `Undefined symbols: facebook::jsi::*` in Release. The Nitro spec type is renamed to `NitroDeviceType` so the generated `DeviceType.hpp` no longer shadows react-native-vision-camera's header of the same name; the public `DeviceType` TypeScript type is unchanged. See https://github.com/l2hyunwoo/react-native-nitro-device-info/issues/179
+
 ## 1.9.2
 
 ### Patch Changes
